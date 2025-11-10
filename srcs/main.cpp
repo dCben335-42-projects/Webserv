@@ -12,10 +12,9 @@ void printSuccess(const std::string& message)
     std::cout << GREEN << message << RESET << std::endl;
 }
 
-template <typename Scheme>
-void printUrl(const UrlT<Scheme>& url)
+void printUrl(const Url& url)
 {
-    std::cout << BLUE << "URL: " << url.c_str() << RESET << std::endl;
+    std::cout << BLUE << "URL: " << url.str() << RESET << std::endl;
 }
 
 int main()

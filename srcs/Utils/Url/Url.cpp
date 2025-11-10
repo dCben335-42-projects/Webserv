@@ -2,16 +2,14 @@
 
 // Base Url implementation
 Url::Url(const std::string& url) : m_value(url) {}
+Url::~Url() {}
 
-const std::string& Url::str() { 
-    return m_value;
-}
-std::string Url::c_str() {
+const std::string& Url::str() const { 
     return m_value;
 }
 
-bool Url::isValidPrefix(const std::string& pattern) const {
-    return m_value.compare(0, pattern.size(), pattern) == 0;
+std::string Url::c_str() const {
+    return m_value;
 }
 
 // Define static members for schemes

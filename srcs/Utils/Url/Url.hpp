@@ -21,15 +21,12 @@ class Url {
         std::string m_value;
     public:
         Url(const std::string& url);
-
-        virtual ~Url() {}
-        virtual const std::string& str();
-        virtual std::string c_str();
+        virtual ~Url();
+        virtual const std::string& str() const;
+        virtual std::string c_str() const;
 
         virtual std::string schemeStr() const = 0;
         virtual UrlScheme scheme() const = 0;
-
-        bool isValidPrefix(const std::string& pattern) const;
 };
 
 
@@ -48,7 +45,7 @@ class UrlT : public Url {
         bool        isValid(const std::string& url) const;
 
         std::string schemeStr() const;
-        UrlScheme scheme() const;
+        UrlScheme   scheme() const;
 };
 
 #include "Url.tpp"
