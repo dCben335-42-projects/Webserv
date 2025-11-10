@@ -2,24 +2,18 @@
 # define HTTP_SERVER_HPP
 
 #include <string>
-#include "Url.hpp"s
+#include "Url.hpp"
 
 class HttpServer
 {
     private:
         int             m_port;
         std::string     m_address;
-        Url<>   m_url;
+        UrlT<void>      m_url;
         
     public:
         HttpServer();
         ~HttpServer();
 };
 
-HttpServer::HttpServer(/* args */)
-{
-}
-
-HttpServer::~HttpServer()
-{
-}
+#endif

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Url.hpp"
 #include "config.hpp"
+#include "HttpServer.hpp"
 
 void printError(const std::string& message)
 {
@@ -19,6 +20,7 @@ void printUrl(const Url& url)
 
 int main()
 {
+    HttpServer server;
     try
     {
         {
