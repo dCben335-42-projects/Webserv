@@ -1,13 +1,14 @@
 #include "Url.hpp"
 
-// -----------------------------
-// Base Url implementation
-// -----------------------------
 Url::Url(const std::string& url) : m_value(url) {}
 Url::~Url() {}
 
-const std::string& Url::str() const { return m_value; }
-std::string Url::c_str() const { return m_value; }
+const std::string& Url::str() const {
+    return m_value;
+}
+std::string Url::c_str() const {
+    return m_value;
+}
 
 
 // -----------------------------
@@ -70,8 +71,12 @@ UrlT<void>::UrlT(const std::string& url) : Url(url), m_scheme(URL_HTTP::scheme),
         throw std::invalid_argument("Unknown URL scheme");
 }
 
-std::string UrlT<void>::schemeStr() const { return m_schemeStr; }
-UrlScheme UrlT<void>::scheme() const { return m_scheme; }
+std::string UrlT<void>::schemeStr() const {
+    return m_schemeStr;
+}
+UrlScheme UrlT<void>::scheme() const {
+    return m_scheme;
+}
 
 bool UrlT<void>::isValid(const std::string& url) const {
     for (size_t i = 0; i < sizeof(allSchemes)/sizeof(allSchemes[0]); ++i)

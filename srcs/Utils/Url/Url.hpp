@@ -4,7 +4,6 @@
 #include <string>
 #include <stdexcept>
 
-// URL schemes enum
 enum UrlScheme {
     SCHEME_URL_HTTP,
     SCHEME_URL_HTTPS,
@@ -17,7 +16,6 @@ enum UrlScheme {
     SCHEME_URL_WSS
 };
 
-// Base Url class
 class Url {
     protected:
         std::string     m_value;
