@@ -1,8 +1,42 @@
+#include <iostream>
+#include "Url.hpp"
+#include "config.hpp"
 
+void printError(const std::string& message)
+{
+    std::cerr << RED << message << RESET << std::endl;
+}
 
+void printSuccess(const std::string& message)
+{
+    std::cout << GREEN << message << RESET << std::endl;
+}
 
+template <typename Scheme>
+void printUrl(const UrlT<Scheme>& url)
+{
+    std::cout << BLUE << "URL: " << url.c_str() << RESET << std::endl;
+}
 
 int main()
 {
-    return 0;
+    try
+    {
+        {
+            UrlT<URL_HTTP> url("http://example.com");
+            printUrl(url);
+        }
+        {
+            UrlT<URL_FTP> url("ftp://invalid-url.com");
+            printUrl(url);
+        }
+        {
+            UrlT<URL_HTTP> url("http://another-example.org/resource");
+            printUrl(url);
+        }
+    }
+    catch(const std::exception& e)
+    {
+        printError(e.what());
+    }
 }
