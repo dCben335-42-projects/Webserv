@@ -26,6 +26,7 @@ SRC_FILES	:=
 
 SRC         = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ 		= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC))
+DEPS 	  	= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.d, $(SRC))
 
 # rules
 $(NAME): $(OBJ)
@@ -61,3 +62,5 @@ gen:
 	$(MAKE) re
 
 .PHONY: all clean fclean re val run gen
+
+-include $(DEPS)

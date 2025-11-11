@@ -1,8 +1,14 @@
 #include "AUrl.hpp"
 #include <stdexcept>
+#include <cstdlib>
+// stoi is included via <cstdlib> 
+#include <sstream>
+
 
 AUrl::AUrl(const std::string& url) : m_value(url) {
     parse(url);
+    std::stringstream ss(m_port);
+    ss >> m_portNumber;
 }
 AUrl::~AUrl() {}
 
@@ -114,6 +120,9 @@ const std::string& AUrl::getHost() const {
 }
 const std::string& AUrl::getPort() const {
     return m_port;
+}
+const unsigned short& AUrl::getPortNumber() const {
+    return m_portNumber;
 }
 const std::string& AUrl::getPath() const {
     return m_path;

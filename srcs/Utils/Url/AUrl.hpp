@@ -18,14 +18,15 @@ enum UrlScheme {
 
 class AUrl {
     protected:
-        std::string m_value;
-        std::string m_protocol;
-        std::string m_host;
-        std::string m_port;
-        std::string m_path;
-        std::map<std::string, std::string> m_query;
-        std::string m_fragment;
-
+        std::string                         m_value;
+        std::string                         m_protocol;
+        std::string                         m_host;
+        std::string                         m_port;
+        std::string                         m_path;
+        std::map<std::string, std::string>  m_query;
+        std::string                         m_fragment;
+        unsigned short                      m_portNumber;
+        
         void parse(const std::string& url);
         void parseQuery(const std::string& queryPart);
     public:
@@ -38,6 +39,7 @@ class AUrl {
         const std::string& getProtocol() const;
         const std::string& getHost() const;
         const std::string& getPort() const;
+        const unsigned short& getPortNumber() const;
         const std::string& getPath() const;
         const std::map<std::string, std::string>& getQuery() const;
         const std::string& getFragment() const;
