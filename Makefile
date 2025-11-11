@@ -58,6 +58,6 @@ gen:
 	@echo "Generating includes.mk..."
 	@./config/include_flags.sh . "*.hpp" $(CONF_MK_INCLUDES) INCLUDES_FLAGS
 	@echo "Regenerating Makefile..."
-	$(MAKE)
+	$(MAKE) re
 
 .PHONY: all clean fclean re val run gen

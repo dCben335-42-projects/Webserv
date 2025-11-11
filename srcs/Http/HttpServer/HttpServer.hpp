@@ -7,9 +7,8 @@
 class HttpServer
 {
     private:
-        int             m_port;
-        std::string     m_address;
-        UrlT<void>      m_url;
+        Url<void>       m_url;
+        
         
     public:
         HttpServer();

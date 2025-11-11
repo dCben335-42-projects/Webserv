@@ -5,28 +5,34 @@
 #include <stdexcept>
 
 template <typename Scheme>
-UrlT<Scheme>::UrlT(const std::string& url) : 
-    Url(url),
+Url<Scheme>::Url(const std::string& url) :
+    AUrl(url),
     m_scheme(Scheme::scheme),
-    m_schemeStr(Scheme::pattern)
+    m_schemePattern(Scheme::pattern),
+    m_schemeName(Scheme::name)
 {
-    if (!isValid(url))
+    if (!isValid())
         throw std::invalid_argument("Invalid URL for scheme");
 }
 
 template <typename Scheme>
-std::string UrlT<Scheme>::schemeStr() const {
-    return m_schemeStr;
+std::string Url<Scheme>::getSchemePattern() const {
+    return m_schemePattern;
 }
 
 template <typename Scheme>
-UrlScheme UrlT<Scheme>::scheme() const {
+UrlScheme Url<Scheme>::getScheme() const {
     return m_scheme;
 }
 
 template <typename Scheme>
-bool UrlT<Scheme>::isValid(const std::string& url) const {
-    return url.find(Scheme::pattern) == 0;
+std::string Url<Scheme>::getSchemeName() const {
+    return m_schemeName;
+}
+
+template <typename Scheme>
+bool Url<Scheme>::isValid() const {
+    return m_value.find(m_schemePattern) == 0;
 }
 
 #endif
