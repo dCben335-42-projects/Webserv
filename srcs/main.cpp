@@ -1,8 +1,10 @@
+#include "bnf.hpp"
 #include <iostream>
 #include "Url.hpp"
 #include "config.hpp"
 #include "HttpServer.hpp"
 #include "AppErrors.hpp"
+
 
 void printError(const std::string& message)
 {
@@ -34,10 +36,13 @@ void printUrl(const AUrl& url)
 
 int main()
 {
+    bnf::ERuleType type = bnf::GROUP;
+    bnf::ARule *rule = new bnf::Group();
 
-    Lexer lexer("config/def_language.txt");
+    std::cout << "Rule type: " << rule->getType() << std::endl;
+    std::cout << "Rule type: " << type<< std::endl;
+    delete rule;
 
-    std::cout << lexer.getContent() << std::endl;
 
     // try {
     //     try

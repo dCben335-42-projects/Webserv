@@ -1,7 +1,11 @@
 config			::= { statement }
 
-statement		::= directive (SEMI | dqsq) 
+statement		::= directive SEMI 
 				|= block
+
+
+directive		::= IDENT
+
 
 directive		::= IDENT { parameter }
 

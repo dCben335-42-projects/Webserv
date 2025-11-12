@@ -56,6 +56,7 @@ gen:
 	@$(MKDIR) $(CONF_DIR)
 	@echo "Generating sources.mk..."
 	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) SRC_FILES
+	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) SRC_FILES
 	@echo "Generating includes.mk..."
 	@./config/include_flags.sh . "*.hpp" $(CONF_MK_INCLUDES) INCLUDES_FLAGS
 	@echo "Regenerating Makefile..."
