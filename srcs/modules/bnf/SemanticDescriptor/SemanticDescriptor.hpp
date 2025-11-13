@@ -9,10 +9,10 @@
 
 class SemanticDescriptor {
     private:
-        std::map<std::string, Concept *> m_concepts;
+        std::map<std::string, std::vector<Concept *>*> m_concepts;
         std::string m_last_key;
-        size_t parseConceptName(const std::string& m_content);
-        size_t parseRule(const std::string& m_content, size_t cursor);
+        void parseConceptName(std::string& m_content);
+        size_t parseRule(const std::string& m_content, size_t cursor, size_t concept_count);
         public:
         SemanticDescriptor() {};
         ~SemanticDescriptor() {};

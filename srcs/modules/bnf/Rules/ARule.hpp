@@ -9,19 +9,20 @@ struct BnfMap;
 
 class ARule {
     protected:
-    const ERuleType m_type;
-    ARule(ERuleType t);
+        const ERuleType m_type;
+        ARule(ERuleType t);
+
     public:
-    virtual ~ARule();
-    
-    ARule& operator=(const ARule &other);
-    
-    virtual void addItem(const std::string& val) = 0;
-    
-    static BnfMap getMap(const std::string &opener);
-    
-    ERuleType getType() const;
-    virtual void print() const = 0;
+        virtual ~ARule();
+
+        ARule& operator=(const ARule &other);
+        virtual void addItem(const std::string& val) = 0;
+        ERuleType getType() const;
+        
+        virtual void print() const = 0;
+        
+        static BnfMap   getMap(const std::string &opener);
+        static bool     isKeyWord(const std::string &word, bool onlyClose);
 };
 
 struct BnfMap 
@@ -29,6 +30,7 @@ struct BnfMap
     std::string opener;
     std::string closer;
     ARule* (*constructor)();
+    bool       hasClosure;
 };
 
 #endif

@@ -36,31 +36,55 @@ static const BnfMap rules[] = {
     {
         .opener = LBRACE,
         .closer = RBRACE,
-        .constructor = &createGroup
+        .constructor = &createGroup,
+        .hasClosure = true
     },
     {
         .opener = LBRACKET,
         .closer = RBRACKET,
-        .constructor = &createSequence
+        .constructor = &createSequence,
+        .hasClosure = true
     },
      {
         .opener = LHOOK,
         .closer = RHOOK,
-        .constructor = &createOption
+        .constructor = &createOption,
+        .hasClosure = true
     },
     {
-        .constructor = NULL
+        .opener = "",
+        .closer = "",
+        .constructor = &createSymbol,
+        .hasClosure = false
     },
 };
 
+
+
+bool ARule::isKeyWord(const std::string &word, bool onlyClose)
+{
+    size_t i = 0;
+   
+    while (rules[i].hasClosure)
+    {
+        if (!onlyClose && word == rules[i].opener)
+            return true;
+        if (word == rules[i].closer)
+            return true;
+        i++;
+    }
+    return false;
+}
+
 BnfMap ARule::getMap(const std::string &opener)
 {
-    for (size_t i = 0; rules[i].constructor; i++)
+    size_t i = 0;
+   
+    while (rules[i].hasClosure)
+    {
         if (opener == rules[i].opener)
             return rules[i];
-    return (BnfMap){
-        .opener = "",
-        .closer = "",
-        .constructor = &createSymbol
-    };
+        i++;
+    }
+    return rules[i];
 }
