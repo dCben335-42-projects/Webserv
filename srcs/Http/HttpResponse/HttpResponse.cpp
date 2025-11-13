@@ -6,9 +6,9 @@ HttpResponse::HttpResponse()
 {
     m_statusCode = 200;
     m_body = "Hello, World!";
-    m_protocol = "HTTP/1.1";
-    m_headers["Content-Type"] = "text/plain";
-    m_headers["Content-Length"] = m_body.size();
+    // m_protocol = "HTTP/1.1";
+    m_headers["Content-Type"] = "application/json";
+    // m_headers["Content-Length"] = m_body.size();
     m_headers["Connection"] = "close";
 }
 
@@ -27,10 +27,6 @@ void HttpResponse::setStatusCode(int statusCode)
 {
     m_statusCode = statusCode;
 }
-void HttpResponse::setProtocol(const std::string& protocol)
-{
-    m_protocol = protocol;
-}
 void HttpResponse::setHeader(const std::string& key, const std::string& value)
 {
     m_headers[key] = value;
@@ -48,10 +44,6 @@ int HttpResponse::getStatusCode() const
 {
     return m_statusCode;
 }
-std::string HttpResponse::getProtocol() const
-{
-    return m_protocol;
-}
 std::string HttpResponse::getHeader(const std::string& key) const
 {
     std::map<std::string, std::string>::const_iterator it = m_headers.find(key);
@@ -64,7 +56,7 @@ std::string HttpResponse::getHeader(const std::string& key) const
 void HttpResponse::sendResponse(int clientSocket)
 {
     std::ostringstream responseStream;
-    responseStream << m_protocol << " " << m_statusCode << " OK\r\n";
+    // responseStream << m_protocol << " " << m_statusCode << " OK\r\n";
     std::map<std::string, std::string>::const_iterator it = m_headers.begin();
     for (; it != m_headers.end(); ++it)
         responseStream << it->first << ": " << it->second << "\r\n";

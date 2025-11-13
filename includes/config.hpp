@@ -11,6 +11,12 @@
 
 # define MAX_CONNECTIONS        1024
 
+// ANCHOR   Method
+# define M_GET                   "GET"
+# define M_POST                  "POST"
+# define M_DELETE                "DELETE"
+# define M_PUT                  "PUT"
+# define M_PATCH                  "PATCH"
 
 
 // ANCHOR   Std Colors

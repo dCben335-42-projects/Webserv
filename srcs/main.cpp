@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "HttpServer.hpp"
 #include "AppErrors.hpp"
+#include "Method.hpp"
 
 void printError(const std::string& message)
 {
@@ -35,24 +36,25 @@ int main()
     try {
         try
         {
-            HttpServer server(9058);
-            server.run();   
-            {
-                Url<void> url("https://www.example.com:8080/path/to/resource?key1=value1&key2=value2#section1");
-                printUrl(url);
-            }
-            {
-                Url<URL_HTTP> url("http://example.com");
-                printUrl(url);
-            }
-            {
-                Url<URL_FTP> url("ftp://invalid-url.com");
-                printUrl(url);
-            }
-            {
-                Url<void> url("wssa://another-example.org/resource?id=123&lang=en2#fragment?test=yes");
-                printUrl(url);
-            }
+            Method get("GET");
+            // HttpServer server(9058);
+            // server.run();   
+            // {
+            //     Url<void> url("https://www.example.com:8080/path/to/resource?key1=value1&key2=value2#section1");
+            //     printUrl(url);
+            // }
+            // {
+            //     Url<URL_HTTP> url("http://example.com");
+            //     printUrl(url);
+            // }
+            // {
+            //     Url<URL_FTP> url("ftp://invalid-url.com");
+            //     printUrl(url);
+            // }
+            // {
+            //     Url<void> url("wssa://another-example.org/resource?id=123&lang=en2#fragment?test=yes");
+            //     printUrl(url);
+            // }
         }
         catch(const std::exception& e)
         {
