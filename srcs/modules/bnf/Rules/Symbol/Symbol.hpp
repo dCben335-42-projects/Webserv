@@ -9,8 +9,9 @@ using bnf::SYMBOL;
 class Symbol : public ARule {
     public:
         Symbol();
+        Symbol(const std::string& val);
         ~Symbol();
-        void setValue(const std::string& val);
+        void addItem(const std::string& val);
         const std::string& getValue() const;
         void print() const;
     private:

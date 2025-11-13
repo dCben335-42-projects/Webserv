@@ -13,6 +13,7 @@ class Lexer {
         const std::string& getContent() const;
 
     private:
+        void createBnf();
         // stores the whole file content read by the constructor
         std::string m_content;
 };

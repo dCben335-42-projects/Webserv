@@ -8,10 +8,12 @@
 
 class Concept {
     public:
-        Concept(const std::string& k, const std::vector<ARule *>& vals);
+        Concept();
         ~Concept();
+
+        void setRule(ARule * rule);
+        void printRules();
     private:
-        std::string key;
         std::vector<ARule *> values;
 };
 
