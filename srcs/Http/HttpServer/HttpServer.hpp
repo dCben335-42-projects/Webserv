@@ -14,13 +14,9 @@
 class HttpServer
 {
     private:
-        // Url<void>       m_url;
-        
-
-        // SOCKET MANAGEMENT
-        int m_socket;
-        struct sockaddr_in m_address;
-        unsigned short m_port;
+        unsigned short      m_socket;
+        struct sockaddr_in  m_address;
+        unsigned short      m_port;
 
     public:
         HttpServer(unsigned short port = 9058);

@@ -3,15 +3,14 @@
 
 #include <string>
 #include <map>
+#include "AHttpMessage.hpp"
 
-class HttpRequest
+class HttpRequest : public AHttpMessage
 {
     private:
         std::string                         m_body;
         std::map<std::string, std::string>  m_headers;
         std::string                        	m_method;
-        std::string                        	m_url;
-        std::string                        	m_protocol;
     public:
         HttpRequest();
         ~HttpRequest();

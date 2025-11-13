@@ -26,12 +26,13 @@ class Method {
 
     public:
         explicit Method(const std::string& method);
+        explicit Method(const EMethodType& method);
         ~Method();
 
         Method &operator=(const Method &other);
 
-        EMethodType     &getType(void);
-        std::string    &getStrType(void);
+        EMethodType         getType() const;
+        std::string         getStrType() const;
         bool isValid(void) const;
 };
 

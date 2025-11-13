@@ -37,8 +37,8 @@ int main()
         try
         {
             Method get("GET");
-            // HttpServer server(9058);
-            // server.run();   
+            HttpServer server(9058);
+            server.run();   
             // {
             //     Url<void> url("https://www.example.com:8080/path/to/resource?key1=value1&key2=value2#section1");
             //     printUrl(url);

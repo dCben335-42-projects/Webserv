@@ -47,20 +47,20 @@ void HttpServer::run()
         {
             throw std::runtime_error("Accept failed");
         }
-
         char buffer[2048];
-        
+
+
         ssize_t bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
         if (bytesRead <= 0)
             break;
         buffer[bytesRead] = '\0';
-       
         std::cout << "Received request:\n"
                   << buffer << std::endl;
-        HttpResponse res;
+        HttpResponse    res;
         res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
         res.sendResponse(clientSocket);
         std::cout << "Response Header :" << res.getHeader("Content-Type") << std::endl;
+        std::cout << res << std::endl;
         close(clientSocket);
     }
 }
