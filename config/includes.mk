@@ -10,8 +10,8 @@ INCLUDES_FLAGS += -I ./srcs/Utils/Url
 =======
 INCLUDES_FLAGS += -I includes
 INCLUDES_FLAGS += -I srcs/Http/HttpMessages
-INCLUDES_FLAGS += -I srcs/Http/HttpRequest
-INCLUDES_FLAGS += -I srcs/Http/HttpResponse
+INCLUDES_FLAGS += -I srcs/Http/HttpMessages/HttpRequest
+INCLUDES_FLAGS += -I srcs/Http/HttpMessages/HttpResponse
 INCLUDES_FLAGS += -I srcs/Http/HttpServer
 INCLUDES_FLAGS += -I srcs/Http/Method
 INCLUDES_FLAGS += -I srcs/Utils/Errors/AppErrors

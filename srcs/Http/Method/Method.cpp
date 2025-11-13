@@ -28,6 +28,22 @@ Method::Method(const std::string &method)
     throw std::invalid_argument("Invalid Method" + method);
 }
 
+Method::Method(const EMethodType &method)
+{
+    MethodType m;
+    for (size_t i = 0; g_methodsType[i].type != NONE; ++i)
+    {
+        m = g_methodsType[i];
+        if (method == m.type)
+        {
+            m_type = m.type;
+            m_strType = m.str;
+            return ;
+        }
+    }
+    throw std::invalid_argument("Invalid Method");
+}
+
 Method &Method::operator=(const Method &other)
 {
     if (this == &other)
@@ -39,10 +55,10 @@ Method &Method::operator=(const Method &other)
 
 Method::~Method(){}
 
-EMethodType &Method::getType() {
+EMethodType Method::getType() const {
     return m_type;
 }
 
-std::string &Method::getStrType() {
+std::string Method::getStrType() const {
     return m_strType;
 }

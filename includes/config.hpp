@@ -9,14 +9,16 @@
 # define SOCKET_PROTOCOL        IPPROTO_TCP
 # define SOCKET_INTERFACE       INADDR_ANY
 
+# define PROTOCOL               "HTTP/1.1"
+
 # define MAX_CONNECTIONS        1024
 
 // ANCHOR   Method
 # define M_GET                   "GET"
 # define M_POST                  "POST"
 # define M_DELETE                "DELETE"
-# define M_PUT                  "PUT"
-# define M_PATCH                  "PATCH"
+# define M_PUT                   "PUT"
+# define M_PATCH                 "PATCH"
 
 
 // ANCHOR   Std Colors

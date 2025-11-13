@@ -1,6 +1,6 @@
 SRC_FILES += Http/HttpMessages/AHttpMessage.cpp
-SRC_FILES += Http/HttpRequest/HttpRequest.cpp
-SRC_FILES += Http/HttpResponse/HttpResponse.cpp
+SRC_FILES += Http/HttpMessages/HttpRequest/HttpRequest.cpp
+SRC_FILES += Http/HttpMessages/HttpResponse/HttpResponse.cpp
 SRC_FILES += Http/HttpServer/HttpServer.cpp
 SRC_FILES += Http/Method/Method.cpp
 SRC_FILES += main.cpp
