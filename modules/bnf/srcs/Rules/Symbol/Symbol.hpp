@@ -11,6 +11,7 @@ class Symbol : public ARule {
         Symbol(const std::string& val);
         ~Symbol();
         void addItem(const std::string& val);
+        std::vector<std::string>  getItems() const;
         const std::string& getValue() const;
         void print() const;
     private:

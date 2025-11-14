@@ -13,6 +13,7 @@ class Option : public ARule {
         Option();
         ~Option();
         void addItem(const std::string& val);
+        std::vector<std::string>  getItems() const;
         void print() const;
     private:
         std::vector<std::string> items;

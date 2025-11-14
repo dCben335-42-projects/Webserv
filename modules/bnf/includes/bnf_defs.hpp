@@ -23,6 +23,7 @@ namespace bnf {
     static const std::string EQRULE   = "::=";
     static const std::string ORRULE   = "|=";
     static const std::string WHITESPACE   = "\t\n\r";
+    static const std::string CURSOR   = "<head>";
 }
 
 #endif

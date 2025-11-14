@@ -4,6 +4,13 @@
 #include <stdexcept>
 #include <iostream>
 #include "./SemanticDescriptor.hpp"
+#include "ARule.hpp"
+#include "Symbol.hpp"
+#include "bnf_defs.hpp"
+#include "Group.hpp"
+#include "Sequence.hpp"
+#include "Option.hpp"
+#include <algorithm>
 
 using namespace bnf;
 
@@ -119,7 +126,7 @@ void SemanticDescriptor::createBnf(const std::string& m_content)
 
 void SemanticDescriptor::parseRule(const std::string& m_content, size_t cursor)
 {
-    std::vector<Concept*> *concepts = m_concepts[m_last_key];
+    std::vector<Concept*> *concepts = m_concepts[m_lastKey];
     Concept *concept = new Concept();
     concepts->push_back(concept);
     std::istringstream iss(m_content.substr(cursor));
@@ -160,6 +167,48 @@ void SemanticDescriptor::parseConceptName(std::string& s)
     if (!(iss >> w) || (iss >> w))
         throw std::runtime_error("Error: Concept name invalid");
 
+    if (m_concepts.find(s) != m_concepts.end())
+        throw std::runtime_error("Error: Concept name already defined: " + s);
+
     m_concepts[s] = new std::vector<Concept*>();
-    m_last_key = s;
+    m_lastKey = s;
+}
+
+void SemanticDescriptor::createTree(std::vector<std::string> alreadyViewed, TreeNode* node)
+{
+    std::vector<std::string> items;
+
+    for (std::vector<Concept*>::iterator it = node->concepts->begin(); it != node->concepts->end(); ++it)
+    {
+        items = (*it)->getItems();
+
+        for (std::vector<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt) {
+            TreeNode* temp_node = new TreeNode();
+            temp_node->value = *itemIt;
+            temp_node->concepts = m_concepts[*itemIt];
+
+            if (std::find(alreadyViewed.begin(), alreadyViewed.end(), *itemIt) != alreadyViewed.end())
+                throw std::runtime_error("Error: Recursive concept detected: " + *itemIt);
+
+            alreadyViewed.push_back(*itemIt);
+            node->children.push_back(temp_node);
+        }
+
+        for (size_t i = 0; i < items.size(); ++i) {
+            createTree(alreadyViewed, node->children[i]);
+        }
+    }
+}
+
+void SemanticDescriptor::checkValidity()
+{
+    std::vector<Concept*> *conceptPtr = m_concepts[CURSOR];
+    std::vector<std::string> alreadyViewed = conceptPtr->at(0)->getItems();
+
+    TreeNode* node = new TreeNode();
+
+    node->value = CURSOR;
+    node->concepts = conceptPtr;
+
+    createTree(alreadyViewed, node);
 }

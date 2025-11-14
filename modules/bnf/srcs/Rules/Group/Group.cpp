@@ -8,6 +8,10 @@ void Group::addItem(const std::string& val) {
     items.push_back(val);
 }
 
+std::vector<std::string> Group::getItems() const {
+    return items;
+}
+
 void Group::print() const {
     std::cout << "{ Group: [";
     for (size_t i = 0; i < items.size(); ++i) {

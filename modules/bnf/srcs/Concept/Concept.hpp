@@ -13,6 +13,9 @@ class Concept {
 
         void setRule(ARule * rule);
         void printRules();
+        std::vector<ARule *> getRules();
+        bool calledInConcept(std::string conceptName);
+        std::vector<std::string> getItems();
     private:
         std::vector<ARule *> values;
 };

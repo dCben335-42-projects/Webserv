@@ -1,6 +1,6 @@
-config			::= { statement }
+<head>			::= { statement }
 
-statement		::= directive SEMI 
+statement		::= directive SEMI
 				|= block
 
 

@@ -11,10 +11,17 @@
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
 
+struct TreeNode
+{
+    std::string value;
+    std::vector<Concept*> *concepts;
+    std::vector<TreeNode*> children;
+};
+
 class SemanticDescriptor {
     private:
         std::map<std::string, std::vector<Concept *>*> m_concepts;
-        std::string m_last_key;
+        std::string m_lastKey;
         void parseConceptName(std::string& m_content);
         void parseRule(const std::string& m_content, size_t cursor);
         public:
@@ -23,6 +30,9 @@ class SemanticDescriptor {
         
         void createBnf(const std::string& m_content);
         void printSemanticDescriptor();
+        void createTree(std::vector<std::string> alreadyViewed, TreeNode* node);
+        
+        void checkValidity();
         void createConcept();
     
 };
