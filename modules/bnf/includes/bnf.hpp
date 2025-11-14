@@ -2,13 +2,13 @@
 #define BNF_HPP
 
 #include "bnf_defs.hpp"
-#include "ARule.hpp"
-#include "Group.hpp"
-#include "Sequence.hpp"
-#include "Option.hpp"
-#include "Symbol.hpp"
-#include "Concept.hpp"
-#include "SemanticDescriptor.hpp"
+#include "../srcs/Rules/ARule.hpp"
+#include "../srcs/Rules/Group/Group.hpp"
+#include "../srcs/Rules/Sequence/Sequence.hpp"
+#include "../srcs/Rules/Option/Option.hpp"
+#include "../srcs/Rules/Symbol/Symbol.hpp"
+#include "../srcs/Concept/Concept.hpp"
+#include "../srcs/SemanticDescriptor/SemanticDescriptor.hpp"
 
 namespace bnf {
     typedef ::ARule ARule;

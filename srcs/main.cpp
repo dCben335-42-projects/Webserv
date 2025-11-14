@@ -1,4 +1,4 @@
-#include "bnf.hpp"
+// #include "bnf.hpp"
 #include <iostream>
 #include "Url.hpp"
 #include "config.hpp"
@@ -36,14 +36,14 @@ void printUrl(const AUrl& url)
 
 int main()
 {
-    bnf::ERuleType type = bnf::GROUP;
-    bnf::ARule *rule = new bnf::Group();
+    // bnf::ERuleType type = bnf::GROUP;
+    // bnf::ARule *rule = new bnf::Group();
 
-    std::cout << "Rule type: " << rule->getType() << std::endl;
-    std::cout << "Rule type: " << type<< std::endl;
-    delete rule;
+    // std::cout << "Rule type: " << rule->getType() << std::endl;
+    // std::cout << "Rule type: " << type<< std::endl;
+    // delete rule;
 
-    Lexer("config/def_language.txt");
+    // Lexer("config/def_language.txt");
 
     // try {
     //     try
@@ -76,4 +76,5 @@ int main()
     // {
     //     std::cerr << e.what() << std::endl;
     // }
+    return (0);
 }

@@ -2,7 +2,6 @@
 #define SYMBOL_HPP
 
 #include <string>
-#include "bnf_defs.hpp"
 #include "ARule.hpp"
 
 using bnf::SYMBOL;

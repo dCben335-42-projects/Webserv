@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "bnf_defs.hpp"
-#include "ARule.hpp"
+#include "../ARule.hpp"
 
 using bnf::GROUP;
 
