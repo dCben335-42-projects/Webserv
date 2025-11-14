@@ -43,7 +43,7 @@ int main()
     // std::cout << "Rule type: " << type<< std::endl;
     // delete rule;
 
-    // Lexer("config/def_language.txt");
+    Lexer("config/def_language.txt");
 
     // try {
     //     try
