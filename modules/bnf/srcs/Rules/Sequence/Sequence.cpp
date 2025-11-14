@@ -1,4 +1,4 @@
-#include "Sequence.hpp"
+#include "./Sequence.hpp"
 #include <iostream>
 
 Sequence::Sequence() : ARule(SEQUENCE) {}

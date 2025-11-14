@@ -3,13 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-#include "SemanticDescriptor.hpp"
-#include "ARule.hpp"
-#include "Symbol.hpp"
-#include "bnf_defs.hpp"
-#include "Group.hpp"
-#include "Sequence.hpp"
-#include "Option.hpp"
+#include "./SemanticDescriptor.hpp"
 
 using bnf::EQRULE;
 using bnf::LBRACE;

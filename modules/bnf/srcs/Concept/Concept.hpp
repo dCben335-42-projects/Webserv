@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "bnf_defs.hpp"
-#include "ARule.hpp"
+#include "../Rules/ARule.hpp"
 
 class Concept {
     public:

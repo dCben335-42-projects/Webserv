@@ -1,8 +1,8 @@
 #include "ARule.hpp"
-#include "Group.hpp"
-#include "Sequence.hpp"
-#include "Option.hpp"
-#include "Symbol.hpp"
+#include "./Group/Group.hpp"
+#include "./Sequence/Sequence.hpp"
+#include "./Option/Option.hpp"
+#include "./Symbol/Symbol.hpp"
 
 using namespace bnf;
 

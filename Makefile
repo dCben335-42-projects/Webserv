@@ -16,6 +16,8 @@ CONF_MK_INCLUDES 		= $(CONF_DIR)/includes.mk
 CONF_MK_SOURCES 		= $(CONF_DIR)/sources.mk
 CONF_MK_MODULES 		= $(CONF_DIR)/modules.mk
 
+-include				modules/bnf/config/includes.mk
+
 # includes
 INCLUDES_DIR			= ./includes
 INCLUDES_FLAGS 			:= -I $(INCLUDES_DIR)
@@ -32,10 +34,10 @@ MODULES_DIR				= ./modules
 MODULE_BNF_DIR 			= $(MODULES_DIR)/bnf
 MODULE_BNF_NAME			= $(MODULE_BNF_DIR)/bnf.a
 MODULE_BNF_INCLUDES		= $(MODULE_BNF_DIR)/includes
-MODULE_BNF_FLAGS 		= -L $(LIBFT_FOLDER) -lft
+MODULE_BNF_FLAGS 		= -L $(MODULE_BNF_DIR) -lbnf
 
-MODULES_FLAGS 			= $(LIBFT_FLAGS)
 INCLUDES_FLAGS			+= -I $(MODULE_BNF_INCLUDES)
+MODULES_FLAGS 			= $(MODULE_BNF_FLAGS)
 
 SRCS         			= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS 					= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))

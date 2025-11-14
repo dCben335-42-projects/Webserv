@@ -1,4 +1,4 @@
-NAME        		= bnf.a
+NAME        		= libbnf.a
 
 AR 					= ar -rcs
 CXX         		= c++
@@ -12,13 +12,11 @@ MKDIR 				= mkdir -p
 BUILD_DIR   		= ./.build
 
 CONF_DIR   			= ./config
-CONF_MK_INCLUDES 	= $(CONF_DIR)/includes.mk
 CONF_MK_SOURCES 	= $(CONF_DIR)/sources.mk
 
 # includes
 INCLUDES_DIR			= ./includes
-INCLUDES_FLAGS 			:= -I $(INCLUDES_DIR)
--include $(CONF_MK_INCLUDES)
+INCLUDES_FLAGS 			= -I $(INCLUDES_DIR)
 
 # sources
 SRC_DIR				= ./srcs
@@ -36,7 +34,6 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
-	@echo "This is the includes $(INCLUDES_FLAGS)"
 	@$(MKDIR) $(@D)
 	$(CXX) $(CXX_FLAGS) -o $@ -c $< $(INCLUDES_FLAGS)
 
@@ -52,8 +49,6 @@ gen:
 	@$(MKDIR) $(CONF_DIR)
 	@echo "Generating sources.mk..."
 	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) SRC_FILES 0
-	@echo "Generating includes.mk..."
-	@./config/include_flags.sh $(SRC_DIR) "*.hpp" $(CONF_MK_INCLUDES) INCLUDES_FLAGS 1
 	@echo "Regenerating Makefile..."
 	$(MAKE) re
 

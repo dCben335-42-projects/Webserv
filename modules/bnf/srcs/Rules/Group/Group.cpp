@@ -1,4 +1,4 @@
-#include "Group.hpp"
+#include "./Group.hpp"
 #include <iostream>
 
 Group::Group() : ARule(GROUP) {}

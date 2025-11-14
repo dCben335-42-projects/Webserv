@@ -1,4 +1,4 @@
-#include "Option.hpp"
+#include "./Option.hpp"
 #include <iostream>
 
 Option::Option() : ARule(OPTION) {}

@@ -2,7 +2,7 @@
 #define SYMBOL_HPP
 
 #include <string>
-#include "ARule.hpp"
+#include "../ARule.hpp"
 
 using bnf::SYMBOL;
 class Symbol : public ARule {

@@ -1,4 +1,4 @@
-#include "Symbol.hpp"
+#include "./Symbol.hpp"
 #include <iostream>
 
 Symbol::Symbol(): ARule(SYMBOL) {}
