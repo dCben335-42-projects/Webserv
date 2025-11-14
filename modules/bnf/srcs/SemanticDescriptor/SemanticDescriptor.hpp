@@ -14,8 +14,8 @@
 struct TreeNode
 {
     std::string value;
-    std::vector<Concept*> *concepts;
-    std::vector<TreeNode*> children;
+    std::vector<Concept *> *concepts;
+    std::vector<TreeNode *> children;
     std::vector<std::string> path;
 };
 
@@ -25,7 +25,7 @@ class SemanticDescriptor {
         std::string m_lastKey;
         void parseConceptName(std::string& m_content);
         void parseRule(const std::string& m_content, size_t cursor);
-        public:
+    public:
         SemanticDescriptor() {};
         ~SemanticDescriptor() {};
         

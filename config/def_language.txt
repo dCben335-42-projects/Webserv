@@ -1,19 +1,19 @@
 <head>			::= { statement }
 
-statement		::= directive SEMI
+statement		::= directive SEMI A
 				|= block
 
 
 
 directive		::= IDENT { parameter }
 
-block			::= IDENT { parameter } LBRACE { statement } 
+block			::= IDENT { parameter } LBRACE [ statement ] 
 
 
 
 				RBRACE
 
-parameter		::= IDENT
+parameter		::= IDENT [ directive ]
 				|= NUMBER
 				|= STRING
 

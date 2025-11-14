@@ -21,7 +21,7 @@ Lexer::Lexer(std::string const& filepath) {
     val.createBnf(m_content);
 
     val.printSemanticDescriptor();
-    val.checkValidity();
+    // val.checkValidity();
 
 
 

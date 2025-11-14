@@ -45,7 +45,7 @@ std::vector<std::string> Concept::getItems() {
         }
     }
 
-    std::cout << allItems.size() << " items found in concept." << std::endl;
+    // std::cout << allItems.size() << " items found in concept." << std::endl;
     return allItems;
 }
 
