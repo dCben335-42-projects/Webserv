@@ -59,7 +59,7 @@ void HttpServer::run()
         HttpResponse    res;
         res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
         res.sendResponse(clientSocket);
-        std::cout << "Response Header :" << res.getHeader("Content-Type") << std::endl;
+        std::cout << "Response Header :" << std::endl;
         std::cout << res << std::endl;
         close(clientSocket);
     }
