@@ -20,8 +20,8 @@ Lexer::Lexer(std::string const& filepath) {
     SemanticDescriptor val = SemanticDescriptor();
     val.createBnf(m_content);
 
-    val.printSemanticDescriptor();
-    // val.checkValidity();
+    // val.printSemanticDescriptor();
+    val.checkValidity();
 
 
 

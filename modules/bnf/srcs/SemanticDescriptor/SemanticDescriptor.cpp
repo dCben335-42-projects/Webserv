@@ -61,10 +61,9 @@ void SemanticDescriptor::printSemanticDescriptor()
         }
     }
 
+    // std::string head_key = "<head>";
 
-    std::cout << "\n\n\n\n\n\nPrinting <head> rules specifically:" << std::endl;
 
-    std::cout << m_concepts["LETTER"]->size() << std::endl;
 }
 
 // Fonction utilitaire : découpe le texte en blocs selon is_rule_start
@@ -279,7 +278,7 @@ void SemanticDescriptor::checkValidity()
     std::cout << "-----------------------\n\n\n" << std::endl;
 
     m_concepts["LETTER"];
-    
+    // delete node;
 }
 
 void SemanticDescriptor::printTree(TreeNode* node, int level)

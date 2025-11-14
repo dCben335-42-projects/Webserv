@@ -1,6 +1,6 @@
 <head>			::= { statement }
 
-statement		::= directive SEMI A
+statement		::= directive SEMI 'A'
 				|= block
 
 
@@ -28,8 +28,7 @@ LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
 LOCASE_LETTER	::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
 					'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
 UPCASE_LETTER	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
-STRING			::= '"' { STRING_CHAR | ESCAPE_SEQ } '"'
-STRING_CHAR		::= [^"\\]
+STRING			::= '"' { 'STRING_CHAR' | ESCAPE_SEQ } '"'
 ESCAPE_SEQ		::= '\' ( '"' | '\' | 'n' | 't' )
 LBRACE			::= '{'
 RBRACE			::= '}'
