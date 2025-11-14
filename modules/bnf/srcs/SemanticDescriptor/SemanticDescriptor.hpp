@@ -16,6 +16,7 @@ struct TreeNode
     std::string value;
     std::vector<Concept*> *concepts;
     std::vector<TreeNode*> children;
+    std::vector<std::string> path;
 };
 
 class SemanticDescriptor {
@@ -30,7 +31,8 @@ class SemanticDescriptor {
         
         void createBnf(const std::string& m_content);
         void printSemanticDescriptor();
-        void createTree(std::vector<std::string> alreadyViewed, TreeNode* node);
+        TreeNode* createTree(TreeNode* node);
+        void printTree(TreeNode* node, int depth);
         
         void checkValidity();
         void createConcept();

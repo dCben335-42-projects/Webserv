@@ -1,5 +1,6 @@
 #include "Concept.hpp"
 #include <iostream>
+#include <algorithm>
 
 using namespace bnf;
 
@@ -34,11 +35,17 @@ std::vector<std::string> Concept::getItems() {
     std::vector<std::string> allItems;
     for (std::vector<ARule *>::iterator it = values.begin(); it != values.end(); ++it) {
         ARule* rule = *it;
-        if (rule->getType() != OPTION)
+        if (rule->getType() == OPTION)
             continue;
         std::vector<std::string> items = rule->getItems();
-        allItems.insert(allItems.end(), items.begin(), items.end());
+
+        for (size_t i = 0; i < items.size(); ++i) {
+            if (std::find(allItems.begin(), allItems.end(), items[i]) == allItems.end())
+                allItems.push_back(items[i]);
+        }
     }
+
+    std::cout << allItems.size() << " items found in concept." << std::endl;
     return allItems;
 }
 
