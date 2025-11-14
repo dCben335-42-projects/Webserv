@@ -42,6 +42,7 @@ void    AHttpMessage::setHeader(const std::string &key, const std::string &value
 }
 void    AHttpMessage::setBody(const std::string &body)
 {
+    m_headers["Content-Length"] = body.size();
     m_body = body;
 }
 void    AHttpMessage::setMethod(const Method &method)
@@ -54,10 +55,16 @@ std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
     std::map<std::string, std::string> headers = message.getHeaders();
     std::map<std::string, std::string>::iterator it = headers.begin();
+    size_t total = headers.size();
+    size_t index = 0;
+    
     while (it != headers.end())
     {
-        o << it->second;
+        o << it->first << ": " << it->second;
+        if (index < total - 1)
+            o << "\n";
         it++;
+        index++;
     }
 	return o;
 }
