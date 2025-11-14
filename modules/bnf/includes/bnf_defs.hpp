@@ -22,6 +22,7 @@ namespace bnf {
     static const std::string DIVIDER = "|";
     static const std::string EQRULE   = "::=";
     static const std::string ORRULE   = "|=";
+    static const std::string WHITESPACE   = "\t\n\r";
 }
 
 #endif

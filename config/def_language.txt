@@ -7,7 +7,11 @@ statement		::= directive SEMI
 
 directive		::= IDENT { parameter }
 
-block			::= IDENT { parameter } LBRACE { statement } RBRACE
+block			::= IDENT { parameter } LBRACE { statement } 
+
+
+
+				RBRACE
 
 parameter		::= IDENT
 				|= NUMBER

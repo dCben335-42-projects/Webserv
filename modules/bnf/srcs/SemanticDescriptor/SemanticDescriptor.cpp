@@ -13,33 +13,26 @@ static bool is_rule_start(const std::string &line)
     while (i < line.size() && std::isspace(line[i]))
         ++i;
 
-    // Cas 1 : vérifie si c'est juste "|="
     if (i + 2 <= line.size() && line.compare(i, 2, "|=") == 0)
         return true;
 
-    // Cas 2 : mot suivi de "::="
     size_t start = i;
     while (i < line.size() && (std::isalnum(line[i]) || line[i] == '_'))
         ++i;
 
-    if (i == start) // pas de mot trouvé
+    if (i == start)
         return false;
 
-    // Sauter les espaces après le mot
     while (i < line.size() && std::isspace(line[i]))
         ++i;
 
-    // Vérifier si on a "::="
     if (i + 3 <= line.size() && line.compare(i, 3, "::=") == 0)
         return true;
 
     return false;
 }
 
-
-
 void SemanticDescriptor::printSemanticDescriptor() {
-    
     for (std::map<std::string, std::vector<Concept *>*>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it) {
         std::cout << "---------------------" << std::endl;
         const std::string& key = it->first;
@@ -60,78 +53,90 @@ void SemanticDescriptor::printSemanticDescriptor() {
     }
 }
 
-void SemanticDescriptor::createBnf(const std::string& m_content) {
-    std::vector<std::string> lines;
-    std::istringstream iss(m_content);
-    std::string line;
-    std::vector<std::string> blocks;
-    std::string current_block;
+// Fonction utilitaire : découpe le texte en blocs selon is_rule_start
+static void splitBlocks(const std::string& text, std::vector<std::string>& blocks)
+{
+    std::istringstream iss(text);
+    std::string line, current_block;
+
     while (std::getline(iss, line))
     {
-        if (is_rule_start(line))
+        if (is_rule_start(line) && !current_block.empty())
         {
-            if (!current_block.empty())
-            {
-                blocks.push_back(current_block);
-                current_block.clear();
-            }
+            blocks.push_back(current_block);
+            current_block.clear();
         }
         current_block += line + "\n";
     }
 
     if (!current_block.empty())
         blocks.push_back(current_block);
+}
+
+// Fonction utilitaire : trouve la position du séparateur et extrait le nom du concept
+static size_t findSeparator(const std::string& block, bool& has_eq)
+{
+    size_t pos = block.find(EQRULE);
+    has_eq = true;
+
+    if (pos == std::string::npos)
+    {
+        pos = block.find(ORRULE);
+        if (pos == std::string::npos)
+            throw std::runtime_error("Erreur: '::=' ou '|=' non trouvé");
+        has_eq = false;
+        pos += ORRULE.length();
+    }
+    else
+    {
+        pos += EQRULE.length();
+    }
+
+    return pos;
+}
+
+// Version compacte de createBnf
+void SemanticDescriptor::createBnf(const std::string& m_content)
+{
+    std::vector<std::string> blocks;
+    splitBlocks(m_content, blocks);
 
     for (size_t i = 0; i < blocks.size(); ++i)
     {
-        size_t pos = blocks[i].find(EQRULE);
+        const std::string& block = blocks[i];
+        bool has_eq;
+        size_t pos = findSeparator(block, has_eq);
 
-        if (pos == std::string::npos)
+        if (has_eq)
         {
-            pos = blocks[i].find(ORRULE);
-            if (pos == std::string::npos)
-            {
-                throw std::runtime_error("Erreur: '::=' non trouvé");
-            }
-            else
-            {
-                pos += ORRULE.length();
-            }
+            std::string concept_name = block.substr(0, pos - EQRULE.length());
+            parseConceptName(concept_name);
         }
-        else
-        {
-            std::string a = blocks[i].substr(0, pos);
-            parseConceptName(a);
-            pos += EQRULE.length();
-        }
-        parseRule(blocks[i], pos);
+
+        parseRule(block, pos);
     }
 }
 
-void SemanticDescriptor::parseRule(const std::string& m_content, size_t cursor) {
-
-    std::string rule;
-
-    m_concepts[m_last_key]->push_back(new Concept());
-    
-    rule = m_content.substr(cursor);
-    std::istringstream iss(rule);
-    std::vector<std::string> parts;
+void SemanticDescriptor::parseRule(const std::string& m_content, size_t cursor)
+{
+    std::vector<Concept*> *concepts = m_concepts[m_last_key];
+    Concept *concept = new Concept();
+    concepts->push_back(concept);
+    std::istringstream iss(m_content.substr(cursor));
     std::string word;
-
-    ARule * arule = NULL; 
-
-    while (iss >> word) {
-         if (ARule::isKeyWord(word, true))
-            throw std::runtime_error("Error bad closing " + word);
+    ARule *arule = NULL;
+    while (iss >> word)
+    {
+        if (ARule::isKeyWord(word, true))
+            throw std::runtime_error("Invalid keyword: " + word);
         BnfMap map = ARule::getMap(word);
         arule = map.constructor();
-        if (map.hasClosure)
-            iss >> word;
+        if (map.hasClosure && !(iss >> word))
+            throw std::runtime_error("Unexpected end of rule after " + map.opener);
         while (word != map.closer)
         {
             if (ARule::isKeyWord(word, false))
-                throw std::runtime_error("Error bad closing " + word);
+                throw std::runtime_error("Bad closing keyword: " + word);
             if (word != DIVIDER)
             {
                 arule->addItem(word);
@@ -141,25 +146,20 @@ void SemanticDescriptor::parseRule(const std::string& m_content, size_t cursor) 
             if (!(iss >> word))
                 break;
         }
-        (*m_concepts[m_last_key])[(*m_concepts[m_last_key]).size() - 1]->setRule(arule);
+        concept->setRule(arule);
     }
 }
 
-void SemanticDescriptor::parseConceptName(std::string& m_content) {
-    m_content.erase(0, m_content.find_first_not_of(" \t\n\r"));
-    m_content.erase(m_content.find_last_not_of(" \t\n\r") + 1);
+void SemanticDescriptor::parseConceptName(std::string& s)
+{
+    s.erase(0, s.find_first_not_of(WHITESPACE));
+    s.erase(s.find_last_not_of(WHITESPACE) + 1);
 
-    std::istringstream iss(m_content);
-    std::vector<std::string> parts;
-    std::string word;
-    while (iss >> word) {
-        parts.push_back(word);
-    }
+    std::istringstream iss(s);
+    std::string w;
+    if (!(iss >> w) || (iss >> w))
+        throw std::runtime_error("Error: Concept name invalid");
 
-    if (parts.size() != 1) {
-        throw std::runtime_error("Erreur: clé invalide (espaces internes détectés)");
-    }
-
-    m_concepts.insert(std::make_pair(m_content, new std::vector<Concept *>()));
-    m_last_key = m_content;
+    m_concepts[s] = new std::vector<Concept*>();
+    m_last_key = s;
 }
