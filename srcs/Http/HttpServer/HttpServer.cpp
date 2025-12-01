@@ -55,12 +55,7 @@ void HttpServer::handleClient(int clientSocket)
         HttpRequest req = HttpRequest().read(clientSocket).parse();
         std::cout << "\n----- Request Start -----" << std::endl;
         std::cout << req << std::endl;
-
-        if (req.getHeader("Host").empty())
-        {
-            throw std::runtime_error("400 Bad Request: Missing Host header");
-        }
-
+      
         std::cout << "======> Response " << std::endl;
         res.setStatusCode(200);
         res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
