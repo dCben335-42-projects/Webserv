@@ -10,10 +10,14 @@
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
+#include "../TreeNodeData/TreeNodeData.hpp"
 #include "../TreeNode/TreeNode.hpp"
 
 class SemanticDescriptor {
     private:
+        bool m_is_stopped_by_rconcept;
+        std::map<std::string, bool> m_rconcept_check_result;
+        std::map<std::string, TreeNodeData> m_data;
         std::map<std::string, std::vector<Concept *>*> m_concepts;
         std::string m_lastKey;
         void parseConceptName(std::string& m_content);

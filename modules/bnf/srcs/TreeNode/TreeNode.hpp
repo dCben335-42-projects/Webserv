@@ -1,30 +1,16 @@
 #ifndef TREENODE_HPP
 #define TREENODE_HPP
 
-#include <map>
-#include <vector>
-#include "bnf_defs.hpp"
-#include "../Rules/ARule.hpp"
-#include "../Rules/Group/Group.hpp"
-#include "../Rules/Option/Option.hpp"
-#include "../Rules/Sequence/Sequence.hpp"
-#include "../Rules/Symbol/Symbol.hpp"
-#include "../Concept/Concept.hpp"
+#include "../TreeNodeData/TreeNodeData.hpp"
 
-enum ESecure {
-    SECURE,
-    NOT_SECURE
-};
-
-class TreeNode
-{
+class TreeNode {
     public:
-        std::string value;
-        std::vector<Concept *> *concepts;
-        std::vector<TreeNode *> children;
+        TreeNode(TreeNodeData& data, std::vector<std::string> path);
+        TreeNode(std::string value, std::vector<Concept *> *concepts);
+        ~TreeNode() {};
+        TreeNodeData &value;
         std::vector<std::string> path;
-        std::vector<ESecure> recurse_safe;
-        bool is_multiple() const;
+        std::vector<TreeNode *> children;
 };
 
 #endif

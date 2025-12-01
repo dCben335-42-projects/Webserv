@@ -1,6 +1,6 @@
 #include "./TreeNode.hpp"
 
-bool TreeNode::is_multiple() const
-{
-    return (concepts->size() > 1);
-}
+TreeNode::TreeNode(TreeNodeData& data, std::vector<std::string> path) : value(data), path(path) {}
+
+TreeNode::TreeNode(std::string value, std::vector<Concept *> *concepts)
+    : value(*(new TreeNodeData(value, concepts))) {}

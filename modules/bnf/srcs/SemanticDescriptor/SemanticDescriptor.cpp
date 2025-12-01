@@ -5,6 +5,7 @@
 #include <iostream>
 #include "./SemanticDescriptor.hpp"
 #include <algorithm>
+#include "../utils/utils.cpp"
 
 using namespace bnf;
 
@@ -54,10 +55,6 @@ void SemanticDescriptor::printSemanticDescriptor()
             }
         }
     }
-
-    // std::string head_key = "<head>";
-
-
 }
 
 // Fonction utilitaire : découpe le texte en blocs selon is_rule_start
@@ -165,10 +162,10 @@ void SemanticDescriptor::parseConceptName(std::string &s)
     std::istringstream iss(s);
     std::string w;
     if (!(iss >> w) || (iss >> w))
-        throw std::runtime_error("Error: Concept name invalid");
+        throw std::runtime_error(ERR_INVALID_CONCEPT_NAME);
 
     if (m_concepts.find(s) != m_concepts.end())
-        throw std::runtime_error("Error: Concept name already defined: " + s);
+        throw std::runtime_error(ERR_CONCEPT_ALREADY_DEFINED + s);
 
     m_concepts[s] = new std::vector<Concept *>();
     m_lastKey = s;
@@ -186,87 +183,86 @@ static void printVector(const std::vector<std::string> &vec)
     std::cout << "]" << std::endl;
 }
 
-bool startsWith(const std::string &s, const std::string &prefix)
-{
-
-    if (s.size() < prefix.size())
-        return false;
-
-    return s.compare(0, prefix.size(), prefix) == 0;
-}
-
-// bool is_multiple
-
+typedef std::map<std::string, TreeNodeData> DataMap;
 
 TreeNode *SemanticDescriptor::createTree(TreeNode *node)
 {
-    if (!node->concepts)
+    if (!node->value.concepts)
         return node;
     std::vector<std::string> items;
 
-    size_t index = 0;
-    // std::cout << "\n=========================" << std::endl;
-    // std::cout << "Creating tree for node: " << node->value << std::endl;
-    // std::cout << "concept found " << node->concepts->size() << std::endl;
-
-    // for (size_t i = 0; i < node->concepts->size(); ++i)
-
-    // if (node->concepts->size() > 1)
-    //     node->is_multiple = true;
-    
-
-    for (std::vector<Concept *>::iterator it = node->concepts->begin(); it != node->concepts->end(); ++it)
+    for (std::vector<Concept *>::iterator it = node->value.concepts->begin(); it != node->value.concepts->end(); ++it)
     {
-        std::cout << "i = " << index << std::endl;
         items = (*it)->getItems();
-
-        printVector(items);
-
-        std::cout << node->children.size() << " children before processing items." << std::endl;
 
         for (std::vector<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
-            TreeNode *temp_node = new TreeNode();
-            temp_node->value = *itemIt;
-            temp_node->path = node->path;
-            temp_node->concepts = m_concepts[*itemIt];
+            m_is_stopped_by_rconcept = false;
+
+            TreeNode* temp_node = new TreeNode(
+                getOrInsert(m_data, *itemIt, TreeNodeData(*itemIt, m_concepts[*itemIt]))->second,
+                node->path
+            );
 
             if (startsWith(*itemIt, "'"))
             {
                 node->children.push_back(temp_node);
                 continue;
             }
-            if (m_concepts[*itemIt] == NULL)
-                throw std::runtime_error("Error: Concept not found: " + *itemIt);
-        
-            if (std::find(temp_node->path.begin(), temp_node->path.end(), *itemIt) != temp_node->path.end())
-                throw std::runtime_error("Error: Recursive path detected: " + *itemIt);
-            temp_node->path.push_back(*itemIt);
-            node->children.push_back(temp_node);
-            createTree(temp_node);
+
+            if (!m_concepts[*itemIt])
+                throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + *itemIt);
+
+            printVector(temp_node->path);
+
+            if (!isInContainer(temp_node->path, *itemIt))
+            {
+                temp_node->path.push_back(*itemIt);
+                node->children.push_back(temp_node);
+                createTree(temp_node);
+
+                if (isInMap(m_rconcept_check_result, *itemIt) && !m_is_stopped_by_rconcept)
+                {
+                    std::cout << "\033[32mRecursive concept validated:\033[0m " << *itemIt << std::endl;
+                    m_rconcept_check_result[*itemIt] = true;
+                    m_is_stopped_by_rconcept = false;
+                }
+            }
+            else
+            {
+                // Si on trouve un chemin récursif
+                std::cout << "==========================" << std::endl;
+                std::cout << "\033[31mRecursive path detected but allowed:\033[0m : " << *itemIt << std::endl;
+
+                // Marquer ce concept comme a verifier
+                if (!isInMap(m_rconcept_check_result, *itemIt)) 
+                    m_rconcept_check_result[*itemIt] = false;
+                m_is_stopped_by_rconcept = true;
+            }
         }
-        ++index;
     }
-    std::cout << "=========================\n" << std::endl;
     return node;
 }
 
 void SemanticDescriptor::checkValidity()
 {
-    TreeNode *node = new TreeNode();
+    m_is_stopped_by_rconcept = false;
 
-    node->value = CURSOR;
-    node->concepts = m_concepts[CURSOR];
+    TreeNode* node = new TreeNode(CURSOR, m_concepts[CURSOR]);
     node->path.push_back(CURSOR);
 
-    std::cout << "\n\n\n-----------------------" << std::endl;
+    createTree(node);
 
-    printTree(createTree(node), 0);
-
-    std::cout << "-----------------------\n\n\n" << std::endl;
-
-    m_concepts["LETTER"];
-    // delete node;
+    for (std::map<std::string, bool>::iterator it = m_rconcept_check_result.begin();
+     it != m_rconcept_check_result.end();
+     ++it)
+    {
+        std::cout << "clé = " << it->first 
+                << ", valeur = " << (it->second ? "true" : "false")
+                << std::endl;
+        if (!it->second)
+            throw std::runtime_error("Error: Recursive path detected: " + it->first);
+    }
 }
 
 void SemanticDescriptor::printTree(TreeNode* node, int level)
@@ -275,7 +271,7 @@ void SemanticDescriptor::printTree(TreeNode* node, int level)
 
     for (int i = 0; i < level; ++i)
         std::cout << "  ";
-    std::cout << node->value << std::endl;
+    std::cout << node->value.value << std::endl;
 
     for (std::vector<TreeNode*>::iterator it = node->children.begin(); 
          it != node->children.end(); ++it)
