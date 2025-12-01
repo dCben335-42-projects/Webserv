@@ -16,8 +16,6 @@ CONF_MK_INCLUDES 		= $(CONF_DIR)/includes.mk
 CONF_MK_SOURCES 		= $(CONF_DIR)/sources.mk
 CONF_MK_MODULES 		= $(CONF_DIR)/modules.mk
 
--include				modules/bnf/config/includes.mk
-
 # includes
 INCLUDES_DIR			= ./includes
 INCLUDES_FLAGS 			:= -I $(INCLUDES_DIR)

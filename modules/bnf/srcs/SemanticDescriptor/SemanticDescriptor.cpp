@@ -195,6 +195,9 @@ bool startsWith(const std::string &s, const std::string &prefix)
     return s.compare(0, prefix.size(), prefix) == 0;
 }
 
+// bool is_multiple
+
+
 TreeNode *SemanticDescriptor::createTree(TreeNode *node)
 {
     if (!node->concepts)
@@ -202,25 +205,22 @@ TreeNode *SemanticDescriptor::createTree(TreeNode *node)
     std::vector<std::string> items;
 
     size_t index = 0;
-    std::cout << "\n=========================" << std::endl;
-    std::cout << "Creating tree for node: " << node->value << std::endl;
-    std::cout << "concept found " << node->concepts->size() << std::endl;
+    // std::cout << "\n=========================" << std::endl;
+    // std::cout << "Creating tree for node: " << node->value << std::endl;
+    // std::cout << "concept found " << node->concepts->size() << std::endl;
 
     // for (size_t i = 0; i < node->concepts->size(); ++i)
+
+    // if (node->concepts->size() > 1)
+    //     node->is_multiple = true;
+    
+
     for (std::vector<Concept *>::iterator it = node->concepts->begin(); it != node->concepts->end(); ++it)
     {
         std::cout << "i = " << index << std::endl;
-        // (*it)->printRules();
-        // (*node->concepts)[i]->printRules();
         items = (*it)->getItems();
 
         printVector(items);
-
-        // if (node->children.size() != 0)
-        // {
-        //     std::cout << "Node already has children, skipping." << std::endl;
-        //     return node;
-        // }
 
         std::cout << node->children.size() << " children before processing items." << std::endl;
 
@@ -245,12 +245,6 @@ TreeNode *SemanticDescriptor::createTree(TreeNode *node)
             node->children.push_back(temp_node);
             createTree(temp_node);
         }
-
-        // for (size_t j = 0; j < items.size(); ++j)
-        // {
-        //     if (!node->children[j]->concepts)
-        //         continue;
-        // }
         ++index;
     }
     std::cout << "=========================\n" << std::endl;
@@ -281,8 +275,6 @@ void SemanticDescriptor::printTree(TreeNode* node, int level)
 
     for (int i = 0; i < level; ++i)
         std::cout << "  ";
-
-    // std::cout << node->children.size() << " children.";
     std::cout << node->value << std::endl;
 
     for (std::vector<TreeNode*>::iterator it = node->children.begin(); 

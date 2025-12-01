@@ -10,14 +10,7 @@
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
-
-struct TreeNode
-{
-    std::string value;
-    std::vector<Concept *> *concepts;
-    std::vector<TreeNode *> children;
-    std::vector<std::string> path;
-};
+#include "../TreeNode/TreeNode.hpp"
 
 class SemanticDescriptor {
     private:

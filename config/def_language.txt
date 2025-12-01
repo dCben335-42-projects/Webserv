@@ -7,7 +7,7 @@ statement		::= directive SEMI 'A'
 
 directive		::= IDENT { parameter }
 
-block			::= IDENT { parameter } LBRACE [ statement ] 
+block			::= IDENT { parameter } LBRACE [ statement ]
 
 
 
@@ -33,7 +33,3 @@ ESCAPE_SEQ		::= '\' ( '"' | '\' | 'n' | 't' )
 LBRACE			::= '{'
 RBRACE			::= '}'
 SEMI			::= ';'
-
-
-
-
