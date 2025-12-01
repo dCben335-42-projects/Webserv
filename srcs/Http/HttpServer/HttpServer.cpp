@@ -2,6 +2,14 @@
 #include "HttpResponse.hpp"
 #include "config.hpp"
 
+#include <string> 
+#include <cstring>
+#include <cctype>    
+#include <stdexcept> 
+#include <iostream>  
+#include <cstdlib>
+
+
 HttpServer::HttpServer(unsigned short port)
     : m_socket(-1), m_port(port)
 {
@@ -27,7 +35,7 @@ HttpServer::HttpServer(unsigned short port)
         throw std::runtime_error("Bind failed");
     if (listen(m_socket, SOMAXCONN) < 0)
         throw std::runtime_error("Listen failed");
-    std::cout << "Server started on port " << "localhost:" << m_port << std::endl;
+    std::cout << "Server started on port " << "http://localhost:" << m_port << std::endl;
 }
 
 HttpServer::~HttpServer()
@@ -36,31 +44,60 @@ HttpServer::~HttpServer()
         close(m_socket);
 }
 
-void HttpServer::run()
+
+// In your HttpServer class
+void HttpServer::handleClient(int clientSocket)
 {
-    struct sockaddr_in clientAddr;
-    socklen_t clientLen = sizeof(clientAddr);
-    while (true)
+    HttpResponse    res;
+
+    try
     {
-        int clientSocket = accept(m_socket, (struct sockaddr *)&clientAddr, &clientLen);
-        if (clientSocket < 0)
+        HttpRequest req = HttpRequest().read(clientSocket).parse();
+        std::cout << "\n----- Request Start -----" << std::endl;
+        std::cout << req << std::endl;
+
+        if (req.getHeader("Host").empty())
         {
-            throw std::runtime_error("Accept failed");
+            throw std::runtime_error("400 Bad Request: Missing Host header");
         }
-        char buffer[2048];
 
-
-        ssize_t bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-        if (bytesRead <= 0)
-            break;
-        buffer[bytesRead] = '\0';
-        std::cout << "Received request:\n"
-                  << buffer << std::endl;
-        HttpResponse    res;
+        std::cout << "======> Response " << std::endl;
+        res.setStatusCode(200);
+        res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
         res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
         res.sendResponse(clientSocket);
-        std::cout << "Response Header :" << std::endl;
         std::cout << res << std::endl;
-        close(clientSocket);
+        std::cout << "----- Request End -----\n" << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        res.setStatusCode(501);
+        res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_JSON);
+        res.setBody("{\n\"error\": \"" + std::string(e.what()) + "\"\n}");
+        
+        std::cout << res << std::endl;
+        res.sendResponse(clientSocket);
+    }
+    close(clientSocket);
+    
+  
+}
+
+
+void HttpServer::run()
+{
+    struct sockaddr_in      clientAddr;
+    socklen_t               clientLen = sizeof(clientAddr);
+    std::string             request;
+    int clientSocket;
+
+
+    while (true)
+    {
+        clientSocket = accept(m_socket, (struct sockaddr *)&clientAddr, &clientLen);
+        if (clientSocket < 0)
+            throw std::runtime_error("Accept failed");
+        handleClient(clientSocket);
     }
 }

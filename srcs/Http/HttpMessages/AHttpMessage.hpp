@@ -1,9 +1,9 @@
 #ifndef A_HTTP_MESSAGE_HPP
 # define A_HTTP_MESSAGE_HPP
 
+# include "Method.hpp"
 # include <string>
 # include <map>
-# include "Method.hpp"
 # include <iostream>
 
 class AHttpMessage

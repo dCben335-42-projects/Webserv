@@ -10,14 +10,17 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include "HttpRequest.hpp"
+#include "HttpResponse.hpp"
 
 class HttpServer
 {
     private:
         unsigned short      m_socket;
-        struct sockaddr_in  m_address;
         unsigned short      m_port;
+        struct sockaddr_in  m_address;
 
+        void                handleClient(int clientSocket); 
     public:
         HttpServer(unsigned short port = 9058);
         ~HttpServer();

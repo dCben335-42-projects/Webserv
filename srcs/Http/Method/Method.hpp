@@ -33,7 +33,6 @@ class Method {
 
         EMethodType         getType() const;
         std::string         getStrType() const;
-        bool isValid(void) const;
 };
 
 #endif 

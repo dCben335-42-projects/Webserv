@@ -25,7 +25,7 @@ Method::Method(const std::string &method)
             return ;
         }
     }
-    throw std::invalid_argument("Invalid Method" + method);
+    throw std::invalid_argument("Invalid Method " + method);
 }
 
 Method::Method(const EMethodType &method)
@@ -41,7 +41,7 @@ Method::Method(const EMethodType &method)
             return ;
         }
     }
-    throw std::invalid_argument("Invalid Method");
+    throw std::invalid_argument("Invalid Method type");
 }
 
 Method &Method::operator=(const Method &other)

@@ -1,8 +1,10 @@
 #include "AHttpMessage.hpp"
 #include <exception>
+#include "config.hpp"
+#include "Number.hpp"
 
-
-AHttpMessage::AHttpMessage(void) : m_method(Method(GET)) {}
+AHttpMessage::AHttpMessage(void) :
+    m_method(Method(GET)) {}
 AHttpMessage::AHttpMessage(const std::string &method) :
     m_method(Method(method))
 {
@@ -16,6 +18,7 @@ AHttpMessage::AHttpMessage(const EMethodType &method) :
 AHttpMessage::~AHttpMessage() {}
 
 
+// ANCHOR Getters
 std::map<std::string, std::string> AHttpMessage::getHeaders() const
 {
     return m_headers;
@@ -36,14 +39,15 @@ std::string AHttpMessage::getBody() const
 
 
 
+// ANCHOR Setters
 void    AHttpMessage::setHeader(const std::string &key, const std::string &value) 
 {
     m_headers[key] = value;
 }
 void    AHttpMessage::setBody(const std::string &body)
 {
-    m_headers["Content-Length"] = body.size();
     m_body = body;
+    m_headers[HEADER_CONTENT_LENGTH] = Number::toString(body.size());
 }
 void    AHttpMessage::setMethod(const Method &method)
 {
@@ -51,6 +55,7 @@ void    AHttpMessage::setMethod(const Method &method)
 }
 
 
+// ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
     std::map<std::string, std::string> headers = message.getHeaders();

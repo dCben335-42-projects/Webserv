@@ -1,9 +1,8 @@
 #ifndef HTPP_RESPONSE_CPP
 #define HTPP_RESPONSE_CPP
 
-#include <string>
 #include "AHttpMessage.hpp"
-#include <map>
+#include <ostream>
 
 class HttpResponse : public AHttpMessage
 {
@@ -14,8 +13,8 @@ class HttpResponse : public AHttpMessage
         ~HttpResponse();
 
         unsigned short      getStatusCode() const;
-        void                setStatusCode(unsigned short code);
         std::string         getHead() const;
+        void                setStatusCode(unsigned short code);
         void                sendResponse(int clientSocket);
 };
 
