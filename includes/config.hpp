@@ -3,7 +3,8 @@
 
 # define PROJECT_NAME "WebServ"
 
-# define DEFAULT_URL            "http://localhost:9058/"
+# define DEFAULT_URL            "http://localhost:8080/"
+# define DEFAULT_PORT           8080
 # define SOCKET_IPV4            AF_INET
 # define SOCKET_TCP             SOCK_STREAM
 # define SOCKET_PROTOCOL        IPPROTO_TCP

@@ -13,6 +13,7 @@ class HttpRequest : public AHttpMessage
         std::map<std::string, std::string>  m_headers;
         std::string                        	m_method;
         std::string                         m_rawStr;
+        std::string                         m_target;
 
         std::string     readHeaders(const int clientSocket);
         size_t          readContentLength(
@@ -25,7 +26,7 @@ class HttpRequest : public AHttpMessage
                             size_t received
                         );
 
-        size_t          parseMethod(const std::string &rawRequest);
+        size_t          parseFirstLine(const std::string &rawRequest);
         size_t          parseHeaderLine(
                             const std::string &rawRequest,
                             const size_t pos
@@ -35,8 +36,11 @@ class HttpRequest : public AHttpMessage
         HttpRequest();
         ~HttpRequest();
         
-        std::string getRawRequest() const;
-        std::string setRawRequest(const std::string &rawRequest);
+        std::string     getRawRequest() const;
+        std::string     getTarget() const;
+
+        void            setRawRequest(const std::string &rawRequest);
+        void            setTarget(const std::string &path);
         
         HttpRequest&    read(const int clientSocket);
         HttpRequest&    parse();

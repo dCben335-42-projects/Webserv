@@ -25,6 +25,20 @@ std::string HttpRequest::getRawRequest() const
 {
     return m_rawStr;
 }
+std::string HttpRequest::getTarget() const
+{
+    return m_target;
+}
+
+// ANCHOR Setters
+void HttpRequest::setRawRequest(const std::string &rawRequest)
+{
+    m_rawStr = rawRequest;
+}
+void HttpRequest::setTarget(const std::string &path)
+{
+    m_target = path;
+}
 
 
 // ANCHOR Reading Public method
@@ -54,7 +68,7 @@ HttpRequest& HttpRequest::parse()
 {
     const size_t    lineEndSize = std::strlen(HEADER_ENDING);
     std::string     rawRequest = m_rawStr;
-    size_t          pos = parseMethod(rawRequest) + lineEndSize;
+    size_t          pos = parseFirstLine(rawRequest) + std::strlen(HEADER_LINE_ENDING);
     size_t          headersEnd = rawRequest.find(HEADER_ENDING, pos);
 
     if (headersEnd == std::string::npos)
@@ -64,6 +78,11 @@ HttpRequest& HttpRequest::parse()
     size_t bodyStart = headersEnd + lineEndSize;
     if (bodyStart < rawRequest.size())
         setBody(rawRequest.substr(bodyStart));
+
+    std::cout << *this << std::endl;
+    if (getHeader(HEADER_HOST).empty())
+        throw std::invalid_argument("Missing Host Header sadaw");
+    
     return *this;
 }
 
@@ -72,32 +91,47 @@ HttpRequest& HttpRequest::parse()
 
 
 // ANCHOR Parsing Private methods
-size_t HttpRequest::parseMethod(const std::string &rawRequest)
+size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 {
     size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
     if (lineEnd == std::string::npos)
         throw std::invalid_argument("Invalid Request Line");
-    std::string requestLine = rawRequest.substr(0, lineEnd);
-    size_t methodEnd = requestLine.find(' ');
+
+    std::string     requestLine = rawRequest.substr(0, lineEnd);
+    size_t          methodEnd = requestLine.find(' ');
     if (methodEnd != std::string::npos)
+        setMethod(Method(requestLine.substr(0, methodEnd)));
+
+    size_t          targetEnd = requestLine.find(' ', methodEnd + 1);
+    if (targetEnd != std::string::npos)
     {
-        std::string methodStr = requestLine.substr(0, methodEnd);
-        Method method(methodStr);
-        setMethod(method);
+        std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
+        if (path.empty() || path[0] != '/')
+            throw std::invalid_argument("Invalid Request Target: " + path);
+        setTarget(path);
     }
+
+    size_t versionPos = requestLine.find(' ', targetEnd + 1);
+    if (versionPos != std::string::npos)
+    {
+        std::string httpVersion = requestLine.substr(versionPos + 1);
+        if (httpVersion != PROTOCOL)
+            throw std::invalid_argument("Unsupported HTTP Version: " + httpVersion);
+    } 
     return lineEnd;
 }
 size_t  HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t pos)
 {
     const size_t colon = rawRequest.find(':', pos);
     const size_t nextLine = rawRequest.find(HEADER_LINE_ENDING, pos);
+
     if (colon == std::string::npos || nextLine == std::string::npos || colon > nextLine)
         throw std::invalid_argument("Malformed Header Line");
 
     const std::string headerName = rawRequest.substr(pos, colon - pos);
     const std::string headerValue = rawRequest.substr(colon + 1, nextLine - colon - 1);
+    
     setHeader(headerName, String::trim(headerValue));
-
     return nextLine + std::strlen(HEADER_LINE_ENDING);
 }
 

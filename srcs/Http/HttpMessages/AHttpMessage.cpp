@@ -65,7 +65,8 @@ std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
     
     while (it != headers.end())
     {
-        o << it->first << ": " << it->second;
+        o   << "\"" << it->first << "\"" 
+            << ": \"" << it->second << "\"";
         if (index < total - 1)
             o << "\n";
         it++;
