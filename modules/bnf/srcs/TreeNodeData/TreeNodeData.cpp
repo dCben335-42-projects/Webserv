@@ -1,7 +1,7 @@
 #include "./TreeNodeData.hpp"
 
-TreeNodeData::TreeNodeData(std::string value, std::vector<Concept *> *concepts)
-    : value(value), concepts(concepts) {}
+TreeNodeData::TreeNodeData(std::string name, std::vector<Concept *> *concepts)
+    : name(name), concepts(concepts) {}
 
 bool TreeNodeData::is_multiple() const
 {

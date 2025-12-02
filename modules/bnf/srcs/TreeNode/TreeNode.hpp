@@ -5,10 +5,10 @@
 
 class TreeNode {
     public:
-        TreeNode(TreeNodeData& data, std::vector<std::string> path);
-        TreeNode(std::string value, std::vector<Concept *> *concepts);
+        TreeNode(TreeNodeData& content, std::vector<std::string> path);
+        TreeNode(std::string name, std::vector<Concept *> *concepts);
         ~TreeNode() {};
-        TreeNodeData &value;
+        TreeNodeData &content;
         std::vector<std::string> path;
         std::vector<TreeNode *> children;
 };

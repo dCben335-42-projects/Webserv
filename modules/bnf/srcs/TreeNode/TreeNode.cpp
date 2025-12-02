@@ -1,6 +1,6 @@
 #include "./TreeNode.hpp"
 
-TreeNode::TreeNode(TreeNodeData& data, std::vector<std::string> path) : value(data), path(path) {}
+TreeNode::TreeNode(TreeNodeData& content, std::vector<std::string> path) : content(content), path(path) {}
 
-TreeNode::TreeNode(std::string value, std::vector<Concept *> *concepts)
-    : value(*(new TreeNodeData(value, concepts))) {}
+TreeNode::TreeNode(std::string name, std::vector<Concept *> *concepts)
+    : content(*(new TreeNodeData(name, concepts))) {}

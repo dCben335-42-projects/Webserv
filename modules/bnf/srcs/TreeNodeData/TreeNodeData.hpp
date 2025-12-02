@@ -19,11 +19,12 @@ enum ESecure {
 class TreeNodeData
 {
     public:
-        TreeNodeData(std::string value, std::vector<Concept *> *concepts);
+        TreeNodeData(std::string name, std::vector<Concept *> *concepts);
         ~TreeNodeData() {};
-        std::string value;
+        std::string name;
         std::vector<Concept *> *concepts;
         bool is_multiple() const;
 };
+
 
 #endif

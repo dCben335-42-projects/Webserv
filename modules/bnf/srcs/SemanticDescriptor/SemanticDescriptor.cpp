@@ -6,9 +6,27 @@
 #include "./SemanticDescriptor.hpp"
 #include <algorithm>
 #include "../utils/utils.cpp"
+#include "../utils/debug.cpp"
 
 using namespace bnf;
 
+typedef std::vector<Concept *> ConceptList;
+typedef std::map<std::string, TreeNodeData> DataMap;
+
+template <typename T>
+struct Vec {
+    typedef std::vector<T> type;
+    typedef typename type::iterator iterator;
+    typedef typename type::const_iterator const_iterator;
+};
+
+template <typename T>
+struct Map {
+    typedef std::map<std::string, T> type;
+    typedef typename type::iterator iterator;
+    typedef typename type::const_iterator const_iterator;
+};
+    
 static bool is_rule_start(const std::string &line)
 {
     size_t i = 0;
@@ -36,11 +54,11 @@ static bool is_rule_start(const std::string &line)
 
 void SemanticDescriptor::printSemanticDescriptor()
 {
-    for (std::map<std::string, std::vector<Concept *> *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+    for (std::map<std::string, ConceptList *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
     {
         std::cout << "---------------------" << std::endl;
         const std::string &key = it->first;
-        std::vector<Concept *> *conceptPtr = it->second;
+        ConceptList *conceptPtr = it->second;
 
         std::cout << "Concept name: " << key << std::endl;
         std::cout << "Number of rules: " << conceptPtr->size() << std::endl;
@@ -48,7 +66,7 @@ void SemanticDescriptor::printSemanticDescriptor()
         if (conceptPtr)
         {
             int index = 0;
-            for (std::vector<Concept *>::iterator it = conceptPtr->begin(); it != conceptPtr->end(); ++it, ++index)
+            for (ConceptList::iterator it = conceptPtr->begin(); it != conceptPtr->end(); ++it, ++index)
             {
                 std::cout << "Rule " << index << ":" << std::endl;
                 (*it)->printRules();
@@ -123,9 +141,8 @@ void SemanticDescriptor::createBnf(const std::string &m_content)
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
-    std::vector<Concept *> *concepts = m_concepts[m_lastKey];
     Concept *concept = new Concept();
-    concepts->push_back(concept);
+    m_concepts[m_lastKey]->push_back(concept);
     std::istringstream iss(m_content.substr(cursor));
     std::string word;
     ARule *arule = NULL;
@@ -167,35 +184,22 @@ void SemanticDescriptor::parseConceptName(std::string &s)
     if (m_concepts.find(s) != m_concepts.end())
         throw std::runtime_error(ERR_CONCEPT_ALREADY_DEFINED + s);
 
-    m_concepts[s] = new std::vector<Concept *>();
+    m_concepts[s] = new ConceptList();
     m_lastKey = s;
 }
 
-static void printVector(const std::vector<std::string> &vec)
-{
-    std::cout << "[";
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        std::cout << vec[i];
-        if (i < vec.size() - 1)
-            std::cout << ", ";
-    }
-    std::cout << "]" << std::endl;
-}
-
-typedef std::map<std::string, TreeNodeData> DataMap;
 
 TreeNode *SemanticDescriptor::createTree(TreeNode *node)
 {
-    if (!node->value.concepts)
+    if (!node->content.concepts)
         return node;
-    std::vector<std::string> items;
+    Vec<std::string>::type items;
 
-    for (std::vector<Concept *>::iterator it = node->value.concepts->begin(); it != node->value.concepts->end(); ++it)
+    for (ConceptList::iterator it = node->content.concepts->begin(); it != node->content.concepts->end(); ++it)
     {
         items = (*it)->getItems();
 
-        for (std::vector<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+        for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
             m_is_stopped_by_rconcept = false;
 
@@ -213,7 +217,7 @@ TreeNode *SemanticDescriptor::createTree(TreeNode *node)
             if (!m_concepts[*itemIt])
                 throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + *itemIt);
 
-            printVector(temp_node->path);
+            debugLog(temp_node->path);
 
             if (!isInContainer(temp_node->path, *itemIt))
             {
@@ -253,7 +257,7 @@ void SemanticDescriptor::checkValidity()
 
     createTree(node);
 
-    for (std::map<std::string, bool>::iterator it = m_rconcept_check_result.begin();
+    for (Map<bool>::iterator it = m_rconcept_check_result.begin();
      it != m_rconcept_check_result.end();
      ++it)
     {
@@ -271,7 +275,7 @@ void SemanticDescriptor::printTree(TreeNode* node, int level)
 
     for (int i = 0; i < level; ++i)
         std::cout << "  ";
-    std::cout << node->value.value << std::endl;
+    std::cout << node->content.name << std::endl;
 
     for (std::vector<TreeNode*>::iterator it = node->children.begin(); 
          it != node->children.end(); ++it)
