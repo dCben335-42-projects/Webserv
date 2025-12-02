@@ -3,9 +3,13 @@
 
 #include <string>
 #include <iostream>
-#include <map>
 #include <vector>
+#include <map>
+#include <algorithm>
 
+// -----------------------------
+// Type helpers for template iterators
+// -----------------------------
 template <typename T>
 struct Vec {
     typedef std::vector<T> type;
@@ -20,10 +24,16 @@ struct Map {
     typedef typename type::const_iterator const_iterator;
 };
 
+// -----------------------------
+// String utilities
+// -----------------------------
 bool startsWith(const std::string &s, const std::string &prefix);
 
-template <typename Map, typename Key, typename Value>
-typename Map::iterator getOrInsert(Map &map, const Key &key, const Value &value);
+// -----------------------------
+// Map utilities
+// -----------------------------
+template <typename MapType, typename KeyType, typename ValueType>
+typename MapType::iterator getOrInsert(MapType &map, const KeyType &key, const ValueType &value);
 
 template <typename MapType, typename KeyType>
 bool isInMap(const MapType &m, const KeyType &key);
@@ -31,29 +41,30 @@ bool isInMap(const MapType &m, const KeyType &key);
 template <typename T>
 void printMapKeys(const Map<T>& m);
 
-template<typename T>
-void log(const T &v);
-
-template<typename T>
-void log(T *ptr);
-
-template<typename T>
-void log(const std::vector<T>&);
-
-template<typename K, typename V>
-void log(const std::map<K,V>&);
-
-void log(char *s);
-
-void log(const char *s);
-
-template <typename T>
-void log(const std::vector<T> &vec);
-
-template<typename K, typename V>
-void log(const std::map<K, V> &m);
-
+// -----------------------------
+// Container utilities
+// -----------------------------
 template <typename ContainerType, typename ValueType>
 bool isInContainer(const ContainerType &c, const ValueType &value);
+
+// -----------------------------
+// Logging / debug utilities
+// -----------------------------
+template <typename T>
+void log(const T &v);
+
+template <typename T>
+void log(T *ptr);
+
+template <typename T>
+void log(const std::vector<T>& vec);
+
+template <typename K, typename V>
+void log(const std::map<K,V>& m);
+
+void log(const char *s);
+void log(char *s);
+
+#include "utils.tpp"
 
 #endif

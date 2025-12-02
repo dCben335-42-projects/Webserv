@@ -6,7 +6,6 @@
 #include "./SemanticDescriptor.hpp"
 #include <algorithm>
 #include "../utils/utils.hpp"
-#include "../utils/debug.cpp"
 
 using namespace bnf;
 
@@ -264,7 +263,7 @@ bool SemanticDescriptor::createTree(TreeNode *node)
 
 void SemanticDescriptor::checkValidity()
 {
-    m_is_stopped_by_rconcept = false;
+    m_isStoppedByRConcept = false;
 
     log("Bonjour\n");
     log(m_concepts);

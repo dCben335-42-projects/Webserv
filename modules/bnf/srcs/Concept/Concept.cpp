@@ -1,7 +1,7 @@
 #include "Concept.hpp"
 #include <iostream>
 #include <algorithm>
-// #include "../utils/utils.hpp"
+#include "../utils/utils.hpp"
 
 using namespace bnf;
 
@@ -70,12 +70,12 @@ std::ostream& operator<<(std::ostream& os, const Concept& data)
 
     std::vector<ARule *> values = data.getValues();
 
-    // log(values);
+    log(values);
 
-    for (std::vector<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
-        ARule* rule = *it;
-        os << *rule;
-    }
+    // for (std::vector<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
+        // ARule* rule = *it;
+        // os << *rule;
+    // }
 
     return os;
 

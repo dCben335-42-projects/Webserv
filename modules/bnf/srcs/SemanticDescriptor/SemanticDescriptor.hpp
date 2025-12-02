@@ -15,7 +15,7 @@
 
 class SemanticDescriptor {
     private:
-        bool m_is_stopped_by_rconcept;
+        bool m_isStoppedByRConcept;
         std::map<std::string, bool> m_rconcept_check_result;
         std::map<std::string, TreeNodeData> m_data;
         std::map<std::string, std::vector<Concept *>*> m_concepts;
