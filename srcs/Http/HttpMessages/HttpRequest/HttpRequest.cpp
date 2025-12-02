@@ -1,8 +1,8 @@
 #include "HttpRequest.hpp"
 #include "config.hpp"
 #include "String.hpp"
+#include "Number.hpp"
 
-#include <string>
 #include <cctype>
 #include <cstring>
 #include <stdexcept>
@@ -13,7 +13,6 @@
 #include <cctype>    
 #include <stdexcept> 
 #include <iostream>  
-#include <cstdlib>
 
 // ANCHOR Constructors / Destructors
 HttpRequest::HttpRequest(): AHttpMessage() {}
@@ -156,10 +155,7 @@ std::string HttpRequest::readHeaders(const int clientSocket)
         throw std::runtime_error("Receive failed during header line");
     return headers;
 }
-size_t HttpRequest::readContentLength(
-    std::string &request,
-    const size_t headersEnd
-)
+size_t HttpRequest::readContentLength(std::string &request, const size_t headersEnd)
 {
     size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd); 
     if (clPos == std::string::npos)
@@ -177,7 +173,7 @@ size_t HttpRequest::readContentLength(
         return 0;
 
     std::string clStr = request.substr(clPos, endPos - clPos);
-    return static_cast<size_t>(std::atoi(clStr.c_str())); 
+    return Number::toSizeT(clStr);
 }
 std::string HttpRequest::readBody(
     const int clientSocket,
