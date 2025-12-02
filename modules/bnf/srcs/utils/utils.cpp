@@ -1,4 +1,4 @@
-#include <string>
+#include "./utils.hpp"
 
 /**
  * @brief Checks if a string starts with a given prefix.
@@ -68,12 +68,82 @@ typename Map::iterator getOrInsert(Map &map, const Key &key, const Value &value)
  * std::map<std::string, int> m;
  * m["a"] = 42;
  * bool exists = is_in_map(m, std::string("a")); // returns true
+ * bool not_exists = is_in_map(m, std::string("c")); // returns false
  */
 template <typename MapType, typename KeyType>
 bool isInMap(const MapType &m, const KeyType &key)
 {
     return m.find(key) != m.end();
 }
+
+
+template <typename T>
+void printMapKeys(const Map<T>& m)
+{
+    for (typename Map<T>::const_iterator it = m.begin(); it != m.end(); ++it) {
+        std::cout << it->first << std::endl;
+    }
+}
+
+template<typename T>
+void log(const T &v)
+{
+    std::cout << v;
+}
+
+void log(char *s)
+{
+    log(static_cast<const char*>(s));
+}
+void log(const char *s)
+{
+    if(s) std::cout << s;
+    else std::cout << "null";
+}
+
+template<typename T>
+void log(T *ptr)
+{
+    if (ptr)
+        log(*ptr);
+    else
+        std::cout << "null";
+}
+
+template <typename T>
+void log(const std::vector<T> &vec)
+{
+    std::cout << "[";
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        log(vec[i]);                 // appel récursif !
+        if (i < vec.size() - 1)
+            std::cout << ", ";
+    }
+
+    std::cout << "]";
+}
+
+template<typename K, typename V>
+void log(const std::map<K, V> &m)
+{
+    std::cout << "{";
+    typename std::map<K,V>::const_iterator it = m.begin();
+    typename std::map<K,V>::const_iterator end = m.end();
+
+    while (it != end)
+    {
+        log(it->first);
+        std::cout << ": ";
+        log(it->second); // gère les pointeurs
+        if (++it != end)
+            std::cout << ", ";
+    }
+    std::cout << "}";
+}
+
+
 
 /**
  * @brief Checks if an element exists in a container.
@@ -104,16 +174,3 @@ bool isInContainer(const ContainerType &c, const ValueType &value)
     return std::find(c.begin(), c.end(), value) != c.end();
 }
 
-template <typename T>
-struct Vec {
-    typedef std::vector<T> type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
-};
-
-template <typename T>
-struct Map {
-    typedef std::map<std::string, T> type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
-};

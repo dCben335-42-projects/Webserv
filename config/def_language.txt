@@ -1,17 +1,5 @@
-<head>			::= { statement | 'shrek' }
+<head>       ::= 'fef' 'grg'
 
 
 
-
-
-
-statement		::= block
-				|= directive
-      
-block			::= IDENT { 'parameter' } 'LBRACE' { statement }
-				|= SEMI
-				|= directive
-
-directive		::= statement
-SEMI			::= 'p'
-IDENT			::= 's'
+|=diwdw	::= 'duwhdu'

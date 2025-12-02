@@ -1,6 +1,7 @@
 #include "Concept.hpp"
 #include <iostream>
 #include <algorithm>
+// #include "../utils/utils.hpp"
 
 using namespace bnf;
 
@@ -49,10 +50,37 @@ std::vector<std::string> Concept::getItems() {
     return allItems;
 }
 
-void Concept::printRules() {
-    for (std::vector<ARule *>::iterator it = values.begin(); it != values.end(); ++it) {
+void Concept::printRules() const {
+    for (std::vector<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
         ARule* rule = *it;
         if (rule)
             rule->print();
     }
+}
+
+std::vector<ARule *> Concept::getValues() const {
+    return values;
+}
+
+std::ostream& operator<<(std::ostream& os, const Concept& data)
+{
+    (void)os;
+    // data.printRules();
+    // (void)data;
+
+    std::vector<ARule *> values = data.getValues();
+
+    // log(values);
+
+    for (std::vector<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
+        ARule* rule = *it;
+        os << *rule;
+    }
+
+    return os;
+
+
+    // os << "TreeNodeData(name: " << data.name << ", concepts count: " 
+    //    << (data.concepts ? data.concepts->size() : 0) << ")";
+    // return os;
 }

@@ -88,3 +88,8 @@ BnfMap ARule::getMap(const std::string &opener)
     }
     return rules[i];
 }
+
+std::ostream& operator<<(std::ostream& os, const ARule& data) {
+    os << data.getPrintableValue();
+    return os;
+}

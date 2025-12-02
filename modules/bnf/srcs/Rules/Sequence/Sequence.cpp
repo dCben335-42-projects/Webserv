@@ -22,3 +22,14 @@ void Sequence::print() const {
     }
     std::cout << "]}" << std::endl;
 }
+
+std::string Sequence::getPrintableValue() const {
+    std::string s = std::string("{ Sequence: [");
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (i != 0)
+            s + ", ";
+        s + items[i];
+    }
+    s + "]}";
+    return s;
+}

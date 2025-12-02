@@ -7,3 +7,5 @@ SRC_FILES += Rules/Symbol/Symbol.cpp
 SRC_FILES += SemanticDescriptor/SemanticDescriptor.cpp
 SRC_FILES += TreeNodeData/TreeNodeData.cpp
 SRC_FILES += TreeNode/TreeNode.cpp
+SRC_FILES += utils/debug.cpp
+SRC_FILES += utils/utils.cpp

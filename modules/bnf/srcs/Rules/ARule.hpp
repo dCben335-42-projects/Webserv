@@ -22,10 +22,13 @@ class ARule {
         
         virtual void print() const = 0;
         virtual std::vector<std::string>  getItems() const = 0;
+        virtual std::string getPrintableValue() const = 0;
         
         static BnfMap   getMap(const std::string &opener);
         static bool     isKeyWord(const std::string &word, bool onlyClose);
 };
+
+std::ostream& operator<<(std::ostream& os, const ARule& data);
 
 struct BnfMap 
 {

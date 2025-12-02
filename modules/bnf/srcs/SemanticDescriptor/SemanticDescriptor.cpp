@@ -5,7 +5,7 @@
 #include <iostream>
 #include "./SemanticDescriptor.hpp"
 #include <algorithm>
-#include "../utils/utils.cpp"
+#include "../utils/utils.hpp"
 #include "../utils/debug.cpp"
 
 using namespace bnf;
@@ -13,30 +13,45 @@ using namespace bnf;
 typedef std::vector<Concept *> ConceptList;
 typedef std::map<std::string, TreeNodeData> DataMap;
     
-static bool is_rule_start(const std::string &line)
+static bool is_rule_start(const std::string &line, size_t *startDef)
 {
     size_t i = 0;
     while (i < line.size() && std::isspace(line[i]))
         ++i;
-
     if (i + 2 <= line.size() && line.compare(i, 2, "|=") == 0)
+    {
+        std::cout << "1ndex: " <<  i << std::endl;
+        *startDef = i + 2;
         return true;
-
+    }
     size_t start = i;
     while (i < line.size() && (std::isalnum(line[i]) || line[i] == '_'))
         ++i;
-
     if (i == start)
         return false;
-
     while (i < line.size() && std::isspace(line[i]))
         ++i;
-
     if (i + 3 <= line.size() && line.compare(i, 3, "::=") == 0)
+    {
+        std::cout << "index: " <<  i << std::endl;
+        *startDef = i + 3;
         return true;
-
+    }
     return false;
 }
+
+static bool isOnlyWhitespace(const std::string& str, size_t start)
+{
+    if (start >= str.size())
+        return false;
+    for (std::string::const_iterator it = str.begin() + start; it != str.end(); ++it) {
+        if (!isspace(static_cast<unsigned char>(*it))) {
+            return false;  // On a trouvé un caractère qui n'est pas un blanc
+        }
+    }
+    return true;  // Tous les caractères étaient des blancs
+}
+
 
 void SemanticDescriptor::printSemanticDescriptor()
 {
@@ -66,17 +81,23 @@ static void splitBlocks(const std::string &text, std::vector<std::string> &block
 {
     std::istringstream iss(text);
     std::string line, current_block;
+    size_t startDef = 0;
 
     while (std::getline(iss, line))
     {
-        if (is_rule_start(line) && !current_block.empty())
+        if (is_rule_start(line, &startDef) && !current_block.empty())
         {
+            if (isOnlyWhitespace(current_block, startDef))
+            {
+                throw std::runtime_error("Benoit a mage ma soupel");
+            }
             blocks.push_back(current_block);
             current_block.clear();
+            std::cout <<  startDef << std::endl;
         }
         current_block += line + "\n";
+        std::cout << current_block << std::endl;
     }
-
     if (!current_block.empty())
         blocks.push_back(current_block);
 }
@@ -174,76 +195,10 @@ void SemanticDescriptor::parseConceptName(std::string &s)
     m_lastKey = s;
 }
 
-
-
-
-
-
-
-
-
-
-
-bool isRecursiveConceptNameInChildrenPath(
-    const TreeNode *node,
-    const std::string &nameToFind,
-    const size_t pathStartIndex)
-{
-    std::cout << "Checking in node: " << node->content.name << std::endl;
-
-    for (std::vector<TreeNode *>::const_iterator it = node->children.begin();
-         it != node->children.end(); ++it)
-    {
-        const TreeNode *child = *it;
-        for (size_t i = pathStartIndex; i < node->path.size(); ++i)
-        {
-            std::cout << node->path[i]  << std::endl;
-            if (node->path[i] == nameToFind)
-                return true;
-        }
-        if (isRecursiveConceptNameInChildrenPath(child, nameToFind, pathStartIndex))
-            return true;
-    }
-    return false;
-}
-
-bool isErrorr(const TreeNode *node)
-{
-    bool    isError = true;
-    const   std::string &name = node->content.name;
-    const   size_t pathLen = node->path.size() - 1;
-
-    std::cout << "==================" << name << " " << pathLen << "=================="  << std::endl;
-
-    if (!node->children.size() || node->content.name == CURSOR)
-        return false;
-    for (std::vector<TreeNode *>::const_iterator it = node->children.begin();
-         it != node->children.end(); ++it)
-    {
-        const TreeNode *child = *it;
-        bool res = isRecursiveConceptNameInChildrenPath(child, name, pathLen);
-        if (!res)
-            isError = false;
-        std::cout << "==>res for child: " << child->content.name << ": " << res << std::endl;
-    }
-    std::cout << "isError: " << isError << std::endl;
-    std::cout << "====================================" << std::endl;
-    return isError;
-}
-
-
-
-
-
-
-
-
-
-
 bool SemanticDescriptor::createTree(TreeNode *node)
 {
-    if (!node->content.concepts || !node->content.concepts->size())
-        return node;
+    // if (!node->content.concepts || !node->content.concepts->size())
+    //     return true;
     Vec<std::string>::type items;
     
     for (ConceptList::iterator it = node->content.concepts->begin(); it != node->content.concepts->end(); ++it)
@@ -254,9 +209,10 @@ bool SemanticDescriptor::createTree(TreeNode *node)
         bool isLineError = false;
         for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
-            // m_is_stopped_by_rconcept = false;
-            std::cout << "---------------------" <<  std::endl;
-
+            if (startsWith(*itemIt, DQSQ))
+                continue;
+            if (!isInMap(m_concepts, *itemIt))
+                throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + *itemIt);
             TreeNode* temp_node = new TreeNode(
                 getOrInsert(
                     m_data,
@@ -265,28 +221,7 @@ bool SemanticDescriptor::createTree(TreeNode *node)
                 )->second,
                 node->path
             );
-            if (startsWith(*itemIt, "'"))
-            {
-                // temp_node->content.isEnded = true;
-                // node->children.push_back(temp_node);
-                continue;
-            }
-            if (!isInMap(m_concepts, *itemIt))
-                throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + *itemIt);
 
-
-
-
-
-
-            
-
-            std::cout << "ITEM: " << *itemIt << std::endl;
-            debugLog(temp_node->path);
-            std::cout << "---------------------\n" <<  std::endl;
-
-
-            
             if (!isInContainer(temp_node->path, *itemIt))
             {
                 temp_node->path.push_back(*itemIt);
@@ -296,11 +231,9 @@ bool SemanticDescriptor::createTree(TreeNode *node)
             }
             else {
                 isLineError = true;
-                // std::cout << "=========" << *itemIt << std::endl;
                 temp_node->path.push_back(*itemIt);
             }
         }
-
 
         if (!isLineError)
             node->content.isInfinite = false;
@@ -332,24 +265,15 @@ bool SemanticDescriptor::createTree(TreeNode *node)
 void SemanticDescriptor::checkValidity()
 {
     m_is_stopped_by_rconcept = false;
+
+    log("Bonjour\n");
+    log(m_concepts);
     
     TreeNode* node = new TreeNode(CURSOR, m_concepts[CURSOR]);
     node->path.push_back(CURSOR);
-
+    printSemanticDescriptor();
     if (createTree(node))
         throw  std::runtime_error("ERREUR !");
-
-    // for (Map<bool>::iterator it = m_rconcept_check_result.begin();
-    //  it != m_rconcept_check_result.end();
-    //  ++it)
-    // {
-
-    //     std::cout << "clé = " << it->first 
-    //             << ", valeur = " << (it->second ? "true" : "false")
-    //             << std::endl;
-    //     if (!it->second)
-    //         throw std::runtime_error("Error: Recursive path detected: " + it->first);
-    // }
 }
 
 void SemanticDescriptor::printTree(TreeNode* node, int level)
