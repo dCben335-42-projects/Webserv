@@ -11,6 +11,8 @@
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
 
+#include <iostream>
+
 enum ESecure {
     SECURE,
     NOT_SECURE
@@ -23,8 +25,13 @@ class TreeNodeData
         ~TreeNodeData() {};
         std::string name;
         std::vector<Concept *> *concepts;
+        bool isEnded;
         bool is_multiple() const;
 };
+
+
+std::ostream& operator<<(std::ostream& os, const TreeNodeData& data);
+
 
 
 #endif

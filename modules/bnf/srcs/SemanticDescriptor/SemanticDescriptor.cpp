@@ -12,20 +12,6 @@ using namespace bnf;
 
 typedef std::vector<Concept *> ConceptList;
 typedef std::map<std::string, TreeNodeData> DataMap;
-
-template <typename T>
-struct Vec {
-    typedef std::vector<T> type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
-};
-
-template <typename T>
-struct Map {
-    typedef std::map<std::string, T> type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
-};
     
 static bool is_rule_start(const std::string &line)
 {
@@ -189,6 +175,71 @@ void SemanticDescriptor::parseConceptName(std::string &s)
 }
 
 
+
+
+
+
+
+
+
+
+
+bool isRecursiveConceptNameInChildrenPath(
+    const TreeNode *node,
+    const std::string &nameToFind,
+    const size_t pathStartIndex)
+{
+    std::cout << "Checking in node: " << node->content.name << std::endl;
+
+    for (std::vector<TreeNode *>::const_iterator it = node->children.begin();
+         it != node->children.end(); ++it)
+    {
+        const TreeNode *child = *it;
+        for (size_t i = pathStartIndex; i < node->path.size(); ++i)
+        {
+            std::cout << node->path[i]  << std::endl;
+            if (node->path[i] == nameToFind)
+                return true;
+        }
+        if (isRecursiveConceptNameInChildrenPath(child, nameToFind, pathStartIndex))
+            return true;
+    }
+    return false;
+}
+
+bool isErrorr(const TreeNode *node)
+{
+    bool    isError = true;
+    const   std::string &name = node->content.name;
+    const   size_t pathLen = node->path.size() - 1;
+
+    std::cout << "==================" << name << " " << pathLen << "=================="  << std::endl;
+
+    if (!node->children.size() || node->content.name == CURSOR)
+        return false;
+    for (std::vector<TreeNode *>::const_iterator it = node->children.begin();
+         it != node->children.end(); ++it)
+    {
+        const TreeNode *child = *it;
+        bool res = isRecursiveConceptNameInChildrenPath(child, name, pathLen);
+        if (!res)
+            isError = false;
+        std::cout << "==>res for child: " << child->content.name << ": " << res << std::endl;
+    }
+    std::cout << "isError: " << isError << std::endl;
+    std::cout << "====================================" << std::endl;
+    return isError;
+}
+
+
+
+
+
+
+
+
+
+
 TreeNode *SemanticDescriptor::createTree(TreeNode *node)
 {
     if (!node->content.concepts)
@@ -201,57 +252,104 @@ TreeNode *SemanticDescriptor::createTree(TreeNode *node)
 
         for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
-            m_is_stopped_by_rconcept = false;
+            // m_is_stopped_by_rconcept = false;
+
+
+
+
+            std::cout << "---------------------" <<  std::endl;
 
             TreeNode* temp_node = new TreeNode(
-                getOrInsert(m_data, *itemIt, TreeNodeData(*itemIt, m_concepts[*itemIt]))->second,
+                getOrInsert(
+                    m_data,
+                    *itemIt,
+                    TreeNodeData(*itemIt, m_concepts[*itemIt])
+                )->second,
                 node->path
             );
-
             if (startsWith(*itemIt, "'"))
             {
-                node->children.push_back(temp_node);
+                temp_node->content.isEnded = true;
+                // node->children.push_back(temp_node);
                 continue;
             }
-
-            if (!m_concepts[*itemIt])
+            if (!isInMap(m_concepts, *itemIt))
                 throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + *itemIt);
 
-            debugLog(temp_node->path);
 
+
+
+
+
+            
+
+            std::cout << "ITEM: " << *itemIt << std::endl;
+            debugLog(temp_node->path);
+            std::cout << "---------------------\n" <<  std::endl;
+
+
+            
             if (!isInContainer(temp_node->path, *itemIt))
             {
                 temp_node->path.push_back(*itemIt);
                 node->children.push_back(temp_node);
                 createTree(temp_node);
+                // if (isErrorr(node))
+                // {
+                //     throw std::runtime_error("Error: Recursive path detected: " + *itemIt);
+                // }
 
-                if (isInMap(m_rconcept_check_result, *itemIt) && !m_is_stopped_by_rconcept)
-                {
-                    std::cout << "\033[32mRecursive concept validated:\033[0m " << *itemIt << std::endl;
-                    m_rconcept_check_result[*itemIt] = true;
-                    m_is_stopped_by_rconcept = false;
-                }
+                // std::cout << "TEST DE MERDE" << std::endl;
+                // if (isInMap(m_rconcept_check_result, *itemIt) && !m_is_stopped_by_rconcept)
+                // {
+                //     std::cout << "\033[32mRecursive concept validated:\033[0m " << *itemIt << std::endl;
+                    // m_rconcept_check_result[*itemIt] = true;
+                //     m_is_stopped_by_rconcept = false;
+                // }
             }
-            else
-            {
-                // Si on trouve un chemin récursif
-                std::cout << "==========================" << std::endl;
-                std::cout << "\033[31mRecursive path detected but allowed:\033[0m : " << *itemIt << std::endl;
+            temp_node->path.push_back(*itemIt);
+            // else
+            // {
+                
+            //     // Si on trouve un chemin récursif
+            //     std::cout << "==========================" << std::endl;
+            //     std::cout << "\033[31mRecursive path detected but allowed:\033[0m : " << *itemIt << std::endl;
 
-                // Marquer ce concept comme a verifier
-                if (!isInMap(m_rconcept_check_result, *itemIt)) 
-                    m_rconcept_check_result[*itemIt] = false;
-                m_is_stopped_by_rconcept = true;
-            }
+            //     // Marquer ce concept comme a verifier
+            //     if (!isInMap(m_rconcept_check_result, *itemIt)) 
+            //         m_rconcept_check_result[*itemIt] = false;
+            //     m_is_stopped_by_rconcept = true;
+            // }
         }
     }
     return node;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void SemanticDescriptor::checkValidity()
 {
     m_is_stopped_by_rconcept = false;
-
+    
     TreeNode* node = new TreeNode(CURSOR, m_concepts[CURSOR]);
     node->path.push_back(CURSOR);
 
@@ -261,6 +359,7 @@ void SemanticDescriptor::checkValidity()
      it != m_rconcept_check_result.end();
      ++it)
     {
+
         std::cout << "clé = " << it->first 
                 << ", valeur = " << (it->second ? "true" : "false")
                 << std::endl;

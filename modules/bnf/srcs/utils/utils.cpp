@@ -103,3 +103,17 @@ bool isInContainer(const ContainerType &c, const ValueType &value)
 {
     return std::find(c.begin(), c.end(), value) != c.end();
 }
+
+template <typename T>
+struct Vec {
+    typedef std::vector<T> type;
+    typedef typename type::iterator iterator;
+    typedef typename type::const_iterator const_iterator;
+};
+
+template <typename T>
+struct Map {
+    typedef std::map<std::string, T> type;
+    typedef typename type::iterator iterator;
+    typedef typename type::const_iterator const_iterator;
+};

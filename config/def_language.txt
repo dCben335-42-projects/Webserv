@@ -1,7 +1,16 @@
-<head>			::= { statement }
+<head>			::= { statement | 'shrek' }
 
-statement		::= 'directive' SEMI
+
+statement		::= 'directive' SEMI IDENT
 				|= block
 
-block			::= 'IDENT' { 'parameter' } 'LBRACE' { statement }
+
+
+
+
+
+statement		::= block
+
+block			::= IDENT { 'parameter' } 'LBRACE' { statement }
 SEMI			::= ';'
+IDENT			::= statement
