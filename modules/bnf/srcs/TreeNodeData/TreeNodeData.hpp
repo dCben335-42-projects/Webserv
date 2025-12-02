@@ -25,7 +25,7 @@ class TreeNodeData
         ~TreeNodeData() {};
         std::string name;
         std::vector<Concept *> *concepts;
-        bool isEnded;
+        bool isInfinite;
         bool is_multiple() const;
 };
 

@@ -28,7 +28,7 @@ class SemanticDescriptor {
         
         void createBnf(const std::string& m_content);
         void printSemanticDescriptor();
-        TreeNode* createTree(TreeNode* node);
+        bool createTree(TreeNode* node);
         void printTree(TreeNode* node, int depth);
         
         void checkValidity();

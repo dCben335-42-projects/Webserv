@@ -1,7 +1,7 @@
 #include "./TreeNodeData.hpp"
 
 TreeNodeData::TreeNodeData(std::string name, std::vector<Concept *> *concepts)
-    : name(name), concepts(concepts), isEnded(false) {}
+    : name(name), concepts(concepts), isInfinite(true) {}
 
 bool TreeNodeData::is_multiple() const
 {

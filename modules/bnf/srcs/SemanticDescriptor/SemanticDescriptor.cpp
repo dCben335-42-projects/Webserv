@@ -240,23 +240,21 @@ bool isErrorr(const TreeNode *node)
 
 
 
-TreeNode *SemanticDescriptor::createTree(TreeNode *node)
+bool SemanticDescriptor::createTree(TreeNode *node)
 {
-    if (!node->content.concepts)
+    if (!node->content.concepts || !node->content.concepts->size())
         return node;
     Vec<std::string>::type items;
-
+    
     for (ConceptList::iterator it = node->content.concepts->begin(); it != node->content.concepts->end(); ++it)
     {
         items = (*it)->getItems();
-
+        if (!items.size())
+            throw std::runtime_error("ERREUR de CON");
+        bool isLineError = false;
         for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
             // m_is_stopped_by_rconcept = false;
-
-
-
-
             std::cout << "---------------------" <<  std::endl;
 
             TreeNode* temp_node = new TreeNode(
@@ -269,7 +267,7 @@ TreeNode *SemanticDescriptor::createTree(TreeNode *node)
             );
             if (startsWith(*itemIt, "'"))
             {
-                temp_node->content.isEnded = true;
+                // temp_node->content.isEnded = true;
                 // node->children.push_back(temp_node);
                 continue;
             }
@@ -293,36 +291,21 @@ TreeNode *SemanticDescriptor::createTree(TreeNode *node)
             {
                 temp_node->path.push_back(*itemIt);
                 node->children.push_back(temp_node);
-                createTree(temp_node);
-                // if (isErrorr(node))
-                // {
-                //     throw std::runtime_error("Error: Recursive path detected: " + *itemIt);
-                // }
-
-                // std::cout << "TEST DE MERDE" << std::endl;
-                // if (isInMap(m_rconcept_check_result, *itemIt) && !m_is_stopped_by_rconcept)
-                // {
-                //     std::cout << "\033[32mRecursive concept validated:\033[0m " << *itemIt << std::endl;
-                    // m_rconcept_check_result[*itemIt] = true;
-                //     m_is_stopped_by_rconcept = false;
-                // }
+                if (createTree(temp_node))
+                    isLineError = true;
             }
-            temp_node->path.push_back(*itemIt);
-            // else
-            // {
-                
-            //     // Si on trouve un chemin récursif
-            //     std::cout << "==========================" << std::endl;
-            //     std::cout << "\033[31mRecursive path detected but allowed:\033[0m : " << *itemIt << std::endl;
-
-            //     // Marquer ce concept comme a verifier
-            //     if (!isInMap(m_rconcept_check_result, *itemIt)) 
-            //         m_rconcept_check_result[*itemIt] = false;
-            //     m_is_stopped_by_rconcept = true;
-            // }
+            else {
+                isLineError = true;
+                // std::cout << "=========" << *itemIt << std::endl;
+                temp_node->path.push_back(*itemIt);
+            }
         }
+
+
+        if (!isLineError)
+            node->content.isInfinite = false;
     }
-    return node;
+    return node->content.isInfinite;
 }
 
 
@@ -353,19 +336,20 @@ void SemanticDescriptor::checkValidity()
     TreeNode* node = new TreeNode(CURSOR, m_concepts[CURSOR]);
     node->path.push_back(CURSOR);
 
-    createTree(node);
+    if (createTree(node))
+        throw  std::runtime_error("ERREUR !");
 
-    for (Map<bool>::iterator it = m_rconcept_check_result.begin();
-     it != m_rconcept_check_result.end();
-     ++it)
-    {
+    // for (Map<bool>::iterator it = m_rconcept_check_result.begin();
+    //  it != m_rconcept_check_result.end();
+    //  ++it)
+    // {
 
-        std::cout << "clé = " << it->first 
-                << ", valeur = " << (it->second ? "true" : "false")
-                << std::endl;
-        if (!it->second)
-            throw std::runtime_error("Error: Recursive path detected: " + it->first);
-    }
+    //     std::cout << "clé = " << it->first 
+    //             << ", valeur = " << (it->second ? "true" : "false")
+    //             << std::endl;
+    //     if (!it->second)
+    //         throw std::runtime_error("Error: Recursive path detected: " + it->first);
+    // }
 }
 
 void SemanticDescriptor::printTree(TreeNode* node, int level)
