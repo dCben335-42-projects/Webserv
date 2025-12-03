@@ -19,7 +19,6 @@ static bool is_rule_start(const std::string &line, size_t *startDef)
         ++i;
     if (i + 2 <= line.size() && line.compare(i, 2, "|=") == 0)
     {
-        std::cout << "1ndex: " <<  i << std::endl;
         *startDef = i + 2;
         return true;
     }
@@ -32,7 +31,6 @@ static bool is_rule_start(const std::string &line, size_t *startDef)
         ++i;
     if (i + 3 <= line.size() && line.compare(i, 3, "::=") == 0)
     {
-        std::cout << "index: " <<  i << std::endl;
         *startDef = i + 3;
         return true;
     }
@@ -54,25 +52,7 @@ static bool isOnlyWhitespace(const std::string& str, size_t start)
 
 void SemanticDescriptor::printSemanticDescriptor()
 {
-    for (std::map<std::string, ConceptList *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
-    {
-        std::cout << "---------------------" << std::endl;
-        const std::string &key = it->first;
-        ConceptList *conceptPtr = it->second;
-
-        std::cout << "Concept name: " << key << std::endl;
-        std::cout << "Number of rules: " << conceptPtr->size() << std::endl;
-
-        if (conceptPtr)
-        {
-            int index = 0;
-            for (ConceptList::iterator it = conceptPtr->begin(); it != conceptPtr->end(); ++it, ++index)
-            {
-                std::cout << "Rule " << index << ":" << std::endl;
-                (*it)->printRules();
-            }
-        }
-    }
+    log(m_concepts);
 }
 
 // Fonction utilitaire : découpe le texte en blocs selon is_rule_start
@@ -81,21 +61,19 @@ static void splitBlocks(const std::string &text, std::vector<std::string> &block
     std::istringstream iss(text);
     std::string line, current_block;
     size_t startDef = 0;
+    size_t startDefBefore = 0;
 
     while (std::getline(iss, line))
     {
         if (is_rule_start(line, &startDef) && !current_block.empty())
         {
-            if (isOnlyWhitespace(current_block, startDef))
-            {
+            if (isOnlyWhitespace(current_block, startDefBefore))
                 throw std::runtime_error("Benoit a mage ma soupel");
-            }
             blocks.push_back(current_block);
             current_block.clear();
-            std::cout <<  startDef << std::endl;
+            startDefBefore = startDef;
         }
         current_block += line + "\n";
-        std::cout << current_block << std::endl;
     }
     if (!current_block.empty())
         blocks.push_back(current_block);
@@ -116,10 +94,7 @@ static size_t findSeparator(const std::string &block, bool &has_eq)
         pos += ORRULE.length();
     }
     else
-    {
         pos += EQRULE.length();
-    }
-
     return pos;
 }
 
@@ -134,13 +109,11 @@ void SemanticDescriptor::createBnf(const std::string &m_content)
         const std::string &block = blocks[i];
         bool has_eq;
         size_t pos = findSeparator(block, has_eq);
-
         if (has_eq)
         {
             std::string concept_name = block.substr(0, pos - EQRULE.length());
             parseConceptName(concept_name);
         }
-
         parseRule(block, pos);
     }
 }
@@ -196,15 +169,11 @@ void SemanticDescriptor::parseConceptName(std::string &s)
 
 bool SemanticDescriptor::createTree(TreeNode *node)
 {
-    // if (!node->content.concepts || !node->content.concepts->size())
-    //     return true;
     Vec<std::string>::type items;
     
     for (ConceptList::iterator it = node->content.concepts->begin(); it != node->content.concepts->end(); ++it)
     {
         items = (*it)->getItems();
-        if (!items.size())
-            throw std::runtime_error("ERREUR de CON");
         bool isLineError = false;
         for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
@@ -263,29 +232,10 @@ bool SemanticDescriptor::createTree(TreeNode *node)
 
 void SemanticDescriptor::checkValidity()
 {
-    m_isStoppedByRConcept = false;
-
-    log("Bonjour\n");
-    log(m_concepts);
-    
     TreeNode* node = new TreeNode(CURSOR, m_concepts[CURSOR]);
-    node->path.push_back(CURSOR);
-    printSemanticDescriptor();
     if (createTree(node))
         throw  std::runtime_error("ERREUR !");
-}
-
-void SemanticDescriptor::printTree(TreeNode* node, int level)
-{
-    if (!node) return;
-
-    for (int i = 0; i < level; ++i)
-        std::cout << "  ";
-    std::cout << node->content.name << std::endl;
-
-    for (std::vector<TreeNode*>::iterator it = node->children.begin(); 
-         it != node->children.end(); ++it)
-    {
-        printTree(*it, level + 1);
-    }
+    log("----------------\n");
+    log(node);
+    log("----------------\n");
 }

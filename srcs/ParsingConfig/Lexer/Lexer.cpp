@@ -23,6 +23,9 @@ Lexer::Lexer(std::string const& filepath) {
     // val.printSemanticDescriptor();
     val.checkValidity();
 
+    
+    val.printSemanticDescriptor();
+
 
 
 

@@ -15,8 +15,6 @@
 
 class SemanticDescriptor {
     private:
-        bool m_isStoppedByRConcept;
-        std::map<std::string, bool> m_rconcept_check_result;
         std::map<std::string, TreeNodeData> m_data;
         std::map<std::string, std::vector<Concept *>*> m_concepts;
         std::string m_lastKey;
@@ -29,10 +27,8 @@ class SemanticDescriptor {
         void createBnf(const std::string& m_content);
         void printSemanticDescriptor();
         bool createTree(TreeNode* node);
-        void printTree(TreeNode* node, int depth);
         
         void checkValidity();
-        void createConcept();
     
 };
 

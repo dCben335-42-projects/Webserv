@@ -17,7 +17,7 @@ void log(const char *s)
     if(s)
         std::cout << s;
     else
-        std::cout << "null";
+        std::cout << Log::indent() << "null";
 }
 
 void log(char *s)

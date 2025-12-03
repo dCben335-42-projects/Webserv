@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include "../TreeNode/TreeNode.hpp"
 
 // -----------------------------
 // Type helpers for template iterators

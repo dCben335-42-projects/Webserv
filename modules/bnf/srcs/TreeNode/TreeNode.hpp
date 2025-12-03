@@ -13,4 +13,6 @@ class TreeNode {
         std::vector<TreeNode *> children;
 };
 
+std::ostream& operator<<(std::ostream& os, const TreeNode& data);
+
 #endif

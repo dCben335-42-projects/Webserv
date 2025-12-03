@@ -2,6 +2,30 @@
 #define UTILS_TPP
 
 #include "./utils.hpp"
+#include "../Log/Log.hpp"
+
+
+#include <string>
+
+template<typename A, typename B>
+struct is_same {
+    static const bool value = false;
+};
+
+template<typename A>
+struct is_same<A, A> {
+    static const bool value = true;
+};
+
+
+template<typename T>
+struct is_string {
+    static const bool value = is_same<T, std::string>::value;
+};
+
+
+
+
 
 // -----------------------------
 // getOrInsert
@@ -29,7 +53,7 @@ void printMapKeys(const Map<T>& m)
 {
     for (typename Map<T>::const_iterator it = m.begin(); it != m.end(); ++it)
         std::cout << it->first << std::endl;
-}
+} 
 
 // -----------------------------
 // log()
@@ -38,6 +62,7 @@ void printMapKeys(const Map<T>& m)
 template<typename T>
 void log(const T &v)
 {
+    // std::cout << Log::indent() << v;
     std::cout << v;
 }
 
@@ -47,38 +72,50 @@ void log(T *ptr)
     if(ptr)
         log(*ptr);  // recursive call
     else
-        std::cout << "null";
+        std::cout << Log::indent() << "null";
 }
 
 template <typename T>
 void log(const std::vector<T> &vec)
 {
-    std::cout << "[";
+    std::cout << Log::indent() << "[\n";
+    Log::incrementIndent();
     for (size_t i = 0; i < vec.size(); ++i)
     {
         log(vec[i]);
         if (i + 1 < vec.size())
-            std::cout << ", ";
+            std::cout << ",\n";
     }
-    std::cout << "]";
+    Log::decrementIndent();
+    std::cout << "\n" << Log::indent() << "]";
 }
 
 template<typename K, typename V>
 void log(const std::map<K,V>& m)
 {
-    std::cout << "{\n";
+    std::cout << Log::indent() << "{\n";
+    Log::incrementIndent();
     typename std::map<K,V>::const_iterator it = m.begin();
     typename std::map<K,V>::const_iterator end = m.end();
+    
     while(it != end)
     {
-        std::cout << "\t";
-
+        std::cout << Log::indent();
         log(it->first);
         std::cout << ": ";
-        log(it->second);
+        if (!is_string<V>::value)
+        {
+            Log::incrementIndent();
+            std::cout << "\n";
+            log(it->second);
+            Log::decrementIndent();
+        }
+        else 
+            log(it->second);
         if (++it != end) std::cout << ",\n";
     }
-    std::cout << "\n}";
+    Log::decrementIndent();
+    std::cout << "\n" << Log::indent() << "}";
 }
 
 // -----------------------------

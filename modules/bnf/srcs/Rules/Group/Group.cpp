@@ -26,9 +26,9 @@ std::string Group::getPrintableValue() const {
     std::string s = std::string("{ Group: [");
     for (size_t i = 0; i < items.size(); ++i) {
         if (i != 0)
-            s + ", ";
-        s + items[i];
+            s += ", ";
+        s += items[i];
     }
-    s + "]}";
+    s += "]}";
     return s;
 }

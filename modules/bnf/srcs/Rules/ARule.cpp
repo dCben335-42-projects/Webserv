@@ -3,6 +3,7 @@
 #include "./Sequence/Sequence.hpp"
 #include "./Option/Option.hpp"
 #include "./Symbol/Symbol.hpp"
+#include "../Log/Log.hpp"
 
 using namespace bnf;
 
@@ -90,6 +91,6 @@ BnfMap ARule::getMap(const std::string &opener)
 }
 
 std::ostream& operator<<(std::ostream& os, const ARule& data) {
-    os << data.getPrintableValue();
+    os << Log::indent() << data.getPrintableValue();
     return os;
 }

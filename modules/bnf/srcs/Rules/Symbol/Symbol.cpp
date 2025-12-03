@@ -29,7 +29,7 @@ const std::string& Symbol::getValue() const {
 }
 
 std::string Symbol::getPrintableValue() const {
-    std::string s = std::string("{Symbol: ") + value + "}";
+    std::string s = std::string("{ Symbol: ") + value + "}";
     return s;
 }
 
