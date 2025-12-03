@@ -12,24 +12,27 @@
 #include "../Concept/Concept.hpp"
 #include "../TreeNodeData/TreeNodeData.hpp"
 #include "../TreeNode/TreeNode.hpp"
+#include "../utils/utils.hpp"
+
+typedef std::vector<Concept *> ConceptList;
 
 class SemanticDescriptor {
     private:
-        std::map<std::string, TreeNodeData> m_data;
-        std::map<std::string, std::vector<Concept *>*> m_concepts;
+        Map<TreeNodeData>::type m_data;
+        Map<ConceptList *>::type m_concepts;
         std::string m_lastKey;
-        void parseConceptName(std::string& m_content);
-        void parseRule(const std::string& m_content, size_t cursor);
-    public:
-        SemanticDescriptor() {};
-        ~SemanticDescriptor() {};
-        
-        void createBnf(const std::string& m_content);
-        void printSemanticDescriptor();
-        bool createTree(TreeNode* node);
-        
+        void parseConceptName(std::string&);
+        void parseRule(const std::string&, size_t);
         void checkValidity();
-    
+        bool hasRecursiveError(TreeNode* node);
+    public:
+        SemanticDescriptor(const std::string& m_content);
+        ~SemanticDescriptor();
+
+        void printSemanticDescriptor();
+        Map<ConceptList *>::type getConcepts() const;
 };
+
+std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);
 
 #endif

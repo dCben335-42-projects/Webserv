@@ -3,17 +3,15 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include "bnf.hpp"
 
 class Lexer {
+    private:
+        std::string m_content;
+        // SemanticDescriptor m_semanticDescriptor;
     public:
         Lexer(std::string const& filepath);
         ~Lexer();
 
-        // Return the raw content of the file provided to the constructor
         const std::string& getContent() const;
-
-    private:
-        void createBnf();
-        // stores the whole file content read by the constructor
-        std::string m_content;
 };
