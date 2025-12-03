@@ -25,6 +25,13 @@ struct Map {
     typedef typename type::const_iterator const_iterator;
 };
 
+// template <typename S, typename T>
+// struct Map {
+//     typedef std::map<S, T> type;
+//     typedef typename type::iterator iterator;
+//     typedef typename type::const_iterator const_iterator;
+// };
+
 // -----------------------------
 // String utilities
 // -----------------------------

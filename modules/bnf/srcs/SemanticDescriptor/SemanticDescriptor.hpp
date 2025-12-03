@@ -28,8 +28,6 @@ class SemanticDescriptor {
     public:
         SemanticDescriptor(const std::string& m_content);
         ~SemanticDescriptor();
-
-        void printSemanticDescriptor();
         Map<ConceptList *>::type getConcepts() const;
 };
 

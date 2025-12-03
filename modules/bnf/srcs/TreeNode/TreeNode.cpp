@@ -22,7 +22,7 @@ std::ostream& operator<<(std::ostream& os, const TreeNode& data) {
         std::cout << Log::indent();
         log(data.children[i]);
     }
-        Log::decrementIndent();
+    Log::decrementIndent();
 
     return os;
 }

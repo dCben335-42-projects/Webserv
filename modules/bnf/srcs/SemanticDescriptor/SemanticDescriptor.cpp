@@ -37,41 +37,44 @@ static void splitBlocks(const std::string &text, std::vector<std::string> &block
 {
     std::istringstream iss(text);
     std::string line, current_block;
-    size_t startDef = 0;
-    size_t startDefBefore = 0;
+    size_t startDef = 0, prevStartDef = 0;
 
     while (std::getline(iss, line))
     {
-        if (is_rule_start(line, &startDef) && !current_block.empty())
-        {
-            if (isOnlyWhitespace(current_block, startDefBefore))
+        bool start = is_rule_start(line, &startDef);
+
+        if (start && !current_block.empty()) {
+            if (isOnlyWhitespace(current_block, prevStartDef))
                 throw std::runtime_error(ERR_CONCEPT_NOT_DEFINED);
             blocks.push_back(current_block);
             current_block.clear();
-            startDefBefore = startDef;
+            prevStartDef = startDef;
         }
-        current_block += line + "\n";
+
+        current_block.append(line);
+        current_block.append(1, '\n');
     }
+
     if (!current_block.empty())
         blocks.push_back(current_block);
 }
 
+
 static size_t findSeparator(const std::string &block, bool &has_eq)
 {
-    size_t pos = block.find(EQRULE);
-    has_eq = true;
+    size_t pos;
 
-    if (pos == std::string::npos)
-    {
-        pos = block.find(ORRULE);
-        if (pos == std::string::npos)
-            throw std::runtime_error(ERR_CONCEPT_NOT_DEFINED);
-        has_eq = false;
-        pos += ORRULE.length();
+    if ((pos = block.find(EQRULE)) != std::string::npos) {
+        has_eq = true;
+        return pos + EQRULE.length();
     }
-    else
-        pos += EQRULE.length();
-    return pos;
+
+    if ((pos = block.find(ORRULE)) != std::string::npos) {
+        has_eq = false;
+        return pos + ORRULE.length();
+    }
+
+    throw std::runtime_error(ERR_CONCEPT_NOT_DEFINED);
 }
     
 SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
@@ -96,11 +99,6 @@ SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
 }
 
 SemanticDescriptor::~SemanticDescriptor() {}
-
-void SemanticDescriptor::printSemanticDescriptor()
-{
-    log(m_concepts);
-}
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
