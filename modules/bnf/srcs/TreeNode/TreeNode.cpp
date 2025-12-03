@@ -5,7 +5,7 @@
 
 TreeNode::TreeNode(TreeNodeData& content, std::vector<std::string> path) : content(content), path(path) {}
 
-TreeNode::TreeNode(std::string name, std::vector<Concept *> *concepts)
+TreeNode::TreeNode(std::string name, ConceptList concepts)
     : content(*(new TreeNodeData(name, concepts)))
 {
     path.push_back(name);

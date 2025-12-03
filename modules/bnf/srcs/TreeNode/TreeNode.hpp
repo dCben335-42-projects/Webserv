@@ -6,7 +6,7 @@
 class TreeNode {
     public:
         TreeNode(TreeNodeData& content, std::vector<std::string> path);
-        TreeNode(std::string name, std::vector<Concept *> *concepts);
+        TreeNode(std::string name, ConceptList concepts);
         ~TreeNode() {};
         TreeNodeData &content;
         std::vector<std::string> path;

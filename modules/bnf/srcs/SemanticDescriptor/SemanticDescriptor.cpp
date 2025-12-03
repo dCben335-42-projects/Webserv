@@ -103,7 +103,7 @@ SemanticDescriptor::~SemanticDescriptor() {}
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
     Concept *concept = new Concept();
-    m_concepts[m_lastKey]->push_back(concept);
+    m_concepts[m_lastKey].push_back(concept);
     std::istringstream iss(m_content.substr(cursor));
     std::string word;
     ARule *arule = NULL;
@@ -146,15 +146,13 @@ void SemanticDescriptor::parseConceptName(std::string &s)
 
     if (m_concepts.find(s) != m_concepts.end())
         throw std::runtime_error(ERR_CONCEPT_ALREADY_DEFINED + s);
-
-    m_concepts[s] = new ConceptList();
     m_lastKey = s;
 }
 
 bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
 {
-    for (ConceptList::iterator it = node->content.concepts->begin();
-         it != node->content.concepts->end(); ++it)
+    for (ConceptList::iterator it = node->content.concepts.begin();
+         it != node->content.concepts.end(); ++it)
     {
         Vec<std::string>::type items = (*it)->getItems();
         bool isLineError = false;
@@ -198,7 +196,7 @@ void SemanticDescriptor::checkValidity()
         throw  std::runtime_error("ERREUR !");
 }
 
-Map<ConceptList *>::type SemanticDescriptor::getConcepts() const
+Map<ConceptList>::type SemanticDescriptor::getConcepts() const
 {
     return m_concepts;
 }

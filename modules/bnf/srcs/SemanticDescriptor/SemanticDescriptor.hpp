@@ -14,12 +14,10 @@
 #include "../TreeNode/TreeNode.hpp"
 #include "../utils/utils.hpp"
 
-typedef std::vector<Concept *> ConceptList;
-
 class SemanticDescriptor {
     private:
         Map<TreeNodeData>::type m_data;
-        Map<ConceptList *>::type m_concepts;
+        Map<ConceptList>::type m_concepts;
         std::string m_lastKey;
         void parseConceptName(std::string&);
         void parseRule(const std::string&, size_t);
@@ -28,7 +26,7 @@ class SemanticDescriptor {
     public:
         SemanticDescriptor(const std::string& m_content);
         ~SemanticDescriptor();
-        Map<ConceptList *>::type getConcepts() const;
+        Map<ConceptList>::type getConcepts() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);
