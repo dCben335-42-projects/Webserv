@@ -13,6 +13,8 @@
 #include "../TreeNodeData/TreeNodeData.hpp"
 #include "../TreeNode/TreeNode.hpp"
 #include "../utils/utils.hpp"
+#include "../Exception/ConceptAlreadyDefinedException.hpp"
+#include "../Exception/InvalidConceptNameException.hpp"
 
 class SemanticDescriptor {
     private:

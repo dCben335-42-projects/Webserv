@@ -79,23 +79,29 @@ static size_t findSeparator(const std::string &block, bool &has_eq)
     
 SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
     std::vector<std::string> blocks;
-    splitBlocks(m_content, blocks);
-
-    for (size_t i = 0; i < blocks.size(); ++i)
-    {
-        const std::string &block = blocks[i];
-        bool has_eq;
-        size_t pos = findSeparator(block, has_eq);
-        if (has_eq)
+    
+    try {
+        splitBlocks(m_content, blocks);
+        for (size_t i = 0; i < blocks.size(); ++i)
         {
-            std::string conceptName = block.substr(0, pos - EQRULE.length());
-            if(miniRegex(conceptName, "[a-zA-Z]*"))
-                throw std::runtime_error(ERR_INVALID_CONCEPT_NAME); 
-            parseConceptName(conceptName);
+            const std::string &block = blocks[i];
+            bool has_eq;
+            size_t pos = findSeparator(block, has_eq);
+            if (has_eq)
+            {
+                std::string conceptName = block.substr(0, pos - EQRULE.length());
+                if(miniRegex(conceptName, "[a-zA-Z]*"))
+                    throw InvalidConceptNameException(conceptName);
+                parseConceptName(conceptName);
+            }
+            parseRule(block, pos);
         }
-        parseRule(block, pos);
+        this->checkValidity();
+    } catch (const SemanticException &e)
+    {
+        std::cout << e.getClassId();
+        std::cout << "\033[33m" << e.what() << "\033[0m" << std::endl;
     }
-    this->checkValidity();
 }
 
 SemanticDescriptor::~SemanticDescriptor() {}
@@ -122,7 +128,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
             if (word != DIVIDER)
             {
                 if(!validate_string_strict(word))
-                    throw std::runtime_error(ERR_INVALID_CONCEPT_NAME); 
+                    throw InvalidConceptNameException(word); 
                 arule->addItem(word);
                 if (!map.hasClosure)
                     break;
@@ -145,7 +151,7 @@ void SemanticDescriptor::parseConceptName(std::string &s)
         throw std::runtime_error(ERR_INVALID_CONCEPT_NAME);
 
     if (m_concepts.find(s) != m_concepts.end())
-        throw std::runtime_error(ERR_CONCEPT_ALREADY_DEFINED + s);
+        throw ConceptAlreadyDefinedException(s);
     m_lastKey = s;
 }
 
