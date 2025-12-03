@@ -1,10 +1,10 @@
 # include "HttpServer.hpp"
-# include "HttpRequest.hpp"
-# include "HttpResponse.hpp"
 # include "config.hpp"
 # include <unistd.h>
 # include <cstring>
 # include <stdexcept> 
+
+
 
 HttpServer::HttpServer(unsigned short port)
     : m_socket(-1), m_port(port)
@@ -40,14 +40,11 @@ HttpServer::~HttpServer()
         close(m_socket);
 }
 
-void HttpServer::handleClient(int clientSocket)
+void HttpServer::respond(HttpRequest &req, HttpResponse &res)
 {
-    HttpResponse    res;
-    HttpRequest     req;
-
     try
     {
-        req.read(clientSocket).parse();
+        req.read().parse();
         std::cout << "\n----- Request Start -----" << std::endl;
         std::cout << req << std::endl;
 
@@ -57,19 +54,17 @@ void HttpServer::handleClient(int clientSocket)
         res.setStatusCode(200);
         res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
         res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
-        res.sendResponse(clientSocket);
+        res.sendRes();
         std::cout << res << std::endl;
         std::cout << "----- Request End -----\n" << std::endl;
     }
-    catch(const std::exception& e)
+    catch(const AHttpError &e)
     {
-        std::cerr << e.what() << '\n';
-        res.setStatusCode(501);
+        res.setStatusCode(e.getStatusCode());
         res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_JSON);
-        res.setBody("{\n\"error\": \"" + std::string(e.what()) + "\"\n}");
-        
+        res.setBody("{\n\t\"status\": \"error\",\n\t\"message\": \"" + std::string(e.what()) + "\"\n}");
         std::cout << res << std::endl;
-        res.sendResponse(clientSocket);
+        res.sendRes();
     }
 }
 
@@ -102,6 +97,12 @@ void HttpServer::createPollClient(void)
 }
 
     
+void HttpServer::handleClient(int clientSocket)
+{
+    HttpRequest req(clientSocket);
+    HttpResponse res(clientSocket);
+    respond(req, res);
+}
 
 void HttpServer::run()
 {

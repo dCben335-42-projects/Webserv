@@ -5,6 +5,10 @@
 #include <poll.h>
 #include <vector>
 
+# include "HttpRequest.hpp"
+# include "HttpResponse.hpp"
+# include "httpErrors.hpp" 
+
 class HttpServer
 {
     private:
@@ -13,9 +17,10 @@ class HttpServer
         struct sockaddr_in      m_address;
         std::vector<pollfd>     m_pollFds;
 
-        void    createPoll(int socket);
-        void    handleClient(int clientSocket); 
-        void    createPollClient(void);
+        void	createPoll(int socket);
+        void	respond(HttpRequest &req, HttpResponse &res); 
+		void	handleClient(int clientSocket); 
+        void	createPollClient(void);
 
     public:
         HttpServer(unsigned short port);

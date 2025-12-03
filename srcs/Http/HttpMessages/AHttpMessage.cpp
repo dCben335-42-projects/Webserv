@@ -3,17 +3,9 @@
 #include "config.hpp"
 #include "Number.hpp"
 
-AHttpMessage::AHttpMessage(void) :
-    m_method(Method(GET)) {}
-AHttpMessage::AHttpMessage(const std::string &method) :
-    m_method(Method(method))
-{
-}
-
-AHttpMessage::AHttpMessage(const EMethodType &method) :
-    m_method(Method(method))
-{
-}
+AHttpMessage::AHttpMessage(int socket):
+    m_socket(socket)
+{}
 
 AHttpMessage::~AHttpMessage() {}
 

@@ -14,11 +14,13 @@ const StatusCodeReason g_statusCodes[] = {
     {200,   "OK"},
     {201,   "Created"},
     {204,   "No Content"},
+    
     {400,   "Bad Request"},
     {401,   "Unauthorized"},
     {403,   "Forbidden"},
     {404,   "Not Found"},
-    {405,   "Method Not Allowed"},
+    {405,   "Method Not Allowedsdawd"},
+
     {413,   "Payload Too Large"},
     {414,   "URI Too Long"},
     {500,   "Internal Server Error"},
@@ -26,14 +28,8 @@ const StatusCodeReason g_statusCodes[] = {
     {0,     "Unknown Status"}
 };
 
-HttpResponse::HttpResponse(): AHttpMessage(GET)
-{
-}
-
-HttpResponse::~HttpResponse()
-{
-}
-
+HttpResponse::HttpResponse(int socket): AHttpMessage(socket) {}
+HttpResponse::~HttpResponse() {}
 
 // ANCHOR Setters
 void HttpResponse::setStatusCode(unsigned short code) {
@@ -69,7 +65,7 @@ std::string HttpResponse::getHead() const
 
 
 // ANCHOR Send response
-void HttpResponse::sendResponse(int clientSocket)
+void HttpResponse::sendRes()
 {
     std::ostringstream responseStream;
     responseStream << getHead();
@@ -79,7 +75,7 @@ void HttpResponse::sendResponse(int clientSocket)
     responseStream << HEADER_LINE_ENDING;
     responseStream << m_body;
     std::string response = responseStream.str();
-    send(clientSocket, response.c_str(), response.size(), 0);
+    send(m_socket, response.c_str(), response.size(), 0);
 }
 
 

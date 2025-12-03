@@ -15,9 +15,8 @@
 #include <iostream>  
 
 // ANCHOR Constructors / Destructors
-HttpRequest::HttpRequest(): AHttpMessage() {}
+HttpRequest::HttpRequest(int socket): AHttpMessage(socket) {}
 HttpRequest::~HttpRequest() {}
-
 
 // ANCHOR Getters
 std::string HttpRequest::getRawRequest() const
@@ -41,9 +40,9 @@ void HttpRequest::setTarget(const std::string &path)
 
 
 // ANCHOR Reading Public method
-HttpRequest& HttpRequest::read(const int clientSocket)
+HttpRequest& HttpRequest::read()
 {
-    std::string         request = readHeaders(clientSocket);
+    std::string         request = readHeaders();
     const size_t        headersEnd = request.find(HEADER_ENDING);
     
     if (headersEnd == std::string::npos)
@@ -54,7 +53,7 @@ HttpRequest& HttpRequest::read(const int clientSocket)
     {
         const size_t bodyStart = headersEnd + std::strlen(HEADER_ENDING);
         const size_t received = request.size() - bodyStart;
-        request += readBody(clientSocket, contentLength, received);
+        request += readBody(contentLength, received);
     }
     if (!request.empty() && request[request.size() - 1] == '\0')
         request.resize(request.size() - 1);
@@ -138,7 +137,7 @@ size_t  HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t
 
 
 // ANCHOR Reading Private method
-std::string HttpRequest::readHeaders(const int clientSocket)
+std::string HttpRequest::readHeaders()
 {
     std::string     headers;
     ssize_t         bytesRead = 0;
@@ -146,7 +145,7 @@ std::string HttpRequest::readHeaders(const int clientSocket)
 
     while (headers.find(HEADER_LINE_ENDING) == std::string::npos)
     {
-        bytesRead = recv(clientSocket, buffer, HEADER_BUFFER_SIZE - 1, 0);
+        bytesRead = recv(m_socket, buffer, HEADER_BUFFER_SIZE - 1, 0);
         if (bytesRead <= 0)
             break;
         headers.append(buffer, bytesRead);
@@ -175,11 +174,7 @@ size_t HttpRequest::readContentLength(std::string &request, const size_t headers
     std::string clStr = request.substr(clPos, endPos - clPos);
     return Number::toSizeT(clStr);
 }
-std::string HttpRequest::readBody(
-    const int clientSocket,
-    const size_t contentLength,
-    size_t received
-)
+std::string HttpRequest::readBody(const size_t contentLength, size_t received)
 {
     std::string     body;
     char            buffer[HEADER_BUFFER_SIZE];
@@ -187,7 +182,7 @@ std::string HttpRequest::readBody(
     
     while (received < contentLength)
     {
-        bytesRead = recv(clientSocket, buffer, HEADER_BUFFER_SIZE - 1, 0);
+        bytesRead = recv(m_socket, buffer, HEADER_BUFFER_SIZE - 1, 0);
         if (bytesRead <= 0)
             break;
         body.append(buffer, bytesRead);

@@ -1,12 +1,12 @@
-#ifndef HTTP404ERROR_HPP
-#define HTTP404ERROR_HPP
+#ifndef HTTP_404_ERROR_HPP
+# define HTTP_404_ERROR_HPP
 
-#include "AHttError.hpp"
+#include "AHttpError.hpp"
 
-class Http404Error : public HttpError
+class Http404Error : public AHttpError
 {
     public:
-        Http404Error() : HttpError("404 Not Found", 404) {}
+        Http404Error() : AHttpError("404 Not Found", 404) {}
 };
 
 

@@ -15,25 +15,14 @@ class HttpRequest : public AHttpMessage
         std::string                         m_rawStr;
         std::string                         m_target;
 
-        std::string     readHeaders(const int clientSocket);
-        size_t          readContentLength(
-                            std::string &request,
-                            const size_t headersEnd
-                        );
-        std::string     readBody(
-                            const int clientSocket,
-                            const size_t contentLength,
-                            size_t received
-                        );
-
+        std::string     readHeaders();
+        size_t          readContentLength(std::string &request,const size_t headersEnd);
+        std::string     readBody(const size_t contentLength, size_t received);
         size_t          parseFirstLine(const std::string &rawRequest);
-        size_t          parseHeaderLine(
-                            const std::string &rawRequest,
-                            const size_t pos
-                        );
+        size_t          parseHeaderLine(const std::string &rawRequest, const size_t pos);
 
     public:
-        HttpRequest();
+        HttpRequest(int m_socket);
         ~HttpRequest();
         
         std::string     getRawRequest() const;
@@ -42,7 +31,7 @@ class HttpRequest : public AHttpMessage
         void            setRawRequest(const std::string &rawRequest);
         void            setTarget(const std::string &path);
         
-        HttpRequest&    read(const int clientSocket);
+        HttpRequest&    read();
         HttpRequest&    parse();
 };
 
