@@ -5,3 +5,6 @@ SRC_FILES += Rules/Option/Option.cpp
 SRC_FILES += Rules/Sequence/Sequence.cpp
 SRC_FILES += Rules/Symbol/Symbol.cpp
 SRC_FILES += SemanticDescriptor/SemanticDescriptor.cpp
+SRC_FILES += TreeNodeData/TreeNodeData.cpp
+SRC_FILES += TreeNode/TreeNode.cpp
+SRC_FILES += utils/utils.cpp

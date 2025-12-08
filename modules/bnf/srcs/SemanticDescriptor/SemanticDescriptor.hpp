@@ -1,30 +1,40 @@
 #ifndef SEMANTIC_DESCRIPTOR_HPP
 #define SEMANTIC_DESCRIPTOR_HPP
 
-#include <map>
 #include <vector>
+
+#include "Map.hpp"
 #include "bnf_defs.hpp"
-#include "../Rules/ARule.hpp"
+
 #include "../Rules/Group/Group.hpp"
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
 
+#include "../TreeNode/TreeNode.hpp"
+#include "../utils/utils.hpp"
+
+typedef std::vector<Concept *> ConceptList;
+
+
 class SemanticDescriptor {
     private:
-        std::map<std::string, std::vector<Concept *>*> m_concepts;
-        std::string m_last_key;
-        void parseConceptName(std::string& m_content);
-        size_t parseRule(const std::string& m_content, size_t cursor, size_t concept_count);
-        public:
-        SemanticDescriptor() {};
-        ~SemanticDescriptor() {};
-        
-        void createBnf(const std::string& m_content);
+        Map<TreeNodeData>::type m_data;
+        Map<ConceptList *>::type m_concepts;
+        std::string m_lastKey;
+        void parseConceptName(std::string&);
+        void parseRule(const std::string&, size_t);
+        void checkValidity();
+        bool hasRecursiveError(TreeNode* node);
+    public:
+        SemanticDescriptor(const std::string& m_content);
+        ~SemanticDescriptor();
+
         void printSemanticDescriptor();
-        void createConcept();
-    
+        Map<ConceptList *>::type getConcepts() const;
 };
+
+std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);
 
 #endif

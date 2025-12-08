@@ -12,9 +12,15 @@ class Concept {
         ~Concept();
 
         void setRule(ARule * rule);
-        void printRules();
+        void printRules() const;
+        std::vector<ARule *> getRules();
+        bool calledInConcept(std::string conceptName);
+        std::vector<std::string> getItems();
+        std::vector<ARule *> getValues() const;
     private:
         std::vector<ARule *> values;
 };
+
+std::ostream& operator<<(std::ostream& os, const Concept& data);
 
 #endif
