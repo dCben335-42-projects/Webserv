@@ -1,20 +1,22 @@
 #ifndef SEMANTIC_DESCRIPTOR_HPP
 #define SEMANTIC_DESCRIPTOR_HPP
 
-#include <map>
 #include <vector>
+
+#include "Map.hpp"
 #include "bnf_defs.hpp"
-#include "../Rules/ARule.hpp"
+
 #include "../Rules/Group/Group.hpp"
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
-#include "../TreeNodeData/TreeNodeData.hpp"
+
 #include "../TreeNode/TreeNode.hpp"
 #include "../utils/utils.hpp"
 
 typedef std::vector<Concept *> ConceptList;
+
 
 class SemanticDescriptor {
     private:

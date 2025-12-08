@@ -1,5 +1,4 @@
 SRC_FILES += Concept/Concept.cpp
-SRC_FILES += Log/Log.cpp
 SRC_FILES += Rules/ARule.cpp
 SRC_FILES += Rules/Group/Group.cpp
 SRC_FILES += Rules/Option/Option.cpp

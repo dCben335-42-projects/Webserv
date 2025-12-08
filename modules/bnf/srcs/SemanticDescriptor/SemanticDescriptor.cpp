@@ -1,10 +1,8 @@
-#include <string>
-#include <vector>
 #include <sstream>
-#include <stdexcept>
 #include <iostream>
 #include "./SemanticDescriptor.hpp"
-#include <algorithm>
+#include "Vector.hpp"
+#include "Logger.hpp"
 
 using namespace bnf;
 
@@ -172,7 +170,7 @@ bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
                 throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
             TreeNodeData data(item, m_concepts[item]);
-            TreeNode* temp_node = new TreeNode(getOrInsert(m_data, item, data)->second, node->path);
+            TreeNode* temp_node = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
 
             if (!isInContainer(temp_node->path, item))
             {

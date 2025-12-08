@@ -4,7 +4,11 @@
 #include <cstddef>
 #include <string>
 
-class Log {
+# define SPACE		' '
+# define TAP_SIZE	4
+
+class Log
+{
     private:
         static size_t m_indent;
     public:

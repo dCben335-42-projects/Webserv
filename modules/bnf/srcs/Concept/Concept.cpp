@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include "../utils/utils.hpp"
+#include "Logger.hpp"
 
 using namespace bnf;
 

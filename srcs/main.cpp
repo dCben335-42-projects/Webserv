@@ -5,34 +5,9 @@
 #include "HttpServer.hpp"
 #include "AppErrors.hpp"
 
-
-void printError(const std::string& message)
-{
-    std::cerr << RED << message << RESET << std::endl;
-}
-
-void printSuccess(const std::string& message)
-{
-    std::cout << GREEN << message << RESET << std::endl;
-}
-
-void printUrl(const AUrl& url)
-{
-    std::cout << BLUE << "URL: " << url.str() << RESET << std::endl;
-    std::cout << "  Scheme:   " << url.getProtocol() << std::endl;
-    std::cout << "  Host:     " << url.getHost() << std::endl;
-    std::cout << "  Port:     " << url.getPort() << std::endl;
-    std::cout << "  Path:     " << url.getPath() << std::endl;
-    std::cout << "  Fragment: " << url.getFragment() << std::endl;
-    std::cout << "  Query Parameters:" << std::endl;
-    const std::map<std::string, std::string>& query = url.getQuery();
-    for (std::map<std::string, std::string>::const_iterator it = query.begin(); it != query.end(); ++it)
-    {
-        std::cout << "    " << it->first << " = " << it->second << std::endl;
-    }
-}
 #include "Lexer.hpp"
 #include <iostream>
+#include "Logger.hpp"
 
 int main()
 {
@@ -42,9 +17,8 @@ int main()
     // std::cout << "Rule type: " << rule->getType() << std::endl;
     // std::cout << "Rule type: " << type<< std::endl;
     // delete rule;
-
     Lexer("config/def_language.txt");
-
+    std::cout << std::endl;
     // try {
     //     try
     //     {
