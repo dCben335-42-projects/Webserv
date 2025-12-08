@@ -32,7 +32,6 @@ SRC_FILES				:=
 MODULES_DIR 			= ..
 
 MODULE_KIT_DIR 			= $(MODULES_DIR)/kit
-MODULE_KIT_NAME			= $(MODULE_KIT_DIR)/libkit.a
 MODULE_KIT_INCLUDES		= $(MODULE_KIT_DIR)/includes
 MODULE_KIT_MK_OBJ		= $(MODULE_KIT_DIR)/config/obj.mk		
 # OBJS from MODULE_KIT => $(KIT_OBJS)
@@ -50,7 +49,7 @@ DEPS 	  				= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.d, $(SRCS))
 # rules
 all:  $(NAME) $(CONF_MK_OBJ)
 
-$(NAME): $(OBJS) $(MODULE_KIT_NAME)
+$(NAME): $(OBJS)
 	$(AR) $(NAME) $(OBJS) $(KIT_OBJS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile | $(MODULE_KIT_MK_OBJ)

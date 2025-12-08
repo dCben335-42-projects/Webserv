@@ -74,15 +74,15 @@ $(MODULE_KIT_NAME): force
 	$(MAKE) $(MAKE_FLAGS) -C $(MODULE_KIT_DIR);
 
 clean:
-	$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_BNF_DIR)
-	$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_LOG_DIR)
-	$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
+	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_BNF_DIR)
+	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_LOG_DIR)
+	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
 	$(RM) $(BUILD_DIR)
 
 fclean: clean
-	$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_BNF_DIR)
-	$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_LOG_DIR)
-	$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
+	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_BNF_DIR)
+	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_LOG_DIR)
+	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
 	$(RM) $(NAME)
 
 re: fclean all
