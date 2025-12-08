@@ -30,7 +30,7 @@ OBJS 				= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
 DEPS 	  			= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.d, $(SRCS))
 
 # rules
-all: $(NAME) $(CONF_MK_OBJ)
+all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(AR) $(NAME) $(OBJS)
@@ -40,7 +40,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	$(CXX) $(CXX_FLAGS) -o $@ -c $< $(INCLUDES_FLAGS)
 
 $(CONF_MK_OBJ): $(OBJS)
-	@echo "Generating $@..."
 	@echo -n "$(EXPORT_OBJS_VAR)=" > $@
 	@for o in $(OBJS); do echo -n "$$o " >> $@; done
 	@echo "" >> $@
@@ -49,8 +48,7 @@ clean:
 	$(RM) $(BUILD_DIR)
 
 fclean: clean
-	$(RM) $(NAME)
-	$(RM) $(CONF_MK_OBJ)
+	$(RM) $(NAME) $(CONF_MK_OBJ)
 
 re: fclean all
 
@@ -69,6 +67,5 @@ gen:
 	@echo "Generating sources.mk..."
 	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) SRC_FILES 0
 	@echo "Regenerating Makefile..."
-	$(MAKE) re
 
 .PHONY: gen

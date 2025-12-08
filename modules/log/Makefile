@@ -47,7 +47,7 @@ OBJS 					= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
 DEPS 	  				= $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.d, $(SRCS))
 
 # rules
-all:  $(NAME) $(CONF_MK_OBJ)
+all:  $(NAME)
 
 $(NAME): $(OBJS)
 	$(AR) $(NAME) $(OBJS) $(KIT_OBJS)
@@ -70,8 +70,7 @@ clean:
 
 fclean: clean
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
-	$(RM) $(NAME)
-	$(RM) $(CONF_MK_OBJ)
+	$(RM) $(NAME) $(CONF_MK_OBJ)
 
 re: fclean all
 
@@ -96,6 +95,5 @@ gen:
 	@echo "Generating sources.mk..."
 	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) SRC_FILES 0
 	@echo "Regenerating Makefile..."
-	$(MAKE) re
 
 .PHONY: gen
