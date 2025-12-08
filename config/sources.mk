@@ -4,6 +4,12 @@ SRC_FILES += Http/HttpMessages/HttpResponse/HttpResponse.cpp
 SRC_FILES += Http/HttpServer/HttpServer.cpp
 SRC_FILES += Http/Method/Method.cpp
 SRC_FILES += main.cpp
+<<<<<<< HEAD
+=======
+SRC_FILES += ParsingConfig/Lexer/Lexer.cpp
+>>>>>>> HttpMessages
 SRC_FILES += Utils/Errors/AppErrors/AppErrors.cpp
+SRC_FILES += Utils/Number/Number.cpp
+SRC_FILES += Utils/String/String.cpp
 SRC_FILES += Utils/Url/AUrl.cpp
 SRC_FILES += Utils/Url/Url.cpp

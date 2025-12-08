@@ -1,6 +1,7 @@
 #include "Method.hpp"
 #include <stdexcept>
 #include "config.hpp"
+#include "httpErrors.hpp"
 
 static const MethodType g_methodsType[] =
 {
@@ -11,6 +12,7 @@ static const MethodType g_methodsType[] =
     {.type = PATCH, .str = M_PATCH},
     {.type = NONE, .str = ""}
 };
+Method::Method(): m_type(NONE) {}
 
 Method::Method(const std::string &method)
 {
@@ -25,7 +27,7 @@ Method::Method(const std::string &method)
             return ;
         }
     }
-    throw std::invalid_argument("Invalid Method" + method);
+    throw Http501Error(method);
 }
 
 Method::Method(const EMethodType &method)
@@ -41,7 +43,7 @@ Method::Method(const EMethodType &method)
             return ;
         }
     }
-    throw std::invalid_argument("Invalid Method");
+    throw Http501Error("adawdaw");
 }
 
 Method &Method::operator=(const Method &other)

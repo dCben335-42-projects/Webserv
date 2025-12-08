@@ -1,22 +1,21 @@
 #ifndef HTPP_RESPONSE_CPP
 #define HTPP_RESPONSE_CPP
 
-#include <string>
 #include "AHttpMessage.hpp"
-#include <map>
+#include <ostream>
 
 class HttpResponse : public AHttpMessage
 {
     private:
         unsigned short  m_statusCode;
     public:
-        HttpResponse();
+        HttpResponse(int socket);
         ~HttpResponse();
 
         unsigned short      getStatusCode() const;
-        void                setStatusCode(unsigned short code);
         std::string         getHead() const;
-        void                sendResponse(int clientSocket);
+        void                setStatusCode(unsigned short code);
+        void                sendRes();
 };
 
 std::ostream &operator<<(std::ostream &o, HttpResponse const &response);

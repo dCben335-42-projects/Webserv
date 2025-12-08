@@ -1,6 +1,10 @@
-#include "HttpServer.hpp"
-#include "HttpResponse.hpp"
-#include "config.hpp"
+# include "HttpServer.hpp"
+# include "config.hpp"
+# include <unistd.h>
+# include <cstring>
+# include <stdexcept> 
+
+
 
 HttpServer::HttpServer(unsigned short port)
     : m_socket(-1), m_port(port)
@@ -22,12 +26,12 @@ HttpServer::HttpServer(unsigned short port)
     m_address.sin_family = SOCKET_IPV4;
     m_address.sin_addr.s_addr = SOCKET_INTERFACE;
     m_address.sin_port = htons(m_port);
-
     if (bind(m_socket, (struct sockaddr *)&m_address, sizeof(m_address)) < 0)
         throw std::runtime_error("Bind failed");
     if (listen(m_socket, SOMAXCONN) < 0)
         throw std::runtime_error("Listen failed");
-    std::cout << "Server started on port " << "localhost:" << m_port << std::endl;
+    std::cout << "Server started on port " << "http://localhost:" << m_port << std::endl;
+    createPoll(m_socket);
 }
 
 HttpServer::~HttpServer()
@@ -36,31 +40,95 @@ HttpServer::~HttpServer()
         close(m_socket);
 }
 
+void HttpServer::respond(HttpRequest &req, HttpResponse &res)
+{
+    try
+    {
+        req.read().parse();
+        std::cout << "\n----- Request Start -----" << std::endl;
+        std::cout << req << std::endl;
+
+        std::cout << "\n\n Raw request: \n"<<req.getRawRequest() << "\n"<< std::endl;
+        std::cout << "======> Response " << std::endl;
+        res.setStatusCode(200);
+        res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
+        res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
+        res.sendRes();
+        std::cout << res << std::endl;
+        std::cout << "----- Request End -----\n" << std::endl;
+    }
+    catch(const AHttpError &e)
+    {
+        res.setStatusCode(e.getStatusCode());
+        res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_JSON);
+        res.setBody("{\n\t\"status\": \"error\",\n\t\"message\": \"" + std::string(e.what()) + "\"\n}");
+        std::cout << res << std::endl;
+        res.sendRes();
+    }
+}
+
+void HttpServer::createPoll(int socket)
+{
+    pollfd  serverFd;
+
+    serverFd.fd = socket;
+    serverFd.events = POLLIN;
+    m_pollFds.push_back(serverFd);
+}
+
+
+void HttpServer::createPollClient(void)
+{   
+    struct sockaddr_in  clientAddr;
+    socklen_t           clientLen = sizeof(clientAddr);
+    int                 clientSocket;
+
+    try {
+        clientSocket = accept(m_socket, (struct sockaddr*)&clientAddr, &clientLen);
+        if (clientSocket < 0)
+            throw std::runtime_error("Accept failed");
+        createPoll(clientSocket);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+}
+
+    
+void HttpServer::handleClient(int clientSocket)
+{
+    HttpRequest req(clientSocket);
+    HttpResponse res(clientSocket);
+    respond(req, res);
+}
+
 void HttpServer::run()
 {
-    struct sockaddr_in clientAddr;
-    socklen_t clientLen = sizeof(clientAddr);
+    int     pollCount;
+    int     clientSocket;
+
     while (true)
     {
-        int clientSocket = accept(m_socket, (struct sockaddr *)&clientAddr, &clientLen);
-        if (clientSocket < 0)
+        pollCount = poll(m_pollFds.data(), m_pollFds.size(), -1);
+        if (pollCount < 0)
+            throw std::runtime_error("Poll failed");
+        
+        for (size_t i = 0; i < m_pollFds.size() && pollCount > 0; ++i)
         {
-            throw std::runtime_error("Accept failed");
+            if (!(m_pollFds[i].revents & POLLIN))
+                continue;
+            pollCount--;
+            if (m_pollFds[i].fd != m_socket)
+            {
+                clientSocket = m_pollFds[i].fd;
+                handleClient(clientSocket);
+                close(clientSocket);
+                m_pollFds.erase(m_pollFds.begin() + i);
+                i--;
+            }
+            else
+                createPollClient();
         }
-        char buffer[2048];
-
-
-        ssize_t bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-        if (bytesRead <= 0)
-            break;
-        buffer[bytesRead] = '\0';
-        std::cout << "Received request:\n"
-                  << buffer << std::endl;
-        HttpResponse    res;
-        res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
-        res.sendResponse(clientSocket);
-        std::cout << "Response Header :" << std::endl;
-        std::cout << res << std::endl;
-        close(clientSocket);
     }
 }

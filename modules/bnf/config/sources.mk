@@ -1,0 +1,7 @@
+SRC_FILES += Concept/Concept.cpp
+SRC_FILES += Rules/ARule.cpp
+SRC_FILES += Rules/Group/Group.cpp
+SRC_FILES += Rules/Option/Option.cpp
+SRC_FILES += Rules/Sequence/Sequence.cpp
+SRC_FILES += Rules/Symbol/Symbol.cpp
+SRC_FILES += SemanticDescriptor/SemanticDescriptor.cpp

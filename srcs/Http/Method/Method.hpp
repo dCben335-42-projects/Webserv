@@ -25,6 +25,7 @@ class Method {
         std::string     m_strType;
 
     public:
+        Method();
         explicit Method(const std::string& method);
         explicit Method(const EMethodType& method);
         ~Method();
@@ -33,7 +34,6 @@ class Method {
 
         EMethodType         getType() const;
         std::string         getStrType() const;
-        bool isValid(void) const;
 };
 
 #endif 

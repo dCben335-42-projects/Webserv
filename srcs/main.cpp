@@ -1,3 +1,4 @@
+// #include "bnf.hpp"
 #include <iostream>
 #include "Url.hpp"
 #include "config.hpp"
@@ -30,6 +31,8 @@ void printUrl(const AUrl& url)
         std::cout << "    " << it->first << " = " << it->second << std::endl;
     }
 }
+#include "Lexer.hpp"
+#include <iostream>
 
 int main()
 {
@@ -37,7 +40,7 @@ int main()
         try
         {
             Method get("GET");
-            HttpServer server(9058);
+            HttpServer server(DEFAULT_PORT);
             server.run();   
             // {
             //     Url<void> url("https://www.example.com:8080/path/to/resource?key1=value1&key2=value2#section1");

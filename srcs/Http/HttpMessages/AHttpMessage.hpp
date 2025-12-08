@@ -1,22 +1,21 @@
 #ifndef A_HTTP_MESSAGE_HPP
 # define A_HTTP_MESSAGE_HPP
 
+# include "Method.hpp"
 # include <string>
 # include <map>
-# include "Method.hpp"
 # include <iostream>
 
 class AHttpMessage
 {
     protected:
+        const int                           m_socket;
         std::map<std::string, std::string>  m_headers;
         Method                              m_method;
         std::string                         m_body;
 
-    public:
-        AHttpMessage();
-        AHttpMessage(const std::string &method);
-        AHttpMessage(const EMethodType &method);
+	public:
+        AHttpMessage(int socket);
         ~AHttpMessage();
 
         std::map<std::string, std::string>  getHeaders() const;
