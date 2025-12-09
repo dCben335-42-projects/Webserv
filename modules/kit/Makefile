@@ -43,25 +43,30 @@ YELLOW  						= \033[0;33m
 BLUE   							= \033[1;34m
 NC      						= \033[0m
 
+TOTAL_SRCS 						:= $(words $($(EXPORT_SRCS_VAR)))
+COMPILED_SRCS					:= 0
+
 # rules
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@echo "$(BLUE)$(ALIAS)Archiving $(NAME)...$(NC)"
+	@echo "\n$(BLUE)$(ALIAS) Archiving $(NAME)...$(NC)"
 	@$(AR) $(NAME) $(OBJS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	@$(MKDIR) $(@D)
-	@echo "$(GREEN)$(ALIAS) Compiling $<...$(NC)"
+	@$(eval COMPILED_SRCS=$(shell echo $$(($(COMPILED_SRCS)+1))))
+	@progress=$$(printf '#%.0s' $$(seq 1 $$(($(COMPILED_SRCS)*50/$(TOTAL_SRCS))))); \
+	printf "\r$(GREEN)$(ALIAS) Compiling $(NAME): [%-50s] %d/%d$(NC)" "$$progress" $(COMPILED_SRCS) $(TOTAL_SRCS);
 	@$(CXX) $(CXX_FLAGS) -o $@ -c $< $(INCLUDES_FLAGS)
 
 clean:
+	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
 	@$(RM) $(BUILD_DIR)
-	@echo "$(RED)$(ALIAS) Cleaned build objects.$(NC)"
 
 fclean: clean
-	@$(RM) $(NAME) $(CONF_MK_OBJ)
 	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
+	@$(RM) $(NAME) $(CONF_MK_OBJ)
 
 re: fclean all
 

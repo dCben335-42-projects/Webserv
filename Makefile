@@ -41,26 +41,17 @@ MODULES_DIR						= ./modules
 MODULE_BNF_DIR 					= $(MODULES_DIR)/bnf
 MODULE_BNF_NAME					= $(MODULE_BNF_DIR)/libbnf.a
 MODULE_BNF_INCLUDES				= $(MODULE_BNF_DIR)/includes
-MODULE_BNF_SRCS					= $(MODULE_BNF_DIR)/config/sources.mk
 MODULE_BNF_FLAGS 				= -L $(MODULE_BNF_DIR) -lbnf
--include $(MODULE_BNF_SRCS) 	# SRCS from MODULE_BNF => $(BNF_SRCS)
-BNF_SRCS 						:= $(addprefix $(MODULE_BNF_DIR)/, $(BNF_SRCS))
 
 MODULE_LOG_DIR 					= $(MODULES_DIR)/log
 MODULE_LOG_NAME					= $(MODULE_LOG_DIR)/liblog.a
 MODULE_LOG_INCLUDES				= $(MODULE_LOG_DIR)/includes
-MODULE_LOG_SRCS					= $(MODULE_LOG_DIR)/config/sources.mk
 MODULE_LOG_FLAGS 				= -L $(MODULE_LOG_DIR) -llog
--include $(MODULE_LOG_SRCS) 	# SRCS from MODULE_LOG => $(LOG_SRCS)
-LOG_SRCS 						:= $(addprefix $(MODULE_LOG_DIR)/, $(LOG_SRCS))
 
 MODULE_KIT_DIR 					= $(MODULES_DIR)/kit
 MODULE_KIT_NAME					= $(MODULE_KIT_DIR)/libkit.a
 MODULE_KIT_INCLUDES				= $(MODULE_KIT_DIR)/includes
-MODULE_KIT_SRCS					= $(MODULE_KIT_DIR)/config/sources.mk
 MODULE_KIT_FLAGS 				= -L $(MODULE_KIT_DIR) -lkit
--include $(MODULE_KIT_SRCS) 	# SRCS from MODULE_KIT => $(KIT_SRCS)
-KIT_SRCS 						:= $(addprefix $(MODULE_KIT_DIR)/, $(KIT_SRCS))
 
 MODULES_INCLUDES_FLAGS 			+= -I $(MODULE_BNF_INCLUDES) -I $(MODULE_LOG_INCLUDES) -I $(MODULE_KIT_INCLUDES)
 MODULES_FLAGS 					= $(MODULE_BNF_FLAGS) $(MODULE_LOG_FLAGS) $(MODULE_KIT_FLAGS)
@@ -74,53 +65,70 @@ YELLOW  						= \033[0;33m
 BLUE   							= \033[1;34m
 NC      						= \033[0m
 
+TOTAL_SRCS 						:= $(words $(SRCS))
+COMPILED_SRCS					:= 0
+
 # rules
 all: $(NAME)
 
-$(NAME): $(OBJS) $(MODULE_BNF_NAME) $(MODULE_LOG_NAME) $(MODULE_KIT_NAME)
-	@echo "$(BLUE)$(ALIAS) Linking $(NAME)...$(NC)"
+$(NAME): $(MODULE_BNF_NAME) $(MODULE_LOG_NAME) $(MODULE_KIT_NAME) $(OBJS)
+	@echo "\n$(BLUE)$(ALIAS) Linking $(NAME)...$(NC)"
 	@$(CXX) $(CXX_FLAGS) $(OBJS) -o $(NAME) $(INCLUDES_FLAGS) $(MODULES_FLAGS) 
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	@$(MKDIR) $(@D)
-	@echo "$(GREEN)$(ALIAS) Compiling $<...$(NC)"
+	@$(eval COMPILED_SRCS=$(shell echo $$(($(COMPILED_SRCS)+1))))
+	@progress=$$(printf '#%.0s' $$(seq 1 $$(($(COMPILED_SRCS)*50/$(TOTAL_SRCS))))); \
+	printf "\r$(GREEN)$(ALIAS) Compiling $(NAME): [%-50s] %d/%d$(NC)" "$$progress" $(COMPILED_SRCS) $(TOTAL_SRCS);
 	@$(CXX) $(CXX_FLAGS) -o $@ -c $< $(INCLUDES_FLAGS)
 
-$(MODULE_BNF_NAME): $(BNF_SRCS)
+$(MODULE_BNF_NAME): force
 	@echo "$(YELLOW)$(ALIAS) Generating bnf module library...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) -C $(MODULE_BNF_DIR);
 
-$(MODULE_LOG_NAME): $(LOG_SRCS)
+$(MODULE_LOG_NAME): force
 	@echo "$(YELLOW)$(ALIAS) Generating log module library...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) -C $(MODULE_LOG_DIR);
 
-$(MODULE_KIT_NAME): $(KIT_SRCS)
+$(MODULE_KIT_NAME): force
 	@echo "$(YELLOW)$(ALIAS) Generating kit module library...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) -C $(MODULE_KIT_DIR);
 
 clean:
+	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
+	@$(RM) $(BUILD_DIR)
+
+clean_libs: clean
+	@echo "$(YELLOW)$(ALIAS) Cleaning module libraries...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_BNF_DIR)
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
-	@$(RM) $(BUILD_DIR)
-	@echo "$(RED)$(ALIAS) Cleaned build objects.$(NC)"
 
-fclean: clean
+fclean_libs: fclean
+	@echo "$(YELLOW)$(ALIAS) Removing libraries and obj.mk...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_BNF_DIR)
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
-	@$(RM) $(NAME)
-	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
 
-re: fclean all
+fclean: clean
+	@echo "$(RED)$(ALIAS) Removing libraries and obj.mk...$(NC)"
+	@$(RM) $(NAME)
 
 val: all
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -q -s ./$(NAME) 
 
 run: all
-	./$(NAME)
+	@echo "$(GREEN)$(ALIAS) Running $(NAME)...$(NC)"
+	@echo "--------------------------\n"
+	@./$(NAME)
+
+re_libs: fclean_libs all
+re: fclean all
+
+force:
+	@true
 	
-.PHONY: all clean fclean re val run
+.PHONY: all clean fclean re val run force fclean_libs clean_libs
 
 -include $(DEPS)
 

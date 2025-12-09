@@ -58,7 +58,6 @@ KIT_OBJS 						:= $(addprefix $(MODULE_KIT_DIR)/, $(KIT_OBJS))
 
 INCLUDES_FLAGS 					+= -I $(MODULE_LOG_INCLUDES) -I $(MODULE_KIT_INCLUDES)
 
-
 # Colors
 RED     						= \033[0;31m
 GREEN   						= \033[0;32m
@@ -66,16 +65,21 @@ YELLOW  						= \033[0;33m
 BLUE   							= \033[1;34m
 NC      						= \033[0m
 
+TOTAL_SRCS 						:= $(words $($(EXPORT_SRCS_VAR)))
+COMPILED_SRCS					:= 0
+
 # rules
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LOG_OBJS) $(KIT_OBJS)
-	@echo "$(BLUE)$(ALIAS) Archiving $(NAME)...$(NC)"
+$(NAME): $(LOG_OBJS) $(KIT_OBJS) $(OBJS)
+	@echo "\n$(BLUE)$(ALIAS) Archiving $(NAME)...$(NC)"
 	@$(AR) $(NAME) $(OBJS) $(LOG_OBJS) $(KIT_OBJS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	@$(MKDIR) $(@D)
-	@echo "$(GREEN)$(ALIAS) Compiling $<...$(NC)"
+	@$(eval COMPILED_SRCS=$(shell echo $$(($(COMPILED_SRCS)+1))))
+	@progress=$$(printf '#%.0s' $$(seq 1 $$(($(COMPILED_SRCS)*50/$(TOTAL_SRCS))))); \
+	printf "\r$(GREEN)$(ALIAS) Compiling $(NAME): [%-50s] %d/%d$(NC)" "$$progress" $(COMPILED_SRCS) $(TOTAL_SRCS);
 	@$(CXX) $(CXX_FLAGS) -o $@ -c $< $(INCLUDES_FLAGS)
 
 $(MODULE_LOG_MK_OBJ): $(LOG_SRCS)
@@ -93,16 +97,23 @@ $(KIT_OBJS): $(MODULE_KIT_MK_OBJ)
 -include $(DEPS)
 
 clean:
+	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
+	@$(RM) $(BUILD_DIR)
+
+clean_libs: clean
+	@echo "$(YELLOW)$(ALIAS) Cleaning module libraries...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
-	@$(RM) $(BUILD_DIR)
-	@echo "$(RED)$(ALIAS) Cleaned build objects.$(NC)"
 
-fclean: clean
+fclean_libs: fclean
+	@echo "$(YELLOW)$(ALIAS) Removed libraries and obj.mk.$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
-	@$(RM) $(NAME) $(CONF_MK_OBJ)
+
+fclean: clean
 	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
+	@$(RM) $(NAME) $(CONF_MK_OBJ)
+
 
 re: fclean all
 
@@ -114,7 +125,7 @@ obj:
 	@echo "" >> $(CONF_MK_OBJ)
 
 
-.PHONY: all clean fclean re obj 
+.PHONY: all clean fclean re obj fclean_libs clean_libs
 
 gen:
 	@$(MKDIR) $(CONF_DIR)

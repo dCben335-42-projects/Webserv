@@ -56,16 +56,21 @@ YELLOW  						= \033[0;33m
 BLUE   							= \033[1;34m
 NC      						= \033[0m
 
+TOTAL_SRCS 						:= $(words $($(EXPORT_SRCS_VAR)))
+COMPILED_SRCS					:= 0
+
 # Rules
 all:  $(NAME)
 
-$(NAME): $(OBJS) $(KIT_OBJS)
-	@echo "$(BLUE)$(ALIAS)Archiving $(NAME)...$(NC)"
+$(NAME): $(KIT_OBJS) $(OBJS)
+	@echo "\n$(BLUE)$(ALIAS) Archiving $(NAME)...$(NC)"
 	@$(AR) $(NAME) $(OBJS) $(KIT_OBJS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp Makefile
 	@$(MKDIR) $(@D)
-	@echo "$(GREEN)$(ALIAS) Compiling $<...$(NC)"
+	@$(eval COMPILED_SRCS=$(shell echo $$(($(COMPILED_SRCS)+1))))
+	@progress=$$(printf '#%.0s' $$(seq 1 $$(($(COMPILED_SRCS)*50/$(TOTAL_SRCS))))); \
+	printf "\r$(GREEN)$(ALIAS) Compiling $(NAME): [%-50s] %d/%d$(NC)" "$$progress" $(COMPILED_SRCS) $(TOTAL_SRCS);
 	@$(CXX) $(CXX_FLAGS) -o $@ -c $< $(INCLUDES_FLAGS)
 
 $(MODULE_KIT_MK_OBJ): $(KIT_SRCS)
@@ -77,14 +82,20 @@ $(KIT_OBJS): $(MODULE_KIT_MK_OBJ)
 -include $(DEPS)
 
 clean:
-	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
+	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
 	@$(RM) $(BUILD_DIR)
-	@echo "$(RED)$(ALIAS) Cleaned build objects.$(NC)"
+
+clean_libs: clean
+	@echo "$(YELLOW)$(ALIAS) Cleaning module libraries...$(NC)"
+	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
 
 fclean: clean
-	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
-	@$(RM) $(NAME) $(CONF_MK_OBJ)
 	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
+	@$(RM) $(NAME) $(CONF_MK_OBJ)
+
+fclean_libs: fclean
+	@echo "$(RED)$(ALIAS) Removed libraries and obj.mk.$(NC)"
+	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
 
 re: fclean all
 
@@ -95,7 +106,7 @@ obj:
 	done
 	@echo "" >> $(CONF_MK_OBJ)
 
-.PHONY: all clean fclean re obj gen
+.PHONY: all clean fclean re obj gen fclean_libs clean_libs
 
 gen:
 	@$(MKDIR) $(CONF_DIR)
