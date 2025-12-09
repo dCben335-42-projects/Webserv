@@ -22,7 +22,7 @@ namespace bnf {
     static const std::string DIVIDER = "|";
     static const std::string EQRULE   = "::=";
     static const std::string ORRULE   = "|=";
-    static const std::string WHITESPACE   = " \t\n\r";
+    static const std::string WS   = " \t\n\r";
     static const std::string CURSOR   = "<head>";
     static const std::string ERR_INVALID_CONCEPT_NAME   = "\033[33mError: Concept name invalid\033[0m";
     static const std::string ERR_CONCEPT_ALREADY_DEFINED   = "\033[33mError: Concept name already defined\033[0m ";

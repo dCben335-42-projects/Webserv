@@ -21,10 +21,10 @@ enum ESecure {
 class TreeNodeData
 {
     public:
-        TreeNodeData(std::string name, std::vector<Concept *> *concepts);
+        TreeNodeData(std::string name, ConceptList concepts);
         ~TreeNodeData() {};
         std::string name;
-        std::vector<Concept *> *concepts;
+        ConceptList concepts;
         bool isInfinite;
         bool is_multiple() const;
 };

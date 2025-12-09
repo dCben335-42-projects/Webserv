@@ -14,24 +14,30 @@
 
 #include "../TreeNode/TreeNode.hpp"
 #include "../utils/utils.hpp"
-
-typedef std::vector<Concept *> ConceptList;
+#include "../Exception/ConceptAlreadyDefinedException.hpp"
+#include "../Exception/InvalidConceptNameException.hpp"
+#include "../Exception/ConceptHasNotDefinitionException.hpp"
+#include "../Exception/EmptyConceptNameException.hpp"
 
 class SemanticDescriptor {
     private:
+        TreeNode* tree;
+        std::vector<std::string> blocks;
         Map<TreeNodeData>::type m_data;
-        Map<ConceptList *>::type m_concepts;
+        Map<ConceptList>::type m_concepts;
         std::string m_lastKey;
-        void parseConceptName(std::string&);
+        bool isStartRule(const std::string &line, size_t *startDef);
+        void splitBlocks(std::istringstream &iss);
+        bool findSeparator(const std::string &block, size_t &pos);
+        void parseConceptName(std::string);
         void parseRule(const std::string&, size_t);
         void checkValidity();
         bool hasRecursiveError(TreeNode* node);
+        void parseBlocks();
     public:
         SemanticDescriptor(const std::string& m_content);
         ~SemanticDescriptor();
-
-        void printSemanticDescriptor();
-        Map<ConceptList *>::type getConcepts() const;
+        Map<ConceptList>::type getConcepts() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);

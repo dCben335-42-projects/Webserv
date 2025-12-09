@@ -105,3 +105,8 @@ bool isOnlyWhitespace(const std::string& str, size_t start)
     }
     return true;
 }
+
+std::string erasePaternWrapper(std::string &s, const std::string pattern)
+{
+    return s.erase(0, s.find_first_not_of(pattern)).erase(s.find_last_not_of(pattern) + 1);
+}
