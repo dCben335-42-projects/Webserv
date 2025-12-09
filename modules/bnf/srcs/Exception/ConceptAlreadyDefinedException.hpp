@@ -3,14 +3,14 @@
 
 #include <string>
 #include <stdexcept>
+#include "SemanticException.hpp"
 
-class ConceptAlreadyDefinedException : public std::runtime_error
+class ConceptAlreadyDefinedException : public SemanticException
 {
     public:
-        explicit ConceptAlreadyDefinedException(const std::string &message):
-            std::runtime_error("\033[33mConceptAlreadyDefinedException: Concept " +
-                message + " is already defined in semantic file.\033[0m\n"
-            )
+        explicit ConceptAlreadyDefinedException(const std::string &message)
+            : SemanticException("Concept \"" + message + "\" is already defined in semantic file.",
+                "ConceptAlreadyDefinedException")
         {};
 };
 

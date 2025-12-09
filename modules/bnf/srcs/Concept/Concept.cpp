@@ -7,7 +7,11 @@ using namespace bnf;
 
 Concept::Concept() {}
 
-Concept::~Concept() {}
+Concept::~Concept() {
+    for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it) {
+        delete (*it);
+    }
+}
 
 void Concept::setRule(ARule * rule) {
     values.push_back(rule);
