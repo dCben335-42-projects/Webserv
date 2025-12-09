@@ -114,8 +114,8 @@ fclean: clean
 	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
 	@$(RM) $(NAME) $(CONF_MK_OBJ)
 
-
 re: fclean all
+re_libs: fclean_libs all
 
 obj:
 	@echo -n "$(EXPORT_OBJS_VAR)=" > $(CONF_MK_OBJ)
@@ -125,7 +125,7 @@ obj:
 	@echo "" >> $(CONF_MK_OBJ)
 
 
-.PHONY: all clean fclean re obj fclean_libs clean_libs
+.PHONY: all clean fclean re re_libs obj fclean_libs clean_libs
 
 gen:
 	@$(MKDIR) $(CONF_DIR)

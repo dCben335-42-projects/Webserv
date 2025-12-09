@@ -98,6 +98,7 @@ fclean_libs: fclean
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
 
 re: fclean all
+re_libs: fclean_libs all
 
 obj:
 	@echo -n "$(EXPORT_OBJS_VAR)=" > $(CONF_MK_OBJ)
