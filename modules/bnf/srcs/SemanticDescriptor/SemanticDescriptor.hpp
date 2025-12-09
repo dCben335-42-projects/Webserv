@@ -17,7 +17,6 @@
 
 typedef std::vector<Concept *> ConceptList;
 
-
 class SemanticDescriptor {
     private:
         Map<TreeNodeData>::type m_data;

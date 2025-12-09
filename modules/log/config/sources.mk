@@ -1,2 +1,2 @@
-SRC_FILES += Log/Log.cpp
-SRC_FILES += test.cpp
+LOG_SRCS += ./srcs/Log/Log.cpp
+LOG_SRCS += ./srcs/test.cpp
