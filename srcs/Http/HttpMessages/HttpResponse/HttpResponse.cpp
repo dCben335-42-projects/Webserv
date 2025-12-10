@@ -5,6 +5,8 @@
 #include <iostream>
 #include "Number.hpp"
 
+#include <cerrno>
+
 struct StatusCodeReason {
     unsigned short code;
     std::string reason;
@@ -28,8 +30,19 @@ const StatusCodeReason g_statusCodes[] = {
     {0,     "Unknown Status"}
 };
 
-HttpResponse::HttpResponse(int socket): AHttpMessage(socket) {}
+HttpResponse::HttpResponse(): m_sentBytes(0) {}
 HttpResponse::~HttpResponse() {}
+
+// ANCHOR Reset
+void HttpResponse::reset()
+{
+    m_statusCode = 0;
+    m_sentBytes = 0;
+    m_fullResponse.clear();
+    m_headers.clear();
+    m_body.clear();
+    m_method = Method();
+}
 
 // ANCHOR Setters
 void HttpResponse::setStatusCode(unsigned short code) {
@@ -41,7 +54,16 @@ unsigned short  HttpResponse::getStatusCode() const {
     return m_statusCode;
 }
 
-std::string HttpResponse::getHead() const
+std::string HttpResponse::getFullResponse() const {
+    return m_fullResponse;
+}
+
+size_t HttpResponse::getSentBytes() const {
+    return m_sentBytes;
+}
+
+// ANCHOR Build head
+std::string HttpResponse::buildHead() const
 {
     std::ostringstream  head;
     std::string         reason;
@@ -65,17 +87,34 @@ std::string HttpResponse::getHead() const
 
 
 // ANCHOR Send response
-void HttpResponse::sendRes()
+void HttpResponse::build()
 {
     std::ostringstream responseStream;
-    responseStream << getHead();
+    responseStream << buildHead();
     std::map<std::string, std::string>::const_iterator it = m_headers.begin();
     for (; it != m_headers.end(); ++it)
         responseStream << it->first << ": " << it->second << HEADER_LINE_ENDING;
     responseStream << HEADER_LINE_ENDING;
     responseStream << m_body;
-    std::string response = responseStream.str();
-    send(m_socket, response.c_str(), response.size(), 0);
+    m_fullResponse = responseStream.str();;
+}
+
+bool HttpResponse::sendRes(int socket)
+{
+	if (m_fullResponse.empty())
+		return true;
+	std::cout << "Sending response, total size: " << m_fullResponse.size() << " bytes." << std::endl;
+    const char			*buf = m_fullResponse.c_str();
+    const size_t		remaining = m_fullResponse.size() - m_sentBytes;
+    const ssize_t		n = send(socket, buf + m_sentBytes, remaining, 0);
+
+    if (n < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return false;
+        throw std::runtime_error("send() failed");
+    }
+    m_sentBytes += n;
+    return (m_sentBytes >= m_fullResponse.size());
 }
 
 
@@ -83,7 +122,7 @@ void HttpResponse::sendRes()
 // ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, HttpResponse const &response)
 {
-    o << response.getHead() << static_cast<AHttpMessage const&>(response);
+    o << response.buildHead() << static_cast<AHttpMessage const&>(response);
     o << "\n"<< "Body:" << "\n" << response.getBody();
     return o;
 }

@@ -15,7 +15,7 @@
 #include <iostream>  
 
 // ANCHOR Constructors / Destructors
-HttpRequest::HttpRequest(int socket): AHttpMessage(socket) {}
+HttpRequest::HttpRequest() {}
 HttpRequest::~HttpRequest() {}
 
 // ANCHOR Getters
@@ -40,26 +40,6 @@ void HttpRequest::setTarget(const std::string &path)
 
 
 // ANCHOR Reading Public method
-HttpRequest& HttpRequest::read()
-{
-    std::string         request = readHeaders();
-    const size_t        headersEnd = request.find(HEADER_ENDING);
-    
-    if (headersEnd == std::string::npos)
-        throw std::runtime_error("Incomplete headers received");
-
-    const size_t contentLength = readContentLength(request, headersEnd);
-    if (contentLength > 0)
-    {
-        const size_t bodyStart = headersEnd + std::strlen(HEADER_ENDING);
-        const size_t received = request.size() - bodyStart;
-        request += readBody(contentLength, received);
-    }
-    if (!request.empty() && request[request.size() - 1] == '\0')
-        request.resize(request.size() - 1);
-    m_rawStr = request;
-    return *this;
-}
 
 // ANCHOR Parsing Public method
 HttpRequest& HttpRequest::parse()
@@ -135,26 +115,7 @@ size_t  HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t
 
 
 
-
-// ANCHOR Reading Private method
-std::string HttpRequest::readHeaders()
-{
-    std::string     headers;
-    ssize_t         bytesRead = 0;
-    char            buffer[HEADER_BUFFER_SIZE];
-
-    while (headers.find(HEADER_LINE_ENDING) == std::string::npos)
-    {
-        bytesRead = recv(m_socket, buffer, HEADER_BUFFER_SIZE - 1, 0);
-        if (bytesRead <= 0)
-            break;
-        headers.append(buffer, bytesRead);
-    }
-    if (bytesRead < 0)
-        throw std::runtime_error("Receive failed during header line");
-    return headers;
-}
-size_t HttpRequest::readContentLength(std::string &request, const size_t headersEnd)
+size_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
 {
     size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd); 
     if (clPos == std::string::npos)
@@ -174,21 +135,21 @@ size_t HttpRequest::readContentLength(std::string &request, const size_t headers
     std::string clStr = request.substr(clPos, endPos - clPos);
     return Number::toSizeT(clStr);
 }
-std::string HttpRequest::readBody(const size_t contentLength, size_t received)
+
+
+
+ssize_t HttpRequest::readOnce(int socketFd)
 {
-    std::string     body;
-    char            buffer[HEADER_BUFFER_SIZE];
-    ssize_t         bytesRead = 0;
-    
-    while (received < contentLength)
-    {
-        bytesRead = recv(m_socket, buffer, HEADER_BUFFER_SIZE - 1, 0);
-        if (bytesRead <= 0)
-            break;
-        body.append(buffer, bytesRead);
-        received += bytesRead;
-    }
-    if (bytesRead < 0)
-        throw std::runtime_error("Receive failed during body");
-    return body;
+    char    buffer[HEADER_BUFFER_SIZE];
+    const   ssize_t bytesRead = recv(
+        socketFd, buffer, HEADER_BUFFER_SIZE, 0
+    ); 
+
+    if (bytesRead < 0) 
+        throw std::runtime_error("recv() failed");
+    if (bytesRead == 0)
+        return 0;
+
+    m_rawStr.append(buffer, bytesRead);
+    return bytesRead;
 }

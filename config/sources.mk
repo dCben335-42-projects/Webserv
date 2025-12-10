@@ -1,4 +1,5 @@
 SRC_FILES += Files/FileHandler.cpp
+SRC_FILES += Http/HttpClient/HttpClient.cpp
 SRC_FILES += Http/HttpMessages/AHttpMessage.cpp
 SRC_FILES += Http/HttpMessages/HttpRequest/HttpRequest.cpp
 SRC_FILES += Http/HttpMessages/HttpResponse/HttpResponse.cpp

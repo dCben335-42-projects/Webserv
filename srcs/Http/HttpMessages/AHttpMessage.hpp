@@ -8,14 +8,13 @@
 
 class AHttpMessage
 {
-    protected:
-        const int                           m_socket;
+	protected:
         std::map<std::string, std::string>  m_headers;
         Method                              m_method;
         std::string                         m_body;
 
 	public:
-        AHttpMessage(int socket);
+        AHttpMessage();
         ~AHttpMessage();
 
         std::map<std::string, std::string>  getHeaders() const;

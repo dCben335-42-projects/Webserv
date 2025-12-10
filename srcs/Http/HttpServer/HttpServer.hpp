@@ -7,26 +7,28 @@
 
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
-# include "httpErrors.hpp" 
+// # include "httpErrors.hpp" 
+# include "HttpClient.hpp"
 
 class HttpServer
 {
-    private:
-        unsigned short          m_socket;
-        unsigned short          m_port;
-        struct sockaddr_in      m_address;
-        std::vector<pollfd>     m_pollFds;
+	private:
+		unsigned short			m_socket;
+		unsigned short			m_port;
+		struct sockaddr_in		m_address;
 
-        void	createPoll(int socket);
-        void	respond(HttpRequest &req, HttpResponse &res); 
-		void	handleClient(int clientSocket); 
-        void	createPollClient(void);
 
-    public:
-        HttpServer(unsigned short port);
-        ~HttpServer();
+		std::vector<pollfd>			m_pollFds;
+		std::map<int, HttpClient>   m_clients;
 
-        void run();
+		void	createPoll(int socket);
+		void	respond(HttpRequest &req, HttpResponse &res); 
+		void	createPollClient(void);
+	public:
+		HttpServer(unsigned short port);
+		~HttpServer();
+
+		void run();
 };
 
 #endif

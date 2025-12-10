@@ -7,15 +7,27 @@
 class HttpResponse : public AHttpMessage
 {
     private:
-        unsigned short  m_statusCode;
+        unsigned short	m_statusCode;
+        std::string		m_fullResponse;
+        size_t          m_sentBytes;
+
+
     public:
-        HttpResponse(int socket);
+        HttpResponse();
         ~HttpResponse();
 
         unsigned short      getStatusCode() const;
-        std::string         getHead() const;
+		std::string			getFullResponse() const;
+		size_t				getSentBytes() const;
+		
         void                setStatusCode(unsigned short code);
-        void                sendRes();
+
+        bool                sendRes(int socket);
+		void				build();
+		void                reset();
+
+		std::string		buildHead() const;
+
 };
 
 std::ostream &operator<<(std::ostream &o, HttpResponse const &response);

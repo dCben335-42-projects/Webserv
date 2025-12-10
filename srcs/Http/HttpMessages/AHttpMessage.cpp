@@ -3,12 +3,8 @@
 #include "config.hpp"
 #include "Number.hpp"
 
-AHttpMessage::AHttpMessage(int socket):
-    m_socket(socket)
-{}
-
+AHttpMessage::AHttpMessage(){}
 AHttpMessage::~AHttpMessage() {}
-
 
 // ANCHOR Getters
 std::map<std::string, std::string> AHttpMessage::getHeaders() const
