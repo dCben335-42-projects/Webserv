@@ -3,6 +3,7 @@
 #include "./SemanticDescriptor.hpp"
 #include "Vector.hpp"
 #include "Logger.hpp"
+#include "../utils/utils.hpp"
 
 using namespace bnf;
 

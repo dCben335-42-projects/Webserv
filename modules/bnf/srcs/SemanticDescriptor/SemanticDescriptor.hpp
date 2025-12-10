@@ -1,8 +1,6 @@
 #ifndef SEMANTIC_DESCRIPTOR_HPP
 #define SEMANTIC_DESCRIPTOR_HPP
 
-#include <vector>
-
 #include "Map.hpp"
 #include "bnf_defs.hpp"
 

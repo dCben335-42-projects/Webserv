@@ -111,7 +111,7 @@ fclean_libs: fclean
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
 
 fclean: clean
-	@echo "$(RED)$(ALIAS) Removing libraries and obj.mk...$(NC)"
+	@echo "$(RED)$(ALIAS) Removing $(NAME)...$(NC)"
 	@$(RM) $(NAME)
 
 val: all

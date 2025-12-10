@@ -1,11 +1,10 @@
 #ifndef CONCEPT_HPP
 #define CONCEPT_HPP
 
-#include <vector>
 #include <string>
 #include "bnf_defs.hpp"
 #include "../Rules/ARule.hpp"
-
+#include "Vector.hpp"
 
 class Concept {
     public:
