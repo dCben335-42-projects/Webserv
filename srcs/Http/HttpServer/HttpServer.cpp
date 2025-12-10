@@ -3,11 +3,10 @@
 # include <unistd.h>
 # include <cstring>
 # include <stdexcept> 
+# include "FileHandler.hpp"
+# include "httpErrors.hpp"
 
-
-
-HttpServer::HttpServer(unsigned short port)
-    : m_socket(-1), m_port(port)
+HttpServer::HttpServer(unsigned short port): m_socket(-1), m_port(port)
 {
 
     // SOCK_STREAM TCP
@@ -40,8 +39,10 @@ HttpServer::~HttpServer()
         close(m_socket);
 }
 
+
 void HttpServer::respond(HttpRequest &req, HttpResponse &res)
 {
+    const std::string ROOT = "files/www";
     try
     {
         req.read().parse();
@@ -49,10 +50,34 @@ void HttpServer::respond(HttpRequest &req, HttpResponse &res)
         std::cout << req << std::endl;
 
         std::cout << "\n\n Raw request: \n"<<req.getRawRequest() << "\n"<< std::endl;
-        std::cout << "======> Response " << std::endl;
+        std::cout << "======> Response " << std::endl;        
+        try
+        {
+            if (req.getTarget() == "/" && req.getHeader("Host") == "localhost:8080")
+            {
+                res.setBody(FileHandler::readFile(ROOT + "/index.html"));
+                res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
+            }
+            else
+            {
+                std::string safePath = FileHandler::getSafePath(ROOT, req.getTarget().substr(1));
+                res.setBody(FileHandler::readFile(safePath));
+                if (safePath.find(".html") != std::string::npos)
+                    res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
+                else if (safePath.find(".css") != std::string::npos)
+                    res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_CSS);
+                else if (safePath.find(".js") != std::string::npos)
+                    res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_JS);
+                else
+                    res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_PLAIN);
+            }
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr <<  RED << e.what() << RESET << '\n';
+            throw Http404Error();
+        }
         res.setStatusCode(200);
-        res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
-        res.setBody("<html><body><h1>Hello, World!</h1></body></html>");
         res.sendRes();
         std::cout << res << std::endl;
         std::cout << "----- Request End -----\n" << std::endl;
@@ -113,7 +138,6 @@ void HttpServer::run()
         pollCount = poll(m_pollFds.data(), m_pollFds.size(), -1);
         if (pollCount < 0)
             throw std::runtime_error("Poll failed");
-        
         for (size_t i = 0; i < m_pollFds.size() && pollCount > 0; ++i)
         {
             if (!(m_pollFds[i].revents & POLLIN))
