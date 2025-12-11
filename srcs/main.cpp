@@ -11,6 +11,7 @@
 
 int main()
 {
+    Lexer("config/def_language.txt");
     try {
         try
         {

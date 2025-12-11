@@ -1,4 +1,5 @@
 INCLUDES_FLAGS += -I ./srcs/Files
+INCLUDES_FLAGS += -I ./srcs/Http/HttpClient
 INCLUDES_FLAGS += -I ./srcs/Http/HttpErrors/4xx
 INCLUDES_FLAGS += -I ./srcs/Http/HttpErrors/4xx
 INCLUDES_FLAGS += -I ./srcs/Http/HttpErrors/4xx

@@ -7,6 +7,27 @@
 
 using namespace bnf;
 
+SemanticDescriptor::SemanticDescriptor() {}
+
+SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
+    std::cout << m_content;
+    if (m_content.empty())
+        return;
+    std::istringstream iss(m_content);
+    splitBlocks(iss);
+    parseBlocks();
+}
+
+SemanticDescriptor::~SemanticDescriptor() {
+    delete tree;
+
+    for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it) {
+        for (Vec<Concept*>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt) {
+            delete *conceptIt;
+        }
+    }
+}
+
 bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 {
     size_t size = line.size();
@@ -68,14 +89,6 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
     throw ConceptHasNotDefinitionException();
 }
 
-SemanticDescriptor::SemanticDescriptor() {}
-
-SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
-    std::istringstream iss(m_content);
-    splitBlocks(iss);
-    parseBlocks();
-}
-
 void SemanticDescriptor::parseBlocks() {
     size_t pos;
     
@@ -93,15 +106,6 @@ void SemanticDescriptor::parseBlocks() {
     } catch (const SemanticException &e) { std::cout << e; }
 }
 
-SemanticDescriptor::~SemanticDescriptor() {
-    delete tree;
-
-    for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it) {
-        for (Vec<Concept*>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt) {
-            delete *conceptIt;
-        }
-    }
-}
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
