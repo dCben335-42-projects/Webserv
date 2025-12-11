@@ -29,7 +29,7 @@ void HttpClient::setState(ClientState state)
 
 void HttpClient::prepareResponse()
 {
-	const std::string ROOT			= "files/www";
+	const std::string ROOT			= "files/www/website";
 	const std::string FALLBACK_TEST = ROOT + "/index.html";
 
 	try
@@ -95,7 +95,8 @@ void HttpClient::onWrite(pollfd &pollFd)
 {
 	if (m_res.sendRes(pollFd.fd))
 	{
-		m_state = CLOSED;
+		m_state		  = CLOSED;
+		pollFd.events = 0;
 		m_res.reset();
 		return;
 	}

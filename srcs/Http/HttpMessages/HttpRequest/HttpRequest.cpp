@@ -43,7 +43,6 @@ void HttpRequest::setTarget(const std::string &path)
 }
 
 
-// ANCHOR Reading Public method
 
 // ANCHOR Parsing Public method
 HttpRequest &HttpRequest::parse()
@@ -144,9 +143,8 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 
 ssize_t HttpRequest::readOnce(int socketFd)
 {
-	char		  buffer[HEADER_BUFFER_SIZE];
-	const ssize_t bytesRead = recv(
-		socketFd, buffer, HEADER_BUFFER_SIZE, 0);
+	char		  buffer[READ_BUFFER_SIZE];
+	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, 0);
 
 	if (bytesRead < 0)
 		throw std::runtime_error("recv() failed");

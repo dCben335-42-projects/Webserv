@@ -15,7 +15,8 @@
 #define HEADER_ENDING "\r\n\r\n"
 #define HEADER_LINE_ENDING "\r\n"
 #define HEADER_SEPARATOR ": "
-#define HEADER_BUFFER_SIZE 2048
+#define READ_BUFFER_SIZE 8192
+#define WRITE_BUFFER_SIZE 8192
 
 #define HEADER_CONTENT_LENGTH "Content-Length"
 #define HEADER_CONTENT_TYPE "Content-Type"
@@ -46,6 +47,7 @@
 #define HEADER_TYPE_TOML "application/toml"
 #define HEADER_TYPE_RTF "application/rtf"
 #define HEADER_TYPE_OCTET "application/octet-stream"
+
 // Font Types
 #define HEADER_TYPE_WOFF "font/woff"
 #define HEADER_TYPE_WOFF2 "font/woff2"
@@ -63,6 +65,7 @@
 // Image Types
 #define HEADER_TYPE_PNG "image/png"
 #define HEADER_TYPE_JPEG "image/jpeg"
+#define HEADER_TYPE_WEBP "image/webp"
 #define HEADER_TYPE_GIF "image/gif"
 #define HEADER_TYPE_SVG "image/svg+xml"
 #define HEADER_TYPE_AVIF "image/avif"
@@ -70,7 +73,7 @@
 #define HEADER_TYPE_ICNS "image/icns"
 #define HEADER_TYPE_BMP "image/bmp"
 #define HEADER_TYPE_TIFF "image/tiff"
-
+#define HEADER_TYPE_ICO "image/x-icon"
 
 // ANCHOR   Method
 #define M_GET "GET"

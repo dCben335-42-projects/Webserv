@@ -14,40 +14,45 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 {
 	Map<std::string> extensionTypeMap;
 
+	extensionTypeMap[".txt"]  = HEADER_TYPE_PLAIN;
+	extensionTypeMap[".csv"]  = HEADER_TYPE_CSV;
 	extensionTypeMap[".html"] = HEADER_TYPE_HTML;
 	extensionTypeMap[".css"]  = HEADER_TYPE_CSS;
+
 	extensionTypeMap[".js"]	  = HEADER_TYPE_JS;
 	extensionTypeMap[".json"] = HEADER_TYPE_JSON;
-
-	extensionTypeMap[".png"]  = HEADER_TYPE_PNG;
-	extensionTypeMap[".jpg"]  = HEADER_TYPE_JPEG;
-	extensionTypeMap[".jpeg"] = HEADER_TYPE_JPEG;
-	extensionTypeMap[".gif"]  = HEADER_TYPE_GIF;
-	extensionTypeMap[".svg"]  = HEADER_TYPE_SVG;
-
-	extensionTypeMap[".txt"] = HEADER_TYPE_PLAIN;
-	extensionTypeMap[".pdf"] = HEADER_TYPE_PDF;
-	extensionTypeMap[".xml"] = HEADER_TYPE_XML;
-	extensionTypeMap[".zip"] = HEADER_TYPE_ZIP;
-
-	extensionTypeMap[".mp3"]  = HEADER_TYPE_MP3;
-	extensionTypeMap[".mp4"]  = HEADER_TYPE_MP4;
-	extensionTypeMap[".webm"] = HEADER_TYPE_WEBM;
-
-	extensionTypeMap[".csv"] = HEADER_TYPE_CSV;
-
-	extensionTypeMap[".eot"]   = HEADER_TYPE_EOT;
-	extensionTypeMap[".ttf"]   = HEADER_TYPE_TTF;
-	extensionTypeMap[".woff"]  = HEADER_TYPE_WOFF;
-	extensionTypeMap[".woff2"] = HEADER_TYPE_WOFF2;
-
-	extensionTypeMap[".flac"] = HEADER_TYPE_FLAC;
-	extensionTypeMap[".wav"]  = HEADER_TYPE_WAV;
-
+	extensionTypeMap[".eot"]  = HEADER_TYPE_EOT;
+	extensionTypeMap[".pdf"]  = HEADER_TYPE_PDF;
+	extensionTypeMap[".xml"]  = HEADER_TYPE_XML;
+	extensionTypeMap[".zip"]  = HEADER_TYPE_ZIP;
 	extensionTypeMap[".yaml"] = HEADER_TYPE_YAML;
 	extensionTypeMap[".yml"]  = HEADER_TYPE_YAML;
 	extensionTypeMap[".toml"] = HEADER_TYPE_TOML;
 	extensionTypeMap[".rtf"]  = HEADER_TYPE_RTF;
+
+	extensionTypeMap[".png"]  = HEADER_TYPE_PNG;
+	extensionTypeMap[".jpg"]  = HEADER_TYPE_JPEG;
+	extensionTypeMap[".webp"] = HEADER_TYPE_WEBP;
+	extensionTypeMap[".jpeg"] = HEADER_TYPE_JPEG;
+	extensionTypeMap[".gif"]  = HEADER_TYPE_GIF;
+	extensionTypeMap[".svg"]  = HEADER_TYPE_SVG;
+	extensionTypeMap[".avif"] = HEADER_TYPE_AVIF;
+	extensionTypeMap[".heic"] = HEADER_TYPE_HEIC;
+	extensionTypeMap[".ico"]  = HEADER_TYPE_ICO;
+
+
+	extensionTypeMap[".mp4"]  = HEADER_TYPE_MP4;
+	extensionTypeMap[".webm"] = HEADER_TYPE_WEBM;
+
+
+	extensionTypeMap[".ttf"]   = HEADER_TYPE_TTF;
+	extensionTypeMap[".woff"]  = HEADER_TYPE_WOFF;
+	extensionTypeMap[".woff2"] = HEADER_TYPE_WOFF2;
+
+	extensionTypeMap[".mp3"]  = HEADER_TYPE_MP3;
+	extensionTypeMap[".flac"] = HEADER_TYPE_FLAC;
+	extensionTypeMap[".wav"]  = HEADER_TYPE_WAV;
+
 
 	return extensionTypeMap;
 }
@@ -63,14 +68,13 @@ std::string FileHandler::readFile(const std::string &path)
 	if (fd == -1)
 		throw FileHandler::FileDoesNotExistException(path);
 
-	const size_t bufferSize = 4096;
-	char		 buffer[bufferSize];
-	ssize_t		 bytesRead = 1;
-	std::string	 content;
+	char		buffer[READ_BUFFER_SIZE];
+	ssize_t		bytesRead = 1;
+	std::string content;
 
 	while (bytesRead > 0)
 	{
-		bytesRead = read(fd, buffer, bufferSize);
+		bytesRead = read(fd, buffer, READ_BUFFER_SIZE);
 		if (bytesRead == -1)
 		{
 			close(fd);

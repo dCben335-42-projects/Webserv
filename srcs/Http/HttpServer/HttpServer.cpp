@@ -8,7 +8,8 @@
 #include <fcntl.h>
 #include <iostream>
 #include <cerrno>
-#include <sys/types.h> // sometimes needed for send()
+#include <sys/types.h>
+#include "Map.hpp"
 #include <sys/socket.h>
 
 HttpServer::HttpServer(unsigned short port) : m_socket(-1), m_port(port)
@@ -66,7 +67,7 @@ void HttpServer::createPollClient(void)
 			throw std::runtime_error("fcntl F_GETFL failed");
 		if (fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK) < 0)
 			throw std::runtime_error("fcntl F_SETFL failed");
-		m_clients.insert(std::make_pair(clientSocket, HttpClient(clientSocket)));
+		findOrInsert(m_clients, clientSocket, HttpClient(clientSocket));
 		createPoll(clientSocket);
 	}
 	catch (const std::exception &e)

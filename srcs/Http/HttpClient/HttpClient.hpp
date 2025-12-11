@@ -23,6 +23,8 @@ class HttpClient
 
 		bool shouldClose() const;
 
+		void prepareResponse();
+
 	public:
 		HttpClient(int fd);
 		~HttpClient();
@@ -33,7 +35,6 @@ class HttpClient
 
 		void onRead();
 		void onWrite(pollfd &pollFd);
-		void prepareResponse();
 };
 
 
