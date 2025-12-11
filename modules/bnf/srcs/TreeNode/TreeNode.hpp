@@ -10,6 +10,10 @@ class TreeNode {
         TreeNodeData &content;
         std::vector<std::string> path;
         std::vector<TreeNode *> children;
+        void setParent(TreeNode *parentPtr);
+        void setPath(std::string segment);
+        TreeNode *parent;
+
 };
 
 std::ostream& operator<<(std::ostream& os, const TreeNode& data);

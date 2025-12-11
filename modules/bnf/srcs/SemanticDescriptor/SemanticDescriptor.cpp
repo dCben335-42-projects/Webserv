@@ -171,21 +171,21 @@ bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
                 throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
             TreeNodeData data(item, m_concepts[item]);
-            TreeNode* temp_node = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
+            TreeNode* tempNode = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
 
-            if (!isInContainer(temp_node->path, item))
+            if (!isInContainer(tempNode->path, item))
             {
-                temp_node->path.push_back(item);
-                node->children.push_back(temp_node);
-                if (hasRecursiveError(temp_node))
+                tempNode->setPath(item);
+                if (hasRecursiveError(tempNode))
                     isLineError = true;
             }
             else
             {
+                tempNode->setPath(item);
                 isLineError = true;
-                temp_node->path.push_back(item);
-                node->children.push_back(temp_node);
             }
+            tempNode->setParent(node);
+            // tempNode->setPath(item);
         }
         if (!isLineError)
             node->content.isInfinite = false;
@@ -206,6 +206,11 @@ void SemanticDescriptor::checkValidity()
 Map<ConceptList>::type SemanticDescriptor::getConcepts() const
 {
     return m_concepts;
+}
+
+TreeNode *SemanticDescriptor::getTree() const
+{
+    return tree;
 }
 
 std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data)

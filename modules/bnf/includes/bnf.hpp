@@ -9,6 +9,7 @@
 #include "../srcs/Rules/Symbol/Symbol.hpp"
 #include "../srcs/Concept/Concept.hpp"
 #include "../srcs/SemanticDescriptor/SemanticDescriptor.hpp"
+#include "../srcs/Parser/Parser.hpp"
 
 namespace bnf {
     typedef ::ARule ARule;
@@ -18,6 +19,7 @@ namespace bnf {
     typedef ::Symbol Symbol;
     typedef ::Concept Concept;
     typedef ::SemanticDescriptor SemanticDescriptor;
+    typedef ::Parser Parser;
 }
 
 

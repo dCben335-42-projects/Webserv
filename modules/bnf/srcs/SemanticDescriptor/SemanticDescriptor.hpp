@@ -37,6 +37,7 @@ class SemanticDescriptor {
         SemanticDescriptor(const std::string& m_content);
         ~SemanticDescriptor();
         Map<ConceptList>::type getConcepts() const;
+        TreeNode *getTree() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);

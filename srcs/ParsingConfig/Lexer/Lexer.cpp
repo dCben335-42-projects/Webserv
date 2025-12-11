@@ -18,6 +18,8 @@ Lexer::Lexer(std::string const& filepath) {
 
     SemanticDescriptor val(m_content);
     std::cout << val;
+    Parser parser(val);
+    parser.parse("dwdw");
 
     ifs.close();
 }

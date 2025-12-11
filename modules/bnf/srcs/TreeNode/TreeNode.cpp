@@ -4,13 +4,25 @@
 
 TreeNode::TreeNode(TreeNodeData &content, std::vector<std::string> path):
     content(content),
-    path(path)
+    path(path),
+    parent(NULL)
 {}
 
 TreeNode::~TreeNode() {
     for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         delete (*it);
     }
+}
+
+void TreeNode::setParent(TreeNode *parentPtr)
+{
+    parent = parentPtr;
+    parentPtr->children.push_back(this);
+}
+
+void TreeNode::setPath(std::string segment)
+{
+    path.push_back(segment);
 }
 
 std::ostream &operator<<(std::ostream &os, const TreeNode &data)
