@@ -1,1 +1,1 @@
-LOG_OBJS=./.build/Log/Log.o ./.build/test.o 
+LOG_OBJS=./.build/Log/Log.o 

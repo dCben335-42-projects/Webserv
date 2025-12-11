@@ -18,8 +18,8 @@ class HttpServer
 		struct sockaddr_in		m_address;
 
 
-		std::vector<pollfd>			m_pollFds;
-		std::map<int, HttpClient>   m_clients;
+		std::vector<pollfd>		m_pollFds;
+		Map<int, HttpClient>	m_clients;
 
 		void	createPoll(int socket);
 		void	respond(HttpRequest &req, HttpResponse &res); 

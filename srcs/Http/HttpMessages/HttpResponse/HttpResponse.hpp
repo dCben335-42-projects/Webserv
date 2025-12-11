@@ -3,31 +3,33 @@
 
 #include "AHttpMessage.hpp"
 #include <ostream>
+#include <Map.hpp>
 
 class HttpResponse : public AHttpMessage
 {
-    private:
-        unsigned short	m_statusCode;
-        std::string		m_fullResponse;
-        size_t          m_sentBytes;
+	private:
+		unsigned short m_statusCode;
+		std::string	   m_fullResponse;
+		size_t		   m_sentBytes;
 
+		static const Map<unsigned short, std::string> m_statusReasonMap;
 
-    public:
-        HttpResponse();
-        ~HttpResponse();
+		static Map<unsigned short, std::string> initStatusReasonMap();
 
-        unsigned short      getStatusCode() const;
-		std::string			getFullResponse() const;
-		size_t				getSentBytes() const;
-		
-        void                setStatusCode(unsigned short code);
+	public:
+		HttpResponse();
+		~HttpResponse();
 
-        bool                sendRes(int socket);
-		void				build();
-		void                reset();
+		unsigned short getStatusCode() const;
+		std::string	   getFullResponse() const;
+		size_t		   getSentBytes() const;
 
-		std::string		buildHead() const;
+		void setStatusCode(unsigned short code);
+		bool sendRes(int socket);
 
+		void		build();
+		std::string buildHead() const;
+		void		reset();
 };
 
 std::ostream &operator<<(std::ostream &o, HttpResponse const &response);

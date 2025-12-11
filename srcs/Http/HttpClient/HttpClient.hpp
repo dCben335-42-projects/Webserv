@@ -15,24 +15,25 @@ enum ClientState
 
 class HttpClient
 {
-    private:
-        HttpRequest		m_req;
-        HttpResponse	m_res;
-        int           	m_fd;
-		ClientState 	m_state;
+	private:
+		HttpRequest	 m_req;
+		HttpResponse m_res;
+		int			 m_fd;
+		ClientState	 m_state;
 
 		bool shouldClose() const;
-    public:
-        HttpClient(int fd);
-        ~HttpClient();
 
-		int				getFd() const;
-		ClientState		getState() const;
-		void			setState(ClientState state);
+	public:
+		HttpClient(int fd);
+		~HttpClient();
 
-		void 			onRead();
-		void 			onWrite(pollfd &pollFd);
-		void			prepareResponse();
+		int			getFd() const;
+		ClientState getState() const;
+		void		setState(ClientState state);
+
+		void onRead();
+		void onWrite(pollfd &pollFd);
+		void prepareResponse();
 };
 
 

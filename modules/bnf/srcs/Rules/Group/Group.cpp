@@ -1,34 +1,24 @@
 #include "./Group.hpp"
-#include <iostream>
+#include "Logger.hpp"
 
-Group::Group() : ARule(GROUP) {}
-Group::~Group() {}
-
-void Group::addItem(const std::string& val) {
-    items.push_back(val);
+Group::Group() : ARule(GROUP)
+{
+}
+Group::~Group()
+{
 }
 
-std::vector<std::string> Group::getItems() const {
-    return items;
+void Group::addItem(const std::string &val)
+{
+	items.push_back(val);
 }
 
-void Group::print() const {
-    std::cout << "{ Group: [";
-    for (size_t i = 0; i < items.size(); ++i) {
-        if (i != 0)
-            std::cout << ", ";
-        std::cout << items[i];
-    }
-    std::cout << "]}" << std::endl;
+std::vector<std::string> Group::getItems() const
+{
+	return items;
 }
 
-std::string Group::getPrintableValue() const {
-    std::string s = std::string("{ Group: [");
-    for (size_t i = 0; i < items.size(); ++i) {
-        if (i != 0)
-            s += ", ";
-        s += items[i];
-    }
-    s += "]}";
-    return s;
+std::string Group::getPrintableValue() const
+{
+	return getLogJson(items);
 }

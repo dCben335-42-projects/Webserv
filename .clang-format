@@ -1,0 +1,47 @@
+BasedOnStyle: LLVM
+
+# Tabs and indentation
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentAccessModifiers: true      # access modifiers indented in classes
+AccessModifierOffset: 0
+
+# Alignments
+AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: true
+AlignOperands: true
+AlignTrailingComments: true
+AlignAfterOpenBracket: Align
+
+# Spaces
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: true
+Cpp11BracedListStyle: true
+PointerAlignment: Right
+SpaceInEmptyParentheses: false
+
+# Braces
+BreakBeforeBraces: Allman
+AllowShortFunctionsOnASingleLine: None
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterFunction: true
+  AfterNamespace: true
+  BeforeCatch: true
+  BeforeElse: true
+
+# Line breaks
+MaxEmptyLinesToKeep: 5
+AllowShortIfStatementsOnASingleLine: false
+ColumnLimit: 0
+
+# Constructor initializers
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
+
+# Misc
+SortIncludes: false

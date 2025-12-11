@@ -8,15 +8,17 @@
 
 using bnf::GROUP;
 
-class Group : public ARule {
-    public:
-        Group();
-        ~Group();
-        void addItem(const std::string& val);
-        std::vector<std::string>  getItems() const;
-        std::string getPrintableValue() const;
-        void print() const;
-    private:
-        std::vector<std::string> items;
+class Group : public ARule
+{
+	public:
+		Group();
+		~Group();
+
+		std::vector<std::string> getItems() const;
+		std::string				 getPrintableValue() const;
+		void					 addItem(const std::string &val);
+
+	private:
+		std::vector<std::string> items;
 };
 #endif

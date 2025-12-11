@@ -9,204 +9,217 @@ using namespace bnf;
 
 bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 {
-    size_t size = line.size();
-    size_t i = 0;
-    
-    while (i < size && std::isspace(line[i]))
-        ++i;
-    if (i + 2 <= size && line.compare(i, 2, "|=") == 0)
-    {
-        *startDef = i + 2;
-        return true;
-    }
-    size_t start = i;
-    while (i < size && (std::isalnum(line[i]) || line[i] == '_'))
-        ++i;
-    if (i == start)
-        return false;
-    while (i < size && std::isspace(line[i]))
-        ++i;
-    if (i + 3 <= size && line.compare(i, 3, "::=") == 0)
-    {
-        *startDef = i + 3;
-        return true;
-    }
-    return false;
+	size_t size = line.size();
+	size_t i	= 0;
+
+	while (i < size && std::isspace(line[i]))
+		++i;
+	if (i + 2 <= size && line.compare(i, 2, "|=") == 0)
+	{
+		*startDef = i + 2;
+		return true;
+	}
+	size_t start = i;
+	while (i < size && (std::isalnum(line[i]) || line[i] == '_'))
+		++i;
+	if (i == start)
+		return false;
+	while (i < size && std::isspace(line[i]))
+		++i;
+	if (i + 3 <= size && line.compare(i, 3, "::=") == 0)
+	{
+		*startDef = i + 3;
+		return true;
+	}
+	return false;
 }
 
 void SemanticDescriptor::splitBlocks(std::istringstream &iss)
 {
-    std::string line, cblock;
-    size_t startDef = 0, prevStartDef = 0;
+	std::string line, cblock;
+	size_t		startDef = 0, prevStartDef = 0;
 
-    while (std::getline(iss, line))
-    {
-        if (isStartRule(line, &startDef) && !cblock.empty()) {
-            if (isOnlyWhitespace(cblock, prevStartDef))
-                throw ConceptHasNotDefinitionException();
-            blocks.push_back(cblock);
-            cblock.clear();
-            prevStartDef = startDef;
-        }
-        cblock += line + '\n';
-    }
-    if (!cblock.empty())
-        blocks.push_back(cblock);
+	while (std::getline(iss, line))
+	{
+		if (isStartRule(line, &startDef) && !cblock.empty())
+		{
+			if (isOnlyWhitespace(cblock, prevStartDef))
+				throw ConceptHasNotDefinitionException();
+			blocks.push_back(cblock);
+			cblock.clear();
+			prevStartDef = startDef;
+		}
+		cblock += line + '\n';
+	}
+	if (!cblock.empty())
+		blocks.push_back(cblock);
 }
 
 bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 {
-    if ((pos = block.find(EQRULE)) != std::string::npos) {
-        return true;
-    }
+	if ((pos = block.find(EQRULE)) != std::string::npos)
+	{
+		return true;
+	}
 
-    if ((pos = block.find(ORRULE)) != std::string::npos) {
-        pos += ORRULE.length();
-        return false;
-    }
+	if ((pos = block.find(ORRULE)) != std::string::npos)
+	{
+		pos += ORRULE.length();
+		return false;
+	}
 
-    throw ConceptHasNotDefinitionException();
+	throw ConceptHasNotDefinitionException();
 }
 
-SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
-    std::istringstream iss(m_content);
-    splitBlocks(iss);
-    parseBlocks();
+SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
+{
+	std::istringstream iss(m_content);
+	splitBlocks(iss);
+	parseBlocks();
 }
 
-void SemanticDescriptor::parseBlocks() {
-    size_t pos;
-    
-    try {
-        for (Vec<std::string>::iterator block = blocks.begin(); block != blocks.end(); ++block)
-        {
-            if (findSeparator(*block, pos))
-            {
-                parseConceptName(block->substr(0, pos));
-                pos += EQRULE.length();
-            }
-            parseRule(*block, pos);
-        }
-        checkValidity();
-    } catch (const SemanticException &e) { std::cout << e; }
+void SemanticDescriptor::parseBlocks()
+{
+	size_t pos;
+
+	try
+	{
+		for (Vec<std::string>::iterator block = blocks.begin(); block != blocks.end(); ++block)
+		{
+			if (findSeparator(*block, pos))
+			{
+				parseConceptName(block->substr(0, pos));
+				pos += EQRULE.length();
+			}
+			parseRule(*block, pos);
+		}
+		checkValidity();
+	}
+	catch (const SemanticException &e)
+	{
+		std::cout << e;
+	}
 }
 
-SemanticDescriptor::~SemanticDescriptor() {
-    delete tree;
+SemanticDescriptor::~SemanticDescriptor()
+{
+	delete tree;
 
-    for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it) {
-        for (Vec<Concept*>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt) {
-            delete *conceptIt;
-        }
-    }
+	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+	{
+		for (Vec<Concept *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
+		{
+			delete *conceptIt;
+		}
+	}
 }
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
-    Concept *concept = new Concept();
-    m_concepts[m_lastKey].push_back(concept);
-    std::istringstream iss(m_content.substr(cursor));
-    std::string word;
-    ARule *arule = NULL;
+	Concept *concept = new Concept();
+	m_concepts[m_lastKey].push_back(concept);
+	std::istringstream iss(m_content.substr(cursor));
+	std::string		   word;
+	ARule			  *arule = NULL;
 
-    while (iss >> word)
-    {
-        if (ARule::isKeyWord(word, true))
-            throw std::runtime_error("Invalid keyword: " + word);
-        BnfMap map = ARule::getMap(word);
-        arule = map.constructor();
-        if (map.hasClosure && !(iss >> word))
-            throw std::runtime_error("Unexpected end of rule after " + map.opener);
-        while (word != map.closer)
-        {
-            if (ARule::isKeyWord(word, false))
-                throw std::runtime_error("Bad closing keyword: " + word);
-            if (word != DIVIDER)
-            {
-                if(!validate_string_strict(word))
-                    throw InvalidConceptNameException(word); 
-                arule->addItem(word);
-                if (!map.hasClosure)
-                    break;
-            }
-            if (!(iss >> word))
-                break;
-        }
-        concept->setRule(arule);
-    }
+	while (iss >> word)
+	{
+		if (ARule::isKeyWord(word, true))
+			throw std::runtime_error("Invalid keyword: " + word);
+		BnfMap map = ARule::getMap(word);
+		arule	   = map.constructor();
+		if (map.hasClosure && !(iss >> word))
+			throw std::runtime_error("Unexpected end of rule after " + map.opener);
+		while (word != map.closer)
+		{
+			if (ARule::isKeyWord(word, false))
+				throw std::runtime_error("Bad closing keyword: " + word);
+			if (word != DIVIDER)
+			{
+				if (!validate_string_strict(word))
+					throw InvalidConceptNameException(word);
+				arule->addItem(word);
+				if (!map.hasClosure)
+					break;
+			}
+			if (!(iss >> word))
+				break;
+		}
+		concept->setRule(arule);
+	}
 }
 
 void SemanticDescriptor::parseConceptName(std::string s)
 {
-    std::istringstream iss(erasePaternWrapper(s, WS));
-    std::string w;
-    if (!(iss >> w))
-        throw EmptyConceptNameException();
-    if (iss >> w)
-        throw ConceptHasNotDefinitionException();
-    if (isInMap(m_concepts, s))
-        throw ConceptAlreadyDefinedException(s);
-    m_lastKey = s;
+	std::istringstream iss(erasePaternWrapper(s, WS));
+	std::string		   w;
+	if (!(iss >> w))
+		throw EmptyConceptNameException();
+	if (iss >> w)
+		throw ConceptHasNotDefinitionException();
+	if (isInMap(m_concepts, s))
+		throw ConceptAlreadyDefinedException(s);
+	m_lastKey = s;
 }
 
 bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
 {
-    for (ConceptList::iterator it = node->content.concepts.begin();
-         it != node->content.concepts.end(); ++it)
-    {
-        Vec<std::string>::type items = (*it)->getItems();
-        bool isLineError = false;
+	for (ConceptList::iterator it = node->content.concepts.begin();
+		 it != node->content.concepts.end(); ++it)
+	{
+		Vec<std::string> items		 = (*it)->getItems();
+		bool			 isLineError = false;
 
-        for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
-        {
-            const std::string &item = *itemIt;
+		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+		{
+			const std::string &item = *itemIt;
 
-            if (startsWith(item, DQSQ))
-                continue;
+			if (startsWith(item, DQSQ))
+				continue;
 
-            if (!isInMap(m_concepts, item))
-                throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
+			if (!isInMap(m_concepts, item))
+				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
-            TreeNodeData data(item, m_concepts[item]);
-            TreeNode* temp_node = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
+			TreeNodeData data(item, m_concepts[item]);
+			TreeNode	*temp_node = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
 
-            if (!isInContainer(temp_node->path, item))
-            {
-                temp_node->path.push_back(item);
-                node->children.push_back(temp_node);
-                if (hasRecursiveError(temp_node))
-                    isLineError = true;
-            }
-            else
-            {
-                isLineError = true;
-                temp_node->path.push_back(item);
-                node->children.push_back(temp_node);
-            }
-        }
-        if (!isLineError)
-            node->content.isInfinite = false;
-    }
-    return node->content.isInfinite;
+			if (!isInContainer(temp_node->path, item))
+			{
+				temp_node->path.push_back(item);
+				node->children.push_back(temp_node);
+				if (hasRecursiveError(temp_node))
+					isLineError = true;
+			}
+			else
+			{
+				isLineError = true;
+				temp_node->path.push_back(item);
+				node->children.push_back(temp_node);
+			}
+		}
+		if (!isLineError)
+			node->content.isInfinite = false;
+	}
+	return node->content.isInfinite;
 }
 
 void SemanticDescriptor::checkValidity()
 {
-    Vec<std::string>::type path;
-    TreeNodeData data(CURSOR, m_concepts[CURSOR]);
-    path.push_back(CURSOR);
-    tree = new TreeNode(data, path);
-    if (hasRecursiveError(tree))
-        throw  std::runtime_error("ERREUR !");
+	Vec<std::string> path;
+	TreeNodeData	 data(CURSOR, m_concepts[CURSOR]);
+	path.push_back(CURSOR);
+	tree = new TreeNode(data, path);
+	if (hasRecursiveError(tree))
+		throw std::runtime_error("ERREUR !");
 }
 
-Map<ConceptList>::type SemanticDescriptor::getConcepts() const
+Map<ConceptList> SemanticDescriptor::getConcepts() const
 {
-    return m_concepts;
+	return m_concepts;
 }
 
-std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data)
+std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 {
-    log(data.getConcepts());
-    return (os);
+	log(data.getConcepts());
+	return (os);
 }

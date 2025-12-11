@@ -8,15 +8,16 @@
 
 using bnf::OPTION;
 
-class Option : public ARule {
-    public:
-        Option();
-        ~Option();
-        void addItem(const std::string& val);
-        std::vector<std::string>  getItems() const;
-        std::string getPrintableValue() const;
-        void print() const;
-    private:
-        std::vector<std::string> items;
+class Option : public ARule
+{
+	public:
+		Option();
+		~Option();
+		void					 addItem(const std::string &val);
+		std::vector<std::string> getItems() const;
+		std::string				 getPrintableValue() const;
+
+	private:
+		std::vector<std::string> items;
 };
 #endif

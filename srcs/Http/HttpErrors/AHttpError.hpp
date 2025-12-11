@@ -6,17 +6,20 @@
 
 class AHttpError : public std::runtime_error
 {
-    protected:
-        int m_statusCode;
-    public:
-        explicit AHttpError(const std::string &message, int code): 
-            std::runtime_error(message),
-            m_statusCode(code)
-        {}
-        
-        int getStatusCode() const {
-            return m_statusCode;
-        }
+	protected:
+		int m_statusCode;
+
+	public:
+		explicit AHttpError(const std::string &message, int code) :
+			std::runtime_error(message),
+			m_statusCode(code)
+		{
+		}
+
+		int getStatusCode() const
+		{
+			return m_statusCode;
+		}
 };
 
 #endif

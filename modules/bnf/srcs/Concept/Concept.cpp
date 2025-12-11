@@ -55,13 +55,7 @@ std::vector<std::string> Concept::getItems() {
     return allItems;
 }
 
-void Concept::printRules() const {
-    for (std::vector<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
-        ARule* rule = *it;
-        if (rule)
-            rule->print();
-    }
-}
+
 
 std::vector<ARule *> Concept::getValues() const {
     return values;

@@ -5,13 +5,14 @@
 #include <vector>
 #include "bnf.hpp"
 
-class Lexer {
-    private:
-        std::string m_content;
-        // SemanticDescriptor m_semanticDescriptor;
-    public:
-        Lexer(std::string const& filepath);
-        ~Lexer();
+class Lexer
+{
+	private:
+		std::string m_content;
+		// SemanticDescriptor m_semanticDescriptor;
+	public:
+		Lexer(std::string const &filepath);
+		~Lexer();
 
-        const std::string& getContent() const;
+		const std::string &getContent() const;
 };

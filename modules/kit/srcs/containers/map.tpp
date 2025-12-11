@@ -30,28 +30,31 @@
 //     typedef typename type::const_iterator const_iterator;
 // };
 
+// MapImpl: produces the real std::map<K,V>
 template <typename K, typename V>
 struct MapImpl {
-    typedef std::map<K, V> type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
+    typedef std::map<K, V> map_type;
 };
 
 template <typename K, typename V = void>
 struct Map;
 
 template <typename V>
-struct Map<V, void> {
-    typedef typename MapImpl<std::string, V>::type type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
+struct Map<V, void> : public MapImpl<std::string, V>::map_type
+{
+    typedef typename MapImpl<std::string, V>::map_type base;
+
+    Map() : base() {}
+    Map(const base &b) : base(b) {}
 };
 
 template <typename K, typename V>
-struct Map {
-    typedef typename MapImpl<K, V>::type type;
-    typedef typename type::iterator iterator;
-    typedef typename type::const_iterator const_iterator;
+struct Map : public MapImpl<K, V>::map_type
+{
+    typedef typename MapImpl<K, V>::map_type base;
+
+    Map() : base() {}
+    Map(const base &b) : base(b) {}
 };
 
 template <typename M, typename K, typename V>

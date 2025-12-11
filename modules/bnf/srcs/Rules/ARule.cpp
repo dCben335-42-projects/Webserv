@@ -9,9 +9,13 @@
 
 using namespace bnf;
 
-ARule::ARule(ERuleType t) : m_type(t) {}
+ARule::ARule(ERuleType t) : m_type(t)
+{
+}
 
-ARule::~ARule() {}
+ARule::~ARule()
+{
+}
 
 ARule &ARule::operator=(const ARule &other)
 {
@@ -26,39 +30,43 @@ ERuleType ARule::getType() const
 	return m_type;
 }
 
-ARule *createGroup() { return new Group(); }
+ARule *createGroup()
+{
+	return new Group();
+}
 
-ARule *createSequence() { return new Sequence(); }
+ARule *createSequence()
+{
+	return new Sequence();
+}
 
-ARule *createOption() { return new Option(); }
+ARule *createOption()
+{
+	return new Option();
+}
 
-ARule *createSymbol() { return new Symbol(); }
+ARule *createSymbol()
+{
+	return new Symbol();
+}
 
 static const BnfMap rules[] = {
-	{
-		.opener = LBRACE,
-		.closer = RBRACE,
-		.constructor = &createGroup,
-		.hasClosure = true
-	},
-	{
-			.opener = LBRACKET,
-		.closer = RBRACKET,
-		.constructor = &createSequence,
-		.hasClosure = true
-	},
-	{
-		.opener = LHOOK,
-		.closer = RHOOK,
-		.constructor = &createOption,
-		.hasClosure = true
-	},
-	{
-		.opener = "",
-		.closer = "",
-		.constructor = &createSymbol,
-		.hasClosure = false
-	},
+	{.opener	  = LBRACE,
+	 .closer	  = RBRACE,
+	 .constructor = &createGroup,
+	 .hasClosure  = true},
+	{.opener	  = LBRACKET,
+	 .closer	  = RBRACKET,
+	 .constructor = &createSequence,
+	 .hasClosure  = true},
+	{.opener	  = LHOOK,
+	 .closer	  = RHOOK,
+	 .constructor = &createOption,
+	 .hasClosure  = true},
+	{.opener	  = "",
+	 .closer	  = "",
+	 .constructor = &createSymbol,
+	 .hasClosure  = false},
 };
 
 bool ARule::isKeyWord(const std::string &word, bool onlyClose)

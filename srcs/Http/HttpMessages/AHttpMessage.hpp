@@ -1,30 +1,28 @@
 #ifndef A_HTTP_MESSAGE_HPP
-# define A_HTTP_MESSAGE_HPP
+#define A_HTTP_MESSAGE_HPP
 
-# include "Method.hpp"
-# include <string>
-# include <map>
-# include <iostream>
+#include "HttpMethod.hpp"
+#include "Map.hpp"
 
 class AHttpMessage
 {
 	protected:
-        std::map<std::string, std::string>  m_headers;
-        Method                              m_method;
-        std::string                         m_body;
+		Map<std::string> m_headers;
+		HttpMethod		 m_method;
+		std::string		 m_body;
 
 	public:
-        AHttpMessage();
-        ~AHttpMessage();
+		AHttpMessage();
+		~AHttpMessage();
 
-        std::map<std::string, std::string>  getHeaders() const;
-        std::string getHeader(const std::string &key) const;
-        std::string getMethod() const;
-        std::string getBody() const;
+		Map<std::string> getHeaders() const;
+		std::string		 getHeader(const std::string &key) const;
+		std::string		 getMethod() const;
+		std::string		 getBody() const;
 
-        void setHeader(const std::string &key, const std::string &value);
-        void setMethod(const Method &method);
-        void setBody(const std::string &body);
+		void setHeader(const std::string &key, const std::string &value);
+		void setMethod(const HttpMethod &method);
+		void setBody(const std::string &body);
 };
 
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message);
