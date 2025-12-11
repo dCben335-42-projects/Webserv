@@ -7,14 +7,6 @@ TreeNode::TreeNode(TreeNodeData &content, std::vector<std::string> path):
     path(path)
 {}
 
-// TreeNode TreeNode::createTree()
-// {
-//     Vec<std::string>::type path;
-//     TreeNodeData data(CURSOR, m_concepts[CURSOR]);
-//     path.push_back(CURSOR);
-//     tree = new TreeNode(data, path);
-// }
-
 TreeNode::~TreeNode() {
     for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         delete (*it);

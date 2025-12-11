@@ -7,12 +7,9 @@
 
 using namespace bnf;
 
-SemanticDescriptor::SemanticDescriptor() {}
+SemanticDescriptor::SemanticDescriptor(): tree(NULL){}
 
 SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
-    std::cout << m_content;
-    if (m_content.empty())
-        return;
     std::istringstream iss(m_content);
     splitBlocks(iss);
     parseBlocks();

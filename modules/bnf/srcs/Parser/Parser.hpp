@@ -15,7 +15,7 @@
 
 class Parser {
     private:
-        const SemanticDescriptor& m_semantic;
+        // const SemanticDescriptor& m_semantic;
     public:
         ~Parser();
         Parser(const SemanticDescriptor& semantic);

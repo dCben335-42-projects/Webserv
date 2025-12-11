@@ -4,7 +4,7 @@
 #include "Vector.hpp"
 #include "Logger.hpp"
 
-Parser::Parser(const SemanticDescriptor& semantic) : m_semantic(semantic) {}
+Parser::Parser(const SemanticDescriptor& semantic) {(void)semantic;}
 
 Parser::~Parser() {}
 
