@@ -32,6 +32,7 @@ class SemanticDescriptor {
         void checkValidity();
         bool hasRecursiveError(TreeNode* node);
         void parseBlocks();
+        bool hasRecursiveErrorOnNewNode(std::string item, TreeNode *parentPtr);
     public:
         SemanticDescriptor();
         SemanticDescriptor(const std::string& m_content);

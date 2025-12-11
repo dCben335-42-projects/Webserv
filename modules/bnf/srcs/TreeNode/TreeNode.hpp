@@ -5,13 +5,14 @@
 
 class TreeNode {
     public:
-        TreeNode(TreeNodeData& content, std::vector<std::string> path);
+        TreeNode(TreeNodeData& content);
         ~TreeNode();
         TreeNodeData &content;
         std::vector<std::string> path;
         std::vector<TreeNode *> children;
-        void setParent(TreeNode *parentPtr);
-        void setPath(std::string segment);
+        TreeNode& setParent(TreeNode *parentPtr);
+        TreeNode& addSegmentPath(std::string segment);
+        TreeNode& setPath(Vec<std::string>::type path);
         TreeNode *parent;
 
 };

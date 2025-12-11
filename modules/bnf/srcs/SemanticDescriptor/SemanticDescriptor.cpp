@@ -7,9 +7,10 @@
 
 using namespace bnf;
 
-SemanticDescriptor::SemanticDescriptor(): tree(NULL){}
+SemanticDescriptor::SemanticDescriptor(): tree(NULL) {}
 
-SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
+SemanticDescriptor::SemanticDescriptor(const std::string& m_content)
+{
     std::istringstream iss(m_content);
     splitBlocks(iss);
     parseBlocks();
@@ -152,13 +153,20 @@ void SemanticDescriptor::parseConceptName(std::string s)
     m_lastKey = s;
 }
 
+bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, TreeNode *parentPtr)
+{
+        TreeNodeData data(item, m_concepts[item]);
+        TreeNode* tempNode = new TreeNode(findOrInsert(m_data, item, data)->second);
+        tempNode->setPath(parentPtr->path).addSegmentPath(item).setParent(parentPtr);
+        return hasRecursiveError(tempNode);
+}
+
 bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
 {
-    for (ConceptList::iterator it = node->content.concepts.begin();
-         it != node->content.concepts.end(); ++it)
+    for (ConceptList::iterator it = node->content.concepts.begin(); it != node->content.concepts.end(); ++it)
     {
         Vec<std::string>::type items = (*it)->getItems();
-        bool isLineError = false;
+        unsigned int hasInfRecursivity = 0;
 
         for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
         {
@@ -170,24 +178,9 @@ bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
             if (!isInMap(m_concepts, item))
                 throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
-            TreeNodeData data(item, m_concepts[item]);
-            TreeNode* tempNode = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
-
-            if (!isInContainer(tempNode->path, item))
-            {
-                tempNode->setPath(item);
-                if (hasRecursiveError(tempNode))
-                    isLineError = true;
-            }
-            else
-            {
-                tempNode->setPath(item);
-                isLineError = true;
-            }
-            tempNode->setParent(node);
-            // tempNode->setPath(item);
+            hasInfRecursivity += isInContainer(node->path, item) || hasRecursiveErrorOnNewNode(item, node);
         }
-        if (!isLineError)
+        if (!hasInfRecursivity)
             node->content.isInfinite = false;
     }
     return node->content.isInfinite;
@@ -197,8 +190,8 @@ void SemanticDescriptor::checkValidity()
 {
     Vec<std::string>::type path;
     TreeNodeData data(CURSOR, m_concepts[CURSOR]);
-    path.push_back(CURSOR);
-    tree = new TreeNode(data, path);
+    tree = new TreeNode(data);
+    tree->addSegmentPath(CURSOR);
     if (hasRecursiveError(tree))
         throw  std::runtime_error("ERREUR !");
 }
