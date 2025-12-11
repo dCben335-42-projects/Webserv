@@ -2,47 +2,50 @@
 #include "Logger.hpp"
 #include <iostream>
 
-TreeNode::TreeNode(TreeNodeData &content):
-    content(content),
-    parent(NULL)
-{}
-
-TreeNode::~TreeNode() {
-    for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-        delete (*it);
-    }
+TreeNode::TreeNode(TreeNodeData &content) :
+	content(content),
+	parent(NULL)
+{
 }
 
-TreeNode& TreeNode::setParent(TreeNode *parentPtr)
+TreeNode::~TreeNode()
 {
-    parent = parentPtr;
-    parentPtr->children.push_back(this);
-    return (*this);
+	for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it)
+	{
+		delete (*it);
+	}
 }
 
-TreeNode& TreeNode::addSegmentPath(std::string segment)
+TreeNode &TreeNode::setParent(TreeNode *parentPtr)
 {
-    path.push_back(segment);
-    return (*this);
+	parent = parentPtr;
+	parentPtr->children.push_back(this);
+	return (*this);
 }
 
-TreeNode& TreeNode::setPath(Vec<std::string>::type newPath)
+TreeNode &TreeNode::addSegmentPath(std::string segment)
 {
-    path = newPath;
-    return (*this);
+	path.push_back(segment);
+	return (*this);
+}
+
+TreeNode &TreeNode::setPath(Vec<std::string> newPath)
+{
+	path = newPath;
+	return (*this);
 }
 
 std::ostream &operator<<(std::ostream &os, const TreeNode &data)
 {
-    log(data.content);
-    Log::incrementIndent();
-    std::cout << "\n";
-    for (size_t i = 0; i < data.children.size(); i++)
-    {
-        std::cout << Log::indent();
-        log(data.children[i]);
-    }
-    Log::decrementIndent();
+	log(data.content);
+	Log::incrementIndent();
+	std::cout << "\n";
+	for (size_t i = 0; i < data.children.size(); i++)
+	{
+		std::cout << Log::indent();
+		log(data.children[i]);
+	}
+	Log::decrementIndent();
 
-    return os;
+	return os;
 }

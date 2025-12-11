@@ -13,16 +13,20 @@
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
-class Parser {
-    private:
-        const SemanticDescriptor& m_semantic;
-        Vec<char>::type getCharAcceptedHead() const;
-        Vec<char>::type getCharAccepted(TreeNode *node) const;
-        std::string getFirstCharAccepted(TreeNode *node) const;
-    public:
-        ~Parser();
-        Parser(const SemanticDescriptor& semantic);
-        void parse(const std::string& stringToParsed);
+class Parser
+{
+	private:
+		const SemanticDescriptor &m_semantic;
+
+		Vec<char>	getCharAcceptedHead() const;
+		Vec<char>	getCharAccepted(TreeNode *node) const;
+		std::string getFirstCharAccepted(TreeNode *node) const;
+
+	public:
+		~Parser();
+		Parser(const SemanticDescriptor &semantic);
+
+		void parse(const std::string &stringToParsed);
 };
 
 // std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);

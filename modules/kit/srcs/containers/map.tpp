@@ -14,32 +14,26 @@ struct MapImpl
 
 template <typename K, typename V = void>
 struct Map;
-
+// clang-format off
 template <typename V>
 struct Map<V, void> : public MapImpl<std::string, V>::map_type
 {
-		typedef typename MapImpl<std::string, V>::map_type base;
+	typedef typename MapImpl<std::string, V>::map_type base;
 
-		Map() : base()
-		{
-		}
-		Map(const base &b) : base(b)
-		{
-		}
+	Map() : base() {}
+	Map(const base &b) : base(b) {}
 };
 
 template <typename K, typename V>
 struct Map : public MapImpl<K, V>::map_type
 {
-		typedef typename MapImpl<K, V>::map_type base;
+	typedef typename MapImpl<K, V>::map_type base;
 
-		Map() : base()
-		{
-		}
-		Map(const base &b) : base(b)
-		{
-		}
+	Map() : base() {}
+	Map(const base &b) : base(b) {}
 };
+
+// clang-format on
 
 template <typename M, typename K, typename V>
 typename M::iterator findOrInsert(M &map, const K &key, const V &value)
