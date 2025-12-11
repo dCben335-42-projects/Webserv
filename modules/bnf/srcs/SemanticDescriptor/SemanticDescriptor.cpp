@@ -7,6 +7,30 @@
 
 using namespace bnf;
 
+SemanticDescriptor::SemanticDescriptor() : tree(NULL)
+{
+}
+
+SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
+{
+	std::istringstream iss(m_content);
+	splitBlocks(iss);
+	parseBlocks();
+}
+
+SemanticDescriptor::~SemanticDescriptor()
+{
+	delete tree;
+
+	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+	{
+		for (Vec<Concept *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
+		{
+			delete *conceptIt;
+		}
+	}
+}
+
 bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 {
 	size_t size = line.size();
@@ -71,13 +95,6 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 	throw ConceptHasNotDefinitionException();
 }
 
-SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
-{
-	std::istringstream iss(m_content);
-	splitBlocks(iss);
-	parseBlocks();
-}
-
 void SemanticDescriptor::parseBlocks()
 {
 	size_t pos;
@@ -101,18 +118,6 @@ void SemanticDescriptor::parseBlocks()
 	}
 }
 
-SemanticDescriptor::~SemanticDescriptor()
-{
-	delete tree;
-
-	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
-	{
-		for (Vec<Concept *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
-		{
-			delete *conceptIt;
-		}
-	}
-}
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
@@ -162,13 +167,20 @@ void SemanticDescriptor::parseConceptName(std::string s)
 	m_lastKey = s;
 }
 
+bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, TreeNode *parentPtr)
+{
+	TreeNodeData data(item, m_concepts[item]);
+	TreeNode	*tempNode = new TreeNode(findOrInsert(m_data, item, data)->second);
+	tempNode->setPath(parentPtr->path).addSegmentPath(item).setParent(parentPtr);
+	return hasRecursiveError(tempNode);
+}
+
 bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
 {
-	for (ConceptList::iterator it = node->content.concepts.begin();
-		 it != node->content.concepts.end(); ++it)
+	for (ConceptList::iterator it = node->content.concepts.begin(); it != node->content.concepts.end(); ++it)
 	{
-		Vec<std::string> items		 = (*it)->getItems();
-		bool			 isLineError = false;
+		Vec<std::string> items			   = (*it)->getItems();
+		unsigned int	 hasInfRecursivity = 0;
 
 		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 		{
@@ -180,24 +192,9 @@ bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
 			if (!isInMap(m_concepts, item))
 				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
-			TreeNodeData data(item, m_concepts[item]);
-			TreeNode	*temp_node = new TreeNode(findOrInsert(m_data, item, data)->second, node->path);
-
-			if (!isInContainer(temp_node->path, item))
-			{
-				temp_node->path.push_back(item);
-				node->children.push_back(temp_node);
-				if (hasRecursiveError(temp_node))
-					isLineError = true;
-			}
-			else
-			{
-				isLineError = true;
-				temp_node->path.push_back(item);
-				node->children.push_back(temp_node);
-			}
+			hasInfRecursivity += isInContainer(node->path, item) || hasRecursiveErrorOnNewNode(item, node);
 		}
-		if (!isLineError)
+		if (!hasInfRecursivity)
 			node->content.isInfinite = false;
 	}
 	return node->content.isInfinite;
@@ -207,8 +204,8 @@ void SemanticDescriptor::checkValidity()
 {
 	Vec<std::string> path;
 	TreeNodeData	 data(CURSOR, m_concepts[CURSOR]);
-	path.push_back(CURSOR);
-	tree = new TreeNode(data, path);
+	tree = new TreeNode(data);
+	tree->addSegmentPath(CURSOR);
 	if (hasRecursiveError(tree))
 		throw std::runtime_error("ERREUR !");
 }
@@ -216,6 +213,11 @@ void SemanticDescriptor::checkValidity()
 Map<ConceptList> SemanticDescriptor::getConcepts() const
 {
 	return m_concepts;
+}
+
+TreeNode *SemanticDescriptor::getTree() const
+{
+	return tree;
 }
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)

@@ -17,9 +17,11 @@ Lexer::Lexer(std::string const &filepath)
 	ss << ifs.rdbuf();
 	m_content = ss.str();
 
-	SemanticDescriptor sdawd = SemanticDescriptor(m_content);
-	log(sdawd);
-	std::cout << std::endl;
+	SemanticDescriptor val(m_content);
+	std::cout << val;
+	Parser parser(val);
+	parser.parse("dwdw");
+
 	ifs.close();
 }
 

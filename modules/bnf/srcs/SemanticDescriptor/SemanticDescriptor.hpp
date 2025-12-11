@@ -25,21 +25,23 @@ class SemanticDescriptor
 		Map<TreeNodeData>		 m_data;
 		Map<ConceptList>		 m_concepts;
 		std::string				 m_lastKey;
-
-		bool isStartRule(const std::string &line, size_t *startDef);
-		void splitBlocks(std::istringstream &iss);
-		bool findSeparator(const std::string &block, size_t &pos);
-		void parseConceptName(std::string);
-		void parseRule(const std::string &, size_t);
-		void checkValidity();
-		bool hasRecursiveError(TreeNode *node);
-		void parseBlocks();
+		bool					 isStartRule(const std::string &line, size_t *startDef);
+		void					 splitBlocks(std::istringstream &iss);
+		bool					 findSeparator(const std::string &block, size_t &pos);
+		void					 parseConceptName(std::string);
+		void					 parseRule(const std::string &, size_t);
+		void					 checkValidity();
+		bool					 hasRecursiveError(TreeNode *node);
+		void					 parseBlocks();
+		bool					 hasRecursiveErrorOnNewNode(std::string item, TreeNode *parentPtr);
 
 	public:
+		SemanticDescriptor();
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
 		Map<ConceptList> getConcepts() const;
+		TreeNode		*getTree() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

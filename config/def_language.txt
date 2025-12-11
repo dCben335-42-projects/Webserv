@@ -13,7 +13,7 @@ block			::= IDENT { parameter } LBRACE { statement }
 
 				RBRACE
 
-parameter		::= IDENT [ directive ]
+parameter		::= IDENT
 				|= NUMBER
 				|= STRING
 

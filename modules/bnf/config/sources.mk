@@ -1,5 +1,6 @@
 BNF_SRCS += ./srcs/Concept/Concept.cpp
 BNF_SRCS += ./srcs/Exception/SemanticException.cpp
+BNF_SRCS += ./srcs/Parser/Parser.cpp
 BNF_SRCS += ./srcs/Rules/ARule.cpp
 BNF_SRCS += ./srcs/Rules/Group/Group.cpp
 BNF_SRCS += ./srcs/Rules/Option/Option.cpp

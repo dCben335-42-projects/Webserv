@@ -8,8 +8,9 @@
 class Lexer
 {
 	private:
-		std::string m_content;
-		// SemanticDescriptor m_semanticDescriptor;
+		std::string		   m_content;
+		SemanticDescriptor m_semanticDescriptor;
+
 	public:
 		Lexer(std::string const &filepath);
 		~Lexer();

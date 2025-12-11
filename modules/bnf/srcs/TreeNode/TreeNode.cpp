@@ -2,23 +2,34 @@
 #include "Logger.hpp"
 #include <iostream>
 
-TreeNode::TreeNode(TreeNodeData &content, std::vector<std::string> path):
+TreeNode::TreeNode(TreeNodeData &content):
     content(content),
-    path(path)
+    parent(NULL)
 {}
-
-// TreeNode TreeNode::createTree()
-// {
-//     Vec<std::string>::type path;
-//     TreeNodeData data(CURSOR, m_concepts[CURSOR]);
-//     path.push_back(CURSOR);
-//     tree = new TreeNode(data, path);
-// }
 
 TreeNode::~TreeNode() {
     for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         delete (*it);
     }
+}
+
+TreeNode& TreeNode::setParent(TreeNode *parentPtr)
+{
+    parent = parentPtr;
+    parentPtr->children.push_back(this);
+    return (*this);
+}
+
+TreeNode& TreeNode::addSegmentPath(std::string segment)
+{
+    path.push_back(segment);
+    return (*this);
+}
+
+TreeNode& TreeNode::setPath(Vec<std::string>::type newPath)
+{
+    path = newPath;
+    return (*this);
 }
 
 std::ostream &operator<<(std::ostream &os, const TreeNode &data)
