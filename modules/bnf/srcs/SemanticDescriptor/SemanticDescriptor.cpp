@@ -68,6 +68,8 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
     throw ConceptHasNotDefinitionException();
 }
 
+SemanticDescriptor::SemanticDescriptor() {}
+
 SemanticDescriptor::SemanticDescriptor(const std::string& m_content) {
     std::istringstream iss(m_content);
     splitBlocks(iss);

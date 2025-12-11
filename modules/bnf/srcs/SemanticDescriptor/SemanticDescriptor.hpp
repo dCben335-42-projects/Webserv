@@ -33,6 +33,7 @@ class SemanticDescriptor {
         bool hasRecursiveError(TreeNode* node);
         void parseBlocks();
     public:
+        SemanticDescriptor();
         SemanticDescriptor(const std::string& m_content);
         ~SemanticDescriptor();
         Map<ConceptList>::type getConcepts() const;
