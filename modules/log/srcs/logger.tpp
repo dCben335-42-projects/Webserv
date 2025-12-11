@@ -3,6 +3,7 @@
 
 #include "./Log/Log.hpp"
 #include "String.hpp"
+#include <sstream>
 
 template <typename V>
 void log(const V &v)
@@ -17,9 +18,6 @@ void log(V *ptr)
 	else
 		std::cout << Log::indent() << "null";
 }
-
-
-#include <sstream>
 
 template <typename V>
 std::string getLogJson(const V &v)

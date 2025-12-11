@@ -5,13 +5,6 @@
 #include "Map.hpp"
 #include <IsType.hpp>
 
-template <typename V>
-void logQuotedString(const V &v)
-{
-	std::cout << "\"";
-	log(v);
-	std::cout << "\"";
-}
 
 template <typename MapType>
 std::string getMapLogJson(const MapType &m)
@@ -32,7 +25,7 @@ std::string getMapLogJson(const MapType &m)
 		{
 			Log::incrementIndent();
 			result += "\n";
-			result += getLogJson(it->second);
+			result += getLogString(it->second);
 			Log::decrementIndent();
 		}
 		else
@@ -61,7 +54,9 @@ void logMapJson(const MapType &m)
 	while (it != end)
 	{
 		std::cout << Log::indent();
-		logQuotedString(it->first);
+		std::cout << "\"";
+		log(it->first);
+		std::cout << "\"";
 		std::cout << ": ";
 		if (!is_string<typename MapType::mapped_type>::value)
 		{
@@ -71,7 +66,11 @@ void logMapJson(const MapType &m)
 			Log::decrementIndent();
 		}
 		else
-			logQuotedString(it->second);
+		{
+			std::cout << "\"";
+			log(it->second);
+			std::cout << "\"";
+		}
 		if (++it != end)
 			std::cout << ",\n";
 	}

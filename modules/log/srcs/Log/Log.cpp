@@ -32,3 +32,9 @@ void log(const char *s)
 	else
 		std::cout << Log::indent() << "null";
 }
+
+
+std::string getLogJson(const std::string &s)
+{
+	return s;
+}

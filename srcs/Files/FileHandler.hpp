@@ -3,6 +3,7 @@
 
 #include <string>
 #include <exception>
+#include "Map.hpp"
 
 class FileHandler
 {
@@ -10,12 +11,17 @@ class FileHandler
 		FileHandler();
 		~FileHandler();
 
+		static const Map<std::string> m_extensionTypeMap;
+		static Map<std::string>		  initExtensionTypeMap();
+
 	public:
 		static bool		   fileExists(const std::string &path);
 		static std::string readFile(const std::string &path);
 		static std::string getSafePath(
 			const std::string &root,
 			const std::string &requestPath);
+
+		static std::string getContentType(const std::string &filePath);
 
 	private:
 		class FileHandlerException : public std::exception

@@ -20,6 +20,7 @@ class Log
 		static std::string indent();
 };
 
-void log(const char *s);
+void		log(const char *s);
+std::string getLogJson(const std::string &s);
 
 #endif

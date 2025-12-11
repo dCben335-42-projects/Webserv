@@ -19,6 +19,7 @@ Lexer::Lexer(std::string const &filepath)
 
 	SemanticDescriptor sdawd = SemanticDescriptor(m_content);
 	log(sdawd);
+	std::cout << std::endl;
 	ifs.close();
 }
 

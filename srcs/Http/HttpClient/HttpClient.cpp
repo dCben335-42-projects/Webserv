@@ -29,28 +29,23 @@ void HttpClient::setState(ClientState state)
 
 void HttpClient::prepareResponse()
 {
-	const std::string ROOT = "files/www";
+	const std::string ROOT			= "files/www";
+	const std::string FALLBACK_TEST = ROOT + "/index.html";
+
 	try
 	{
 		try
 		{
 			if (m_req.getTarget() == "/" && m_req.getHeader("Host") == "localhost:8080")
 			{
-				m_res.setBody(FileHandler::readFile(ROOT + "/index.html"));
-				m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
+				m_res.setBody(FileHandler::readFile(FALLBACK_TEST));
+				m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(FALLBACK_TEST));
 			}
 			else
 			{
 				std::string safePath = FileHandler::getSafePath(ROOT, m_req.getTarget().substr(1));
 				m_res.setBody(FileHandler::readFile(safePath));
-				if (safePath.find(".html") != std::string::npos)
-					m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_HTML);
-				else if (safePath.find(".css") != std::string::npos)
-					m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_CSS);
-				else if (safePath.find(".js") != std::string::npos)
-					m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_JS);
-				else
-					m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_PLAIN);
+				m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(safePath));
 			}
 		}
 		catch (const std::exception &e)
@@ -63,7 +58,7 @@ void HttpClient::prepareResponse()
 	catch (const AHttpError &e)
 	{
 		m_res.setStatusCode(e.getStatusCode());
-		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPES_JSON);
+		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_JSON);
 		m_res.setBody("{\n\t\"status\": \"error\",\n\t\"message\": \"" + std::string(e.what()) + "\"\n}");
 	}
 	m_res.build();
