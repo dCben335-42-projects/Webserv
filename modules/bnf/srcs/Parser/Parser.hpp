@@ -9,7 +9,7 @@
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
-#include "../TreeNode/TreeNode.hpp"
+#include "../ConceptNode/ConceptNode.hpp"
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
@@ -18,9 +18,9 @@ class Parser
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		Vec<char>	getCharAcceptedHead() const;
-		Vec<char>	getCharAccepted(TreeNode *node) const;
-		std::string getFirstCharAccepted(TreeNode *node) const;
+		Vec<char>		 getCharAcceptedHead() const;
+		Vec<char>		 getCharAccepted(ConceptNode *node) const;
+		Vec<std::string> getFirstCharAccepted(ConceptNode *node) const;
 
 	public:
 		~Parser();

@@ -1,4 +1,5 @@
 BNF_SRCS += ./srcs/Concept/Concept.cpp
+BNF_SRCS += ./srcs/ConceptNode/ConceptNode.cpp
 BNF_SRCS += ./srcs/Exception/SemanticException.cpp
 BNF_SRCS += ./srcs/Parser/Parser.cpp
 BNF_SRCS += ./srcs/Rules/ARule.cpp
@@ -7,6 +8,5 @@ BNF_SRCS += ./srcs/Rules/Option/Option.cpp
 BNF_SRCS += ./srcs/Rules/Sequence/Sequence.cpp
 BNF_SRCS += ./srcs/Rules/Symbol/Symbol.cpp
 BNF_SRCS += ./srcs/SemanticDescriptor/SemanticDescriptor.cpp
-BNF_SRCS += ./srcs/TreeNodeData/TreeNodeData.cpp
 BNF_SRCS += ./srcs/TreeNode/TreeNode.cpp
 BNF_SRCS += ./srcs/utils/utils.cpp

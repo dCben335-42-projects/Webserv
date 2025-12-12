@@ -6,7 +6,7 @@
 #include <iostream>
 
 #define SPACE ' '
-#define TAP_SIZE 2
+#define TAP_SIZE 4
 
 class Log
 {

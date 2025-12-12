@@ -167,17 +167,16 @@ void SemanticDescriptor::parseConceptName(std::string s)
 	m_lastKey = s;
 }
 
-bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, TreeNode *parentPtr)
+bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr)
 {
-	TreeNodeData data(item, m_concepts[item]);
-	TreeNode	*tempNode = new TreeNode(findOrInsert(m_data, item, data)->second);
-	tempNode->setPath(parentPtr->path).addSegmentPath(item).setParent(parentPtr);
+	ConceptNode *tempNode = new ConceptNode(item, m_concepts[item]);
+	tempNode->setPath(parentPtr->getPath()).addSegmentPath(item).setParent(parentPtr);
 	return hasRecursiveError(tempNode);
 }
 
-bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
+bool SemanticDescriptor::hasRecursiveError(ConceptNode *node)
 {
-	for (ConceptList::iterator it = node->content.concepts.begin(); it != node->content.concepts.end(); ++it)
+	for (ConceptList::const_iterator it = node->getConcepts().begin(); it != node->getConcepts().end(); ++it)
 	{
 		Vec<std::string> items			   = (*it)->getItems();
 		unsigned int	 hasInfRecursivity = 0;
@@ -192,19 +191,18 @@ bool SemanticDescriptor::hasRecursiveError(TreeNode *node)
 			if (!isInMap(m_concepts, item))
 				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
-			hasInfRecursivity += isInContainer(node->path, item) || hasRecursiveErrorOnNewNode(item, node);
+			hasInfRecursivity += isInContainer(node->getPath(), item) || hasRecursiveErrorOnNewNode(item, node);
 		}
 		if (!hasInfRecursivity)
-			node->content.isInfinite = false;
+			node->setHasInfRecursivity(false);
 	}
-	return node->content.isInfinite;
+	return node->hasInfRecursivity();
 }
 
 void SemanticDescriptor::checkValidity()
 {
 	Vec<std::string> path;
-	TreeNodeData	 data(CURSOR, m_concepts[CURSOR]);
-	tree = new TreeNode(data);
+	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]);
 	tree->addSegmentPath(CURSOR);
 	if (hasRecursiveError(tree))
 		throw std::runtime_error("ERREUR !");
@@ -215,7 +213,7 @@ Map<ConceptList> SemanticDescriptor::getConcepts() const
 	return m_concepts;
 }
 
-TreeNode *SemanticDescriptor::getTree() const
+ConceptNode *SemanticDescriptor::getTree() const
 {
 	return tree;
 }

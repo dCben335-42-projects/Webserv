@@ -9,8 +9,8 @@
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
 #include "../Concept/Concept.hpp"
-#include "../TreeNode/TreeNode.hpp"
 #include "../utils/utils.hpp"
+#include "../ConceptNode/ConceptNode.hpp"
 
 #include "../Exception/ConceptAlreadyDefinedException.hpp"
 #include "../Exception/InvalidConceptNameException.hpp"
@@ -20,9 +20,9 @@
 class SemanticDescriptor
 {
 	private:
-		TreeNode				*tree;
+		ConceptNode				*tree;
 		std::vector<std::string> blocks;
-		Map<TreeNodeData>		 m_data;
+		Map<ConceptNode>		 m_data;
 		Map<ConceptList>		 m_concepts;
 		std::string				 m_lastKey;
 		bool					 isStartRule(const std::string &line, size_t *startDef);
@@ -31,9 +31,9 @@ class SemanticDescriptor
 		void					 parseConceptName(std::string);
 		void					 parseRule(const std::string &, size_t);
 		void					 checkValidity();
-		bool					 hasRecursiveError(TreeNode *node);
+		bool					 hasRecursiveError(ConceptNode *node);
 		void					 parseBlocks();
-		bool					 hasRecursiveErrorOnNewNode(std::string item, TreeNode *parentPtr);
+		bool					 hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 
 	public:
 		SemanticDescriptor();
@@ -41,7 +41,7 @@ class SemanticDescriptor
 		~SemanticDescriptor();
 
 		Map<ConceptList> getConcepts() const;
-		TreeNode		*getTree() const;
+		ConceptNode		*getTree() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

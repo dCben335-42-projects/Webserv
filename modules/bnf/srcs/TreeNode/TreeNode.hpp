@@ -1,20 +1,27 @@
 #ifndef TREENODE_HPP
 #define TREENODE_HPP
 
-#include "../TreeNodeData/TreeNodeData.hpp"
+#include "Vector.hpp"
+#include <string>
 
 class TreeNode
 {
+	protected:
+		TreeNode		*m_parent;
+		Vec<TreeNode *>	 m_children;
+		Vec<std::string> m_path;
+
 	public:
-		TreeNode(TreeNodeData &content);
-		~TreeNode();
-		TreeNodeData			&content;
-		std::vector<std::string> path;
-		std::vector<TreeNode *>	 children;
-		TreeNode				&setParent(TreeNode *parentPtr);
-		TreeNode				&addSegmentPath(std::string segment);
-		TreeNode				&setPath(Vec<std::string> path);
-		TreeNode				*parent;
+		TreeNode();
+		virtual ~TreeNode();
+
+		TreeNode &setParent(TreeNode *parentPtr);
+		TreeNode &setPath(Vec<std::string> path);
+		TreeNode &addSegmentPath(std::string segment);
+
+		TreeNode		*getParent() const;
+		Vec<std::string> getPath() const;
+		Vec<TreeNode *>	 getChildren() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const TreeNode &data);

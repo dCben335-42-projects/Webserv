@@ -2,15 +2,14 @@
 #include "Logger.hpp"
 #include <iostream>
 
-TreeNode::TreeNode(TreeNodeData &content) :
-	content(content),
-	parent(NULL)
+TreeNode::TreeNode() :
+	m_parent(NULL)
 {
 }
 
 TreeNode::~TreeNode()
 {
-	for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it)
+	for (Vec<TreeNode *>::iterator it = m_children.begin(); it != m_children.end(); ++it)
 	{
 		delete (*it);
 	}
@@ -18,34 +17,49 @@ TreeNode::~TreeNode()
 
 TreeNode &TreeNode::setParent(TreeNode *parentPtr)
 {
-	parent = parentPtr;
-	parentPtr->children.push_back(this);
+	m_parent = parentPtr;
+	parentPtr->m_children.push_back(this);
 	return (*this);
 }
 
 TreeNode &TreeNode::addSegmentPath(std::string segment)
 {
-	path.push_back(segment);
+	m_path.push_back(segment);
 	return (*this);
 }
 
 TreeNode &TreeNode::setPath(Vec<std::string> newPath)
 {
-	path = newPath;
+	m_path = newPath;
 	return (*this);
 }
 
 std::ostream &operator<<(std::ostream &os, const TreeNode &data)
 {
-	log(data.content);
+	// log(data.);
 	Log::incrementIndent();
 	std::cout << "\n";
-	for (size_t i = 0; i < data.children.size(); i++)
+	for (size_t i = 0; i < data.getChildren().size(); i++)
 	{
 		std::cout << Log::indent();
-		log(data.children[i]);
+		log(data.getChildren()[i]);
 	}
 	Log::decrementIndent();
 
 	return os;
+}
+
+TreeNode *TreeNode::getParent() const
+{
+	return m_parent;
+}
+
+Vec<TreeNode *> TreeNode::getChildren() const
+{
+	return m_children;
+}
+
+Vec<std::string> TreeNode::getPath() const
+{
+	return m_path;
 }
