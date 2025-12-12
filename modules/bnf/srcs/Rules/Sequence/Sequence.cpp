@@ -14,7 +14,7 @@ void Sequence::addItem(const std::string &val)
 	items.push_back(val);
 }
 
-std::vector<std::string> Sequence::getItems() const
+Vec<std::string> Sequence::getItems() const
 {
 	return items;
 }

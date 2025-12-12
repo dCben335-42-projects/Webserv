@@ -2,7 +2,7 @@
 #define ARULE_HPP
 
 #include "bnf_defs.hpp"
-#include <vector>
+#include "Vector.hpp"
 
 using bnf::ERuleType;
 
@@ -21,8 +21,8 @@ class ARule
 		virtual void addItem(const std::string &val) = 0;
 		ERuleType	 getType() const;
 
-		virtual std::vector<std::string> getItems() const		   = 0;
-		virtual std::string				 getPrintableValue() const = 0;
+		virtual Vec<std::string> getItems() const		   = 0;
+		virtual std::string		 getPrintableValue() const = 0;
 
 		static BnfMap getMap(const std::string &opener);
 		static bool	  isKeyWord(const std::string &word, bool onlyClose);

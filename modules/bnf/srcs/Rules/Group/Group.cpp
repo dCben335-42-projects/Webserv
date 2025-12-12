@@ -13,7 +13,7 @@ void Group::addItem(const std::string &val)
 	items.push_back(val);
 }
 
-std::vector<std::string> Group::getItems() const
+Vec<std::string> Group::getItems() const
 {
 	return items;
 }

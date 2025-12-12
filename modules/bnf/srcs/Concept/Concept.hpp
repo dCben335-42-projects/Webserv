@@ -12,19 +12,21 @@ class Concept
 		Concept();
 		~Concept();
 
-		void					 setRule(ARule *rule);
-		void					 printRules() const;
-		std::vector<ARule *>	 getRules();
-		bool					 calledInConcept(std::string conceptName);
-		std::vector<std::string> getItems();
-		std::vector<ARule *>	 getValues() const;
+		Vec<ARule *>	 getRules();
+		Vec<std::string> getItems();
+		Vec<ARule *>	 getValues() const;
+
+		void setRule(ARule *rule);
+
+		void printRules() const;
+		bool calledInConcept(std::string conceptName);
 
 	private:
-		std::vector<ARule *> values;
+		Vec<ARule *> values;
 };
 
 std::ostream &operator<<(std::ostream &os, const Concept &data);
 
-typedef std::vector<Concept *> ConceptList;
+typedef Vec<Concept *> ConceptList;
 
 #endif

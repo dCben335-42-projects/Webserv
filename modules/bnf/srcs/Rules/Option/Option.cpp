@@ -13,7 +13,7 @@ void Option::addItem(const std::string &val)
 	items.push_back(val);
 }
 
-std::vector<std::string> Option::getItems() const
+Vec<std::string> Option::getItems() const
 {
 	return items;
 }

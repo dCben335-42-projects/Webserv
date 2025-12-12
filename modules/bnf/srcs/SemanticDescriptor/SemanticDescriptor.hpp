@@ -20,11 +20,11 @@
 class SemanticDescriptor
 {
 	private:
-		ConceptNode				*tree;
-		std::vector<std::string> blocks;
-		Map<ConceptNode>		 m_data;
-		Map<ConceptList>		 m_concepts;
-		std::string				 m_lastKey;
+		ConceptNode		*tree;
+		Vec<std::string> blocks;
+		Map<ConceptNode> m_data;
+		Map<ConceptList> m_concepts;
+		std::string		 m_lastKey;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);

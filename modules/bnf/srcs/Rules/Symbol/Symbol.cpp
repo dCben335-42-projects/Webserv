@@ -14,9 +14,9 @@ Symbol::~Symbol()
 {
 }
 
-std::vector<std::string> Symbol::getItems() const
+Vec<std::string> Symbol::getItems() const
 {
-	std::vector<std::string> items;
+	Vec<std::string> items;
 	items.push_back(value);
 	return items;
 }

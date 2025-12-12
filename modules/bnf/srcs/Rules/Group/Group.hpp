@@ -14,11 +14,11 @@ class Group : public ARule
 		Group();
 		~Group();
 
-		std::vector<std::string> getItems() const;
-		std::string				 getPrintableValue() const;
-		void					 addItem(const std::string &val);
+		Vec<std::string> getItems() const;
+		std::string		 getPrintableValue() const;
+		void			 addItem(const std::string &val);
 
 	private:
-		std::vector<std::string> items;
+		Vec<std::string> items;
 };
 #endif

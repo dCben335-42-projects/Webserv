@@ -23,20 +23,20 @@ void Concept::setRule(ARule *rule)
 	values.push_back(rule);
 }
 
-std::vector<ARule *> Concept::getRules()
+Vec<ARule *> Concept::getRules()
 {
 	return values;
 }
 
 bool Concept::calledInConcept(std::string conceptName)
 {
-	for (std::vector<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
 	{
-		ARule					*rule  = *it;
-		std::vector<std::string> items = rule->getItems();
+		ARule			*rule  = *it;
+		Vec<std::string> items = rule->getItems();
 		if (rule->getType() != OPTION)
 			continue;
-		for (std::vector<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 		{
 			if (*itemIt == conceptName)
 			{
@@ -47,15 +47,15 @@ bool Concept::calledInConcept(std::string conceptName)
 	return false;
 }
 
-std::vector<std::string> Concept::getItems()
+Vec<std::string> Concept::getItems()
 {
-	std::vector<std::string> allItems;
-	for (std::vector<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	Vec<std::string> allItems;
+	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		ARule *rule = *it;
 		if (rule->getType() == OPTION)
 			continue;
-		std::vector<std::string> items = rule->getItems();
+		Vec<std::string> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
 		{
@@ -70,7 +70,7 @@ std::vector<std::string> Concept::getItems()
 
 
 
-std::vector<ARule *> Concept::getValues() const
+Vec<ARule *> Concept::getValues() const
 {
 	return values;
 }
@@ -81,11 +81,11 @@ std::ostream &operator<<(std::ostream &os, const Concept &data)
 	// data.printRules();
 	// (void)data;
 
-	std::vector<ARule *> values = data.getValues();
+	Vec<ARule *> values = data.getValues();
 
 	log(values);
 
-	// for (std::vector<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
+	// for (Vec<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
 	// ARule* rule = *it;
 	// os << *rule;
 	// }

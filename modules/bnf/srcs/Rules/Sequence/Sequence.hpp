@@ -13,12 +13,12 @@ class Sequence : public ARule
 	public:
 		Sequence();
 		~Sequence();
-		void					 addItem(const std::string &val);
-		std::vector<std::string> getItems() const;
-		std::string				 getPrintableValue() const;
+		void			 addItem(const std::string &val);
+		Vec<std::string> getItems() const;
+		std::string		 getPrintableValue() const;
 
 	private:
-		std::vector<std::string> items;
+		Vec<std::string> items;
 };
 
 #endif
