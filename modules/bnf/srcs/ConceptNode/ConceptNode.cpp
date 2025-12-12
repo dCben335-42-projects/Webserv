@@ -35,14 +35,3 @@ void ConceptNode::setHasInfRecursivity(const bool hasInfRecursivity)
 {
 	m_hasInfRecursivity = hasInfRecursivity;
 }
-
-Vec<ConceptNode *> ConceptNode::getChildren() const
-{
-	// return dynamic_cast<Vec<ConceptNode *>> m_children;
-	Vec<ConceptNode *> conceptChildren;
-	for (Vec<TreeNode *>::const_iterator it = m_children.begin(); it != m_children.end(); ++it)
-	{
-		conceptChildren.push_back(dynamic_cast<ConceptNode *>(*it));
-	}
-	return conceptChildren;
-}

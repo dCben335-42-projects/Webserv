@@ -4,26 +4,30 @@
 #include "Vector.hpp"
 #include <string>
 
+template <typename Derived>
 class TreeNode
 {
 	protected:
-		TreeNode		*m_parent;
-		Vec<TreeNode *>	 m_children;
-		Vec<std::string> m_path;
+		TreeNode<Derived> *m_parent;
+		Vec<Derived *>	   m_children;
+		Vec<std::string>   m_path;
 
 	public:
 		TreeNode();
 		virtual ~TreeNode();
 
-		TreeNode &setParent(TreeNode *parentPtr);
-		TreeNode &setPath(Vec<std::string> path);
-		TreeNode &addSegmentPath(std::string segment);
+		TreeNode<Derived> &setParent(TreeNode<Derived> *parentPtr);
+		TreeNode<Derived> &setPath(Vec<std::string> path);
+		TreeNode<Derived> &addSegmentPath(std::string segment);
 
-		TreeNode		*getParent() const;
-		Vec<std::string> getPath() const;
-		Vec<TreeNode *>	 getChildren() const;
+		TreeNode<Derived>	   *getParent() const;
+		const Vec<std::string> &getPath() const;
+		const Vec<Derived *>   &getChildren() const;
 };
 
-std::ostream &operator<<(std::ostream &os, const TreeNode &data);
+template <typename Derived>
+std::ostream &operator<<(std::ostream &os, const TreeNode<Derived> &data);
+
+#include "./TreeNode.tpp"
 
 #endif

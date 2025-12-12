@@ -13,7 +13,7 @@
 #include "../Concept/Concept.hpp"
 #include "../TreeNode/TreeNode.hpp"
 
-class ConceptNode : public TreeNode
+class ConceptNode : public TreeNode<ConceptNode>
 {
 	private:
 		const std::string  m_name;
@@ -23,12 +23,13 @@ class ConceptNode : public TreeNode
 	public:
 		ConceptNode(const std::string name, const ConceptList &concepts);
 		~ConceptNode() {};
-		bool			   is_multiple() const;
-		bool			   hasInfRecursivity() const;
-		void			   setHasInfRecursivity(const bool hasInfRecursivity);
+
+		bool is_multiple() const;
+		bool hasInfRecursivity() const;
+		void setHasInfRecursivity(const bool hasInfRecursivity);
+
 		const ConceptList &getConcepts() const;
 		const std::string &getName() const;
-		Vec<ConceptNode *> getChildren() const;
 };
 
 

@@ -25,7 +25,7 @@ Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 {
 	while (node->getChildren().size() > 0)
 	{
-		node = dynamic_cast<ConceptNode *>(node->getChildren()[0]);
+		node = node->getChildren()[0];
 		if (node->getChildren().size() > 0)
 			continue;
 		else
@@ -81,7 +81,7 @@ void Parser::parse(const std::string &stringToParsed)
 	// std::cout << getFirstCharAccepted(m_semantic.getTree()->children[0]);
 
 	log("\n------------------\n");
-	log(getFirstCharAccepted(dynamic_cast<ConceptNode *>(m_semantic.getTree()->getChildren()[0])));
+	log(getFirstCharAccepted(m_semantic.getTree()->getChildren()[0]));
 	log("\n");
 
 

@@ -25,15 +25,19 @@ class SemanticDescriptor
 		Map<ConceptNode>		 m_data;
 		Map<ConceptList>		 m_concepts;
 		std::string				 m_lastKey;
-		bool					 isStartRule(const std::string &line, size_t *startDef);
-		void					 splitBlocks(std::istringstream &iss);
-		bool					 findSeparator(const std::string &block, size_t &pos);
-		void					 parseConceptName(std::string);
-		void					 parseRule(const std::string &, size_t);
-		void					 checkValidity();
-		bool					 hasRecursiveError(ConceptNode *node);
-		void					 parseBlocks();
-		bool					 hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
+
+		bool isStartRule(const std::string &line, size_t *startDef);
+		void splitBlocks(std::istringstream &iss);
+		bool findSeparator(const std::string &block, size_t &pos);
+
+		void parseConceptName(std::string);
+		void parseRule(const std::string &, size_t);
+
+		void checkValidity();
+		bool hasRecursiveError(ConceptNode *node);
+
+		void parseBlocks();
+		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 
 	public:
 		SemanticDescriptor();

@@ -8,5 +8,4 @@ BNF_SRCS += ./srcs/Rules/Option/Option.cpp
 BNF_SRCS += ./srcs/Rules/Sequence/Sequence.cpp
 BNF_SRCS += ./srcs/Rules/Symbol/Symbol.cpp
 BNF_SRCS += ./srcs/SemanticDescriptor/SemanticDescriptor.cpp
-BNF_SRCS += ./srcs/TreeNode/TreeNode.cpp
 BNF_SRCS += ./srcs/utils/utils.cpp

@@ -1,0 +1,73 @@
+#include "./TreeNode.hpp"
+#include "Logger.hpp"
+#include <iostream>
+
+template <typename Derived>
+TreeNode<Derived>::TreeNode() : m_parent(NULL)
+{
+}
+
+template <typename Derived>
+TreeNode<Derived>::~TreeNode()
+{
+	for (typename Vec<Derived *>::iterator it = m_children.begin(); it != m_children.end(); ++it)
+	{
+		delete (*it);
+	}
+}
+
+template <typename Derived>
+TreeNode<Derived> &TreeNode<Derived>::setParent(TreeNode<Derived> *parentPtr)
+{
+	m_parent = parentPtr;
+	if (parentPtr)
+		parentPtr->m_children.push_back(static_cast<Derived *>(this));
+	return (*this);
+}
+
+template <typename Derived>
+TreeNode<Derived> &TreeNode<Derived>::addSegmentPath(std::string segment)
+{
+	m_path.push_back(segment);
+	return (*this);
+}
+
+template <typename Derived>
+TreeNode<Derived> &TreeNode<Derived>::setPath(Vec<std::string> newPath)
+{
+	m_path = newPath;
+	return (*this);
+}
+
+template <typename Derived>
+std::ostream &operator<<(std::ostream &os, const TreeNode<Derived> &data)
+{
+	Log::incrementIndent();
+	std::cout << "\n";
+	for (size_t i = 0; i < data.getChildren().size(); i++)
+	{
+		std::cout << Log::indent();
+		log(data.getChildren()[i]);
+	}
+	Log::decrementIndent();
+
+	return os;
+}
+
+template <typename Derived>
+TreeNode<Derived> *TreeNode<Derived>::getParent() const
+{
+	return m_parent;
+}
+
+template <typename Derived>
+const Vec<Derived *> &TreeNode<Derived>::getChildren() const
+{
+	return m_children;
+}
+
+template <typename Derived>
+const Vec<std::string> &TreeNode<Derived>::getPath() const
+{
+	return m_path;
+}
