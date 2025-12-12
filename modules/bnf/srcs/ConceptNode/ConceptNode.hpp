@@ -30,7 +30,6 @@ class ConceptNode : public TreeNode<ConceptNode>
 
 		const ConceptList  &getConcepts() const;
 		const std::string  &getName() const;
-		static ConceptNode *create(std::string item, Map<ConceptList> &m_concepts);
 };
 
 

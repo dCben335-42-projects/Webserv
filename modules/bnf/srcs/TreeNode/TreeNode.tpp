@@ -71,3 +71,23 @@ const Vec<std::string> &TreeNode<Derived>::getPath() const
 {
 	return m_path;
 }
+
+template <typename Derived>
+Derived *TreeNode<Derived>::getChild(size_t idx) const
+{
+	if (m_children.size() > idx)
+		return m_children[idx];
+	return NULL;
+}
+
+template <typename Derived>
+size_t TreeNode<Derived>::getChildCount() const
+{
+	return m_children.size();
+}
+
+template <typename Derived>
+bool TreeNode<Derived>::hasChildren() const
+{
+	return !m_children.empty();
+}

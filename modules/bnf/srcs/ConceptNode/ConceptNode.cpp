@@ -35,8 +35,3 @@ void ConceptNode::setHasInfRecursivity(const bool hasInfRecursivity)
 {
 	m_hasInfRecursivity = hasInfRecursivity;
 }
-
-ConceptNode *ConceptNode::create(std::string item, Map<ConceptList> &m_concepts)
-{
-	return new ConceptNode(item, m_concepts[item]);
-}

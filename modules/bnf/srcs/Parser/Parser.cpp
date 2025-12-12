@@ -21,12 +21,26 @@ Parser::~Parser()
 //     // }
 // }
 
+void printNode(ConceptNode *node)
+{
+	std::cout << node->getName() << std::endl; // or whatever you want
+}
+
 Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 {
-	while (node->getChildren().size() > 0)
+	V_FOREACH(ConceptNode *, java, node->getChildren())
 	{
-		node = node->getChildren()[0];
-		if (node->getChildren().size() > 0)
+		log(*java);
+	}
+
+	node->getChildren().foreach (printNode);
+
+
+
+	while (node->hasChildren())
+	{
+		node = node->getChild(0);
+		if (node->hasChildren())
 			continue;
 		else
 		{

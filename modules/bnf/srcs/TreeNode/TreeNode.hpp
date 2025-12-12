@@ -23,6 +23,9 @@ class TreeNode
 		TreeNode<Derived>	   *getParent() const;
 		const Vec<std::string> &getPath() const;
 		const Vec<Derived *>   &getChildren() const;
+		Derived				   *getChild(size_t idx) const;
+		size_t					getChildCount() const;
+		bool					hasChildren() const;
 };
 
 template <typename Derived>

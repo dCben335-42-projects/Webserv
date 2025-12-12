@@ -45,6 +45,7 @@ class SemanticDescriptor
 		~SemanticDescriptor();
 
 		Map<ConceptList> getConcepts() const;
+		ConceptList		&getConcept(const std::string &key);
 		ConceptNode		*getTree() const;
 };
 

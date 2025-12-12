@@ -207,8 +207,6 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 
 void SemanticDescriptor::checkValidity()
 {
-	Vec<std::string> path;
-
 	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]);
 	tree->addSegmentPath(CURSOR);
 	if (hasRecursiveError(*tree))
@@ -218,6 +216,11 @@ void SemanticDescriptor::checkValidity()
 Map<ConceptList> SemanticDescriptor::getConcepts() const
 {
 	return m_concepts;
+}
+
+ConceptList &SemanticDescriptor::getConcept(const std::string &key)
+{
+	return m_concepts[key];
 }
 
 ConceptNode *SemanticDescriptor::getTree() const
