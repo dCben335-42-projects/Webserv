@@ -59,21 +59,6 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 // ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
-	Map<std::string> headers = message.getHeaders();
-	// Map<std::string>::iterator it	   = headers.begin();
-	// const size_t total = headers.size();
-	// size_t index = 0;
-
-	// log("Headers:");
-	log(headers);
-	// while (it != headers.end())
-	// {
-	// 	o << "\"" << it->first << "\""
-	// 	  << ": \"" << it->second << "\"";
-	// 	if (index < total - 1)
-	// 		o << "\n";
-	// 	it++;
-	// 	index++;
-	// }
+	log(message.getHeaders());
 	return o;
 }

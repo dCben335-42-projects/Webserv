@@ -22,6 +22,8 @@ class FileHandler
 			const std::string &requestPath);
 
 		static std::string getContentType(const std::string &filePath);
+		static std::string findLastModifiedDate(const std::string &filePath);
+
 
 	private:
 		class FileHandlerException : public std::exception

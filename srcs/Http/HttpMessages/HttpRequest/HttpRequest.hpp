@@ -38,4 +38,7 @@ class HttpRequest : public AHttpMessage
 		size_t	readContentLength(std::string request, const size_t headersEnd);
 };
 
+std::ostream &operator<<(std::ostream &o, const HttpRequest &message);
+
+
 #endif

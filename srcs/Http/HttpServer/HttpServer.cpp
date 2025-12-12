@@ -67,7 +67,7 @@ void HttpServer::createPollClient(void)
 			throw std::runtime_error("fcntl F_GETFL failed");
 		if (fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK) < 0)
 			throw std::runtime_error("fcntl F_SETFL failed");
-		findOrInsert(m_clients, clientSocket, HttpClient(clientSocket));
+		m_clients.set(clientSocket, HttpClient(clientSocket));
 		createPoll(clientSocket);
 	}
 	catch (const std::exception &e)
@@ -89,7 +89,7 @@ void HttpServer::run()
 			if (it != m_clients.end())
 			{
 				HttpClient &client	= it->second;
-				m_pollFds[i].events = 0; // meanwhile reset events
+				m_pollFds[i].events = 0;
 				if (client.getState() == READING)
 					m_pollFds[i].events |= POLLIN;
 				if (client.getState() == WRITING)

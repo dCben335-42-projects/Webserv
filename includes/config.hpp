@@ -1,7 +1,8 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#define PROJECT_NAME "WebServ"
+#define PROJECT_NAME "i_am_the_one_who_ports"
+#define SERVER_NAME PROJECT_NAME "/1.0"
 
 #define DEFAULT_URL "http://localhost:8080/"
 #define DEFAULT_PORT 8080
@@ -17,9 +18,21 @@
 #define HEADER_SEPARATOR ": "
 #define READ_BUFFER_SIZE 8192
 #define WRITE_BUFFER_SIZE 8192
-
+#define HEADER_SERVER "Server"
 #define HEADER_CONTENT_LENGTH "Content-Length"
 #define HEADER_CONTENT_TYPE "Content-Type"
+#define HEADER_DATE "Date"
+#define HEADER_LAST_MODIFIED "Last-Modified"
+#define HEADER_CONTENT_ENCODING "Content-Encoding"
+#define HEADER_TRANSFER_ENCODING "Transfer-Encoding"
+#define HEADER_LOCATION "Location"
+#define HEADER_ALLOW "Allow"
+#define HEADER_CONTENT_LANGUAGE "Content-Language"
+#define HEADER_CONTENT_LOCATION "Content-Location"
+#define HEADER_VARY "Vary"
+#define HEADER_CACHE_CONTROL "Cache-Control"
+#define HEADER_EXPIRES "Expires"
+#define HEADER_ETAG "ETag"
 #define HEADER_CONNECTION "Connection"
 #define HEADER_HOST "Host"
 #define HEADER_USER_AGENT "User-Agent"
@@ -87,6 +100,7 @@
 #define RED "\033[31m"
 #define GREEN "\033[32m"
 #define BLUE "\033[34m"
+#define YELLOW "\033[33m"
 #define RESET "\033[0m"
 
 
