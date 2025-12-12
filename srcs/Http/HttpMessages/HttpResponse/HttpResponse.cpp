@@ -48,6 +48,8 @@ void HttpResponse::reset()
 	m_headers.clear();
 	m_body.clear();
 	m_method = HttpMethod();
+
+	m_headers[HEADER_SERVER] = SERVER_NAME;
 }
 
 

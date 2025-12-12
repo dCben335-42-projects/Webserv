@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include "String.hpp"
 #include "Number.hpp"
+#include "Logger.hpp"
 
 #include <cctype>
 #include <cstring>
@@ -153,4 +154,17 @@ ssize_t HttpRequest::readOnce(int socketFd)
 
 	m_rawStr.append(buffer, bytesRead);
 	return bytesRead;
+}
+
+
+
+std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
+{
+	log("----- HTTP Request -----\n");
+	log(BLUE "Method: " + message.getMethod() + RESET);
+	log("\n" GREEN "Target: " + message.getTarget() + RESET);
+	log("\n" YELLOW "Headers:\n");
+	log(message.getHeaders());
+	log(RESET "\n------------------------");
+	return o;
 }

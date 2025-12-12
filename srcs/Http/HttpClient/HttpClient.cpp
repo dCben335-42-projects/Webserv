@@ -4,6 +4,7 @@
 #include <cstring>
 #include "FileHandler.hpp"
 #include "httpErrors.hpp"
+#include "Date.hpp"
 
 HttpClient::HttpClient(int fd) : m_fd(fd), m_state(READING)
 {
@@ -31,21 +32,33 @@ void HttpClient::prepareResponse()
 {
 	const std::string ROOT			= "files/www/website";
 	const std::string FALLBACK_TEST = ROOT + "/index.html";
+	std::string		  resource;
+	std::string		  target;
 
 	try
 	{
 		try
 		{
 			if (m_req.getTarget() == "/" && m_req.getHeader("Host") == "localhost:8080")
-			{
-				m_res.setBody(FileHandler::readFile(FALLBACK_TEST));
-				m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(FALLBACK_TEST));
-			}
+				resource = FALLBACK_TEST;
 			else
 			{
-				std::string safePath = FileHandler::getSafePath(ROOT, m_req.getTarget().substr(1));
-				m_res.setBody(FileHandler::readFile(safePath));
-				m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(safePath));
+				target	 = m_req.getTarget();
+				target	 = target.at(0) == '/' ? target.substr(1) : target;
+				resource = FileHandler::getSafePath(ROOT, target);
+			}
+			m_res.setBody(FileHandler::readFile(resource));
+			m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
+
+			{
+				std::string fileDate = FileHandler::findLastModifiedDate(resource);
+				if (!fileDate.empty())
+					m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+			}
+			{
+				std::string date = Date::getCurrentDate();
+				if (!date.empty())
+					m_res.setHeader(HEADER_DATE, date);
 			}
 		}
 		catch (const std::exception &e)
@@ -61,6 +74,7 @@ void HttpClient::prepareResponse()
 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_JSON);
 		m_res.setBody("{\n\t\"status\": \"error\",\n\t\"message\": \"" + std::string(e.what()) + "\"\n}");
 	}
+	std::cout << FileHandler::findLastModifiedDate(FALLBACK_TEST) << std::endl;
 	m_res.build();
 }
 
@@ -86,8 +100,6 @@ void HttpClient::onRead()
 		return;
 	m_req.parse();
 	prepareResponse();
-	std::cout << "======> Response " << std::endl;
-	std::cout << m_res << std::endl;
 	m_state = WRITING;
 }
 

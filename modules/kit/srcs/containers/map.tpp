@@ -4,36 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
-
-
-template <typename K, typename V>
-struct MapImpl
-{
-		typedef std::map<K, V> map_type;
-};
-
-template <typename K, typename V = void>
-struct Map;
-// clang-format off
-template <typename V>
-struct Map<V, void> : public MapImpl<std::string, V>::map_type
-{
-	typedef typename MapImpl<std::string, V>::map_type base;
-
-	Map() : base() {}
-	Map(const base &b) : base(b) {}
-};
-
-template <typename K, typename V>
-struct Map : public MapImpl<K, V>::map_type
-{
-	typedef typename MapImpl<K, V>::map_type base;
-
-	Map() : base() {}
-	Map(const base &b) : base(b) {}
-};
-
-// clang-format on
+#include <stdexcept>
 
 template <typename M, typename K, typename V>
 typename M::iterator findOrInsert(M &map, const K &key, const V &value)
@@ -67,70 +38,91 @@ size_t getMapSize(const M &m)
 
 
 
-
-
-// ANCHOR -- Print functions --
-template <typename M, typename K>
-void printMapKey(const M &m, const K &key)
+template <typename Derived, typename K, typename V>
+class MapBase
 {
-	typename M::const_iterator it = m.find(key);
-	if (it != m.end())
-		std::cout << it->first;
-	else
-		std::cout << "Key not found";
-}
+	public:
+		bool has(const K &key) const
+		{
+			return isInMap(static_cast<const Derived &>(*this), key);
+		}
 
-template <typename M, typename K>
-void printMapValue(const M &m, const K &key)
+		V &get(const K &key)
+		{
+			return getMapValue(static_cast<Derived &>(*this), key);
+		}
+		const V &get(const K &key) const
+		{
+			return getMapValue(static_cast<const Derived &>(*this), key);
+		}
+
+		void set(const K &key, const V &value)
+		{
+			findOrInsert(static_cast<Derived &>(*this), key, value)->second = value;
+		}
+
+		void remove(const K &key)
+		{
+			static_cast<Derived &>(*this).erase(key);
+		}
+
+		bool try_get(const K &key, V &out) const
+		{
+			typename Derived::const_iterator it = static_cast<const Derived &>(*this).find(key);
+			if (it == static_cast<const Derived &>(*this).end())
+				return false;
+			out = it->second;
+			return true;
+		}
+
+		size_t size() const
+		{
+			return getMapSize(static_cast<const Derived &>(*this));
+		}
+};
+
+
+template <typename K, typename V>
+struct MapImpl
 {
-	typename M::const_iterator it = m.find(key);
-	if (it != m.end())
-		std::cout << it->second;
-	else
-		std::cout << "Key not found";
-}
+		typedef std::map<K, V> map_type;
+};
 
-template <typename M, typename K, typename V>
-void printMapEntry(const M &m, const K &key)
+
+template <typename K, typename V = void>
+struct Map;
+
+
+template <typename V>
+struct Map<V, void>
+	: public MapImpl<std::string, V>::map_type,
+	  public MapBase<Map<V, void>, std::string, V>
 {
-	typename M::const_iterator it = m.find(key);
-	if (it != m.end())
-		std::cout << it->first << ": " << it->second;
-	else
-		std::cout << "Key not found";
-}
+		typedef typename MapImpl<std::string, V>::map_type base;
 
-template <typename M>
-void printMap(const M &m)
+		Map() : base()
+		{
+		}
+		Map(const base &b) : base(b)
+		{
+		}
+};
+
+template <typename K, typename V>
+struct Map
+	: public MapImpl<K, V>::map_type,
+	  public MapBase<Map<K, V>, K, V>
 {
-	for (typename M::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		printMapEntry(m, it->first);
-		std::cout << "\n";
-	}
-	std::cout << std::flush;
-}
+		typedef typename MapImpl<K, V>::map_type base;
 
-template <typename M>
-void printMapKeys(const M &m)
-{
-	for (typename M::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		printMapKeys(m, it->first);
-		std::cout << "\n";
-	}
-	std::cout << std::flush;
-}
+		Map() : base()
+		{
+		}
+		Map(const base &b) : base(b)
+		{
+		}
+};
 
-template <typename M>
-void printMapValues(const M &m)
-{
-	for (typename M::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		printMapValue(m, it->first);
-		std::cout << "\n";
-	}
-	std::cout << std::flush;
-}
+// clang-format on
 
-#endif
+#endif // MAP_HPP

@@ -28,14 +28,10 @@ void printNode(ConceptNode *node)
 
 Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 {
-	V_FOREACH(ConceptNode *, java, node->getChildren())
-	{
-		log(*java);
-	}
-
-	node->getChildren().foreach (printNode);
-
-
+	// V_FOREACH(ConceptNode *, java, node->getChildren())
+	// {
+	// 	log(*java);
+	// }
 
 	while (node->hasChildren())
 	{

@@ -7,7 +7,7 @@ int main()
 {
 	try
 	{
-		Lexer	   lex("config/def_language.txt");
+		// Lexer	   lex("config/def_language.txt");
 		HttpServer server(DEFAULT_PORT);
 		server.run();
 	}
