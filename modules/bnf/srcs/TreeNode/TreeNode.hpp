@@ -16,9 +16,9 @@ class TreeNode
 		TreeNode();
 		virtual ~TreeNode();
 
-		TreeNode<Derived> &setParent(TreeNode<Derived> *parentPtr);
-		TreeNode<Derived> &setPath(Vec<std::string> path);
-		TreeNode<Derived> &addSegmentPath(std::string segment);
+		Derived &setParent(TreeNode<Derived> *parentPtr);
+		Derived &setPath(Vec<std::string> path);
+		Derived &addSegmentPath(std::string segment);
 
 		TreeNode<Derived>	   *getParent() const;
 		const Vec<std::string> &getPath() const;

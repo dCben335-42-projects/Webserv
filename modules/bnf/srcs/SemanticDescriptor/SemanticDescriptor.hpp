@@ -34,7 +34,7 @@ class SemanticDescriptor
 		void parseRule(const std::string &, size_t);
 
 		void checkValidity();
-		bool hasRecursiveError(ConceptNode *node);
+		bool hasRecursiveError(ConceptNode &node);
 
 		void parseBlocks();
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);

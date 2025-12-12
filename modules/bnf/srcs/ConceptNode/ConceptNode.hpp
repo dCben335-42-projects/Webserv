@@ -28,8 +28,9 @@ class ConceptNode : public TreeNode<ConceptNode>
 		bool hasInfRecursivity() const;
 		void setHasInfRecursivity(const bool hasInfRecursivity);
 
-		const ConceptList &getConcepts() const;
-		const std::string &getName() const;
+		const ConceptList  &getConcepts() const;
+		const std::string  &getName() const;
+		static ConceptNode *create(std::string item, Map<ConceptList> &m_concepts);
 };
 
 

@@ -169,17 +169,23 @@ void SemanticDescriptor::parseConceptName(std::string s)
 
 bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr)
 {
-	ConceptNode *tempNode = new ConceptNode(item, m_concepts[item]);
-	tempNode->setPath(parentPtr->getPath()).addSegmentPath(item).setParent(parentPtr);
-	return hasRecursiveError(tempNode);
+	ConceptNode *tempN = new ConceptNode(item, m_concepts[item]);
+	tempN->setPath(parentPtr->getPath())
+		.addSegmentPath(item)
+		.setParent(parentPtr);
+
+	return hasRecursiveError(*tempN);
 }
 
-bool SemanticDescriptor::hasRecursiveError(ConceptNode *node)
+bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 {
-	for (ConceptList::const_iterator it = node->getConcepts().begin(); it != node->getConcepts().end(); ++it)
+	Vec<std::string> items;
+	unsigned int	 hasInfRecursivity;
+
+	for (ConceptList::const_iterator it = node.getConcepts().begin(); it != node.getConcepts().end(); ++it)
 	{
-		Vec<std::string> items			   = (*it)->getItems();
-		unsigned int	 hasInfRecursivity = 0;
+		items			  = (*it)->getItems();
+		hasInfRecursivity = 0;
 
 		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 		{
@@ -191,20 +197,21 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode *node)
 			if (!isInMap(m_concepts, item))
 				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
 
-			hasInfRecursivity += isInContainer(node->getPath(), item) || hasRecursiveErrorOnNewNode(item, node);
+			hasInfRecursivity += isInContainer(node.getPath(), item) || hasRecursiveErrorOnNewNode(item, &node);
 		}
 		if (!hasInfRecursivity)
-			node->setHasInfRecursivity(false);
+			node.setHasInfRecursivity(false);
 	}
-	return node->hasInfRecursivity();
+	return node.hasInfRecursivity();
 }
 
 void SemanticDescriptor::checkValidity()
 {
 	Vec<std::string> path;
+
 	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]);
 	tree->addSegmentPath(CURSOR);
-	if (hasRecursiveError(tree))
+	if (hasRecursiveError(*tree))
 		throw std::runtime_error("ERREUR !");
 }
 

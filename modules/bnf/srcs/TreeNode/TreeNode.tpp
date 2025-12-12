@@ -17,26 +17,26 @@ TreeNode<Derived>::~TreeNode()
 }
 
 template <typename Derived>
-TreeNode<Derived> &TreeNode<Derived>::setParent(TreeNode<Derived> *parentPtr)
+Derived &TreeNode<Derived>::setParent(TreeNode<Derived> *parentPtr)
 {
 	m_parent = parentPtr;
 	if (parentPtr)
 		parentPtr->m_children.push_back(static_cast<Derived *>(this));
-	return (*this);
+	return (static_cast<Derived &>(*this));
 }
 
 template <typename Derived>
-TreeNode<Derived> &TreeNode<Derived>::addSegmentPath(std::string segment)
+Derived &TreeNode<Derived>::addSegmentPath(std::string segment)
 {
 	m_path.push_back(segment);
-	return (*this);
+	return (static_cast<Derived &>(*this));
 }
 
 template <typename Derived>
-TreeNode<Derived> &TreeNode<Derived>::setPath(Vec<std::string> newPath)
+Derived &TreeNode<Derived>::setPath(Vec<std::string> newPath)
 {
 	m_path = newPath;
-	return (*this);
+	return (static_cast<Derived &>(*this));
 }
 
 template <typename Derived>
