@@ -64,11 +64,11 @@ void HttpClient::prepareResponse()
 		catch (const std::exception &e)
 		{
 			std::cerr << e.what() << '\n';
-			throw Http404Error();
+			throw Http404Exception();
 		}
 		m_res.setStatusCode(200);
 	}
-	catch (const AHttpError &e)
+	catch (const AHttpException &e)
 	{
 		m_res.setStatusCode(e.getStatusCode());
 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_JSON);

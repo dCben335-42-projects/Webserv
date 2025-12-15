@@ -21,8 +21,7 @@ Map<std::string> AHttpMessage::getHeaders() const
 }
 std::string AHttpMessage::getHeader(const std::string &key) const
 {
-	Map<std::string>::const_iterator it = m_headers.find(key);
-	return it != m_headers.end() ? it->second : "";
+	return m_headers.get(key);
 }
 std::string AHttpMessage::getMethod() const
 {

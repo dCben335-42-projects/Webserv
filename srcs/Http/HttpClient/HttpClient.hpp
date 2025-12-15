@@ -22,10 +22,10 @@ class HttpClient
 		ClientState	 m_state;
 
 		bool shouldClose() const;
-
 		void prepareResponse();
 
 	public:
+		HttpClient() {};
 		HttpClient(int fd);
 		~HttpClient();
 

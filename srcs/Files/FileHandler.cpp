@@ -53,7 +53,6 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 	extensionTypeMap[".flac"] = HEADER_TYPE_FLAC;
 	extensionTypeMap[".wav"]  = HEADER_TYPE_WAV;
 
-
 	return extensionTypeMap;
 }
 bool FileHandler::fileExists(const std::string &path)

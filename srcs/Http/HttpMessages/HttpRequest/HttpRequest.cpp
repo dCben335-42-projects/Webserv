@@ -45,26 +45,44 @@ void HttpRequest::setTarget(const std::string &path)
 
 
 
+// ANCHOR Socket Reading Public method
+ssize_t HttpRequest::readOnce(int socketFd)
+{
+	char		  buffer[READ_BUFFER_SIZE];
+	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, 0);
+
+	if (bytesRead < 0)
+		throw std::runtime_error("recv() failed");
+	if (bytesRead == 0)
+		return 0;
+
+	m_rawStr.append(buffer, bytesRead);
+	return bytesRead;
+}
+
+
+
 // ANCHOR Parsing Public method
 HttpRequest &HttpRequest::parse()
 {
-	const size_t lineEndSize = std::strlen(HEADER_ENDING);
-	std::string	 rawRequest	 = m_rawStr;
-	size_t		 pos		 = parseFirstLine(rawRequest) + std::strlen(HEADER_LINE_ENDING);
-	size_t		 headersEnd	 = rawRequest.find(HEADER_ENDING, pos);
+	const size_t headerEndSize = std::strlen(HEADER_ENDING);
+	const size_t lineEndSize   = std::strlen(HEADER_LINE_ENDING);
+
+	std::string rawRequest = m_rawStr;
+	size_t		pos		   = parseFirstLine(rawRequest) + lineEndSize;
+	size_t		headersEnd = rawRequest.find(HEADER_ENDING, pos);
 
 	if (headersEnd == std::string::npos)
 		throw std::invalid_argument("Invalid Headers");
 	while (pos < headersEnd)
 		pos = parseHeaderLine(rawRequest, pos);
-	size_t bodyStart = headersEnd + lineEndSize;
+	size_t bodyStart = headersEnd + headerEndSize;
 	if (bodyStart < rawRequest.size())
 		setBody(rawRequest.substr(bodyStart));
 
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
-		throw std::invalid_argument("Missing Host Header sadaw");
-
+		throw std::invalid_argument("Missing Host Header Field");
 	return *this;
 }
 
@@ -137,24 +155,11 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 		return 0;
 
 	std::string clStr = request.substr(clPos, endPos - clPos);
-	return Number::toSizeT(clStr);
+	// clStr contains the Content-Length value as a string
+	return Number::toSizeT(request.substr(clPos, endPos - clPos));
 }
 
 
-
-ssize_t HttpRequest::readOnce(int socketFd)
-{
-	char		  buffer[READ_BUFFER_SIZE];
-	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, 0);
-
-	if (bytesRead < 0)
-		throw std::runtime_error("recv() failed");
-	if (bytesRead == 0)
-		return 0;
-
-	m_rawStr.append(buffer, bytesRead);
-	return bytesRead;
-}
 
 
 

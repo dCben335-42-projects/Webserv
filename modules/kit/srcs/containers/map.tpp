@@ -75,6 +75,15 @@ class MapBase
 			return true;
 		}
 
+		bool try_get(const K &key, V *&out)
+		{
+			typename Derived::iterator it = static_cast<Derived &>(*this).find(key);
+			if (it == static_cast<Derived &>(*this).end())
+				return false;
+			out = &it->second;
+			return true;
+		}
+
 		size_t size() const
 		{
 			return getMapSize(static_cast<const Derived &>(*this));
@@ -106,6 +115,11 @@ struct Map<V, void>
 		Map(const base &b) : base(b)
 		{
 		}
+		Map &operator=(const Map &other)
+		{
+			base::operator=(other);
+			return *this;
+		}
 };
 
 template <typename K, typename V>
@@ -119,6 +133,14 @@ struct Map
 		{
 		}
 		Map(const base &b) : base(b)
+		{
+		}
+		Map &operator=(const Map &other)
+		{
+			base::operator=(other);
+			return *this;
+		}
+		~Map()
 		{
 		}
 };
