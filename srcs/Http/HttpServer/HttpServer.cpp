@@ -15,6 +15,7 @@
 HttpServer::HttpServer()
 {
 	createPollServer(DEFAULT_PORT);
+	createPollServer(9090);
 }
 
 HttpServer::~HttpServer()
@@ -48,7 +49,6 @@ void HttpServer::createPollServer(const unsigned short port)
 	std::cout << "Server started on port " << "http://localhost:" << port << std::endl;
 	createPoll(sock_fd);
 	m_hosts.push(sock_fd);
-	m_serverFd = sock_fd;
 }
 
 // ANCHOR Private poll methods
@@ -74,10 +74,10 @@ void HttpServer::createPollClient(const int serverFd)
 	struct sockaddr_in clientAddr;
 	socklen_t		   clientLen	= sizeof(clientAddr);
 	int				   clientSocket = -1;
-	(void) serverFd;
+
 	try
 	{
-		clientSocket = accept(m_serverFd, (struct sockaddr *) &clientAddr, &clientLen);
+		clientSocket = accept(serverFd, (struct sockaddr *) &clientAddr, &clientLen);
 		if (clientSocket < 0)
 			throw std::runtime_error("Accept failed");
 		int flags = fcntl(clientSocket, F_GETFL, 0);
@@ -98,7 +98,6 @@ void HttpServer::createPollClient(const int serverFd)
 
 void HttpServer::updatePollStatus()
 {
-
 	for (size_t i = 0; i < m_pollFds.size(); ++i)
 	{
 		HttpClient *client = NULL;
@@ -140,18 +139,19 @@ void HttpServer::run()
 				deleteClient(fd, i--);
 				continue;
 			}
-			if (fd == m_serverFd)
+			if (m_hosts.contains(fd))
 			{
 				createPollClient(fd);
 				continue;
 			}
-			if (m_clients.try_get(fd, client) && client->getState() != CLOSED)
+			if (m_clients.try_get(fd, client))
 			{
 				if (m_pollFds[i].revents & POLLIN)
 					client->onRead();
 				if (m_pollFds[i].revents & POLLOUT)
 					client->onWrite(m_pollFds[i]);
-				continue;
+				if (client->getState() != CLOSED)
+					continue;
 			}
 			deleteClient(fd, i--);
 		}

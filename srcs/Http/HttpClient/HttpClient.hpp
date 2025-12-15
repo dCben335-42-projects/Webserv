@@ -25,7 +25,6 @@ class HttpClient
 		void prepareResponse();
 
 	public:
-		HttpClient() {};
 		HttpClient(int fd);
 		~HttpClient();
 

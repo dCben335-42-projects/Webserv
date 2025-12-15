@@ -61,7 +61,6 @@ ssize_t HttpRequest::readOnce(int socketFd)
 }
 
 
-
 // ANCHOR Parsing Public method
 HttpRequest &HttpRequest::parse()
 {
@@ -93,16 +92,16 @@ HttpRequest &HttpRequest::parse()
 // ANCHOR Parsing Private methods
 size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 {
-	size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
+	const size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
 	if (lineEnd == std::string::npos)
 		throw std::invalid_argument("Invalid Request Line");
 
-	std::string requestLine = rawRequest.substr(0, lineEnd);
-	size_t		methodEnd	= requestLine.find(' ');
+	const std::string requestLine = rawRequest.substr(0, lineEnd);
+	const size_t	  methodEnd	  = requestLine.find(' ');
 	if (methodEnd != std::string::npos)
 		setMethod(HttpMethod(requestLine.substr(0, methodEnd)));
 
-	size_t targetEnd = requestLine.find(' ', methodEnd + 1);
+	const size_t targetEnd = requestLine.find(' ', methodEnd + 1);
 	if (targetEnd != std::string::npos)
 	{
 		std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
@@ -111,10 +110,10 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 		setTarget(path);
 	}
 
-	size_t versionPos = requestLine.find(' ', targetEnd + 1);
+	const size_t versionPos = requestLine.find(' ', targetEnd + 1);
 	if (versionPos != std::string::npos)
 	{
-		std::string httpVersion = requestLine.substr(versionPos + 1);
+		const std::string httpVersion = requestLine.substr(versionPos + 1);
 		if (httpVersion != PROTOCOL)
 			throw std::invalid_argument("Unsupported HTTP Version: " + httpVersion);
 	}
@@ -154,8 +153,6 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 	if (endPos <= clPos)
 		return 0;
 
-	std::string clStr = request.substr(clPos, endPos - clPos);
-	// clStr contains the Content-Length value as a string
 	return Number::toSizeT(request.substr(clPos, endPos - clPos));
 }
 

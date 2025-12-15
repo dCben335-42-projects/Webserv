@@ -16,9 +16,8 @@ class HttpServer
 {
 	private:
 		Vec<int>			 m_hosts;
-		Vec<pollfd>			 m_pollFds;
 		Map<int, HttpClient> m_clients;
-		int					 m_serverFd;
+		Vec<pollfd>			 m_pollFds;
 
 		void createPoll(const int socket);
 		void createPollClient(const int serverFd);
