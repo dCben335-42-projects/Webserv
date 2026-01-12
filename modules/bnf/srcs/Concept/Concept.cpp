@@ -10,6 +10,25 @@ Concept::Concept()
 {
 }
 
+void Concept::finish()
+{
+	Vec<std::string> items = getItemsWithOption();
+	for (Vec<std::string>::iterator it = items.begin(); it != items.end(); ++it)
+	{
+		if (!startsWith(*it, "\'"))
+		{
+			isTerminal = false;
+			return;
+		}
+	}
+	isTerminal = true;
+}
+
+bool Concept::getIsTerminal() const
+{
+	return isTerminal;
+}
+
 Concept::~Concept()
 {
 	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
@@ -68,6 +87,22 @@ Vec<std::string> Concept::getItems()
 	return allItems;
 }
 
+Vec<std::string> Concept::getItemsWithOption()
+{
+	Vec<std::string> allItems;
+	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	{
+		ARule			*rule  = *it;
+		Vec<std::string> items = rule->getItems();
+
+		for (size_t i = 0; i < items.size(); ++i)
+		{
+			if (std::find(allItems.begin(), allItems.end(), items[i]) == allItems.end())
+				allItems.push_back(items[i]);
+		}
+	}
+	return allItems;
+}
 
 
 Vec<ARule *> Concept::getValues() const

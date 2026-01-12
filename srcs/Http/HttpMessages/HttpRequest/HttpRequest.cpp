@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include "String.hpp"
 #include "Number.hpp"
+#include "Logger.hpp"
 
 #include <cctype>
 #include <cstring>
@@ -44,26 +45,67 @@ void HttpRequest::setTarget(const std::string &path)
 
 
 
+// ANCHOR Socket Reading Public method
+
+/**
+ *
+ * @brief Reads data from the given socket file descriptor
+ * and appends it to the raw request string.
+ *
+ * @param socketFd The socket file descriptor to read from.
+ *
+ * @return The number of bytes read, or 0 if the connection is closed.
+ *
+ * @throws std::runtime_error if recv() fails.
+ *
+ */
+ssize_t HttpRequest::readOnce(int socketFd)
+{
+	char		  buffer[READ_BUFFER_SIZE];
+	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, 0);
+
+	if (bytesRead < 0)
+		throw std::runtime_error("recv() failed");
+	if (bytesRead == 0)
+		return 0;
+
+	m_rawStr.append(buffer, bytesRead);
+	return bytesRead;
+}
+
+
 // ANCHOR Parsing Public method
+
+/**
+ *
+ * @brief Parses the raw HTTP request string into its components:
+ * the request line, headers, and body.
+ *
+ * @return A reference to the current HttpRequest object.
+ *
+ * @throws std::invalid_argument if the request is malformed or missing required fields.
+ *
+ */
 HttpRequest &HttpRequest::parse()
 {
-	const size_t lineEndSize = std::strlen(HEADER_ENDING);
-	std::string	 rawRequest	 = m_rawStr;
-	size_t		 pos		 = parseFirstLine(rawRequest) + std::strlen(HEADER_LINE_ENDING);
-	size_t		 headersEnd	 = rawRequest.find(HEADER_ENDING, pos);
+	const size_t headerEndSize = std::strlen(HEADER_ENDING);
+	const size_t lineEndSize   = std::strlen(HEADER_LINE_ENDING);
+
+	std::string rawRequest = m_rawStr;
+	size_t		pos		   = parseFirstLine(rawRequest) + lineEndSize;
+	size_t		headersEnd = rawRequest.find(HEADER_ENDING, pos);
 
 	if (headersEnd == std::string::npos)
 		throw std::invalid_argument("Invalid Headers");
 	while (pos < headersEnd)
 		pos = parseHeaderLine(rawRequest, pos);
-	size_t bodyStart = headersEnd + lineEndSize;
+	size_t bodyStart = headersEnd + headerEndSize;
 	if (bodyStart < rawRequest.size())
 		setBody(rawRequest.substr(bodyStart));
 
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
-		throw std::invalid_argument("Missing Host Header sadaw");
-
+		throw std::invalid_argument("Missing Host Header Field");
 	return *this;
 }
 
@@ -72,18 +114,31 @@ HttpRequest &HttpRequest::parse()
 
 
 // ANCHOR Parsing Private methods
+
+/**
+ *
+ * @brief Parses the first line of the raw HTTP request string,
+ * extracting the HTTP method, target, and version.
+ *
+ * @param rawRequest The raw HTTP request string.
+ *
+ * @return The position of the end of the first line.
+ *
+ * @throws std::invalid_argument if the request line is malformed.
+ *
+ */
 size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 {
-	size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
+	const size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
 	if (lineEnd == std::string::npos)
 		throw std::invalid_argument("Invalid Request Line");
 
-	std::string requestLine = rawRequest.substr(0, lineEnd);
-	size_t		methodEnd	= requestLine.find(' ');
+	const std::string requestLine = rawRequest.substr(0, lineEnd);
+	const size_t	  methodEnd	  = requestLine.find(' ');
 	if (methodEnd != std::string::npos)
 		setMethod(HttpMethod(requestLine.substr(0, methodEnd)));
 
-	size_t targetEnd = requestLine.find(' ', methodEnd + 1);
+	const size_t targetEnd = requestLine.find(' ', methodEnd + 1);
 	if (targetEnd != std::string::npos)
 	{
 		std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
@@ -92,15 +147,29 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 		setTarget(path);
 	}
 
-	size_t versionPos = requestLine.find(' ', targetEnd + 1);
+	const size_t versionPos = requestLine.find(' ', targetEnd + 1);
 	if (versionPos != std::string::npos)
 	{
-		std::string httpVersion = requestLine.substr(versionPos + 1);
+		const std::string httpVersion = requestLine.substr(versionPos + 1);
 		if (httpVersion != PROTOCOL)
 			throw std::invalid_argument("Unsupported HTTP Version: " + httpVersion);
 	}
 	return lineEnd;
 }
+
+/**
+ *
+ * @brief Parses a single header line from the raw HTTP request string,
+ * extracting the header name and value.
+ *
+ * @param rawRequest The raw HTTP request string.
+ * @param pos The position to start parsing from.
+ *
+ * @return The position of the end of the parsed header line.
+ *
+ * @throws std::invalid_argument if the header line is malformed.
+ *
+ */
 size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t pos)
 {
 	const size_t colon	  = rawRequest.find(':', pos);
@@ -117,7 +186,16 @@ size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t 
 }
 
 
-
+/**
+ *
+ * @brief Reads the Content-Length header from the HTTP request.
+ *
+ * @param request The raw HTTP request string.
+ * @param headersEnd The position of the end of the headers in the request string.
+ *
+ * @return The value of the Content-Length header, or 0 if not present or invalid.
+ *
+ */
 size_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
 {
 	size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd);
@@ -135,22 +213,20 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 	if (endPos <= clPos)
 		return 0;
 
-	std::string clStr = request.substr(clPos, endPos - clPos);
-	return Number::toSizeT(clStr);
+	return Number::toSizeT(request.substr(clPos, endPos - clPos));
 }
 
 
 
-ssize_t HttpRequest::readOnce(int socketFd)
+
+// ANCHOR Overloaded Operators
+std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 {
-	char		  buffer[READ_BUFFER_SIZE];
-	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, 0);
-
-	if (bytesRead < 0)
-		throw std::runtime_error("recv() failed");
-	if (bytesRead == 0)
-		return 0;
-
-	m_rawStr.append(buffer, bytesRead);
-	return bytesRead;
+	log("----- HTTP Request -----\n");
+	log(BLUE "Method: " + message.getMethod() + RESET);
+	log("\n" GREEN "Target: " + message.getTarget() + RESET);
+	log("\n" YELLOW "Headers:\n");
+	log(message.getHeaders());
+	log(RESET "\n------------------------");
+	return o;
 }

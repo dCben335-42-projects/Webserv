@@ -36,7 +36,7 @@ HttpMethod::HttpMethod(const std::string &method)
 			return;
 		}
 	}
-	throw Http501Error(method);
+	throw Http501Exception(method);
 }
 
 HttpMethod::HttpMethod(const EMethodType &method)
@@ -49,7 +49,7 @@ HttpMethod::HttpMethod(const EMethodType &method)
 		m_strType = it->second;
 		return;
 	}
-	throw Http501Error("adawdaw");
+	throw Http501Exception("adawdaw");
 }
 
 HttpMethod &HttpMethod::operator=(const HttpMethod &other)

@@ -22,5 +22,6 @@ Vec<std::string> Option::getItems() const
 
 std::string Option::getPrintableValue() const
 {
+	log("Option Items:");
 	return getLogJson(items);
 }

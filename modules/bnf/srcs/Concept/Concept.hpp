@@ -15,14 +15,18 @@ class Concept
 		Vec<ARule *>	 getRules();
 		Vec<std::string> getItems();
 		Vec<ARule *>	 getValues() const;
+		void			 finish();
 
 		void setRule(ARule *rule);
 
-		void printRules() const;
-		bool calledInConcept(std::string conceptName);
+		void			 printRules() const;
+		bool			 calledInConcept(std::string conceptName);
+		Vec<std::string> getItemsWithOption();
+		bool			 getIsTerminal() const;
 
 	private:
 		Vec<ARule *> values;
+		bool		 isTerminal;
 };
 
 std::ostream &operator<<(std::ostream &os, const Concept &data);

@@ -40,6 +40,13 @@ HttpResponse::~HttpResponse()
 
 
 // ANCHOR Reset
+
+/**
+ *
+ * @brief Resets the HttpResponse object to its initial state,
+ * clearing all data and setting default values.
+ *
+ */
 void HttpResponse::reset()
 {
 	m_statusCode = 0;
@@ -48,27 +55,57 @@ void HttpResponse::reset()
 	m_headers.clear();
 	m_body.clear();
 	m_method = HttpMethod();
+
+	m_headers[HEADER_SERVER] = SERVER_NAME;
 }
 
 
 
 // ANCHOR Setters
+/**
+ *
+ * @brief Sets the HTTP status code of the response.
+ *
+ * @param code The HTTP status code to be set.
+ *
+ */
 void HttpResponse::setStatusCode(unsigned short code)
 {
 	m_statusCode = code;
 }
 
 // ANCHOR Getters
+/**
+ *
+ * @brief Gets the HTTP status code of the response.
+ *
+ * @return The HTTP status code.
+ *
+ */
 unsigned short HttpResponse::getStatusCode() const
 {
 	return m_statusCode;
 }
 
+/**
+ *
+ * @brief Gets the full HTTP response string.
+ *
+ * @return The complete HTTP response.
+ *
+ */
 std::string HttpResponse::getFullResponse() const
 {
 	return m_fullResponse;
 }
 
+/**
+ *
+ * @brief Gets the number of bytes that have been sent so far.
+ *
+ * @return The number of bytes sent.
+ *
+ */
 size_t HttpResponse::getSentBytes() const
 {
 	return m_sentBytes;
@@ -88,6 +125,18 @@ std::string HttpResponse::buildHead() const
 
 
 // ANCHOR Send response
+/**
+ *
+ * @brief Builds the full HTTP response string,
+ * including the status line, headers, and body.
+ *
+ * @note This function constructs the complete HTTP response
+ * and stores it in the m_fullResponse member variable.
+ *
+ * @note It is typically called after setting the status code,
+ * headers, and body of the response.
+ *
+ */
 void HttpResponse::build()
 {
 	std::ostringstream responseStream;
@@ -100,7 +149,22 @@ void HttpResponse::build()
 	m_fullResponse = responseStream.str();
 }
 
-bool HttpResponse::sendRes(int socket)
+
+/**
+ *
+ * @brief Sends the HTTP response over the given socket.
+ *
+ * @param socket The socket file descriptor to send the response to.
+ *
+ * @note This function attempts to send a portion of the response,
+ *       handling partial sends and non-blocking socket behavior.
+ *
+ * @return true if the entire response has been sent, false otherwise.
+ *
+ * @throws std::runtime_error if send() fails.
+ *
+ */
+bool HttpResponse::sendOnce(int socket)
 {
 	if (m_sentBytes >= m_fullResponse.size())
 		return true;

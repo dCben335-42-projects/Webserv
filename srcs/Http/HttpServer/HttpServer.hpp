@@ -3,30 +3,31 @@
 
 #include <netinet/in.h>
 #include <poll.h>
-#include <vector>
 
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
-// # include "httpErrors.hpp"
+// #include "httpErrors.hpp"
 #include "HttpClient.hpp"
+
+#include "Map.hpp"
+#include "Vector.hpp"
 
 class HttpServer
 {
 	private:
-		unsigned short	   m_socket;
-		unsigned short	   m_port;
-		struct sockaddr_in m_address;
-
-
-		std::vector<pollfd>	 m_pollFds;
+		Vec<int>			 m_hosts;
 		Map<int, HttpClient> m_clients;
+		Vec<pollfd>			 m_pollFds;
 
-		void createPoll(int socket);
-		void respond(HttpRequest &req, HttpResponse &res);
-		void createPollClient(void);
+		void createPoll(const int socket);
+		void createPollClient(const int serverFd);
+		void createPollServer(const unsigned short port);
+
+		void updatePollStatus();
+		void deleteClient(const int &clientFd, const size_t &index);
 
 	public:
-		HttpServer(unsigned short port);
+		HttpServer();
 		~HttpServer();
 
 		void run();

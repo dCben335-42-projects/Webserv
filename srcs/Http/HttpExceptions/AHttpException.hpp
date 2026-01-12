@@ -4,13 +4,13 @@
 #include <string>
 #include <stdexcept>
 
-class AHttpError : public std::runtime_error
+class AHttpException : public std::runtime_error
 {
 	protected:
 		int m_statusCode;
 
 	public:
-		explicit AHttpError(const std::string &message, int code) :
+		explicit AHttpException(const std::string &message, int code) :
 			std::runtime_error(message),
 			m_statusCode(code)
 		{

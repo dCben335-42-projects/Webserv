@@ -12,141 +12,128 @@ Parser::~Parser()
 {
 }
 
-
-// Vec<char> Parser::getCharAccepted(TreeNode *node) const
-// {
-//     Vec<TreeNode *> children = node->children;
-//     // for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-
-//     // }
-// }
-
-// void printNode(ConceptNode *node)
-// {
-// 	std::cout << node->getName() << std::endl; // or whatever you want
-// }
-
-Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
+Vec<std::string> Parser::getTerminalChars(ConceptNode *node)
 {
-	V_FOREACH(ConceptNode *, child, node->getChildren())
+	ConceptList RulesConcept = m_semantic.getConcepts()[node->getName()];
+	return RulesConcept[0]->getValues()[0]->getItems();
+}
+
+void Parser::createAllPath(std::string conceptName, PathSegment &currentPath)
+{
+	ConceptList conceptList = m_semantic.getConcepts()[conceptName];
+	if (conceptList.empty())
+		return;
+
+	for (size_t i = 0; i < conceptList.size(); ++i)
 	{
-		log(*child);
-	}
+		Concept *concept  = conceptList[i];
+		bool terminalTerm = false;
 
-	// node->getChildren().foreach (printNode);
-
-
-
-	while (node->hasChildren())
-	{
-		node = node->getChild(0);
-		if (node->hasChildren())
-			continue;
-		else
+		if (concept->getIsTerminal())
 		{
+			terminalTerm = true;
+		}
+		Vec<ARule *> values = concept->getValues();
+		for (size_t j = 0; j < values.size(); ++j)
+		{
+			Vec<std::string> items = values[j]->getItems();
+			if (values[j]->getType() == SYMBOL)
+			{
+				currentPath.addNextPathSegment(PathSegment(items[0], i, j, 0, terminalTerm));
+				createAllPath(items[0], currentPath.getLastPathSegment());
+			}
+			else if (values[j]->getType() == SEQUENCE)
+			{
+				for (size_t k = 0; k < items.size(); ++k)
+				{
+					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, terminalTerm));
+					createAllPath(items[k], currentPath.getLastPathSegment());
+				}
+			}
+			else if (values[j]->getType() == OPTION)
+			{
+				for (size_t k = 0; k < items.size(); ++k)
+				{
+					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, terminalTerm));
+					createAllPath(items[k], currentPath.getLastPathSegment());
+				}
+			}
+			else if (values[j]->getType() == GROUP)
+			{
+				for (size_t k = 0; k < items.size(); ++k)
+				{
+					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, terminalTerm));
+					createAllPath(items[k], currentPath.getLastPathSegment());
+				}
+			}
 		}
 	}
-	Vec<char> eventualChar;
-	ARule	 *rule = m_semantic.getConcepts()[node->getName()][0]->getValues()[0];
-	// log(m_semantic.getConcepts());
-
-	// log(m_semantic.getConcepts()[node->content.name]);
-
-	// log(m_semantic.getConcepts()[node->content.name][0]);
-
-	// log(m_semantic.getConcepts()[node->content.name][0]->getValues());
-
-	// log(m_semantic.getConcepts()[node->content.name][0]->getValues()[0]);
-
-	// log(m_semantic.getConcepts()[node->content.name][0]->getValues()[0]->getItems());
-
-	// if (rule->getType() == OPTION)
-	// {
-
-	// }
-
-
-
-	// if (rule->getType() == GROUP)
-	// {
-	// Vec<std::string> items = rule->getItems();
-	// }
-
-	// m_semantic.getConcepts()[node->content.name][0]->getValues();
-	// return (node->content);
-	// for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-
-	// }
-	return (rule->getItems());
 }
 
-
-// Vec<char> Parser::getCharAcceptedHead() const
-// {
-//     // Vec<TreeNode *> children = m_semantic.getTree()->children;
-//     // for (Vec<TreeNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-//     //     TreeNode * val =        *it;
-//     // }
-// }
-
-void Parser::detectPattern(ConceptNode *node, const char c)
+void Parser::recursive_parse(PathSegment &currentPath, char c, Map<std::string> &m_map_ref)
 {
-	// log("Detecting pattern for word: " + c + " in concept: " + root->getName());
-
-	// root->get
-
-	ARule			*rule  = m_semantic.getConcepts()[node->getName()][0]->getValues()[0];
-	Vec<std::string> items = rule->getItems();
-	// items.has
-}
-
-void Parser::recursive_parse(ConceptNode *root, const std::string &stringToParsed, size_t &charIndex)
-{
-	size_t childCount = root->getChildCount();
-	if (childCount == 0)
+	if (startsWith(conceptName, "\'"))
 	{
-		detectPattern(root, stringToParsed.at(charIndex));
-		charIndex++;
-		return;
+		log("Terminal found: " + conceptName + "\n");
 	}
-	for (size_t i = 0; i < childCount; i++)
+	ConceptList conceptList = m_semantic.getConcept(conceptName);
+
+	if (conceptList.empty())
+		return;
+	for (size_t i = 0; i < conceptList.size(); ++i)
 	{
-		ConceptNode *child = root->getChild(i);
-
-		log("Child " + std::to_string(i) + ": " + child->getName());
-
-		recursive_parse(child, stringToParsed, charIndex);
+		Concept *concept	= conceptList[i];
+		Vec<ARule *> values = concept->getValues();
+		for (size_t j = 0; j < values.size(); ++j)
+		{
+			Vec<std::string> items = values[j]->getItems();
+			if (values[j]->getType() == SYMBOL)
+			{
+				recursive_parse(items[0], c, m_map_ref);
+			}
+			else if (values[j]->getType() == SEQUENCE)
+			{
+				for (size_t k = 0; k < items.size(); ++k)
+				{
+					recursive_parse(items[k], c, m_map_ref);
+				}
+			}
+			else if (values[j]->getType() == OPTION)
+			{
+				for (size_t k = 0; k < items.size(); ++k)
+				{
+					recursive_parse(items[k], c, m_map_ref);
+				}
+			}
+			else if (values[j]->getType() == GROUP)
+			{
+				for (size_t k = 0; k < items.size(); ++k)
+				{
+					recursive_parse(items[k], c, m_map_ref);
+				}
+			}
+		}
 	}
 }
 
 void Parser::parse(const std::string &stringToParsed)
 {
-
 	if (stringToParsed.empty())
 		return;
 
-	size_t	wordsIndex	  = 0;
-	size_t &refWordsIndex = wordsIndex;
+	Map<std::string>  m_map;
+	Map<std::string> &m_map_ref		  = m_map;
+	PathSegment		  headsegment	  = PathSegment(CURSOR, 0, 0, 0, false);
+	PathSegment		 &headsegment_ref = headsegment;
 
-	ConceptNode *root = m_semantic.getTree()->getChildren()[0];
-	recursive_parse(root, stringToParsed, refWordsIndex);
+	log("------------------\n");
+	for (size_t i = 0; i < stringToParsed.size(); ++i)
+	{
+		char c = stringToParsed[i];
+		createAllPath(CURSOR, headsegment_ref);
+		recursive_parse(headsegment_ref, c, m_map_ref);
+	}
 
-
-
-
-
-	// std::cout << getFirstCharAccepted(m_semantic.getTree()->children[0]);
-
-	log("\n------------------\n");
-	log(getFirstCharAccepted(root));
-	log("\n");
-
-
-	// for (std::string::const_iterator it = stringToParsed.begin(); it != stringToParsed.end(); ++it)
-	// {
-	// 	char c = *it;
-
-	// 	std::cout << c;
-	// }
+	log(headsegment_ref);
 	(void) stringToParsed;
 }

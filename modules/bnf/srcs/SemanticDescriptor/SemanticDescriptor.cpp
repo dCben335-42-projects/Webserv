@@ -152,6 +152,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		}
 		concept->setRule(arule);
 	}
+	concept->finish();
 }
 
 void SemanticDescriptor::parseConceptName(std::string s)
@@ -220,7 +221,7 @@ Map<ConceptList> SemanticDescriptor::getConcepts() const
 
 ConceptList &SemanticDescriptor::getConcept(const std::string &key)
 {
-	return m_concepts[key];
+	return m_concepts.get(key);
 }
 
 ConceptNode *SemanticDescriptor::getTree() const

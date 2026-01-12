@@ -15,19 +15,48 @@ AHttpMessage::~AHttpMessage()
 
 
 // ANCHOR Getters
+/**
+ *
+ * @brief Gets all HTTP headers of the message.
+ *
+ * @return A map containing all HTTP headers.
+ *
+ */
 Map<std::string> AHttpMessage::getHeaders() const
 {
 	return m_headers;
 }
+/**
+ *
+ * @brief Gets the value of a specific HTTP header.
+ *
+ * @param key The key of the header to retrieve.
+ *
+ * @return The value of the specified header.
+ *
+ */
 std::string AHttpMessage::getHeader(const std::string &key) const
 {
-	Map<std::string>::const_iterator it = m_headers.find(key);
-	return it != m_headers.end() ? it->second : "";
+	return m_headers.get(key);
 }
+/**
+ *
+ * @brief Gets the HTTP method of the message.
+ *
+ * @return The HTTP method as a string.
+ *
+ */
 std::string AHttpMessage::getMethod() const
 {
 	return m_method.getStrType();
 }
+/**
+ *
+ * @brief Gets the body of the HTTP message.
+ *
+ * @return The body of the HTTP message.
+ *
+ */
 std::string AHttpMessage::getBody() const
 {
 	return m_body;
@@ -36,17 +65,38 @@ std::string AHttpMessage::getBody() const
 
 
 
-
 // ANCHOR Setters
+/**
+ *
+ * @brief Sets a specific HTTP header.
+ *
+ * @param key The key of the header to set.
+ * @param value The value of the header to set.
+ *
+ */
 void AHttpMessage::setHeader(const std::string &key, const std::string &value)
 {
 	m_headers[key] = value;
 }
+/**
+ *
+ * @brief Sets the body of the HTTP message.
+ *
+ * @param body The body content to be set.
+ *
+ */
 void AHttpMessage::setBody(const std::string &body)
 {
 	m_body							 = body;
 	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(body.size());
 }
+/**
+ *
+ * @brief Sets the HTTP method of the message.
+ *
+ * @param method The HTTP method to be set.
+ *
+ */
 void AHttpMessage::setMethod(const HttpMethod &method)
 {
 	m_method = method;
@@ -59,21 +109,6 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 // ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
-	Map<std::string> headers = message.getHeaders();
-	// Map<std::string>::iterator it	   = headers.begin();
-	// const size_t total = headers.size();
-	// size_t index = 0;
-
-	// log("Headers:");
-	log(headers);
-	// while (it != headers.end())
-	// {
-	// 	o << "\"" << it->first << "\""
-	// 	  << ": \"" << it->second << "\"";
-	// 	if (index < total - 1)
-	// 		o << "\n";
-	// 	it++;
-	// 	index++;
-	// }
+	log(message.getHeaders());
 	return o;
 }

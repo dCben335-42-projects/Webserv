@@ -10,16 +10,12 @@
 class HttpRequest : public AHttpMessage
 {
 	private:
-		std::string						   m_body;
-		std::map<std::string, std::string> m_headers;
-		std::string						   m_method;
-		std::string						   m_rawStr;
-		std::string						   m_target;
+		std::string m_body;
+		std::string m_rawStr;
+		std::string m_target;
 
-		std::string readHeaders();
-		std::string readBody(const size_t contentLength, size_t received);
-		size_t		parseFirstLine(const std::string &rawRequest);
-		size_t		parseHeaderLine(const std::string &rawRequest, const size_t pos);
+		size_t parseFirstLine(const std::string &rawRequest);
+		size_t parseHeaderLine(const std::string &rawRequest, const size_t pos);
 
 	public:
 		HttpRequest();
@@ -37,5 +33,8 @@ class HttpRequest : public AHttpMessage
 		ssize_t readOnce(int socketFd);
 		size_t	readContentLength(std::string request, const size_t headersEnd);
 };
+
+std::ostream &operator<<(std::ostream &o, const HttpRequest &message);
+
 
 #endif

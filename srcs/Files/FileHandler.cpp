@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <limits.h>
-
+#include "Date.hpp"
 #include "config.hpp"
 
 const Map<std::string> FileHandler::m_extensionTypeMap =
@@ -52,7 +52,6 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 	extensionTypeMap[".mp3"]  = HEADER_TYPE_MP3;
 	extensionTypeMap[".flac"] = HEADER_TYPE_FLAC;
 	extensionTypeMap[".wav"]  = HEADER_TYPE_WAV;
-
 
 	return extensionTypeMap;
 }
@@ -122,4 +121,12 @@ std::string FileHandler::getContentType(const std::string &filePath)
 	if (it != m_extensionTypeMap.end())
 		return it->second;
 	return HEADER_TYPE_OCTET;
+}
+
+std::string FileHandler::findLastModifiedDate(const std::string &filePath)
+{
+	struct stat fileStat;
+	if (stat(filePath.c_str(), &fileStat) != 0)
+		throw FileHandler::FileDoesNotExistException(filePath);
+	return Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
 }

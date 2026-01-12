@@ -4,36 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
-
-
-template <typename K, typename V>
-struct MapImpl
-{
-		typedef std::map<K, V> map_type;
-};
-
-template <typename K, typename V = void>
-struct Map;
-// clang-format off
-template <typename V>
-struct Map<V, void> : public MapImpl<std::string, V>::map_type
-{
-	typedef typename MapImpl<std::string, V>::map_type base;
-
-	Map() : base() {}
-	Map(const base &b) : base(b) {}
-};
-
-template <typename K, typename V>
-struct Map : public MapImpl<K, V>::map_type
-{
-	typedef typename MapImpl<K, V>::map_type base;
-
-	Map() : base() {}
-	Map(const base &b) : base(b) {}
-};
-
-// clang-format on
+#include <stdexcept>
 
 template <typename M, typename K, typename V>
 typename M::iterator findOrInsert(M &map, const K &key, const V &value)
@@ -67,70 +38,183 @@ size_t getMapSize(const M &m)
 
 
 
-
-
-// ANCHOR -- Print functions --
-template <typename M, typename K>
-void printMapKey(const M &m, const K &key)
+template <typename Derived, typename K, typename V>
+class MapBase
 {
-	typename M::const_iterator it = m.find(key);
-	if (it != m.end())
-		std::cout << it->first;
-	else
-		std::cout << "Key not found";
-}
+	public:
+		/**
+		 *
+		 * @brief Checks if the map contains the given key.
+		 *
+		 * @param key The key to be checked.
+		 *
+		 * @return true if the key exists in the map, false otherwise.
+		 *
+		 */
+		bool has(const K &key) const
+		{
+			return isInMap(static_cast<const Derived &>(*this), key);
+		}
 
-template <typename M, typename K>
-void printMapValue(const M &m, const K &key)
+		/**
+		 *
+		 * @brief Gets the value associated with the given key in the map.
+		 *
+		 * @param key The key of the pair to be retrieved.
+		 *
+		 * @return The value associated with the given key.
+		 *
+		 */
+		V &get(const K &key)
+		{
+			return getMapValue(static_cast<Derived &>(*this), key);
+		}
+		/**
+		 *
+		 * @brief Gets the value associated with the given key in the map.
+		 *
+		 * @param key The key of the pair to be retrieved.
+		 *
+		 * @return The value associated with the given key.
+		 *
+		 */
+		const V &get(const K &key) const
+		{
+			return getMapValue(static_cast<const Derived &>(*this), key);
+		}
+
+		/**
+		 *
+		 * @brief Sets the value for the given key in the map. If the key does not exist, it is inserted.
+		 *
+		 * @param key The key of the pair to be set.
+		 * @param value The value to be associated with the key.
+		 *
+		 */
+		void set(const K &key, const V &value)
+		{
+			findOrInsert(static_cast<Derived &>(*this), key, value)->second = value;
+		}
+
+		/**
+		 *
+		 * @brief Removes the key-value pair associated with the given key from the map.
+		 *
+		 * @param key The key of the pair to be removed.
+		 *
+		 */
+		void remove(const K &key)
+		{
+			static_cast<Derived &>(*this).erase(key);
+		}
+
+
+		/**
+		 *
+		 * @brief Tries to get the value associated with the given key.
+		 *
+		 * @param key The key to search for in the map.
+		 * @param out A reference to a variable that will hold the value if found.
+		 *
+		 * @return true if the key exists in the map and out is set to the value, false otherwise.
+		 *
+		 */
+		bool try_get(const K &key, V &out) const
+		{
+			typename Derived::const_iterator it = static_cast<const Derived &>(*this).find(key);
+			if (it == static_cast<const Derived &>(*this).end())
+				return false;
+			out = it->second;
+			return true;
+		}
+
+		/**
+		 *
+		 * @brief Tries to get a pointer to the value associated with the given key.
+		 *
+		 * @param key The key to search for in the map.
+		 * @param out A reference to a pointer that will point to the value if found.
+		 *
+		 * @return true if the key exists in the map and out is set to point to the value, false otherwise.
+		 *
+		 */
+		bool try_get(const K &key, V *&out)
+		{
+			typename Derived::iterator it = static_cast<Derived &>(*this).find(key);
+			if (it == static_cast<Derived &>(*this).end())
+				return false;
+			out = &it->second;
+			return true;
+		}
+
+		/**
+		 *
+		 * @brief Returns the number of key-value pairs in the map.
+		 *
+		 * @return The size of the map.
+		 *
+		 */
+		size_t size() const
+		{
+			return getMapSize(static_cast<const Derived &>(*this));
+		}
+};
+
+
+template <typename K, typename V>
+struct MapImpl
 {
-	typename M::const_iterator it = m.find(key);
-	if (it != m.end())
-		std::cout << it->second;
-	else
-		std::cout << "Key not found";
-}
+		typedef std::map<K, V> map_type;
+};
 
-template <typename M, typename K, typename V>
-void printMapEntry(const M &m, const K &key)
+
+template <typename K, typename V = void>
+struct Map;
+
+
+template <typename V>
+struct Map<V, void>
+	: public MapImpl<std::string, V>::map_type,
+	  public MapBase<Map<V, void>, std::string, V>
 {
-	typename M::const_iterator it = m.find(key);
-	if (it != m.end())
-		std::cout << it->first << ": " << it->second;
-	else
-		std::cout << "Key not found";
-}
+		typedef typename MapImpl<std::string, V>::map_type base;
 
-template <typename M>
-void printMap(const M &m)
+		Map() : base()
+		{
+		}
+		Map(const base &b) : base(b)
+		{
+		}
+		Map &operator=(const Map &other)
+		{
+			base::operator=(other);
+			return *this;
+		}
+};
+
+template <typename K, typename V>
+struct Map
+	: public MapImpl<K, V>::map_type,
+	  public MapBase<Map<K, V>, K, V>
 {
-	for (typename M::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		printMapEntry(m, it->first);
-		std::cout << "\n";
-	}
-	std::cout << std::flush;
-}
+		typedef typename MapImpl<K, V>::map_type base;
 
-template <typename M>
-void printMapKeys(const M &m)
-{
-	for (typename M::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		printMapKeys(m, it->first);
-		std::cout << "\n";
-	}
-	std::cout << std::flush;
-}
+		Map() : base()
+		{
+		}
+		Map(const base &b) : base(b)
+		{
+		}
+		Map &operator=(const Map &other)
+		{
+			base::operator=(other);
+			return *this;
+		}
+		~Map()
+		{
+		}
+};
 
-template <typename M>
-void printMapValues(const M &m)
-{
-	for (typename M::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		printMapValue(m, it->first);
-		std::cout << "\n";
-	}
-	std::cout << std::flush;
-}
+// clang-format on
 
-#endif
+#endif // MAP_HPP

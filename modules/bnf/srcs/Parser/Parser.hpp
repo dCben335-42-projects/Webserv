@@ -12,17 +12,17 @@
 #include "../ConceptNode/ConceptNode.hpp"
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
+#include "../PathSegment/PathSegment.hpp"
+#include <set>
 
 class Parser
 {
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		Vec<char>		 getCharAcceptedHead() const;
-		Vec<char>		 getCharAccepted(ConceptNode *node) const;
-		Vec<std::string> getFirstCharAccepted(ConceptNode *node) const;
-		void			 detectPattern(ConceptNode *node, const char c);
-		void			 recursive_parse(ConceptNode *root, const std::string &stringToParsed, size_t &charIndex);
+		void			 recursive_parse(PathSegment &currentPath, char c, Map<std::string> &m_map_ref);
+		Vec<std::string> getTerminalChars(ConceptNode *node);
+		void			 createAllPath(std::string conceptName, PathSegment &currentPath);
 
 	public:
 		~Parser();
@@ -32,5 +32,4 @@ class Parser
 };
 
 // std::ostream& operator<<(std::ostream& os, const SemanticDescriptor& data);
-
 #endif

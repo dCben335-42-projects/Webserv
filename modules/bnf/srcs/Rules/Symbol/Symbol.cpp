@@ -34,6 +34,7 @@ const std::string &Symbol::getValue() const
 
 std::string Symbol::getPrintableValue() const
 {
+	log("Symbol Value: ");
 	return getLogJson(value);
 }
 
