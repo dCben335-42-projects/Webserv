@@ -15,11 +15,29 @@ template <typename Derived, typename V>
 class VecBase
 {
 	public:
+		/**
+		 *
+		 * @brief Checks if the vector contains the given index.
+		 *
+		 * @param index The index to be checked.
+		 *
+		 * @return true if the index exists in the vector, false otherwise.
+		 *
+		 */
 		bool has(size_t index) const
 		{
 			return index < static_cast<const Derived &>(*this).size();
 		}
 
+		/**
+		 *
+		 * @brief Checks if the vector contains the given value.
+		 *
+		 * @param value The value to be checked.
+		 *
+		 * @return true if the value exists in the vector, false otherwise.
+		 *
+		 */
 		bool contains(const V &value) const
 		{
 			const Derived &derived = static_cast<const Derived &>(*this);
@@ -31,21 +49,63 @@ class VecBase
 			return false;
 		}
 
+		/**
+		 *
+		 * @brief Gets the value at the given index in the vector.
+		 *
+		 * @param index The index of the value to be retrieved.
+		 *
+		 * @return The value at the given index.
+		 *
+		 */
 		V &get(size_t index)
 		{
 			return static_cast<Derived &>(*this)[index];
 		}
 
+		/**
+		 *
+		 * @brief Gets the value at the given index in the vector.
+		 *
+		 * @param index The index of the value to be retrieved.
+		 *
+		 * @return The value at the given index.
+		 *
+		 */
 		const V &get(size_t index) const
 		{
 			return static_cast<const Derived &>(*this)[index];
 		}
 
+		/**
+		 *
+		 * @brief Sets the value at the given index in the vector.
+		 *
+		 * @param index The index of the value to be set.
+		 * @param value The value to be set at the given index.
+		 *
+		 */
 		void set(size_t index, const V &value)
 		{
 			static_cast<Derived &>(*this)[index] = value;
 		}
 
+		void remove(size_t index)
+		{
+			static_cast<Derived &>(*this).erase(
+				static_cast<Derived &>(*this).begin() + index);
+		}
+
+		/**
+		 *
+		 * @brief Tries to get the value at the given index.
+		 *
+		 * @param index The index to search for in the vector.
+		 * @param out A reference to a variable that will hold the value if found.
+		 *
+		 * @return true if the index exists in the vector and out is set to the value, false otherwise.
+		 *
+		 */
 		bool try_get(size_t index, V &out) const
 		{
 			if (index >= static_cast<const Derived &>(*this).size())
@@ -54,6 +114,16 @@ class VecBase
 			return true;
 		}
 
+		/**
+		 *
+		 * @brief Tries to get a pointer to the value at the given index.
+		 *
+		 * @param index The index to search for in the vector.
+		 * @param out A reference to a pointer that will point to the value if found.
+		 *
+		 * @return true if the index exists in the vector and out is set to point to the value, false otherwise.
+		 *
+		 */
 		bool try_get(size_t index, V *&out)
 		{
 			if (index >= static_cast<Derived &>(*this).size())
@@ -62,6 +132,13 @@ class VecBase
 			return true;
 		}
 
+		/**
+		 *
+		 * @brief Adds a value to the end of the vector.
+		 *
+		 * @param value The value to be added.
+		 *
+		 */
 		void push(const V &value)
 		{
 			static_cast<Derived &>(*this).push_back(value);

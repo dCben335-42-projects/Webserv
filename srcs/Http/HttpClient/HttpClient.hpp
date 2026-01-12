@@ -6,6 +6,20 @@
 #include "HttpResponse.hpp"
 #include <poll.h>
 
+/**
+ *
+ * @enum ClientState
+ *
+ * @brief Represents the state of an HTTP client.
+ *
+ * READING: The client is currently reading data.
+ * WRITING: The client is currently writing data.
+ * CLOSED: The client connection is closed.
+ *
+ * @note This enum is used to manage the state of an HTTP client
+ * during its lifecycle.
+ *
+ */
 enum ClientState
 {
 	READING,

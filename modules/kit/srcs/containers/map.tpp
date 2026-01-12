@@ -42,30 +42,83 @@ template <typename Derived, typename K, typename V>
 class MapBase
 {
 	public:
+		/**
+		 *
+		 * @brief Checks if the map contains the given key.
+		 *
+		 * @param key The key to be checked.
+		 *
+		 * @return true if the key exists in the map, false otherwise.
+		 *
+		 */
 		bool has(const K &key) const
 		{
 			return isInMap(static_cast<const Derived &>(*this), key);
 		}
 
+		/**
+		 *
+		 * @brief Gets the value associated with the given key in the map.
+		 *
+		 * @param key The key of the pair to be retrieved.
+		 *
+		 * @return The value associated with the given key.
+		 *
+		 */
 		V &get(const K &key)
 		{
 			return getMapValue(static_cast<Derived &>(*this), key);
 		}
+		/**
+		 *
+		 * @brief Gets the value associated with the given key in the map.
+		 *
+		 * @param key The key of the pair to be retrieved.
+		 *
+		 * @return The value associated with the given key.
+		 *
+		 */
 		const V &get(const K &key) const
 		{
 			return getMapValue(static_cast<const Derived &>(*this), key);
 		}
 
+		/**
+		 *
+		 * @brief Sets the value for the given key in the map. If the key does not exist, it is inserted.
+		 *
+		 * @param key The key of the pair to be set.
+		 * @param value The value to be associated with the key.
+		 *
+		 */
 		void set(const K &key, const V &value)
 		{
 			findOrInsert(static_cast<Derived &>(*this), key, value)->second = value;
 		}
 
+		/**
+		 *
+		 * @brief Removes the key-value pair associated with the given key from the map.
+		 *
+		 * @param key The key of the pair to be removed.
+		 *
+		 */
 		void remove(const K &key)
 		{
 			static_cast<Derived &>(*this).erase(key);
 		}
 
+
+		/**
+		 *
+		 * @brief Tries to get the value associated with the given key.
+		 *
+		 * @param key The key to search for in the map.
+		 * @param out A reference to a variable that will hold the value if found.
+		 *
+		 * @return true if the key exists in the map and out is set to the value, false otherwise.
+		 *
+		 */
 		bool try_get(const K &key, V &out) const
 		{
 			typename Derived::const_iterator it = static_cast<const Derived &>(*this).find(key);
@@ -75,6 +128,16 @@ class MapBase
 			return true;
 		}
 
+		/**
+		 *
+		 * @brief Tries to get a pointer to the value associated with the given key.
+		 *
+		 * @param key The key to search for in the map.
+		 * @param out A reference to a pointer that will point to the value if found.
+		 *
+		 * @return true if the key exists in the map and out is set to point to the value, false otherwise.
+		 *
+		 */
 		bool try_get(const K &key, V *&out)
 		{
 			typename Derived::iterator it = static_cast<Derived &>(*this).find(key);
@@ -84,6 +147,13 @@ class MapBase
 			return true;
 		}
 
+		/**
+		 *
+		 * @brief Returns the number of key-value pairs in the map.
+		 *
+		 * @return The size of the map.
+		 *
+		 */
 		size_t size() const
 		{
 			return getMapSize(static_cast<const Derived &>(*this));

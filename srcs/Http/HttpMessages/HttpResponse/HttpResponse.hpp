@@ -25,7 +25,7 @@ class HttpResponse : public AHttpMessage
 		size_t		   getSentBytes() const;
 
 		void setStatusCode(unsigned short code);
-		bool sendRes(int socket);
+		bool sendOnce(int socket);
 
 		void		build();
 		std::string buildHead() const;

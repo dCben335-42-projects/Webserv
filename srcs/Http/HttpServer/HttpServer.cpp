@@ -24,6 +24,21 @@ HttpServer::~HttpServer()
 		close(m_pollFds[i].fd);
 }
 
+/**
+ *
+ * @brief Creates a poll server on the specified port.
+ *
+ * @param port The port number on which the server will
+ * listen for incoming connections.
+ *
+ * @note This function sets up a TCP socket, binds it to the
+ * specified port, and starts listening for incoming connections.
+ * It also adds the server socket to the poll list for monitoring.
+ *
+ * @throws std::runtime_error if socket creation, binding,
+ * or listening fails.
+ *
+ */
 void HttpServer::createPollServer(const unsigned short port)
 {
 	struct sockaddr_in serverAddr;
@@ -36,9 +51,8 @@ void HttpServer::createPollServer(const unsigned short port)
 		throw std::runtime_error("setsockopt failed");
 
 	std::memset(&serverAddr, 0, sizeof(serverAddr));
-	// serverAddr.sin_addr.s_addr = SOCKET_INTERFACE;
 	serverAddr.sin_family	   = SOCKET_IPV4;
-	serverAddr.sin_addr.s_addr = INADDR_ANY;
+	serverAddr.sin_addr.s_addr = SOCKET_INTERFACE;
 	serverAddr.sin_port		   = htons(port);
 
 	if (bind(sock_fd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)) < 0)
@@ -51,24 +65,50 @@ void HttpServer::createPollServer(const unsigned short port)
 	m_hosts.push(sock_fd);
 }
 
+
+
+
+
 // ANCHOR Private poll methods
+
+/**
+ * @brief Creates a pollfd structure for the given socket
+ * and adds it to the poll list.
+ *
+ * @param socket The socket file descriptor to be added to the poll list.
+ *
+ */
 void HttpServer::createPoll(const int socket)
 {
 	pollfd pollFd;
 
-	pollFd.fd	  = socket;
+	pollFd.fd = socket;
+	std::cout << "Creating poll for fd " << pollFd.fd << std::endl;
 	pollFd.events = POLLIN;
 	m_pollFds.push(pollFd);
 }
 
+/**
+ * @brief Deletes a client from the poll list and closes its socket.
+ *
+ * @param clientFd The file descriptor of the client to be deleted.
+ * @param index The index of the client in the poll list.
+ *
+ */
 void HttpServer::deleteClient(const int &clientFd, const size_t &index)
 {
-	m_clients.erase(clientFd);
-	m_pollFds.erase(m_pollFds.begin() + index);
+	m_clients.remove(clientFd);
+	m_pollFds.remove(index);
 	close(clientFd);
 }
 
-
+/**
+ * @brief Accepts a new client connection on the server socket
+ * and adds it to the poll list.
+ *
+ * @param serverFd The file descriptor of the server socket.
+ *
+ */
 void HttpServer::createPollClient(const int serverFd)
 {
 	struct sockaddr_in clientAddr;
@@ -95,7 +135,17 @@ void HttpServer::createPollClient(const int serverFd)
 			close(clientSocket);
 	}
 }
-
+/**
+ *
+ * @brief Updates the poll events for each client
+ * based on their current state.
+ *
+ * @note This function iterates through the list of
+ * poll file descriptors and updates the events field
+ * for each client based on whether they are in the
+ * READING or WRITING state.
+ *
+ */
 void HttpServer::updatePollStatus()
 {
 	for (size_t i = 0; i < m_pollFds.size(); ++i)
@@ -112,6 +162,18 @@ void HttpServer::updatePollStatus()
 	}
 }
 
+
+/**
+ *
+ * @brief Runs the main server loop to handle incoming
+ * connections and client requests.
+ *
+ * @note This function continuously polls the list of
+ * file descriptors for events and processes them accordingly.
+ * It handles new client connections, reads from clients,
+ * writes responses, and cleans up closed connections.
+ *
+ */
 void HttpServer::run()
 {
 	int			ready;
@@ -136,6 +198,9 @@ void HttpServer::run()
 			const int fd = m_pollFds[i].fd;
 			if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
 			{
+				// POLLNVAL indicates that the fd is not open
+				// POLLERR indicates an error condition
+				// POLLHUP indicates that the other side has closed the connection
 				deleteClient(fd, i--);
 				continue;
 			}

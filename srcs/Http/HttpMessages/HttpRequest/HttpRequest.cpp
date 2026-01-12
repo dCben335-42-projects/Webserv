@@ -46,6 +46,19 @@ void HttpRequest::setTarget(const std::string &path)
 
 
 // ANCHOR Socket Reading Public method
+
+/**
+ *
+ * @brief Reads data from the given socket file descriptor
+ * and appends it to the raw request string.
+ *
+ * @param socketFd The socket file descriptor to read from.
+ *
+ * @return The number of bytes read, or 0 if the connection is closed.
+ *
+ * @throws std::runtime_error if recv() fails.
+ *
+ */
 ssize_t HttpRequest::readOnce(int socketFd)
 {
 	char		  buffer[READ_BUFFER_SIZE];
@@ -62,6 +75,17 @@ ssize_t HttpRequest::readOnce(int socketFd)
 
 
 // ANCHOR Parsing Public method
+
+/**
+ *
+ * @brief Parses the raw HTTP request string into its components:
+ * the request line, headers, and body.
+ *
+ * @return A reference to the current HttpRequest object.
+ *
+ * @throws std::invalid_argument if the request is malformed or missing required fields.
+ *
+ */
 HttpRequest &HttpRequest::parse()
 {
 	const size_t headerEndSize = std::strlen(HEADER_ENDING);
@@ -90,6 +114,19 @@ HttpRequest &HttpRequest::parse()
 
 
 // ANCHOR Parsing Private methods
+
+/**
+ *
+ * @brief Parses the first line of the raw HTTP request string,
+ * extracting the HTTP method, target, and version.
+ *
+ * @param rawRequest The raw HTTP request string.
+ *
+ * @return The position of the end of the first line.
+ *
+ * @throws std::invalid_argument if the request line is malformed.
+ *
+ */
 size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 {
 	const size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
@@ -119,6 +156,20 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 	}
 	return lineEnd;
 }
+
+/**
+ *
+ * @brief Parses a single header line from the raw HTTP request string,
+ * extracting the header name and value.
+ *
+ * @param rawRequest The raw HTTP request string.
+ * @param pos The position to start parsing from.
+ *
+ * @return The position of the end of the parsed header line.
+ *
+ * @throws std::invalid_argument if the header line is malformed.
+ *
+ */
 size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t pos)
 {
 	const size_t colon	  = rawRequest.find(':', pos);
@@ -135,7 +186,16 @@ size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t 
 }
 
 
-
+/**
+ *
+ * @brief Reads the Content-Length header from the HTTP request.
+ *
+ * @param request The raw HTTP request string.
+ * @param headersEnd The position of the end of the headers in the request string.
+ *
+ * @return The value of the Content-Length header, or 0 if not present or invalid.
+ *
+ */
 size_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
 {
 	size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd);
@@ -159,7 +219,7 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 
 
 
-
+// ANCHOR Overloaded Operators
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 {
 	log("----- HTTP Request -----\n");
