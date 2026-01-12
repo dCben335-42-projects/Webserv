@@ -21,6 +21,8 @@ class Parser
 		Vec<char>		 getCharAcceptedHead() const;
 		Vec<char>		 getCharAccepted(ConceptNode *node) const;
 		Vec<std::string> getFirstCharAccepted(ConceptNode *node) const;
+		void			 detectPattern(ConceptNode *node, const char c);
+		void			 recursive_parse(ConceptNode *root, const std::string &stringToParsed, size_t &charIndex);
 
 	public:
 		~Parser();
