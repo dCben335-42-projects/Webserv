@@ -21,19 +21,19 @@ Parser::~Parser()
 //     // }
 // }
 
-void printNode(ConceptNode *node)
-{
-	std::cout << node->getName() << std::endl; // or whatever you want
-}
+// void printNode(ConceptNode *node)
+// {
+// 	std::cout << node->getName() << std::endl; // or whatever you want
+// }
 
 Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 {
-	V_FOREACH(ConceptNode *, java, node->getChildren())
+	V_FOREACH(ConceptNode *, child, node->getChildren())
 	{
-		log(*java);
+		log(*child);
 	}
 
-	node->getChildren().foreach (printNode);
+	// node->getChildren().foreach (printNode);
 
 
 
@@ -89,13 +89,56 @@ Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 //     // }
 // }
 
+void Parser::detectPattern(ConceptNode *node, const char c)
+{
+	// log("Detecting pattern for word: " + c + " in concept: " + root->getName());
+
+	// root->get
+
+	ARule			*rule  = m_semantic.getConcepts()[node->getName()][0]->getValues()[0];
+	Vec<std::string> items = rule->getItems();
+	// items.has
+}
+
+void Parser::recursive_parse(ConceptNode *root, const std::string &stringToParsed, size_t &charIndex)
+{
+	size_t childCount = root->getChildCount();
+	if (childCount == 0)
+	{
+		detectPattern(root, stringToParsed.at(charIndex));
+		charIndex++;
+		return;
+	}
+	for (size_t i = 0; i < childCount; i++)
+	{
+		ConceptNode *child = root->getChild(i);
+
+		log("Child " + std::to_string(i) + ": " + child->getName());
+
+		recursive_parse(child, stringToParsed, charIndex);
+	}
+}
+
 void Parser::parse(const std::string &stringToParsed)
 {
+
+	if (stringToParsed.empty())
+		return;
+
+	size_t	wordsIndex	  = 0;
+	size_t &refWordsIndex = wordsIndex;
+
+	ConceptNode *root = m_semantic.getTree()->getChildren()[0];
+	recursive_parse(root, stringToParsed, refWordsIndex);
+
+
+
+
 
 	// std::cout << getFirstCharAccepted(m_semantic.getTree()->children[0]);
 
 	log("\n------------------\n");
-	log(getFirstCharAccepted(m_semantic.getTree()->getChildren()[0]));
+	log(getFirstCharAccepted(root));
 	log("\n");
 
 
