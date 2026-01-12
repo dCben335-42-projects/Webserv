@@ -4,12 +4,10 @@
 #include <cstring>
 #include <stdexcept>
 #include "FileHandler.hpp"
-#include "httpErrors.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <cerrno>
 #include <sys/types.h>
-#include "Map.hpp"
 #include <sys/socket.h>
 
 HttpServer::HttpServer()
@@ -82,8 +80,7 @@ void HttpServer::createPoll(const int socket)
 {
 	pollfd pollFd;
 
-	pollFd.fd = socket;
-	std::cout << "Creating poll for fd " << pollFd.fd << std::endl;
+	pollFd.fd	  = socket;
 	pollFd.events = POLLIN;
 	m_pollFds.push(pollFd);
 }

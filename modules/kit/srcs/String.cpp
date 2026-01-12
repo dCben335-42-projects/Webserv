@@ -34,3 +34,35 @@ std::string String::trim(const std::string &str)
 		--end;
 	return str.substr(start, end - start);
 }
+
+std::string String::htmlEscape(const std::string &input)
+{
+	std::string result;
+	result.reserve(input.size() * 1.1);
+	for (std::string::size_type i = 0; i < input.size(); ++i)
+	{
+		char c = input[i];
+		switch (c)
+		{
+			case '&':
+				result += "&amp;";
+				break;
+			case '<':
+				result += "&lt;";
+				break;
+			case '>':
+				result += "&gt;";
+				break;
+			case '"':
+				result += "&quot;";
+				break;
+			case '\'':
+				result += "&#39;";
+				break;
+			default:
+				result += c;
+				break;
+		}
+	}
+	return result;
+}

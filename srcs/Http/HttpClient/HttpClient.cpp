@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <cstring>
 #include "FileHandler.hpp"
-#include "httpErrors.hpp"
+#include "httpExceptions.hpp"
 #include "Date.hpp"
 
 HttpClient::HttpClient(int fd) : m_fd(fd), m_state(READING)
@@ -90,18 +90,18 @@ void HttpClient::prepareResponse()
 					m_res.setHeader(HEADER_DATE, date);
 			}
 		}
-		catch (const std::exception &e)
+		catch (const FileHandler::FileHandlerException &e)
 		{
 			std::cerr << e.what() << '\n';
-			throw Http404Exception();
+			throw e.getHttpException();
 		}
 		m_res.setStatusCode(200);
 	}
 	catch (const AHttpException &e)
 	{
 		m_res.setStatusCode(e.getStatusCode());
-		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_JSON);
-		m_res.setBody("{\n\t\"status\": \"error\",\n\t\"message\": \"" + std::string(e.what()) + "\"\n}");
+		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+		m_res.setBody(e.getPage());
 	}
 	std::cout << FileHandler::findLastModifiedDate(FALLBACK_TEST) << std::endl;
 	m_res.build();

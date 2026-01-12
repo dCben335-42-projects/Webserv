@@ -61,12 +61,23 @@ bool FileHandler::fileExists(const std::string &path)
 	return stat(path.c_str(), &st) == 0 && S_ISREG(st.st_mode);
 }
 
+bool FileHandler::hasReadPermission(const std::string &path)
+{
+	struct stat st;
+	if (stat(path.c_str(), &st) != 0)
+		return false;
+	return (st.st_mode & S_IRUSR);
+}
+
 std::string FileHandler::readFile(const std::string &path)
 {
+	if (!fileExists(path))
+		throw FileHandler::FileDoesNotExistException(path);
+	if (!hasReadPermission(path))
+		throw FileHandler::FilePermissionException(path);
 	int fd = open(path.c_str(), O_RDONLY);
 	if (fd == -1)
 		throw FileHandler::FileDoesNotExistException(path);
-
 	char		buffer[READ_BUFFER_SIZE];
 	ssize_t		bytesRead = 1;
 	std::string content;

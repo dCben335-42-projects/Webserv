@@ -3,10 +3,12 @@
 
 #include "AHttpException.hpp"
 
+#define HTTP_406_ERROR_MSG "Not Acceptable"
+
 class Http406Exception : public AHttpException
 {
 	public:
-		Http406Exception() : AHttpException("406 Not Acceptable", 406)
+		Http406Exception() : AHttpException(HTTP_406_ERROR_MSG, 406)
 		{
 		}
 };

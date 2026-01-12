@@ -3,10 +3,12 @@
 
 #include "AHttpException.hpp"
 
+#define HTTP_405_ERROR_MSG "Method Not Allowed"
+
 class Http405Exception : public AHttpException
 {
 	public:
-		Http405Exception() : AHttpException("405 Method Not Allowed", 405)
+		Http405Exception() : AHttpException(HTTP_405_ERROR_MSG, 405)
 		{
 		}
 };

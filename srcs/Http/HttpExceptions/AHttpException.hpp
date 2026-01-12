@@ -3,23 +3,23 @@
 
 #include <string>
 #include <stdexcept>
+#include "String.hpp"
+#include "Number.hpp"
 
 class AHttpException : public std::runtime_error
 {
+	private:
+		static const std::string HEAD_TEMPLATE;
+		static const std::string HTML_TEMPLATE;
+
 	protected:
 		int m_statusCode;
 
 	public:
-		explicit AHttpException(const std::string &message, int code) :
-			std::runtime_error(message),
-			m_statusCode(code)
-		{
-		}
-
-		int getStatusCode() const
-		{
-			return m_statusCode;
-		}
+		AHttpException(const std::string &message, int code);
+		int			getStatusCode() const;
+		std::string getPage() const;
 };
+
 
 #endif

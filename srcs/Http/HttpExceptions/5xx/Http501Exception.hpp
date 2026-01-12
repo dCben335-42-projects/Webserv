@@ -3,11 +3,13 @@
 
 #include "AHttpException.hpp"
 
+#define HTTP_501_ERROR_MSG "Not Implemented"
+
 class Http501Exception : public AHttpException
 {
 	public:
 		Http501Exception(const std::string &method) :
-			AHttpException("501 " + (!method.empty() ? (method + " ") : "") + "Not Implemented", 501)
+			AHttpException((!method.empty() ? (method + " ") : "") + HTTP_501_ERROR_MSG, 501)
 		{
 		}
 };

@@ -4,13 +4,10 @@
 #include <netinet/in.h>
 #include <poll.h>
 
-#include "HttpRequest.hpp"
-#include "HttpResponse.hpp"
-// #include "httpErrors.hpp"
-#include "HttpClient.hpp"
-
 #include "Map.hpp"
 #include "Vector.hpp"
+
+#include "HttpClient.hpp"
 
 class HttpServer
 {

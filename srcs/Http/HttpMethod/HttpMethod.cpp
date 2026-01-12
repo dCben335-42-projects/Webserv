@@ -1,10 +1,9 @@
 #include "HttpMethod.hpp"
 #include <stdexcept>
 #include "config.hpp"
-#include "httpErrors.hpp"
+#include "httpExceptions.hpp"
 
 const Map<EMethodType, std::string> HttpMethod::m_methodMap = HttpMethod::initMethodMap();
-
 
 Map<EMethodType, std::string> HttpMethod::initMethodMap()
 {
