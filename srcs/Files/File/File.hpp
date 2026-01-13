@@ -20,8 +20,11 @@ class File
 
 		bool		m_isDirectory;
 		std::string m_contentType;
+
 		std::string m_sizeHuman;
 		std::string m_lastModifiedHuman;
+		std::string m_createdAtHuman;
+
 		std::string m_icon;
 		bool		m_isHidden;
 
@@ -44,6 +47,7 @@ class File
 
 		std::string getExtension() const;
 		size_t		getExtensionPos() const;
+		std::string getCreatedAtHuman() const;
 
 		std::string getContent() const;
 

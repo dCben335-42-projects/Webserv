@@ -94,7 +94,8 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"<th></th>"
 	"<th>Name</th>"
 	"<th class=\"size\">Size</th>"
-	"<th class=\"date\">Last modified</th>"
+	"<th class=\"date\">Created</th>"
+	"<th class=\"date\">Modified</th>"
 	"</tr>\n";
 
 const std::string IndexOf::LINE_TEMPLATE =
@@ -102,6 +103,7 @@ const std::string IndexOf::LINE_TEMPLATE =
 	"<td class=\"icon\">{{ICON}}</td>"
 	"<td><a href=\"{{LINK}}\">{{NAME}}</a></td>"
 	"<td class=\"size\">{{SIZE_HUMAN}}</td>"
+	"<td class=\"date\">{{CREATED_HUMAN}}</td>"
 	"<td class=\"date\">{{DATE_HUMAN}}</td>"
 	"</tr>\n";
 
@@ -166,6 +168,7 @@ std::string IndexOf::generateLine(
 	const std::string &link,
 	const std::string &name,
 	const std::string &sizeHuman,
+	const std::string &createdHuman,
 	const std::string &dateHuman)
 {
 	std::string line = LINE_TEMPLATE;
@@ -173,6 +176,7 @@ std::string IndexOf::generateLine(
 	String::replaceAll(line, "{{ICON}}", icon);
 	String::replaceAll(line, "{{LINK}}", link);
 	String::replaceAll(line, "{{NAME}}", name);
+	String::replaceAll(line, "{{CREATED_HUMAN}}", createdHuman);
 	String::replaceAll(line, "{{SIZE_HUMAN}}", sizeHuman);
 	String::replaceAll(line, "{{DATE_HUMAN}}", dateHuman);
 	return line;
@@ -200,7 +204,7 @@ IndexOf &IndexOf::generate()
 	String::replaceAll(result, "{{PATH}}", String::htmlEscape(m_path));
 
 	if (m_path != "/")
-		result += generateLine("📁", "../", "..", "-", "-");
+		result += generateLine("📁", "../", "..", "-", "-", "-");
 	for (Vec<File>::const_iterator it = m_files.begin(); it != m_files.end(); ++it)
 	{
 		result += generateLine(
@@ -208,6 +212,7 @@ IndexOf &IndexOf::generate()
 			it->getPath(),
 			it->getName(),
 			it->getSizeHuman(),
+			it->getCreatedAtHuman(),
 			it->getLastModifiedHuman());
 	}
 	std::string foot = FOOT_TEMPLATE;

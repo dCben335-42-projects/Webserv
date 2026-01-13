@@ -22,9 +22,10 @@ class IndexOf
 			const std::string &link,
 			const std::string &name,
 			const std::string &sizeHuman,
+			const std::string &createdHuman,
 			const std::string &dateHuman);
-		IndexOf &generate();
 
+		IndexOf &generate();
 		IndexOf &scanDirectory(const std::string &path);
 
 	public:

@@ -49,7 +49,7 @@ int Number::toInt(const std::string &str)
 	return std::atoi(str.c_str());
 }
 
-std::string Number::byteToHumanSize(const size_t bytes)
+std::string Number::bytesToHumanSize(const size_t bytes)
 {
 	const char *sizes[] = {"B", "KB", "MB", "GB", "TB", "PB"};
 	size_t		order	= 0;

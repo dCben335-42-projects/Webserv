@@ -3,6 +3,8 @@
 #include "Number.hpp"
 #include "FileHandler.hpp"
 
+#include "Logger.hpp"
+
 File::File(
 	const std::string &name,
 	const std::string &path,
@@ -16,18 +18,17 @@ File::File(
 	if (stat(fullPath.c_str(), &fileStat) != 0)
 		throw std::runtime_error("Failed to get file stats for: " + fullPath);
 
-	m_name		   = name;
-	m_path		   = cleanPath;
-	m_fullPath	   = fullPath;
-	m_size		   = static_cast<size_t>(fileStat.st_size);
-	m_isDirectory  = S_ISDIR(fileStat.st_mode);
-	m_lastModified = Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
-
+	m_name				= name;
+	m_path				= cleanPath;
+	m_fullPath			= fullPath;
+	m_size				= static_cast<size_t>(fileStat.st_size);
+	m_isDirectory		= S_ISDIR(fileStat.st_mode);
 	m_lastModified		= Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
+	m_createdAtHuman	= Date::toHumanFormat(gmtime(&fileStat.st_ctime));
 	m_lastModifiedHuman = Date::toHumanFormat(localtime(&fileStat.st_mtime));
 
 	determineExtension();
-	m_sizeHuman	  = Number::byteToHumanSize(m_size);
+	m_sizeHuman	  = Number::bytesToHumanSize(m_size);
 	m_icon		  = FileHandler::getIcon(*this);
 	m_contentType = FileHandler::getContentType(fullPath);
 	m_isHidden	  = (name[0] == '.');
@@ -93,6 +94,10 @@ std::string File::getExtension() const
 size_t File::getExtensionPos() const
 {
 	return m_extensionPos;
+}
+std::string File::getCreatedAtHuman() const
+{
+	return m_createdAtHuman;
 }
 
 
