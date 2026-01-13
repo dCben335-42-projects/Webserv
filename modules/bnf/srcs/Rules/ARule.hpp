@@ -11,22 +11,27 @@ struct BnfMap;
 class ARule
 {
 	protected:
-		const ERuleType m_type;
-		ARule(ERuleType t);
+		const ERuleType	  m_type;
+		const std::string m_conceptName;
+		const size_t	  m_conceptDefIndex;
+		const size_t	  m_ruleIndex;
+		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
 
 	public:
 		virtual ~ARule();
 
-		ARule		&operator=(const ARule &other);
-		virtual void addItem(const std::string &val) = 0;
-		ERuleType	 getType() const;
-
-		virtual Vec<std::string> getItems() const = 0;
-		// virtual Vec<std::string> getLiteralItems() const   = 0;
-		virtual std::string getPrintableValue() const = 0;
-
-		static BnfMap getMap(const std::string &opener);
-		static bool	  isKeyWord(const std::string &word, bool onlyClose);
+		ARule					 &operator=(const ARule &other);
+		ERuleType				  getType() const;
+		virtual const std::string getTypeName() const			  = 0;
+		virtual void			  addItem(const std::string &val) = 0;
+		virtual Vec<std::string>  getItems() const				  = 0;
+		virtual std::string		  getPrintableValue() const		  = 0;
+		static BnfMap			  getMap(const std::string &opener);
+		static bool				  isKeyWord(const std::string &word, bool onlyClose);
+		const std::string		  getConceptName() const;
+		size_t					  getConceptDefIndex() const;
+		size_t					  getRuleIndex() const;
+		// void					 setLocalisation(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
 };
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);
@@ -35,7 +40,7 @@ struct BnfMap
 {
 		std::string opener;
 		std::string closer;
-		ARule *(*constructor)();
+		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
 		bool hasClosure;
 };
 

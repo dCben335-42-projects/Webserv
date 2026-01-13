@@ -18,10 +18,10 @@ Lexer::Lexer(std::string const &filepath)
 	m_content = ss.str();
 
 	SemanticDescriptor val(m_content);
-	
+
 	std::cout << val;
 	Parser parser(val);
-	parser.parse("dwdw");
+	parser.parse("58dwdw");
 
 	ifs.close();
 }

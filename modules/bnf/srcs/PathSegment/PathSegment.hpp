@@ -8,7 +8,7 @@
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
-#include "../Concept/Concept.hpp"
+#include "../ConceptDef/ConceptDef.hpp"
 #include "../ConceptNode/ConceptNode.hpp"
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
@@ -22,6 +22,8 @@ class PathSegment
 		size_t			 m_position;
 		size_t			 m_positionInSpecial;
 		Vec<PathSegment> m_nextPathSegments;
+		PathSegment		*m_parent;
+		size_t			 m_depth;
 		bool			 m_isTerminalConcept;
 
 	public:
@@ -32,9 +34,12 @@ class PathSegment
 		size_t					getPosition() const;
 		size_t					getPositionInSpecial() const;
 		const Vec<PathSegment> &getNextPathSegments() const;
-		void					addNextPathSegment(const PathSegment &pathSegment);
+		const PathSegment	   *addNextPathSegment(const PathSegment &pathSegment);
 		PathSegment			   &getLastPathSegment();
 		bool					isTerminalConcept() const;
+		PathSegment			   *getParent() const;
+		void					setDepth(size_t depth);
+		size_t					getDepth() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const PathSegment &data);

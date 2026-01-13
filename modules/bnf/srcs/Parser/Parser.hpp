@@ -8,7 +8,7 @@
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
-#include "../Concept/Concept.hpp"
+#include "../ConceptDef/ConceptDef.hpp"
 #include "../ConceptNode/ConceptNode.hpp"
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
@@ -20,9 +20,9 @@ class Parser
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		void			 recursive_parse(PathSegment &currentPath, char c, Map<std::string> &m_map_ref);
-		Vec<std::string> getTerminalChars(ConceptNode *node);
-		void			 createAllPath(std::string conceptName, PathSegment &currentPath);
+		void recursive_parse(std::string conceptName, char c, std::set<char> &currentSet, std::set<char> &nextSet);
+		void createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes);
+		void getAllTerminalChars(std::string conceptName, std::set<char> &allTerminalChars);
 
 	public:
 		~Parser();

@@ -24,7 +24,7 @@ SemanticDescriptor::~SemanticDescriptor()
 
 	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
-		for (Vec<Concept *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
+		for (Vec<ConceptDef *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
 		{
 			delete *conceptIt;
 		}
@@ -111,6 +111,7 @@ void SemanticDescriptor::parseBlocks()
 			parseRule(*block, pos);
 		}
 		checkValidity();
+		addParent();
 	}
 	catch (const SemanticException &e)
 	{
@@ -121,18 +122,20 @@ void SemanticDescriptor::parseBlocks()
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
-	Concept *concept = new Concept();
+	ConceptDef *concept	   = new ConceptDef(m_lastKey);
+	size_t conceptDefIndex = m_concepts[m_lastKey].size();
 	m_concepts[m_lastKey].push_back(concept);
 	std::istringstream iss(m_content.substr(cursor));
 	std::string		   word;
-	ARule			  *arule = NULL;
+	ARule			  *arule	  = NULL;
+	size_t			   aruleIndex = 0;
 
 	while (iss >> word)
 	{
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
-		arule	   = map.constructor();
+		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex);
 		if (map.hasClosure && !(iss >> word))
 			throw std::runtime_error("Unexpected end of rule after " + map.opener);
 		while (word != map.closer)
@@ -151,8 +154,51 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 				break;
 		}
 		concept->setRule(arule);
+		aruleIndex++;
 	}
 	concept->finish();
+}
+
+void SemanticDescriptor::addParent()
+{
+	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+	{
+		for (Vec<ConceptDef *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
+		{
+			ConceptDef *concept = *conceptIt;
+			Vec<ARule *> values = concept->getValues();
+
+			for (Vec<ARule *>::iterator ruleIt = values.begin(); ruleIt != values.end(); ++ruleIt)
+			{
+				ARule			 *rule = *ruleIt;
+				Vec<ConceptDef *> conceptDefs;
+				Vec<std::string>  items = rule->getItems();
+
+				if (rule->getType() == SYMBOL && m_concepts.try_get(items[0], conceptDefs))
+				{
+					for (Vec<ConceptDef *>::iterator childIt = conceptDefs.begin(); childIt != conceptDefs.end(); ++childIt)
+					{
+						ConceptDef *childConcept = *childIt;
+						childConcept->addParent(rule);
+					}
+				}
+				else
+				{
+					for (size_t i = 0; i < items.size(); ++i)
+					{
+						if (m_concepts.try_get(items[i], conceptDefs))
+						{
+							for (Vec<ConceptDef *>::iterator childIt = conceptDefs.begin(); childIt != conceptDefs.end(); ++childIt)
+							{
+								ConceptDef *childConcept = *childIt;
+								childConcept->addParent(rule);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void SemanticDescriptor::parseConceptName(std::string s)
@@ -222,6 +268,17 @@ Map<ConceptList> SemanticDescriptor::getConcepts() const
 ConceptList &SemanticDescriptor::getConcept(const std::string &key)
 {
 	return m_concepts.get(key);
+}
+
+const ConceptList &SemanticDescriptor::getConcept(const std::string &key) const
+{
+	return m_concepts.get(key);
+}
+
+
+bool SemanticDescriptor::tryGetConcept(const std::string &key, ConceptList &conceptList) const
+{
+	return m_concepts.try_get(key, conceptList);
 }
 
 ConceptNode *SemanticDescriptor::getTree() const

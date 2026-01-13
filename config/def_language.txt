@@ -1,7 +1,7 @@
-<head>			::= IDENT
+<head>			::= IDENT DIGIT
 
 IDENT			::= LETTER { LETTER }
-				|= LETTER [ DIGIT ]
+				|= [ DIGIT ] LETTER
 				
 
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )

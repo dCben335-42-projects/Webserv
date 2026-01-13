@@ -1,4 +1,4 @@
-#include "Concept.hpp"
+#include "ConceptDef.hpp"
 #include <iostream>
 #include <algorithm>
 #include "../utils/utils.hpp"
@@ -6,11 +6,11 @@
 
 using namespace bnf;
 
-Concept::Concept()
+ConceptDef::ConceptDef(const std::string conceptName) : m_conceptName(conceptName), isTerminal(false)
 {
 }
 
-void Concept::finish()
+void ConceptDef::finish()
 {
 	Vec<std::string> items = getItemsWithOption();
 	for (Vec<std::string>::iterator it = items.begin(); it != items.end(); ++it)
@@ -24,12 +24,12 @@ void Concept::finish()
 	isTerminal = true;
 }
 
-bool Concept::getIsTerminal() const
+bool ConceptDef::getIsTerminal() const
 {
 	return isTerminal;
 }
 
-Concept::~Concept()
+ConceptDef::~ConceptDef()
 {
 	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
 	{
@@ -37,36 +37,17 @@ Concept::~Concept()
 	}
 }
 
-void Concept::setRule(ARule *rule)
+void ConceptDef::setRule(ARule *rule)
 {
 	values.push_back(rule);
 }
 
-Vec<ARule *> Concept::getRules()
+Vec<ARule *> ConceptDef::getRules()
 {
 	return values;
 }
 
-bool Concept::calledInConcept(std::string conceptName)
-{
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
-	{
-		ARule			*rule  = *it;
-		Vec<std::string> items = rule->getItems();
-		if (rule->getType() != OPTION)
-			continue;
-		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
-		{
-			if (*itemIt == conceptName)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-Vec<std::string> Concept::getItems()
+Vec<std::string> ConceptDef::getItems()
 {
 	Vec<std::string> allItems;
 	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
@@ -83,11 +64,10 @@ Vec<std::string> Concept::getItems()
 		}
 	}
 
-	// std::cout << allItems.size() << " items found in concept." << std::endl;
 	return allItems;
 }
 
-Vec<std::string> Concept::getItemsWithOption()
+Vec<std::string> ConceptDef::getItemsWithOption()
 {
 	Vec<std::string> allItems;
 	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
@@ -105,30 +85,20 @@ Vec<std::string> Concept::getItemsWithOption()
 }
 
 
-Vec<ARule *> Concept::getValues() const
+Vec<ARule *> ConceptDef::getValues() const
 {
 	return values;
 }
 
-std::ostream &operator<<(std::ostream &os, const Concept &data)
+void ConceptDef::addParent(ARule *parent)
+{
+	m_parents.insert(parent);
+}
+
+std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {
 	(void) os;
-	// data.printRules();
-	// (void)data;
-
 	Vec<ARule *> values = data.getValues();
-
 	log(values);
-
-	// for (Vec<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
-	// ARule* rule = *it;
-	// os << *rule;
-	// }
-
 	return os;
-
-
-	// os << "ConceptNode(name: " << data.name << ", concepts count: "
-	//    << (data.concepts ? data.concepts->size() : 0) << ")";
-	// return os;
 }

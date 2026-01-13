@@ -10,7 +10,7 @@
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
-#include "../Concept/Concept.hpp"
+#include "../ConceptDef/ConceptDef.hpp"
 #include "../TreeNode/TreeNode.hpp"
 
 class ConceptNode : public TreeNode<ConceptNode>
@@ -28,8 +28,8 @@ class ConceptNode : public TreeNode<ConceptNode>
 		bool hasInfRecursivity() const;
 		void setHasInfRecursivity(const bool hasInfRecursivity);
 
-		const ConceptList  &getConcepts() const;
-		const std::string  &getName() const;
+		const ConceptList &getConcepts() const;
+		const std::string &getName() const;
 };
 
 

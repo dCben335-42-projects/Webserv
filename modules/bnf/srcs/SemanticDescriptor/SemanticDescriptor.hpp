@@ -8,7 +8,7 @@
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
-#include "../Concept/Concept.hpp"
+#include "../ConceptDef/ConceptDef.hpp"
 #include "../utils/utils.hpp"
 #include "../ConceptNode/ConceptNode.hpp"
 
@@ -38,15 +38,18 @@ class SemanticDescriptor
 
 		void parseBlocks();
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
+		void addParent();
 
 	public:
 		SemanticDescriptor();
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		Map<ConceptList> getConcepts() const;
-		ConceptList		&getConcept(const std::string &key);
-		ConceptNode		*getTree() const;
+		Map<ConceptList>   getConcepts() const;
+		ConceptList		  &getConcept(const std::string &key);
+		const ConceptList &getConcept(const std::string &key) const;
+		bool			   tryGetConcept(const std::string &key, ConceptList &conceptList) const;
+		ConceptNode		  *getTree() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

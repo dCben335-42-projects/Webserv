@@ -2,6 +2,7 @@
 #include <iostream>
 #include "./Parser.hpp"
 #include "Vector.hpp"
+#include "Map.hpp"
 #include "Logger.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
@@ -12,106 +13,121 @@ Parser::~Parser()
 {
 }
 
-Vec<std::string> Parser::getTerminalChars(ConceptNode *node)
+void Parser::createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes)
 {
-	ConceptList RulesConcept = m_semantic.getConcepts()[node->getName()];
-	return RulesConcept[0]->getValues()[0]->getItems();
-}
-
-void Parser::createAllPath(std::string conceptName, PathSegment &currentPath)
-{
-	ConceptList conceptList = m_semantic.getConcepts()[conceptName];
-	if (conceptList.empty())
-		return;
+	ConceptList conceptList = m_semantic.getConcept(conceptName);
 
 	for (size_t i = 0; i < conceptList.size(); ++i)
 	{
-		Concept *concept  = conceptList[i];
-		bool terminalTerm = false;
+		ConceptDef *concept = conceptList[i];
+		Vec<ARule *> values = concept->getValues();
 
 		if (concept->getIsTerminal())
 		{
-			terminalTerm = true;
+			for (size_t j = 0; j < values.size(); ++j)
+			{
+				Vec<std::string> items = values[j]->getItems();
+				for (size_t k = 0; k < items.size(); ++k)
+					allNodes.push(
+						currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, true)));
+			}
+			return;
 		}
-		Vec<ARule *> values = concept->getValues();
 		for (size_t j = 0; j < values.size(); ++j)
 		{
 			Vec<std::string> items = values[j]->getItems();
-			if (values[j]->getType() == SYMBOL)
+			for (size_t k = 0; k < items.size(); ++k)
 			{
-				currentPath.addNextPathSegment(PathSegment(items[0], i, j, 0, terminalTerm));
-				createAllPath(items[0], currentPath.getLastPathSegment());
-			}
-			else if (values[j]->getType() == SEQUENCE)
-			{
-				for (size_t k = 0; k < items.size(); ++k)
-				{
-					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, terminalTerm));
-					createAllPath(items[k], currentPath.getLastPathSegment());
-				}
-			}
-			else if (values[j]->getType() == OPTION)
-			{
-				for (size_t k = 0; k < items.size(); ++k)
-				{
-					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, terminalTerm));
-					createAllPath(items[k], currentPath.getLastPathSegment());
-				}
-			}
-			else if (values[j]->getType() == GROUP)
-			{
-				for (size_t k = 0; k < items.size(); ++k)
-				{
-					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, terminalTerm));
-					createAllPath(items[k], currentPath.getLastPathSegment());
-				}
+				allNodes.push(
+					currentPath.addNextPathSegment(PathSegment(items[k], i, j, k, false)));
+				createAllPath(items[k], currentPath.getLastPathSegment(), allNodes);
 			}
 		}
 	}
 }
 
-void Parser::recursive_parse(PathSegment &currentPath, char c, Map<std::string> &m_map_ref)
+// void Parser::recursive_parse(char c, std::set<char> &currentSet, std::set<char> &nextSet)
+// {
+// 	(void) c;
+// 	(void) currentSet;
+// 	(void) nextSet;
+// }
+
+void Parser::getAllTerminalChars(std::string conceptName, std::set<char> &allTerminalChars)
 {
 	if (startsWith(conceptName, "\'"))
 	{
-		log("Terminal found: " + conceptName + "\n");
+		allTerminalChars.insert(conceptName.begin() + 1, conceptName.end() - 1);
+		return;
 	}
 	ConceptList conceptList = m_semantic.getConcept(conceptName);
 
-	if (conceptList.empty())
-		return;
 	for (size_t i = 0; i < conceptList.size(); ++i)
 	{
-		Concept *concept	= conceptList[i];
+		ConceptDef *concept = conceptList[i];
 		Vec<ARule *> values = concept->getValues();
+
 		for (size_t j = 0; j < values.size(); ++j)
 		{
-			Vec<std::string> items = values[j]->getItems();
-			if (values[j]->getType() == SYMBOL)
+			if (values[j]->getType() == OPTION)
 			{
-				recursive_parse(items[0], c, m_map_ref);
-			}
-			else if (values[j]->getType() == SEQUENCE)
-			{
+				Vec<std::string> items = values[j]->getItems();
 				for (size_t k = 0; k < items.size(); ++k)
-				{
-					recursive_parse(items[k], c, m_map_ref);
-				}
+					getAllTerminalChars(items[k], allTerminalChars);
 			}
-			else if (values[j]->getType() == OPTION)
+			else if (values[j]->getType() == SYMBOL)
 			{
-				for (size_t k = 0; k < items.size(); ++k)
-				{
-					recursive_parse(items[k], c, m_map_ref);
-				}
+				Vec<std::string> items = values[j]->getItems();
+				getAllTerminalChars(items[0], allTerminalChars);
+				break;
 			}
-			else if (values[j]->getType() == GROUP)
+			else
 			{
+				Vec<std::string> items = values[j]->getItems();
 				for (size_t k = 0; k < items.size(); ++k)
-				{
-					recursive_parse(items[k], c, m_map_ref);
-				}
+					getAllTerminalChars(items[k], allTerminalChars);
+				break;
 			}
+		}
+	}
+}
+
+void Parser::recursive_parse(std::string conceptName, char c, std::set<char> &currentSet, std::set<char> &nextSet)
+{
+	// if (startsWith(conceptName, "\'"))
+	// {
+	// 	allTerminalChars.insert(conceptName.begin() + 1, conceptName.end() - 1);
+	// 	return;
+	// }
+	ConceptList conceptDefList = m_semantic.getConcept(conceptName);
+
+	for (size_t i = 0; i < conceptDefList.size(); ++i)
+	{
+		ConceptDef *concept = conceptDefList[i];
+		Vec<ARule *> values = concept->getValues();
+
+		for (size_t j = 0; j < values.size(); ++j) // trouver une soluce pour quil connaisse sa position ( par increment sur chaque concept encore valide )
+		{
+			if (values[j]->getType() == OPTION)
+			{
+				Vec<std::string> items = values[j]->getItems();
+				return;
+				for (size_t k = 0; k < items.size(); ++k)
+					recursive_parse(items[k], c, currentSet, nextSet);
+			}
+			// else if (values[j]->getType() == SYMBOL)
+			// {
+			// 	Vec<std::string> items = values[j]->getItems();
+			// 	getAllTerminalChars(items[0], allTerminalChars);
+			// 	break;
+			// }
+			// else
+			// {
+			// 	Vec<std::string> items = values[j]->getItems();
+			// 	for (size_t k = 0; k < items.size(); ++k)
+			// 		getAllTerminalChars(items[k], allTerminalChars);
+			// 	break;
+			// }
 		}
 	}
 }
@@ -121,19 +137,37 @@ void Parser::parse(const std::string &stringToParsed)
 	if (stringToParsed.empty())
 		return;
 
-	Map<std::string>  m_map;
-	Map<std::string> &m_map_ref		  = m_map;
-	PathSegment		  headsegment	  = PathSegment(CURSOR, 0, 0, 0, false);
-	PathSegment		 &headsegment_ref = headsegment;
+
+	// Map<std::string>  m_map;
+	// Map<std::string> &m_map_ref		  = m_map;
+	// PathSegment		  headsegment	  = PathSegment(CURSOR, 0, 0, 0, false);
+	// PathSegment		 &headsegment_ref = headsegment;
+	// Vec<const PathSegment *> allNodes;
+
+	std::set<char> currentSet;
+	std::set<char> nextSet;
+	getAllTerminalChars(CURSOR, currentSet);
+
 
 	log("------------------\n");
+	printSet(currentSet);
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		char c = stringToParsed[i];
-		createAllPath(CURSOR, headsegment_ref);
-		recursive_parse(headsegment_ref, c, m_map_ref);
+		if (currentSet.find(c) == currentSet.end())
+		{
+			log("Error: unexpected character '");
+			log(std::string(1, c));
+			log("'\n");
+			return;
+		}
+		// createAllPath(CURSOR, headsegment_ref, allNodes);
+		// recursive_parse(c, currentSet, nextSet);
+		(void) c;
 	}
 
-	log(headsegment_ref);
+	// log(headsegment_ref);
 	(void) stringToParsed;
+	(void) currentSet;
+	(void) nextSet;
 }

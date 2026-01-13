@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include <set>
 
 template <typename M, typename K, typename V>
 typename M::iterator findOrInsert(M &map, const K &key, const V &value)
@@ -36,6 +37,15 @@ size_t getMapSize(const M &m)
 	return m.size();
 }
 
+template <typename T>
+void printSet(const std::set<T> &s)
+{
+	typename std::set<T>::const_iterator it;
+	for (it = s.begin(); it != s.end(); ++it)
+	{
+		std::cout << *it << std::endl;
+	}
+}
 
 
 template <typename Derived, typename K, typename V>
