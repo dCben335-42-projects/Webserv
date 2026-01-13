@@ -1,7 +1,7 @@
 #include "./Sequence.hpp"
 #include "Logger.hpp"
 
-Sequence::Sequence() : ARule(SEQUENCE)
+Sequence::Sequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(SEQUENCE, conceptName, conceptDefIndex, ruleIndex)
 {
 }
 
@@ -17,6 +17,11 @@ void Sequence::addItem(const std::string &val)
 Vec<std::string> Sequence::getItems() const
 {
 	return items;
+}
+
+const std::string Sequence::getTypeName() const
+{
+	return "SEQUENCE";
 }
 
 std::string Sequence::getPrintableValue() const

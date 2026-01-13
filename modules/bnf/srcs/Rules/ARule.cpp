@@ -9,7 +9,7 @@
 
 using namespace bnf;
 
-ARule::ARule(ERuleType t) : m_type(t)
+ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex)
 {
 }
 
@@ -30,24 +30,24 @@ ERuleType ARule::getType() const
 	return m_type;
 }
 
-ARule *createGroup()
+ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
 {
-	return new Group();
+	return new Group(conceptName, conceptDefIndex, ruleIndex);
 }
 
-ARule *createSequence()
+ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
 {
-	return new Sequence();
+	return new Sequence(conceptName, conceptDefIndex, ruleIndex);
 }
 
-ARule *createOption()
+ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
 {
-	return new Option();
+	return new Option(conceptName, conceptDefIndex, ruleIndex);
 }
 
-ARule *createSymbol()
+ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
 {
-	return new Symbol();
+	return new Symbol(conceptName, conceptDefIndex, ruleIndex);
 }
 
 static const BnfMap rules[] = {
@@ -97,8 +97,28 @@ BnfMap ARule::getMap(const std::string &opener)
 	return rules[i];
 }
 
+const std::string ARule::getConceptName() const
+{
+	return m_conceptName;
+}
+
+size_t ARule::getConceptDefIndex() const
+{
+	return m_conceptDefIndex;
+}
+
+size_t ARule::getRuleIndex() const
+{
+	return m_ruleIndex;
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
-	os << Log::indent() << data.getPrintableValue();
+	os << Log::indent() << "{\n"
+	   << Log::indent() << "  ARuleType: " << data.getTypeName() << ",\n"
+	   << Log::indent() << "  ConceptName: " << data.getConceptName() << ",\n"
+	   << Log::indent() << "  ConceptDefIndex: " << data.getConceptDefIndex() << ",\n"
+	   << Log::indent() << "  RuleIndex: " << data.getRuleIndex() << ",\n"
+	   << Log::indent() << "  PrintableValue: " << data.getPrintableValue();
 	return os;
 }

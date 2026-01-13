@@ -1,11 +1,11 @@
 #include "./Symbol.hpp"
 #include "Logger.hpp"
 
-Symbol::Symbol() : ARule(SYMBOL)
+Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex)
 {
 }
 
-Symbol::Symbol(const std::string &val) : ARule(SYMBOL)
+Symbol::Symbol(const std::string &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex)
 {
 	value = val;
 }
@@ -35,6 +35,11 @@ const std::string &Symbol::getValue() const
 std::string Symbol::getPrintableValue() const
 {
 	return getLogJson(value);
+}
+
+const std::string Symbol::getTypeName() const
+{
+	return "SYMBOL";
 }
 
 std::ostream &operator<<(std::ostream &os, const Symbol &data)

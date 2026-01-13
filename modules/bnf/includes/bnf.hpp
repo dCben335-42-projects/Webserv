@@ -7,20 +7,21 @@
 #include "../srcs/Rules/Sequence/Sequence.hpp"
 #include "../srcs/Rules/Option/Option.hpp"
 #include "../srcs/Rules/Symbol/Symbol.hpp"
-#include "../srcs/Concept/Concept.hpp"
+#include "../srcs/ConceptDef/ConceptDef.hpp"
 #include "../srcs/SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../srcs/Parser/Parser.hpp"
 
-namespace bnf {
-    typedef ::ARule ARule;
-    typedef ::Group Group;
-    typedef ::Sequence Sequence;
-    typedef ::Option Option;
-    typedef ::Symbol Symbol;
-    typedef ::Concept Concept;
-    typedef ::SemanticDescriptor SemanticDescriptor;
-    typedef ::Parser Parser;
-}
+namespace bnf
+{
+typedef ::ARule				 ARule;
+typedef ::Group				 Group;
+typedef ::Sequence			 Sequence;
+typedef ::Option			 Option;
+typedef ::Symbol			 Symbol;
+typedef ::ConceptDef		 Concept;
+typedef ::SemanticDescriptor SemanticDescriptor;
+typedef ::Parser			 Parser;
+} // namespace bnf
 
 
 #endif

@@ -1,7 +1,7 @@
 #include "./Option.hpp"
 #include "Logger.hpp"
 
-Option::Option() : ARule(OPTION)
+Option::Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex)
 {
 }
 Option::~Option()
@@ -18,7 +18,10 @@ Vec<std::string> Option::getItems() const
 	return items;
 }
 
-
+const std::string Option::getTypeName() const
+{
+	return "OPTION";
+}
 
 std::string Option::getPrintableValue() const
 {

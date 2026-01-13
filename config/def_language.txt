@@ -1,28 +1,8 @@
-<head>			::= { statement }
+<head>			::= IDENT DIGIT
 
-statement		::= directive SEMI
-				|= block
-
-
-
-directive		::= IDENT { parameter }
-
-block			::= IDENT { parameter } LBRACE { statement } 
-
-
-
-				RBRACE
-
-parameter		::= IDENT
-				|= NUMBER
-				|= STRING
-
-IDENT			::= LETTER { LETTER | DIGIT | '_' | '-' | '/' | '.' | ':' }
-NUMBER			::= DIGIT { DIGIT }
-DIGIT			::= ( '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )
-
-
-
+IDENT			::= LETTER { LETTER }
+				|= [ DIGIT ] LETTER
+				
 
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
 LOCASE_LETTER	::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |

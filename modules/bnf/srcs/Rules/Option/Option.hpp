@@ -11,10 +11,11 @@ using bnf::OPTION;
 class Option : public ARule
 {
 	public:
-		Option();
+		Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
 		~Option();
 		void			 addItem(const std::string &val);
 		Vec<std::string> getItems() const;
+		const std::string getTypeName() const;
 		std::string		 getPrintableValue() const;
 
 	private:

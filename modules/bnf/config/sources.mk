@@ -1,4 +1,4 @@
-BNF_SRCS += ./srcs/Concept/Concept.cpp
+BNF_SRCS += ./srcs/ConceptDef/ConceptDef.cpp
 BNF_SRCS += ./srcs/ConceptNode/ConceptNode.cpp
 BNF_SRCS += ./srcs/Exception/SemanticException.cpp
 BNF_SRCS += ./srcs/Parser/Parser.cpp
