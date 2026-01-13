@@ -70,6 +70,7 @@ void HttpServer::createPollServer(const unsigned short port)
 // ANCHOR Private poll methods
 
 /**
+ *
  * @brief Creates a pollfd structure for the given socket
  * and adds it to the poll list.
  *
@@ -86,6 +87,7 @@ void HttpServer::createPoll(const int socket)
 }
 
 /**
+ *
  * @brief Deletes a client from the poll list and closes its socket.
  *
  * @param clientFd The file descriptor of the client to be deleted.
@@ -100,6 +102,7 @@ void HttpServer::deleteClient(const int &clientFd, const size_t &index)
 }
 
 /**
+ *
  * @brief Accepts a new client connection on the server socket
  * and adds it to the poll list.
  *

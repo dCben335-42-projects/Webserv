@@ -5,6 +5,17 @@
 #include <exception>
 #include "Map.hpp"
 #include "httpExceptions.hpp"
+#include "File.hpp"
+
+#define ICON_PLAIN "📄"
+#define ICON_IMAGE "🖼️"
+#define ICON_ARCHIVE "📦"
+#define ICON_PDF "📕"
+#define ICON_VIDEO "🎥"
+#define ICON_AUDIO "🎵"
+#define ICON_FONT "📝"
+#define ICON_DIRECTORY "📂"
+#define ICON_DEFAULT "📄"
 
 class FileHandler
 {
@@ -15,8 +26,12 @@ class FileHandler
 		static const Map<std::string> m_extensionTypeMap;
 		static Map<std::string>		  initExtensionTypeMap();
 
+		static const Map<std::string> m_iconMap;
+		static Map<std::string>		  initIconMap();
+
 	public:
 		static bool fileExists(const std::string &path);
+		static bool folderExists(const std::string &path);
 		static bool hasReadPermission(const std::string &path);
 
 		static std::string readFile(const std::string &path);
@@ -25,6 +40,9 @@ class FileHandler
 			const std::string &requestPath);
 
 		static std::string getContentType(const std::string &filePath);
+		static std::string getContentType(const File &file);
+		static std::string getIcon(const File &file);
+
 		static std::string findLastModifiedDate(const std::string &filePath);
 
 
@@ -98,5 +116,7 @@ class FileHandler
 				}
 		};
 };
+
+
 
 #endif

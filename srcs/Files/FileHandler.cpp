@@ -7,6 +7,9 @@
 #include "Date.hpp"
 #include "config.hpp"
 
+const Map<std::string> FileHandler::m_iconMap =
+	FileHandler::initIconMap();
+
 const Map<std::string> FileHandler::m_extensionTypeMap =
 	FileHandler::initExtensionTypeMap();
 
@@ -40,10 +43,8 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 	extensionTypeMap[".heic"] = HEADER_TYPE_HEIC;
 	extensionTypeMap[".ico"]  = HEADER_TYPE_ICO;
 
-
 	extensionTypeMap[".mp4"]  = HEADER_TYPE_MP4;
 	extensionTypeMap[".webm"] = HEADER_TYPE_WEBM;
-
 
 	extensionTypeMap[".ttf"]   = HEADER_TYPE_TTF;
 	extensionTypeMap[".woff"]  = HEADER_TYPE_WOFF;
@@ -55,10 +56,64 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 
 	return extensionTypeMap;
 }
+
+Map<std::string> FileHandler::initIconMap()
+{
+	Map<std::string> iconMap;
+
+	iconMap[".txt"]	 = ICON_PLAIN;
+	iconMap[".csv"]	 = ICON_PLAIN;
+	iconMap[".html"] = ICON_PLAIN;
+	iconMap[".css"]	 = ICON_PLAIN;
+	iconMap[".js"]	 = ICON_PLAIN;
+	iconMap[".json"] = ICON_PLAIN;
+	iconMap[".eot"]	 = ICON_FONT;
+	iconMap[".pdf"]	 = ICON_PDF;
+	iconMap[".xml"]	 = ICON_PLAIN;
+	iconMap[".zip"]	 = ICON_ARCHIVE;
+	iconMap[".yaml"] = ICON_PLAIN;
+	iconMap[".yml"]	 = ICON_PLAIN;
+	iconMap[".toml"] = ICON_PLAIN;
+	iconMap[".rtf"]	 = ICON_PLAIN;
+
+	iconMap[".png"]	 = ICON_IMAGE;
+	iconMap[".jpg"]	 = ICON_IMAGE;
+	iconMap[".webp"] = ICON_IMAGE;
+	iconMap[".jpeg"] = ICON_IMAGE;
+	iconMap[".gif"]	 = ICON_IMAGE;
+	iconMap[".svg"]	 = ICON_IMAGE;
+	iconMap[".avif"] = ICON_IMAGE;
+	iconMap[".heic"] = ICON_IMAGE;
+	iconMap[".ico"]	 = ICON_IMAGE;
+
+	iconMap[".mp4"]	 = ICON_VIDEO;
+	iconMap[".webm"] = ICON_VIDEO;
+
+	iconMap[".ttf"]	  = ICON_FONT;
+	iconMap[".woff"]  = ICON_FONT;
+	iconMap[".woff2"] = ICON_FONT;
+
+	iconMap[".mp3"]	 = ICON_AUDIO;
+	iconMap[".flac"] = ICON_AUDIO;
+	iconMap[".wav"]	 = ICON_AUDIO;
+
+	iconMap["/"] = ICON_DIRECTORY;
+	iconMap[""]	 = ICON_DEFAULT;
+	return iconMap;
+}
+
+
+
 bool FileHandler::fileExists(const std::string &path)
 {
 	struct stat st;
 	return stat(path.c_str(), &st) == 0 && S_ISREG(st.st_mode);
+}
+
+bool FileHandler::folderExists(const std::string &path)
+{
+	struct stat st;
+	return stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
 }
 
 bool FileHandler::hasReadPermission(const std::string &path)
@@ -132,6 +187,31 @@ std::string FileHandler::getContentType(const std::string &filePath)
 	if (it != m_extensionTypeMap.end())
 		return it->second;
 	return HEADER_TYPE_OCTET;
+}
+
+std::string FileHandler::getContentType(const File &file)
+{
+	std::string ext = file.getExtension();
+
+	Map<std::string>::const_iterator it = m_extensionTypeMap.find(ext);
+	if (it != m_extensionTypeMap.end())
+		return it->second;
+	return HEADER_TYPE_OCTET;
+}
+
+std::string FileHandler::getIcon(const File &file)
+{
+	if (file.getIsDirectory())
+		return m_iconMap.get("/");
+
+	std::string ext = file.getExtension();
+	if (ext.empty())
+		return m_iconMap.get("");
+
+	Map<std::string>::const_iterator it = m_iconMap.find(ext);
+	if (it != m_iconMap.end())
+		return it->second;
+	return m_iconMap.get("");
 }
 
 std::string FileHandler::findLastModifiedDate(const std::string &filePath)

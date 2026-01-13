@@ -26,6 +26,8 @@ Map<std::string> AHttpMessage::getHeaders() const
 {
 	return m_headers;
 }
+
+
 /**
  *
  * @brief Gets the value of a specific HTTP header.
@@ -39,6 +41,9 @@ std::string AHttpMessage::getHeader(const std::string &key) const
 {
 	return m_headers.get(key);
 }
+
+
+
 /**
  *
  * @brief Gets the HTTP method of the message.

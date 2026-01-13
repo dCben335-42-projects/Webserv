@@ -36,6 +36,9 @@ class HttpClient
 		ClientState	 m_state;
 
 		bool shouldClose() const;
+		void handleGetRequest();
+		void test(const std::string &ROOT);
+		void handlePostRequest();
 		void prepareResponse();
 
 	public:

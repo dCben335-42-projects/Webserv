@@ -1,4 +1,6 @@
+INCLUDES_FLAGS += -I ./srcs/Files/File
 INCLUDES_FLAGS += -I ./srcs/Files
+INCLUDES_FLAGS += -I ./srcs/Files/IndexOf
 INCLUDES_FLAGS += -I ./srcs/Http/HttpClient
 INCLUDES_FLAGS += -I ./srcs/Http/HttpExceptions/4xx
 INCLUDES_FLAGS += -I ./srcs/Http/HttpExceptions/4xx

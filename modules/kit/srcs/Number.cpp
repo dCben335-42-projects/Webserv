@@ -1,6 +1,8 @@
 #include "Number.hpp"
 #include <sstream>
 #include <cstdlib>
+#include <cctype>
+#include <iomanip>
 
 Number::Number()
 {
@@ -45,4 +47,21 @@ size_t Number::toSizeT(const std::string &str)
 int Number::toInt(const std::string &str)
 {
 	return std::atoi(str.c_str());
+}
+
+std::string Number::byteToHumanSize(const size_t bytes)
+{
+	const char *sizes[] = {"B", "KB", "MB", "GB", "TB", "PB"};
+	size_t		order	= 0;
+	double		size	= static_cast<double>(bytes);
+
+	while (size >= 1024 && order < 5)
+	{
+		size /= 1024;
+		++order;
+	}
+
+	std::ostringstream oss;
+	oss << std::fixed << std::setprecision(2) << size << " " << sizes[order];
+	return oss.str();
 }

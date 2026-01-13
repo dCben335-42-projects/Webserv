@@ -53,12 +53,72 @@ void HttpClient::setState(ClientState state)
 	m_state = state;
 }
 
+
 /**
  *
- * @brief Prepares the HTTP response based on the client's request.
+ * @brief Handles HTTP POST requests.
+ *
+ * This function processes the POST request,
+ * retrieves the submitted data,
+ * and prepares the HTTP response with the appropriate headers and body.
+ *
+ * @throws AHttpException if there are issues with processing the POST data.
  *
  */
-void HttpClient::prepareResponse()
+void HttpClient::handlePostRequest()
+{
+}
+
+
+
+#include "IndexOf.hpp"
+std::string testIndexOf(const std::string &target, const std::string &root)
+{
+	IndexOf index(root, target);
+	return index.getPage();
+}
+
+void HttpClient::test(const std::string &ROOT)
+{
+	const std::string target	 = String::removeDuplicateSlashes(m_req.getTarget());
+	const std::string targetPath = String::removeDuplicateSlashes(ROOT + target);
+	if (FileHandler::fileExists(targetPath))
+	{
+		m_res.setBody(FileHandler::readFile(targetPath));
+		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(targetPath));
+		std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+		m_res.setStatusCode(200);
+		return;
+	}
+	if (FileHandler::folderExists(targetPath))
+	{
+		m_res.setBody(testIndexOf(target, ROOT));
+		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+		std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+		m_res.setStatusCode(200);
+		return;
+	}
+	else
+		throw Http404Exception();
+}
+
+/**
+ *
+ * @brief Handles HTTP GET requests.
+ *
+ * This function processes the GET request,
+ * retrieves the requested resource,
+ * and prepares the HTTP response with the appropriate headers and body.
+ *
+ * @throws AHttpException if the requested resource is not found
+ * or if there are permission issues.
+ *
+ */
+void HttpClient::handleGetRequest()
 {
 	const std::string ROOT			= "files/www/website";
 	const std::string FALLBACK_TEST = ROOT + "/index.html";
@@ -67,43 +127,70 @@ void HttpClient::prepareResponse()
 
 	try
 	{
-		try
+		if (m_req.getHeader("Host") == "localhost:9090")
 		{
-			if (m_req.getTarget() == "/" && m_req.getHeader("Host") == "localhost:8080")
+			test(ROOT);
+			return;
+		}
+		if (m_req.getTarget() == "/")
+		{
+			if (m_req.getHeader("Host") == "localhost:8080")
 				resource = FALLBACK_TEST;
 			else
-			{
-				target	 = m_req.getTarget();
-				target	 = target.at(0) == '/' ? target.substr(1) : target;
-				resource = FileHandler::getSafePath(ROOT, target);
-			}
-			m_res.setBody(FileHandler::readFile(resource));
-			m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
-			{
-				std::string fileDate = FileHandler::findLastModifiedDate(resource);
-				if (!fileDate.empty())
-					m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-			}
-			{
-				std::string date = Date::getCurrentDate();
-				if (!date.empty())
-					m_res.setHeader(HEADER_DATE, date);
-			}
+				resource = ROOT + "/index.html";
 		}
-		catch (const FileHandler::FileHandlerException &e)
+		else
 		{
-			std::cerr << e.what() << '\n';
-			throw e.getHttpException();
+			target	 = m_req.getTarget();
+			target	 = target.at(0) == '/' ? target.substr(1) : target;
+			resource = FileHandler::getSafePath(ROOT, target);
 		}
-		m_res.setStatusCode(200);
+		m_res.setBody(FileHandler::readFile(resource));
+		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
+		std::string fileDate = FileHandler::findLastModifiedDate(resource);
+		if (!fileDate.empty())
+			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+		std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+	}
+	catch (const FileHandler::FileHandlerException &e)
+	{
+		std::cerr << e.what() << '\n';
+		throw e.getHttpException();
+	}
+	m_res.setStatusCode(200);
+}
+
+/**
+ *
+ * @brief Prepares the HTTP response based on the client's request.
+ *
+ * This function determines the requested resource, reads the corresponding file,
+ * and sets up the HTTP response with appropriate headers and body.
+ *
+ * @note If the requested resource is not found or an error occurs,
+ * the response will contain an error page.
+ *
+ * @see FileHandler for file operations and error handling.
+ *
+ */
+void HttpClient::prepareResponse()
+{
+	try
+	{
+		if (m_req.getMethod() == "GET")
+			handleGetRequest();
+		else
+			handleGetRequest();
 	}
 	catch (const AHttpException &e)
 	{
+		m_res.reset();
 		m_res.setStatusCode(e.getStatusCode());
 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
 		m_res.setBody(e.getPage());
 	}
-	std::cout << FileHandler::findLastModifiedDate(FALLBACK_TEST) << std::endl;
 	m_res.build();
 }
 
