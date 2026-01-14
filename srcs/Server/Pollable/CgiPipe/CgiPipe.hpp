@@ -14,6 +14,7 @@ class CgiPipe : public Pollable
 		std::string m_scriptPath;
 
 		void onError();
+		void waitChild();
 
 	public:
 		CgiPipe(int pipe_fd, Client *client, const std::string &scriptPath);

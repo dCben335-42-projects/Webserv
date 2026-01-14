@@ -17,7 +17,7 @@ void EventLoop::init()
 {
 	VirtualServer::Config config1 = {
 		.root	   = "files/www/website",
-		.cgiBin	   = "files/www/website/cgi-bin",
+		.cgiBin	   = "/usr/bin/python3",
 		.indexFile = "index.html",
 		.ip		   = "127.0.0.1",
 		.port	   = 8080,

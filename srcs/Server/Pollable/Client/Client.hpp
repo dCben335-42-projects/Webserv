@@ -46,7 +46,7 @@ class Client : public Pollable
 			return m_res;
 		}
 
-		void spawn_cgi(const std::string &script_path);
+		void spawnCgi(const std::string &script_path);
 };
 
 

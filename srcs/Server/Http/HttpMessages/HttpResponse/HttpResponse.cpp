@@ -73,6 +73,16 @@ void HttpResponse::setStatusCode(unsigned short code)
 {
 	m_statusCode = code;
 }
+void HttpResponse::setFullResponse(const std::string str)
+{
+	m_fullResponse = str;
+}
+void HttpResponse::appendToFulFullResponse(const char *buf, size_t size)
+{
+	m_fullResponse.append(buf, size);
+}
+
+
 
 // ANCHOR Getters
 /**

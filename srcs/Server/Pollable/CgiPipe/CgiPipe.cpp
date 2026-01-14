@@ -1,4 +1,3 @@
-// CgiPipe.cpp
 #include "CgiPipe.hpp"
 #include <unistd.h>
 #include <sys/wait.h>
@@ -28,20 +27,48 @@ CgiPipe::~CgiPipe()
 	}
 }
 
+void CgiPipe::waitChild()
+{
+	int	  exit_status;
+	int	  status;
+	pid_t id;
+
+	id = waitpid(m_pid, &status, WNOHANG);
+	if (id > 0)
+	{
+		if (WIFEXITED(status))
+		{
+			exit_status = WEXITSTATUS(status);
+			if (exit_status == 0)
+			{
+				close(m_fd);
+				m_events = 0;
+				m_client->setEvents(POLLOUT);
+			}
+			else
+				onError();
+		}
+		else
+			onError();
+	}
+}
+
 void CgiPipe::onPollIn()
 {
-	char	buffer[8192];
-	ssize_t bytes_read = read(m_fd, buffer, sizeof(buffer));
+	char	buffer[8192] = {'\0'};
+	ssize_t bytes_read	 = read(m_fd, buffer, sizeof(buffer));
 
 	if (bytes_read > 0)
 	{
 		HttpResponse &res = m_client->getResponse();
-		res.appendBody(buffer, bytes_read);
+		res.appendToFulFullResponse(buffer, bytes_read);
+		std::cerr << "salope va" << std::endl;
 		return;
 	}
 	if (bytes_read == 0)
 	{
 		close(m_fd);
+		waitChild();
 		m_events = 0;
 		m_client->setEvents(POLLOUT);
 		return;

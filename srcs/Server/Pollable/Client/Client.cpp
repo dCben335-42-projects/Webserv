@@ -99,27 +99,28 @@ void Client::handleGetRequest()
 
 	try
 	{
-		if (m_req.getHeader("Host") == "localhost:9090")
-		{
-			test(ROOT);
-			return;
-		}
-		if (m_req.getTarget() == "/")
-			resource = ROOT + "/index.html";
-		else
-		{
-			target	 = m_req.getTarget();
-			target	 = target.at(0) == '/' ? target.substr(1) : target;
-			resource = FileHandler::getSafePath(ROOT, target);
-		}
-		m_res.setBody(FileHandler::readFile(resource));
-		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
-		std::string fileDate = FileHandler::findLastModifiedDate(resource);
-		if (!fileDate.empty())
-			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-		std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
+		spawnCgi(ROOT + m_req.getTarget());
+		// if (m_req.getHeader("Host") == "localhost:9090")
+		// {
+		// 	test(ROOT);
+		// 	return;
+		// }
+		// if (m_req.getTarget() == "/")
+		// 	resource = ROOT + "/index.html";
+		// else
+		// {
+		// 	target	 = m_req.getTarget();
+		// 	target	 = target.at(0) == '/' ? target.substr(1) : target;
+		// 	resource = FileHandler::getSafePath(ROOT, target);
+		// }
+		// m_res.setBody(FileHandler::readFile(resource));
+		// m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
+		// std::string fileDate = FileHandler::findLastModifiedDate(resource);
+		// if (!fileDate.empty())
+		// 	m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+		// std::string date = Date::getCurrentDate();
+		// if (!date.empty())
+		// 	m_res.setHeader(HEADER_DATE, date);
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
@@ -275,7 +276,7 @@ void Client::onPollErr()
  * @param script_path The path to the CGI script to be executed.
  *
  */
-void Client::spawn_cgi(const std::string &script_path)
+void Client::spawnCgi(const std::string &script_path)
 {
 	CgiSpawner spawner(this, m_server);
 	int		   stdout_fd = spawner.spawn(script_path);
