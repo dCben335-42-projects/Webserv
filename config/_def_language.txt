@@ -1,1 +1,39 @@
 <head>			::= { 'statement' }
+
+
+[
+	{
+		name: IDENT,
+		conceptIndex: 0
+		position: 0
+		nextSegmentPossible:
+		[
+			{
+				name: LETTER,
+				conceptIndex: 0
+				position: 0
+				type: Symbol
+			},
+			{
+				name: LETTER,
+				conceptIndex: 0
+				position: 1
+				type: Sequence
+			},
+			{
+				name: LETTER,
+				conceptIndex: 1
+				position: 0
+				type: Symbol
+			},
+			{
+				name: DIGIT,
+				conceptIndex: 1
+				position: 1
+				type: Option
+			},
+		]
+	},
+]
+
+"letter" => 'l' 'e' 't' 't' 'e' 'r'

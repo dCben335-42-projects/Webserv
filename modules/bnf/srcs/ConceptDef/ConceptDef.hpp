@@ -18,8 +18,9 @@ class ConceptDef
 		Vec<std::string> getItems();
 		Vec<std::string> getItemsWithOption();
 		bool			 getIsTerminal() const;
-		void			 finish();
-		void			 setRule(ARule *rule);
+
+		void finish();
+		void setRule(ARule *rule);
 
 	private:
 		const std::string m_conceptName;

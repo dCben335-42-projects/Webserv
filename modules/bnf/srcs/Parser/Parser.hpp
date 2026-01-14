@@ -13,19 +13,16 @@
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
+typedef std::set<ARule *> ARuleSet;
+
 class Parser
 {
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		Vec<char>		 getCharAcceptedHead() const;
-		Vec<char>		 getCharAccepted(ConceptNode *node) const;
-		Vec<std::string> getFirstCharAccepted(ConceptNode *node) const;
-		void			 detectPattern(ConceptNode *node, const char c);
-		void			 recursive_parse(ConceptNode *root, const std::string &stringToParsed, size_t &charIndex);
-		void			 recursive_parse(std::string conceptName, char c, std::set<char> &currentSet, std::set<char> &nextSet);
-		void			 createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes);
-		void			 getAllTerminalChars(std::string conceptName, std::set<char> &allTerminalChars);
+		void recursive_parse(char c, ARuleSet &currentARuleMap, ARuleSet &nextARuleMap);
+		void createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes);
+		void getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARuleSet> &allTerminalChars);
 
 	public:
 		~Parser();

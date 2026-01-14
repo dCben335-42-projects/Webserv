@@ -9,7 +9,7 @@
 
 using namespace bnf;
 
-ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex)
+ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex), m_nextRule(NULL)
 {
 }
 
@@ -112,6 +112,16 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
+const ARule *ARule::getNextRule() const
+{
+	return m_nextRule;
+}
+
+void ARule::setNextRule(ARule *nextRule)
+{
+	m_nextRule = nextRule;
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << Log::indent() << "{\n";
@@ -120,7 +130,9 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	   << Log::indent() << "type: " << data.getTypeName() << ",\n"
 	   << Log::indent() << "index: " << data.getRuleIndex() << ",\n"
 	   << Log::indent() << "ptr: " << &data << ",\n"
-	   << Log::indent() << "content: " << data.getPrintableValue() << "\n";
+	   << Log::indent() << "content: " << data.getPrintableValue() << "\n"
+	   << Log::indent() << "ptr_next: " << data.getNextRule() << "\n";
+
 	Log::decrementIndent();
 	os << Log::indent() << "}";
 	return os;

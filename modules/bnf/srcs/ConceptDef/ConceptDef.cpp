@@ -39,6 +39,8 @@ ConceptDef::~ConceptDef()
 
 void ConceptDef::setRule(ARule *rule)
 {
+	if (values.size() > 0)
+		values.back()->setNextRule(rule);
 	values.push_back(rule);
 }
 
