@@ -18,10 +18,10 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
+
 	Config::Location *defaultLocation = new Config::Location(
 		"/", "", "", false, NULL);
 	Config config1("127.0.0.1", 8080, "localhost", defaultLocation, Map<Config::Location *>());
-
 	new VirtualServer(config1);
 }
 

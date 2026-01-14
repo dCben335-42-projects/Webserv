@@ -31,7 +31,6 @@ class CgiSpawner
 		void		writePostData();
 		void		closeUnusedPipes();
 
-
 	public:
 		CgiSpawner(Client *client, VirtualServer *server);
 

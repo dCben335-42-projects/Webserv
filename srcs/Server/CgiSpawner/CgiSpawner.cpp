@@ -70,7 +70,6 @@ void CgiSpawner::setupEnv()
 	}
 }
 
-
 #include <stdio.h>
 #include "Logger.hpp"
 void CgiSpawner::childprocess(const std::string &script_path)
