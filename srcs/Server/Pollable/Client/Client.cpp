@@ -1,56 +1,26 @@
-#include "HttpClient.hpp"
+#include "Client.hpp"
 #include "config.hpp"
 #include <unistd.h>
 #include <cstring>
 #include "FileHandler.hpp"
 #include "httpExceptions.hpp"
 #include "Date.hpp"
+#include "IndexOf.hpp"
+#include "CgiSpawner.hpp"
+#include "CgiPipe.hpp"
+#include "EventLoop.hpp"
 
-HttpClient::HttpClient(int fd) : m_fd(fd), m_state(READING)
+Client::Client(int fd, VirtualServer *server) :
+	Pollable(fd),
+	m_server(server)
 {
-}
-HttpClient::~HttpClient()
-{
-}
-
-/**
- *
- * @brief Gets the file descriptor associated with the HTTP client.
- *
- * @return The file descriptor of the client.
- *
- */
-int HttpClient::getFd() const
-{
-	return m_fd;
+	m_events = POLLIN;
 }
 
-/**
- *
- * @brief Gets the current state of the HTTP client.
- *
- * @see ClientState enum for possible states.
- *
- * @return The current state of the client.
- *
- */
-ClientState HttpClient::getState() const
+Client::~Client()
 {
-	return m_state;
-}
-
-/**
- *
- * @brief Sets the state of the HTTP client.
- *
- * @param state The new state to be set for the client.
- *
- * @see ClientState enum for possible states.
- *
- */
-void HttpClient::setState(ClientState state)
-{
-	m_state = state;
+	if (m_fd != -1)
+		close(m_fd);
 }
 
 
@@ -65,21 +35,22 @@ void HttpClient::setState(ClientState state)
  * @throws AHttpException if there are issues with processing the POST data.
  *
  */
-void HttpClient::handlePostRequest()
+void Client::handlePostRequest()
 {
+	(void) 0;
+}
+
+
+void Client::handleDeleteRequest()
+{
+	(void) 0;
 }
 
 
 
-#include "IndexOf.hpp"
-std::string testIndexOf(const std::string &target, const std::string &root)
+void Client::test(const std::string &ROOT)
 {
-	IndexOf index(root, target);
-	return index.getPage();
-}
-
-void HttpClient::test(const std::string &ROOT)
-{
+	(void) m_server;
 	const std::string target	 = String::removeDuplicateSlashes(m_req.getTarget());
 	const std::string targetPath = String::removeDuplicateSlashes(ROOT + target);
 	if (FileHandler::fileExists(targetPath))
@@ -94,7 +65,8 @@ void HttpClient::test(const std::string &ROOT)
 	}
 	if (FileHandler::folderExists(targetPath))
 	{
-		m_res.setBody(testIndexOf(target, ROOT));
+		IndexOf index(ROOT, target);
+		m_res.setBody(index.getPage());
 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
 		std::string date = Date::getCurrentDate();
 		if (!date.empty())
@@ -118,7 +90,7 @@ void HttpClient::test(const std::string &ROOT)
  * or if there are permission issues.
  *
  */
-void HttpClient::handleGetRequest()
+void Client::handleGetRequest()
 {
 	const std::string ROOT			= "files/www/website";
 	const std::string FALLBACK_TEST = ROOT + "/index.html";
@@ -133,12 +105,7 @@ void HttpClient::handleGetRequest()
 			return;
 		}
 		if (m_req.getTarget() == "/")
-		{
-			if (m_req.getHeader("Host") == "localhost:8080")
-				resource = FALLBACK_TEST;
-			else
-				resource = ROOT + "/index.html";
-		}
+			resource = ROOT + "/index.html";
 		else
 		{
 			target	 = m_req.getTarget();
@@ -162,6 +129,9 @@ void HttpClient::handleGetRequest()
 	m_res.setStatusCode(200);
 }
 
+
+
+
 /**
  *
  * @brief Prepares the HTTP response based on the client's request.
@@ -175,14 +145,19 @@ void HttpClient::handleGetRequest()
  * @see FileHandler for file operations and error handling.
  *
  */
-void HttpClient::prepareResponse()
+void Client::prepareResponse()
 {
+	const std::string method = m_req.getMethod();
 	try
 	{
-		if (m_req.getMethod() == "GET")
+		if (method == "GET")
 			handleGetRequest();
+		else if (method == "POST")
+			handlePostRequest();
+		else if (method == "DELETE")
+			handleDeleteRequest();
 		else
-			handleGetRequest();
+			throw Http501Exception(method);
 	}
 	catch (const AHttpException &e)
 	{
@@ -194,17 +169,34 @@ void HttpClient::prepareResponse()
 	m_res.build();
 }
 
+
+
 /**
  *
- * @brief Determines if the HTTP connection should be closed based on the client's request.
+ * @brief Checks if the HTTP request from the client is complete.
  *
- * @return true if the connection should be closed, false otherwise.
+ * This function verifies if the entire HTTP request has been received
+ * by checking for the end of headers and the content length.
+ *
+ * @return true if the request is complete, false otherwise.
  *
  */
-bool HttpClient::shouldClose() const
+bool Client::isRequestComplete()
 {
-	return m_req.getHeader("Connection") == "close";
+	const std::string rawRequest = m_req.getRawRequest();
+	size_t			  headersEnd = rawRequest.find(HEADER_ENDING);
+	if (headersEnd == std::string::npos)
+		return false;
+	const size_t contentLength = m_req.readContentLength(rawRequest, headersEnd);
+	const size_t totalLength   = headersEnd + std::strlen(HEADER_ENDING) + contentLength;
+
+	if (rawRequest.size() < totalLength)
+		return false;
+	return true;
 }
+
+
+
 
 
 /**
@@ -220,33 +212,86 @@ bool HttpClient::shouldClose() const
  * @note This function is called when the client socket is ready for reading.
  *
  */
-void HttpClient::onRead()
+void Client::onPollIn()
 {
-	ssize_t n = m_req.readOnce(m_fd);
-	if (n == 0)
+	if (!m_req.readOnce(m_fd))
 	{
-		m_state = CLOSED;
+		m_events = 0;
 		return;
 	}
-	size_t headersEnd = m_req.getRawRequest().find(HEADER_ENDING);
-	if (headersEnd == std::string::npos)
+	if (!isRequestComplete())
+	{
+		m_events = POLLIN;
 		return;
-	size_t contentLength = m_req.readContentLength(m_req.getRawRequest(), headersEnd);
-	if (m_req.getRawRequest().size() < headersEnd + std::strlen(HEADER_ENDING) + contentLength)
-		return;
+	}
 	m_req.parse();
 	prepareResponse();
-	m_state = WRITING;
+	m_events = POLLOUT;
 }
 
-void HttpClient::onWrite(pollfd &pollFd)
+
+
+
+/**
+ *
+ * @brief Handles writing data to the client socket.
+ *
+ * This function sends the prepared HTTP response to the client.
+ * If the entire response has been sent,
+ * it updates the client state to CLOSED and resets the response object.
+ *
+ * @note This function is called when the client socket is ready for writing.
+ *
+ */
+void Client::onPollOut()
 {
-	if (m_res.sendOnce(pollFd.fd))
+	if (m_res.sendOnce(m_fd))
 	{
-		m_state		  = CLOSED;
-		pollFd.events = 0;
-		m_res.reset();
+		m_events = 0;
 		return;
 	}
-	pollFd.events |= POLLOUT;
+	m_events = POLLOUT;
+}
+
+
+void Client::onPollErr()
+{
+	std::cerr << "Client error on fd " << m_fd << std::endl;
+	m_events = 0;
+}
+
+
+
+
+/**
+ *
+ * @brief Spawns a CGI script for the client request.
+ *
+ * This function creates a CgiSpawner instance to handle the CGI script execution.
+ * It sets up the necessary pipes and spawns the CGI process.
+ * If successful, it creates a CgiPipe to read the CGI output.
+ * If spawning fails, it prepares a 500 Internal Server Error response.
+ *
+ * @param script_path The path to the CGI script to be executed.
+ *
+ */
+void Client::spawn_cgi(const std::string &script_path)
+{
+	CgiSpawner spawner(this, m_server);
+	int		   stdout_fd = spawner.spawn(script_path);
+
+	if (stdout_fd >= 0)
+	{
+		CgiPipe *cgi_pipe = new CgiPipe(stdout_fd, this, script_path);
+		EventLoop::addHandler(cgi_pipe);
+		m_events = 0;
+	}
+	else
+	{
+		m_res.reset();
+		m_res.setStatusCode(500);
+		m_res.setBody("CGI spawn failed");
+		m_res.build();
+		m_events = POLLOUT;
+	}
 }

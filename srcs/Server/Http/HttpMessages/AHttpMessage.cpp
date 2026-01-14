@@ -95,6 +95,36 @@ void AHttpMessage::setBody(const std::string &body)
 	m_body							 = body;
 	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(body.size());
 }
+
+/**
+ *
+ * @brief Appends data to the body of the HTTP message.
+ *
+ * @param data The data to be appended to the body.
+ *
+ */
+void AHttpMessage::appendBody(const std::string &data)
+{
+	m_body += data;
+	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
+}
+
+/**
+ *
+ * @brief Appends data to the body of the HTTP message.
+ *
+ * @param buffer The buffer containing data to be appended.
+ * @param size The size of the data to be appended.
+ *
+ */
+void AHttpMessage::appendBody(const char *buffer, size_t size)
+{
+	m_body.append(buffer, size);
+	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
+}
+
+
+
 /**
  *
  * @brief Sets the HTTP method of the message.
