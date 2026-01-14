@@ -15,6 +15,8 @@ class ARule
 		const std::string m_conceptName;
 		const size_t	  m_conceptDefIndex;
 		const size_t	  m_ruleIndex;
+		ARule			 *m_nextRule;
+
 		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
 
 	public:
@@ -28,9 +30,13 @@ class ARule
 		virtual std::string		  getPrintableValue() const		  = 0;
 		static BnfMap			  getMap(const std::string &opener);
 		static bool				  isKeyWord(const std::string &word, bool onlyClose);
-		const std::string		  getConceptName() const;
-		size_t					  getConceptDefIndex() const;
-		size_t					  getRuleIndex() const;
+
+		const std::string getConceptName() const;
+		size_t			  getConceptDefIndex() const;
+		size_t			  getRuleIndex() const;
+		const ARule		 *getNextRule() const;
+
+		void setNextRule(ARule *nextRule);
 };
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);

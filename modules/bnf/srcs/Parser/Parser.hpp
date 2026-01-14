@@ -15,14 +15,16 @@
 #include "../PathSegment/PathSegment.hpp"
 #include <set>
 
+typedef std::set<ARule *> ARuleSet;
+
 class Parser
 {
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		void recursive_parse(std::string conceptName, char c, std::set<char> &currentSet, std::set<char> &nextSet);
+		void recursive_parse(char c, ARuleSet &currentARuleMap, ARuleSet &nextARuleMap);
 		void createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes);
-		void getAllTerminalChars(std::string conceptName, std::set<char> &allTerminalChars);
+		void getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARuleSet> &allTerminalChars);
 
 	public:
 		~Parser();
