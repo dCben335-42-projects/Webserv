@@ -114,11 +114,14 @@ size_t ARule::getRuleIndex() const
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
-	os << Log::indent() << "{\n"
-	   << Log::indent() << "  ARuleType: " << data.getTypeName() << ",\n"
-	   << Log::indent() << "  ConceptName: " << data.getConceptName() << ",\n"
-	   << Log::indent() << "  ConceptDefIndex: " << data.getConceptDefIndex() << ",\n"
-	   << Log::indent() << "  RuleIndex: " << data.getRuleIndex() << ",\n"
-	   << Log::indent() << "  PrintableValue: " << data.getPrintableValue();
+	os << Log::indent() << "{\n";
+	Log::incrementIndent();
+	os << Log::indent() << "position: " << data.getConceptName() << "_" << data.getConceptDefIndex() << ",\n"
+	   << Log::indent() << "type: " << data.getTypeName() << ",\n"
+	   << Log::indent() << "index: " << data.getRuleIndex() << ",\n"
+	   << Log::indent() << "ptr: " << &data << ",\n"
+	   << Log::indent() << "content: " << data.getPrintableValue() << "\n";
+	Log::decrementIndent();
+	os << Log::indent() << "}";
 	return os;
 }

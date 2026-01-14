@@ -90,11 +90,6 @@ Vec<ARule *> ConceptDef::getValues() const
 	return values;
 }
 
-void ConceptDef::addParent(ARule *parent)
-{
-	m_parents.insert(parent);
-}
-
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {
 	(void) os;

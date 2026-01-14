@@ -22,12 +22,14 @@ SemanticDescriptor::~SemanticDescriptor()
 {
 	delete tree;
 
-	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
-		for (Vec<ConceptDef *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
+		Vec<ConceptDef *> defs = (*it).second->getDefinitions();
+		for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
 		{
 			delete *conceptIt;
 		}
+		delete (*it).second;
 	}
 }
 
@@ -122,9 +124,18 @@ void SemanticDescriptor::parseBlocks()
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
-	ConceptDef *concept	   = new ConceptDef(m_lastKey);
-	size_t conceptDefIndex = m_concepts[m_lastKey].size();
-	m_concepts[m_lastKey].push_back(concept);
+	Concept *concept;
+	ConceptDef *conceptDef = new ConceptDef(m_lastKey);
+
+	if (!m_concepts.try_get(m_lastKey, concept))
+	{
+		concept = new Concept(m_lastKey);
+		m_concepts.set(m_lastKey, concept);
+	}
+
+	size_t conceptDefIndex = concept->getDefinitions().size();
+	concept->pushDef(conceptDef);
+
 	std::istringstream iss(m_content.substr(cursor));
 	std::string		   word;
 	ARule			  *arule	  = NULL;
@@ -153,46 +164,41 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			if (!(iss >> word))
 				break;
 		}
-		concept->setRule(arule);
+		conceptDef->setRule(arule);
 		aruleIndex++;
 	}
-	concept->finish();
+	conceptDef->finish();
 }
 
 void SemanticDescriptor::addParent()
 {
-	for (Map<ConceptList>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
-		for (Vec<ConceptDef *>::iterator conceptIt = it->second.begin(); conceptIt != it->second.end(); ++conceptIt)
+		Vec<ConceptDef *> defs = (*it).second->getDefinitions();
+
+		for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
 		{
 			ConceptDef *concept = *conceptIt;
 			Vec<ARule *> values = concept->getValues();
 
 			for (Vec<ARule *>::iterator ruleIt = values.begin(); ruleIt != values.end(); ++ruleIt)
 			{
-				ARule			 *rule = *ruleIt;
-				Vec<ConceptDef *> conceptDefs;
-				Vec<std::string>  items = rule->getItems();
+				ARule *rule = *ruleIt;
 
-				if (rule->getType() == SYMBOL && m_concepts.try_get(items[0], conceptDefs))
+				Concept			*conceptPtr;
+				Vec<std::string> items = rule->getItems();
+
+				if (rule->getType() == SYMBOL && m_concepts.try_get(items[0], conceptPtr))
 				{
-					for (Vec<ConceptDef *>::iterator childIt = conceptDefs.begin(); childIt != conceptDefs.end(); ++childIt)
-					{
-						ConceptDef *childConcept = *childIt;
-						childConcept->addParent(rule);
-					}
+					conceptPtr->addParent(rule);
 				}
 				else
 				{
 					for (size_t i = 0; i < items.size(); ++i)
 					{
-						if (m_concepts.try_get(items[i], conceptDefs))
+						if (m_concepts.try_get(items[i], conceptPtr))
 						{
-							for (Vec<ConceptDef *>::iterator childIt = conceptDefs.begin(); childIt != conceptDefs.end(); ++childIt)
-							{
-								ConceptDef *childConcept = *childIt;
-								childConcept->addParent(rule);
-							}
+							conceptPtr->addParent(rule);
 						}
 					}
 				}
@@ -216,7 +222,7 @@ void SemanticDescriptor::parseConceptName(std::string s)
 
 bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr)
 {
-	ConceptNode *tempN = new ConceptNode(item, m_concepts[item]);
+	ConceptNode *tempN = new ConceptNode(item, m_concepts[item]->getDefinitions());
 	tempN->setPath(parentPtr->getPath())
 		.addSegmentPath(item)
 		.setParent(parentPtr);
@@ -254,32 +260,37 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 
 void SemanticDescriptor::checkValidity()
 {
-	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]);
+	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
 	tree->addSegmentPath(CURSOR);
 	if (hasRecursiveError(*tree))
 		throw std::runtime_error("ERREUR !");
 }
 
-Map<ConceptList> SemanticDescriptor::getConcepts() const
+Map<Concept *> SemanticDescriptor::getConcepts() const
 {
 	return m_concepts;
 }
 
-ConceptList &SemanticDescriptor::getConcept(const std::string &key)
+Concept *&SemanticDescriptor::getConcept(const std::string &key)
 {
 	return m_concepts.get(key);
 }
 
-const ConceptList &SemanticDescriptor::getConcept(const std::string &key) const
+const Concept *SemanticDescriptor::getConcept(const std::string &key) const
 {
 	return m_concepts.get(key);
 }
 
+// const Concept *&SemanticDescriptor::getConcept(const std::string &key) const
+// {
+// 	return m_concepts.get(key);
+// }
 
-bool SemanticDescriptor::tryGetConcept(const std::string &key, ConceptList &conceptList) const
-{
-	return m_concepts.try_get(key, conceptList);
-}
+
+// bool SemanticDescriptor::tryGetConcept(const std::string &key, Concept &conceptList) const
+// {
+// 	return m_concepts.try_get(key, conceptList);
+// }
 
 ConceptNode *SemanticDescriptor::getTree() const
 {

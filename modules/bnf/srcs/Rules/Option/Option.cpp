@@ -25,6 +25,5 @@ const std::string Option::getTypeName() const
 
 std::string Option::getPrintableValue() const
 {
-	log("Option Items:");
 	return getLogJson(items);
 }
