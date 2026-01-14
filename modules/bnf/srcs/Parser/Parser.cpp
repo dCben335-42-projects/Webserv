@@ -90,29 +90,146 @@ void Parser::getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARule
 	}
 }
 
+ARuleSet Parser::getNext(ARule *rule, bool &hasBrother)
+{
+	ARuleSet result;
+
+	if (rule == NULL)
+		return result;
+
+	ARule *nextRule = rule->getNextRule();
+
+	if (nextRule == NULL)
+	{
+		return m_semantic
+			.getConcept(rule->getConceptName())
+			->getParents();
+	}
+	else
+	{
+		result.insert(nextRule);
+		hasBrother = true;
+		return result;
+	}
+}
+
 void Parser::recursive_parse(char c, ARuleSet &currentRuleSet, ARuleSet &nextRuleSet)
 {
 	for (ARuleSet::iterator it = currentRuleSet.begin(); it != currentRuleSet.end(); ++it)
 	{
-		// ARule *rule = *it;
+		ARule		*rule  = *it;
+		const ARule *rule2 = NULL;
 
 		// std::string conceptName		= rule->getConceptName();
 		// size_t		ruleIndex		= rule->getRuleIndex();
 		// size_t		conceptDefIndex = rule->getConceptDefIndex();
 
-		// if (rule->getType() == SYMBOL)
+		if (rule->getType() == SYMBOL)
+		{
+			bool	 hasBrother = false;
+			ARuleSet nextRules	= getNext(rule, hasBrother);
+			if (nextRules.empty() == true)
+			{
+				// Code valide si c = \n
+			}
+			else if (hasBrother)
+			{
+				for (ARuleSet::iterator nextRule = nextRules.begin(); nextRule != nextRules.end(); ++nextRule)
+				{
+					if ((*nextRule)->getType() == SYMBOL)
+					{
+						m_semantic
+							.getConcept(rule->getConceptName())
+							->getParents();
+						if ((*nextRule)->getItems()[0] == std::string(1, c))
+						{
+						}
+					}
+					else
+					{
+					}
+				}
+			}
+			for (ARuleSet::iterator nextRule = nextRules.begin(); nextRule != nextRules.end(); ++nextRule)
+			{
+				if ((*nextRule)->getType() == SYMBOL)
+				{
+				}
+				else
+				{
+				}
+			}
+		}
+
+
 		// {
-		// 	if ()
-
-
-		// 		rule++;
-		// 	if (rule->getType() == SYMBOL)
+		// 	ARuleSet val = m_semantic.getConcept(rule->getConceptName())->getParents();
+		// 	if (val.empty() == true)
 		// 	{
+		// 		// Code valide si c = \n
+		// 	}
+		// 	else
+		// 	{
+		// 		for (ARuleSet::iterator it2 = val.begin(); it2 != val.end(); ++it2)
+		// 		{
+		// 			if ((*it2)->getType() == SYMBOL)
+		// 			{
+		// 				if ((*it2)->getItems()[0] == std::string(1, c))
+		// 				{
+		// 					nextRuleSet.insert(*it2);
+		// 				}
+		// 			}
+		// 			else
+		// 			{
+		// 			}
+		// 		}
 		// 	}
 		// }
+		// else
+		// {
+		// 	rule2 = rule->getNextRule();
+		// 	if (rule2->getType() == SYMBOL)
+		// 	{
+		// 		if (rule2->getItems()[0] == std::string(1, c))
+		// 		{
+		// 			nextRuleSet.insert(rule2);
+		// 		}
+		// 	}
+		// }
+
+
+		// rule2 = rule->getNextRule();
+		// if (rule2 == NULL)
+		// {
+		// 	ARuleSet val = m_semantic.getConcept(rule->getConceptName())->getParents();
+		// 	if (val.empty() == true)
+		// 	{
+		// 		// Code valide si c = \n
+		// 	}
+		// 	else
+		// 	{
+		// 		for (ARuleSet::iterator it2 = val.begin(); it2 != val.end(); ++it2)
+		// 		{
+		// 			if ((*it2)->getType() == SYMBOL)
+		// 			{
+		// 				if ((*it2)->getItems()[0] == std::string(1, c))
+		// 				{
+		// 					nextRuleSet.insert(*it2);
+		// 				}
+		// 			}
+		// 			else
+		// 			{
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// if (rule2->getType() == SYMBOL)
+		// {
+		// }
 	}
-	(void) c;
-	(void) nextRuleSet;
+}
+(void) c;
+(void) nextRuleSet;
 }
 
 void Parser::parse(const std::string &stringToParsed)

@@ -117,6 +117,11 @@ const ARule *ARule::getNextRule() const
 	return m_nextRule;
 }
 
+ARule *ARule::getNextRule()
+{
+	return m_nextRule;
+}
+
 void ARule::setNextRule(ARule *nextRule)
 {
 	m_nextRule = nextRule;

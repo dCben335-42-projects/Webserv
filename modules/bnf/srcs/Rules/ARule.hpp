@@ -35,6 +35,7 @@ class ARule
 		size_t			  getConceptDefIndex() const;
 		size_t			  getRuleIndex() const;
 		const ARule		 *getNextRule() const;
+		ARule			 *getNextRule();
 
 		void setNextRule(ARule *nextRule);
 };

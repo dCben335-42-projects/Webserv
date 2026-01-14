@@ -22,9 +22,10 @@ class Parser
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		void recursive_parse(char c, ARuleSet &currentARuleMap, ARuleSet &nextARuleMap);
-		void createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes);
-		void getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARuleSet> &allTerminalChars);
+		void	 recursive_parse(char c, ARuleSet &currentARuleMap, ARuleSet &nextARuleMap);
+		void	 createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes);
+		void	 getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARuleSet> &allTerminalChars);
+		ARuleSet getNext(ARule *rule, bool &hasBrother);
 
 	public:
 		~Parser();
