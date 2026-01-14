@@ -11,6 +11,7 @@
 #include "../ConceptDef/ConceptDef.hpp"
 #include "../utils/utils.hpp"
 #include "../ConceptNode/ConceptNode.hpp"
+#include "../Concept/Concept.hpp"
 
 #include "../Exception/ConceptAlreadyDefinedException.hpp"
 #include "../Exception/InvalidConceptNameException.hpp"
@@ -23,7 +24,8 @@ class SemanticDescriptor
 		ConceptNode		*tree;
 		Vec<std::string> blocks;
 		Map<ConceptNode> m_data;
-		Map<ConceptList> m_concepts;
+		Vec<Concept>	 m_concepts_data;
+		Map<Concept *>	 m_concepts;
 		std::string		 m_lastKey;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
@@ -45,11 +47,12 @@ class SemanticDescriptor
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		Map<ConceptList>   getConcepts() const;
-		ConceptList		  &getConcept(const std::string &key);
-		const ConceptList &getConcept(const std::string &key) const;
-		bool			   tryGetConcept(const std::string &key, ConceptList &conceptList) const;
-		ConceptNode		  *getTree() const;
+		Map<Concept *> getConcepts() const;
+		Concept		 *&getConcept(const std::string &key);
+		const Concept *getConcept(const std::string &key) const;
+		// const Concept *&getConcept(const std::string &key) const;
+		// bool		 tryGetConcept(const std::string &key, ConceptList &conceptList) const;
+		ConceptNode *getTree() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

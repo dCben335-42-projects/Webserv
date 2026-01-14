@@ -31,7 +31,6 @@ class ARule
 		const std::string		  getConceptName() const;
 		size_t					  getConceptDefIndex() const;
 		size_t					  getRuleIndex() const;
-		// void					 setLocalisation(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
 };
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);

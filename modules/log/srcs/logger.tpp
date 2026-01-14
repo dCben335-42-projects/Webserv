@@ -4,6 +4,7 @@
 #include "./Log/Log.hpp"
 #include "String.hpp"
 #include <sstream>
+#include <set>
 
 template <typename V>
 void log(const V &v)

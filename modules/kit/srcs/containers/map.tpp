@@ -41,12 +41,13 @@ template <typename T>
 void printSet(const std::set<T> &s)
 {
 	typename std::set<T>::const_iterator it;
+	std::cout << "[";
 	for (it = s.begin(); it != s.end(); ++it)
 	{
-		std::cout << *it << std::endl;
+		std::cout << *it << ",";
 	}
+	std::cout << "]" << std::endl;
 }
-
 
 template <typename Derived, typename K, typename V>
 class MapBase

@@ -15,7 +15,7 @@ Parser::~Parser()
 
 void Parser::createAllPath(std::string conceptName, PathSegment &currentPath, Vec<const PathSegment *> &allNodes)
 {
-	ConceptList conceptList = m_semantic.getConcept(conceptName);
+	ConceptList conceptList = m_semantic.getConcept(conceptName)->getDefinitions();
 
 	//     // }
 }
@@ -120,7 +120,8 @@ void Parser::getAllTerminalChars(std::string conceptName, std::set<char> &allTer
 		allTerminalChars.insert(conceptName.begin() + 1, conceptName.end() - 1);
 		return;
 	}
-	ConceptList conceptList = m_semantic.getConcept(conceptName);
+	ConceptList conceptList = m_semantic.getConcept(conceptName)->getDefinitions();
+
 	for (size_t i = 0; i < conceptList.size(); ++i)
 	{
 		ConceptDef *concept = conceptList[i];
@@ -181,7 +182,7 @@ void Parser::recursive_parse(std::string conceptName, char c, std::set<char> &cu
 	// 	allTerminalChars.insert(conceptName.begin() + 1, conceptName.end() - 1);
 	// 	return;
 	// }
-	ConceptList conceptDefList = m_semantic.getConcept(conceptName);
+	ConceptList conceptDefList = m_semantic.getConcept(conceptName)->getDefinitions();
 
 	for (size_t i = 0; i < conceptDefList.size(); ++i)
 	{

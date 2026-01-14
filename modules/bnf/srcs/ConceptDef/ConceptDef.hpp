@@ -1,5 +1,5 @@
-#ifndef CONCEPT_HPP
-#define CONCEPT_HPP
+#ifndef CONCEPT_DEF_HPP
+#define CONCEPT_DEF_HPP
 
 #include <string>
 #include "bnf_defs.hpp"
@@ -20,11 +20,9 @@ class ConceptDef
 		bool			 getIsTerminal() const;
 		void			 finish();
 		void			 setRule(ARule *rule);
-		void			 addParent(ARule *parent);
 
 	private:
 		const std::string m_conceptName;
-		std::set<ARule *> m_parents;
 		Vec<ARule *>	  values;
 		bool			  isTerminal;
 };
