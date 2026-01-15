@@ -53,18 +53,29 @@ const std::set<ARule *> &Concept::getTerminalChars() const
 
 std::ostream &operator<<(std::ostream &os, const Concept &data)
 {
-	(void) os;
-	// data.printRules();
-	// (void)data;
+	os << "{\n";
+	Logger::incrementIndent();
+	os << Logger::indent() << "Concept Name: " << data.getConceptName() << "\n";
+	os << Logger::indent() << "Definitions:";
+	Logger::incrementIndent();
+	os << Logger::indent() << LoggerJson::get(data.getDefinitions());
+	Logger::decrementIndent();
+	Logger::decrementIndent();
+	os << "\n";
 
-	Vec<ARule *> values = data.getValues();
+	Logger::incrementIndent();
+	os << Logger::indent() << "Parents:";
+	Logger::incrementIndent();
+	os << LoggerJson::get(data.getParents(), true);
+	Logger::decrementIndent();
+	os << "\n";
 
-	Logger::log(values);
-
-	// for (Vec<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
-	// ARule* rule = *it;
-	// os << *rule;
-	// }
-
+	os << Logger::indent() << "Terminal Chars:";
+	Logger::incrementIndent();
+	os << LoggerJson::get(data.getTerminalChars(), true);
+	Logger::decrementIndent();
+	Logger::decrementIndent();
+	os << "\n";
+	os << Logger::indent() << "}";
 	return os;
 }

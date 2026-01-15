@@ -132,7 +132,7 @@ std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 	{
 		if (supRuleParent.size() == 0)
 		{
-			return NULL; // Nous somme revenu sur <head> donc nous avons fini
+			return NULL;
 		}
 		else
 		{
@@ -144,9 +144,9 @@ std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 	return &m_nextRules;
 }
 
-void ARule::printNext() const
+std::string ARule::printNext() const
 {
-	printSet(m_nextRules);
+	return LoggerJson::get(m_nextRules, true);
 }
 
 void ARule::setNextRules(ARule *nextRule)
@@ -163,6 +163,15 @@ bool ARule::isTerminalCharAt(size_t index) const
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
-	os << Logger::indent() << data.getPrintableValue();
+	os << "{\n";
+	Logger::incrementIndent();
+	os << Logger::indent() << "position: " << data.getConceptName() << "_" << data.getConceptDefIndex() << ",\n"
+	   << Logger::indent() << "type: " << data.getTypeName() << ",\n"
+	   << Logger::indent() << "index: " << data.getRuleIndex() << ",\n"
+	   << Logger::indent() << "ptr: " << &data << ",\n"
+	   << Logger::indent() << "content: " << data.getPrintableValue() << "\n"
+	   << Logger::indent() << "next: " << data.printNext() << "\n";
+	Logger::decrementIndent();
+	os << Logger::indent() << "}";
 	return os;
 }

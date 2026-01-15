@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 
+// clang-format off
 
 // ANCHOR: GENERIC is_same (used by other type traits)
 template<typename A, typename B>
@@ -24,6 +25,7 @@ template<typename V>
 struct is_string {
     static const bool value = is_same<V, std::string>::value;
 };
+
 
 template<typename V>
 struct is_char {
@@ -134,5 +136,19 @@ struct is_container {
         is_vector<V>::value ||
         is_map<V>::value;
 };
+
+
+template <typename T>
+struct is_pointer
+{
+    enum { value = 0 };
+};
+
+template <typename T>
+struct is_pointer<T*>
+{
+    enum { value = 1 };
+};
+
 
 #endif

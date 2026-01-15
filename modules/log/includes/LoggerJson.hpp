@@ -28,12 +28,14 @@ class LoggerJson
 		template <typename SetType>
 		static std::string setGet(const SetType &set);
 
+		template <typename SetType>
+		static std::string setGetAddress(const SetType &set);
+
 	public:
 		template <typename V>
 		static std::string get(const V &v);
-
 		template <typename V>
-		static std::string get(const V *ptr);
+		static std::string get(V *ptr);
 
 		template <typename V>
 		static std::string get(const std::vector<V> &vec);
@@ -49,6 +51,8 @@ class LoggerJson
 		static std::string get(const std::set<V> &set);
 		template <typename V>
 		static std::string get(const Set<V> &set);
+		template <typename V>
+		static std::string get(const V &v, const bool getAddress);
 };
 
 #include "../srcs/LoggerJson.tpp"

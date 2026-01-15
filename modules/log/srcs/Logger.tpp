@@ -59,4 +59,5 @@ void Logger::log(const Set<V> &set)
 	stream() << indent() << LoggerJson::get(set) << std::endl;
 }
 
+
 #endif
