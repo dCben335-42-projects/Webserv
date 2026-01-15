@@ -231,35 +231,58 @@ void Parser::getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARule
 // (void) nextRuleSet;
 // }
 
+char Parser::adaptTerminalChar(const std::string &str)
+{
+	if (str.length() >= 2 && (str[0] == '\'' && str[str.length() - 1] == '\''))
+		return str[1];
+	return '\0';
+}
+
+void Parser::searchNextRules()
+{
+}
+
+
+// void Parser::recursive_parse(char c, ARuleSet &currentRuleSet, ARuleSet &nextRuleSet, Vec<ARule *> &path)
+// {
+// 	for (ARuleSet::iterator it = currentRuleSet.begin(); it != currentRuleSet.end(); ++it)
+// 	{
+// 		ARule			*rule  = *it;
+// 		Vec<std::string> items = rule->getItems();
+
+// 		for (size_t i = 0; i < items.size(); ++i)
+// 		{
+// 			if (rule->isTerminalCharAt(i))
+// 			{
+// 				if (adaptTerminalChar(items[i]) == c)
+// 				{
+// 					// rule->getNextRules();
+// 				}
+// 			}
+// 		}
+// 		// if (rule->getType() == OPTION)
+// 		// {
+
+// 		// }
+// 	}
+// }
+
 void Parser::parse(const std::string &stringToParsed)
 {
-	log("------------------\n");
+	// log("------------------\n");
 	// if (stringToParsed.empty())
 	// 	return;
 
-	// Map<ARuleSet> currentARuleMap;
-	// ARuleSet	  nextRuleSet;
-	// getAllTerminalChars(CURSOR, NULL, currentARuleMap);
+	// ARuleSet	 currentARuleMap = m_semantic.getConcept(CURSOR)->getTerminalChars();
+	// ARuleSet	 nextARuleMap;
+	// Vec<ARule *> path;
 
-	// char c = stringToParsed[0];
-	// if (currentARuleMap.has(std::string(1, c)) == false)
+	// for (size_t i = 0; i < stringToParsed.size(); ++i)
 	// {
-	// 	std::cout << "No rule for char: " << c << std::endl;
-	// 	return;
+	// 	char c = stringToParsed[i];
+	// 	recursive_parse(c, currentARuleMap, nextARuleMap, path);
+	// 	currentARuleMap = nextARuleMap;
+	// 	nextARuleMap.clear();
 	// }
-	// ARuleSet ruleSet = currentARuleMap.get(std::string(1, c));
-
-	// for (size_t i = 1; i < stringToParsed.size(); ++i)
-	// {
-	// 	char nextChar = stringToParsed[i];
-	// 	recursive_parse(nextChar, ruleSet, nextRuleSet);
-	// 	if (nextRuleSet.empty())
-	// 	{
-	// 		std::cout << "No rule for char: " << nextChar << std::endl;
-	// 		return;
-	// 	}
-	// 	ruleSet = nextRuleSet;
-	// }
-
 	(void) stringToParsed;
 }

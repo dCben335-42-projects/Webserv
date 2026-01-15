@@ -18,6 +18,7 @@ class ARule
 		const std::string m_conceptName;
 		const size_t	  m_conceptDefIndex;
 		const size_t	  m_ruleIndex;
+		Vec<bool>		  m_terminalChars;
 		Concept			 *m_conceptPtr;
 		std::set<ARule *> m_nextRules;
 
@@ -41,6 +42,7 @@ class ARule
 		const std::set<ARule *> *getNextRules(Vec<ARule *> supRuleParent) const;
 		std::set<ARule *>		*getNextRules(Vec<ARule *> supRuleParent);
 		void					 printNext() const;
+		bool					 isTerminalCharAt(size_t index) const;
 
 		void setNextRules(ARule *nextRule);
 };

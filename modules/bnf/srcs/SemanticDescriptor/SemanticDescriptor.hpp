@@ -18,6 +18,9 @@
 #include "../Exception/ConceptHasNotDefinitionException.hpp"
 #include "../Exception/EmptyConceptNameException.hpp"
 
+typedef Vec<ARule *>   ARulePath;
+typedef Vec<ARulePath> ARulePaths;
+
 class SemanticDescriptor
 {
 	private:
@@ -25,6 +28,7 @@ class SemanticDescriptor
 		Vec<std::string> blocks;
 		Map<ConceptNode> m_data;
 		Vec<Concept>	 m_concepts_data;
+		Map<ARulePaths>	 m_startPath;
 		Map<Concept *>	 m_concepts;
 		std::string		 m_lastKey;
 

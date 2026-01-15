@@ -130,7 +130,7 @@ std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
-		if (supRuleParent.size() == 1)
+		if (supRuleParent.size() == 0)
 		{
 			return NULL; // Nous somme revenu sur <head> donc nous avons fini
 		}
@@ -138,7 +138,7 @@ std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 		{
 			ARule *val = supRuleParent.back();
 			supRuleParent.pop_back();
-			val->getNextRules(supRuleParent);
+			return val->getNextRules(supRuleParent);
 		}
 	}
 	return &m_nextRules;
@@ -152,6 +152,13 @@ void ARule::printNext() const
 void ARule::setNextRules(ARule *nextRule)
 {
 	m_nextRules.insert(nextRule);
+}
+
+bool ARule::isTerminalCharAt(size_t index) const
+{
+	if (!m_terminalChars.has(index))
+		return false;
+	return m_terminalChars[index];
 }
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)

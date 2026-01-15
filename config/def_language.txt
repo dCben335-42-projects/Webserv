@@ -1,7 +1,7 @@
 <head>			::= IDENT DIGIT
 
-IDENT			::= LETTER { LETTER } DIGIT LETTER DIGIT
-				|= [ DIGIT ] LETTER
+IDENT			::= LETTER { LETTER }
+				|= DIGIT LETTER
 				
 
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
@@ -17,3 +17,4 @@ SEMI			::= ';'
 
 
 
+DIGIT			::= ( UPCASE_LETTER | '0' | '1' )
