@@ -3,10 +3,13 @@
 
 #include "bnf_defs.hpp"
 #include "Vector.hpp"
+#include <set>
 
 using bnf::ERuleType;
 
 struct BnfMap;
+
+class Concept;
 
 class ARule
 {
@@ -15,9 +18,10 @@ class ARule
 		const std::string m_conceptName;
 		const size_t	  m_conceptDefIndex;
 		const size_t	  m_ruleIndex;
-		ARule			 *m_nextRule;
+		Concept			 *m_conceptPtr;
+		std::set<ARule *> m_nextRules;
 
-		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
+		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 
 	public:
 		virtual ~ARule();
@@ -31,13 +35,13 @@ class ARule
 		static BnfMap			  getMap(const std::string &opener);
 		static bool				  isKeyWord(const std::string &word, bool onlyClose);
 
-		const std::string getConceptName() const;
-		size_t			  getConceptDefIndex() const;
-		size_t			  getRuleIndex() const;
-		const ARule		 *getNextRule() const;
-		ARule			 *getNextRule();
+		const std::string		 getConceptName() const;
+		size_t					 getConceptDefIndex() const;
+		size_t					 getRuleIndex() const;
+		const std::set<ARule *> &getNextRules() const;
+		std::set<ARule *>		&getNextRules();
 
-		void setNextRule(ARule *nextRule);
+		void setNextRules(ARule *nextRule);
 };
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);
@@ -46,7 +50,7 @@ struct BnfMap
 {
 		std::string opener;
 		std::string closer;
-		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex);
+		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 		bool hasClosure;
 };
 

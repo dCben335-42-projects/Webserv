@@ -114,6 +114,7 @@ void SemanticDescriptor::parseBlocks()
 		}
 		checkValidity();
 		addParent();
+		findAllNext();
 	}
 	catch (const SemanticException &e)
 	{
@@ -146,7 +147,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
-		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex);
+		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept);
 		if (map.hasClosure && !(iss >> word))
 			throw std::runtime_error("Unexpected end of rule after " + map.opener);
 		while (word != map.closer)
@@ -174,36 +175,90 @@ void SemanticDescriptor::addParent()
 {
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
-		Vec<ConceptDef *> defs = (*it).second->getDefinitions();
-
-		for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
+		V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
 		{
-			ConceptDef *concept = *conceptIt;
-			Vec<ARule *> values = concept->getValues();
-
-			for (Vec<ARule *>::iterator ruleIt = values.begin(); ruleIt != values.end(); ++ruleIt)
+			V_FOREACH(ARule *, ruleIt, (*conceptIt)->getValues())
 			{
-				ARule *rule = *ruleIt;
-
 				Concept			*conceptPtr;
+				ARule			*rule  = *ruleIt;
 				Vec<std::string> items = rule->getItems();
 
-				if (rule->getType() == SYMBOL && m_concepts.try_get(items[0], conceptPtr))
+				for (size_t i = 0; i < items.size(); ++i)
 				{
-					conceptPtr->addParent(rule);
-				}
-				else
-				{
-					for (size_t i = 0; i < items.size(); ++i)
-					{
-						if (m_concepts.try_get(items[i], conceptPtr))
-						{
-							conceptPtr->addParent(rule);
-						}
-					}
+					if (m_concepts.try_get(items[i], conceptPtr))
+						conceptPtr->addParent(rule);
 				}
 			}
 		}
+	}
+}
+
+
+
+
+
+void SemanticDescriptor::ndw(Vec<std::string> &items, ARule *rule, Vec<std::string> &conceptPaths)
+{
+	Concept			*conceptPtr;
+	Vec<std::string> conceptPathsCopy;
+	for (size_t i = 0; i < items.size(); ++i)
+	{
+		if (conceptPaths.contains(items[i]))
+			continue;
+		if (m_concepts.try_get(items[i], conceptPtr))
+		{
+			Vec<ConceptDef *> defs = conceptPtr->getDefinitions();
+
+			conceptPathsCopy = conceptPaths;
+			conceptPathsCopy.push_back(items[i]);
+			V_FOREACH(ConceptDef *, conceptIt, defs)
+			{
+				ARule			*arule	  = (*conceptIt)->getARule(0);
+				Vec<std::string> subItems = arule->getItems();
+				ndw(subItems, arule, conceptPathsCopy);
+			}
+		}
+		else
+		{
+			for (size_t j = 0; j < conceptPaths.size(); ++j)
+			{
+				m_concepts.get(conceptPaths[j])->addTerminalChar(rule); // Peut etre faire en map  (key)char -> (value)set<ARule *>
+			}
+		}
+	}
+}
+
+
+
+void SemanticDescriptor::findAllNext()
+{
+	// Map<std::set<ARule *>> items;
+	Vec<std::string> conceptPaths;
+	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+	{
+		conceptPaths.push_back((*it).first);
+		V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
+		{
+			ARule			*arule	  = (*conceptIt)->getARule(0);
+			Vec<std::string> subItems = arule->getItems();
+			ndw(subItems, arule, conceptPaths);
+		}
+
+
+		// V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
+		// {
+		// 	Vec<std::string> items = (*conceptIt)->getItemsOfARule(0);
+		// 	Concept			*conceptPtr;
+
+		// 	for (size_t i = 0; i < items.size(); ++i)
+		// 	{
+		// 		if (m_concepts.try_get(items[i], conceptPtr))
+		// 		{
+		// 		}
+		// 	}
+		// }
+
+		conceptPaths.clear();
 	}
 }
 

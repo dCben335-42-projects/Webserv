@@ -15,6 +15,8 @@ class ConceptDef
 
 		Vec<ARule *>	 getRules();
 		Vec<ARule *>	 getValues() const;
+		ARule			*getARule(size_t index = 0);
+		Vec<std::string> getItemsOfARule(size_t index = 0);
 		Vec<std::string> getItems();
 		Vec<std::string> getItemsWithOption();
 		bool			 getIsTerminal() const;

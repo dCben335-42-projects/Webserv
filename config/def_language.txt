@@ -1,6 +1,6 @@
 <head>			::= IDENT DIGIT
 
-IDENT			::= LETTER { LETTER }
+IDENT			::= LETTER { LETTER } DIGIT LETTER DIGIT
 				|= [ DIGIT ] LETTER
 				
 

@@ -1,11 +1,11 @@
 #include "./Symbol.hpp"
 #include "Logger.hpp"
 
-Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex)
+Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
 }
 
-Symbol::Symbol(const std::string &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex)
+Symbol::Symbol(const std::string &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
 	value = val;
 }

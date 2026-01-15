@@ -33,7 +33,8 @@ static const std::string ERR_CONCEPT_NOT_DEFINED	 = "\033[33mError: Concept not 
 } // namespace bnf
 
 #define V_FOREACH(TYPE, op, container) \
-	for (Vec<TYPE>::const_iterator op = (container).begin(); op != (container).end(); ++op)
+	Vec<TYPE> vec = (container); \
+	for (Vec<TYPE>::const_iterator op = vec.begin(); op != vec.end(); ++op) 
 
 
 #endif

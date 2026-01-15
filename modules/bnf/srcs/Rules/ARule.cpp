@@ -4,12 +4,13 @@
 #include "./Sequence/Sequence.hpp"
 #include "./Option/Option.hpp"
 #include "./Symbol/Symbol.hpp"
+#include "../Concept/Concept.hpp"
 
 #include "Logger.hpp"
 
 using namespace bnf;
 
-ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex), m_nextRule(NULL)
+ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex), m_conceptPtr(conceptPtr)
 {
 }
 
@@ -30,24 +31,24 @@ ERuleType ARule::getType() const
 	return m_type;
 }
 
-ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
+ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
 {
-	return new Group(conceptName, conceptDefIndex, ruleIndex);
+	return new Group(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
 }
 
-ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
+ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
 {
-	return new Sequence(conceptName, conceptDefIndex, ruleIndex);
+	return new Sequence(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
 }
 
-ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
+ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
 {
-	return new Option(conceptName, conceptDefIndex, ruleIndex);
+	return new Option(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
 }
 
-ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex)
+ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
 {
-	return new Symbol(conceptName, conceptDefIndex, ruleIndex);
+	return new Symbol(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
 }
 
 static const BnfMap rules[] = {
@@ -112,19 +113,40 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-const ARule *ARule::getNextRule() const
+const std::set<ARule *> &ARule::getNextRules() const
 {
-	return m_nextRule;
+	if (m_nextRules.empty())
+	{
+		if (m_conceptPtr == NULL)
+		{
+			return m_nextRules;
+		}
+		else
+		{
+			Concept *conceptPtr = m_conceptPtr;
+			conceptPtr->getParents();
+			
+		}
+	}
+
+
+
+
+	return m_nextRules;
 }
 
-ARule *ARule::getNextRule()
+std::set<ARule *> &ARule::getNextRules()
 {
-	return m_nextRule;
+
+
+
+
+	return m_nextRules;
 }
 
-void ARule::setNextRule(ARule *nextRule)
+void ARule::setNextRules(ARule *nextRule)
 {
-	m_nextRule = nextRule;
+	m_nextRules.insert(nextRule);
 }
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
@@ -135,8 +157,9 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	   << Log::indent() << "type: " << data.getTypeName() << ",\n"
 	   << Log::indent() << "index: " << data.getRuleIndex() << ",\n"
 	   << Log::indent() << "ptr: " << &data << ",\n"
-	   << Log::indent() << "content: " << data.getPrintableValue() << "\n"
-	   << Log::indent() << "ptr_next: " << data.getNextRule() << "\n";
+	   << Log::indent() << "content: " << data.getPrintableValue() << "\n";
+
+	printSet(data.getNextRules());
 
 	Log::decrementIndent();
 	os << Log::indent() << "}";

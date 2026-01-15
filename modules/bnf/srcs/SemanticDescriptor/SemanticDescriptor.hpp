@@ -41,6 +41,8 @@ class SemanticDescriptor
 		void parseBlocks();
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void addParent();
+		void findAllNext();
+		void ndw(Vec<std::string> &items, ARule *rule, Vec<std::string> &conceptPaths);
 
 	public:
 		SemanticDescriptor();
