@@ -53,17 +53,29 @@ const std::set<ARule *> &Concept::getTerminalChars() const
 
 std::ostream &operator<<(std::ostream &os, const Concept &data)
 {
-	os << Logger::indent() << "{\n";
+	os << "{\n";
 	Logger::incrementIndent();
-	os << Logger::indent() << "Concept Name: " << data.getConceptName() << "\n"
-	   << Logger::indent() << "Definitions:\n";
-	Logger::log(data.getDefinitions());
+	os << Logger::indent() << "Concept Name: " << data.getConceptName() << "\n";
+	os << Logger::indent() << "Definitions:";
+	Logger::incrementIndent();
+	os << Logger::indent() << LoggerJson::get(data.getDefinitions());
 	Logger::decrementIndent();
-	os << "\n"
-	   << Logger::indent() << "Parents: ";
-	printSet(data.getParents());
-	os << Logger::indent() << "Terminal Chars: ";
-	printSet(data.getTerminalChars());
+	Logger::decrementIndent();
+	os << "\n";
+
+	Logger::incrementIndent();
+	os << Logger::indent() << "Parents:";
+	Logger::incrementIndent();
+	os << LoggerJson::get(data.getParents(), true);
+	Logger::decrementIndent();
+	os << "\n";
+
+	os << Logger::indent() << "Terminal Chars:";
+	Logger::incrementIndent();
+	os << LoggerJson::get(data.getTerminalChars(), true);
+	Logger::decrementIndent();
+	Logger::decrementIndent();
+	os << "\n";
 	os << Logger::indent() << "}";
 	return os;
 }

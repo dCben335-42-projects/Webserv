@@ -41,7 +41,7 @@ class ARule
 		size_t					 getRuleIndex() const;
 		const std::set<ARule *> *getNextRules(Vec<ARule *> supRuleParent) const;
 		std::set<ARule *>		*getNextRules(Vec<ARule *> supRuleParent);
-		void					 printNext() const;
+		std::string				 printNext() const;
 		bool					 isTerminalCharAt(size_t index) const;
 
 		void setNextRules(ARule *nextRule);

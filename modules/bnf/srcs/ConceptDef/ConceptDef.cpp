@@ -109,8 +109,6 @@ Vec<std::string> ConceptDef::getItemsOfARule(size_t index)
 
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {
-	(void) os;
-	Vec<ARule *> values = data.getValues();
-	Logger::log(values);
+	os << LoggerJson::get(data.getValues());
 	return os;
 }

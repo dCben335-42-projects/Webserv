@@ -20,7 +20,7 @@ class Logger
 		};
 
 	private:
-		static const size_t INDENT_SIZE = 4;
+		static const size_t INDENT_SIZE = 2;
 		static const char	INDENT_CHAR = ' ';
 
 		static size_t		 m_indent;

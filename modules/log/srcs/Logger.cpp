@@ -30,17 +30,14 @@ std::ostream &Logger::stream()
 
 void Logger::log(const std::string &str)
 {
-	std::cerr << "String:" << std::endl;
 	stream() << indent() << str << std::endl;
 }
 void Logger::log(const char *cstr)
 {
-	std::cerr << "C-String:" << std::endl;
 	stream() << indent() << cstr << std::endl;
 }
 void Logger::log(char c)
 {
-	std::cerr << "Char:" << std::endl;
 	stream() << indent() << c << std::endl;
 }
 
