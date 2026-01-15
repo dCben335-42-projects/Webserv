@@ -3,11 +3,11 @@
 #include "config.hpp"
 #include "httpExceptions.hpp"
 
-const Map<EMethodType, std::string> HttpMethod::m_methodMap = HttpMethod::initMethodMap();
+const Map<HttpMethod::Type, std::string> HttpMethod::m_methodMap = HttpMethod::initMethodMap();
 
-Map<EMethodType, std::string> HttpMethod::initMethodMap()
+Map<HttpMethod::Type, std::string> HttpMethod::initMethodMap()
 {
-	Map<EMethodType, std::string> methodMap;
+	Map<Type, std::string> methodMap;
 
 	methodMap[GET]	  = M_GET;
 	methodMap[POST]	  = M_POST;
@@ -23,8 +23,8 @@ HttpMethod::HttpMethod() : m_type(NONE)
 
 HttpMethod::HttpMethod(const std::string &method)
 {
-	Map<EMethodType, std::string>::const_iterator it  = m_methodMap.begin();
-	Map<EMethodType, std::string>::const_iterator end = m_methodMap.end();
+	Map<Type, std::string>::const_iterator it  = m_methodMap.begin();
+	Map<Type, std::string>::const_iterator end = m_methodMap.end();
 
 	for (; it != end; ++it)
 	{
@@ -38,9 +38,9 @@ HttpMethod::HttpMethod(const std::string &method)
 	throw Http501Exception(method);
 }
 
-HttpMethod::HttpMethod(const EMethodType &method)
+HttpMethod::HttpMethod(const Type &method)
 {
-	Map<EMethodType, std::string>::const_iterator it = m_methodMap.find(method);
+	Map<Type, std::string>::const_iterator it = m_methodMap.find(method);
 
 	if (it != m_methodMap.end())
 	{
@@ -64,7 +64,7 @@ HttpMethod::~HttpMethod()
 {
 }
 
-EMethodType HttpMethod::getType() const
+HttpMethod::Type HttpMethod::getType() const
 {
 	return m_type;
 }

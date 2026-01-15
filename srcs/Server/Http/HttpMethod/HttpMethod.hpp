@@ -4,35 +4,37 @@
 #include <string>
 #include "Map.hpp"
 
-enum EMethodType
-{
-	GET,
-	POST,
-	DELETE,
-	PUT,
-	PATCH,
-	NONE
-};
 
 class HttpMethod
 {
+	public:
+		enum Type
+		{
+			GET,
+			POST,
+			DELETE,
+			PUT,
+			PATCH,
+			NONE
+		};
+
+
 	private:
-		EMethodType m_type;
-		std::string m_strType;
+		HttpMethod::Type m_type;
+		std::string		 m_strType;
 
-		const static Map<EMethodType, std::string> m_methodMap;
-
-		static Map<EMethodType, std::string> initMethodMap();
+		const static Map<Type, std::string> m_methodMap;
+		static Map<Type, std::string>		initMethodMap();
 
 	public:
 		HttpMethod();
 		explicit HttpMethod(const std::string &method);
-		explicit HttpMethod(const EMethodType &method);
+		explicit HttpMethod(const Type &method);
 		~HttpMethod();
 
 		HttpMethod &operator=(const HttpMethod &other);
 
-		EMethodType getType() const;
+		Type		getType() const;
 		std::string getStrType() const;
 };
 

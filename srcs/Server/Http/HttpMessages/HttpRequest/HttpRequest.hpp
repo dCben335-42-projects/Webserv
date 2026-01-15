@@ -13,9 +13,11 @@ class HttpRequest : public AHttpMessage
 		std::string m_body;
 		std::string m_rawStr;
 		std::string m_target;
+		std::string m_queryString;
 
 		size_t parseFirstLine(const std::string &rawRequest);
 		size_t parseHeaderLine(const std::string &rawRequest, const size_t pos);
+		void   parseTargetQuery(const std::string &path);
 
 	public:
 		HttpRequest();
@@ -23,9 +25,9 @@ class HttpRequest : public AHttpMessage
 
 		std::string getRawRequest() const;
 		std::string getTarget() const;
+		std::string getQueryString() const;
 
 		void setRawRequest(const std::string &rawRequest);
-		void setTarget(const std::string &path);
 
 		HttpRequest &read();
 		HttpRequest &parse();

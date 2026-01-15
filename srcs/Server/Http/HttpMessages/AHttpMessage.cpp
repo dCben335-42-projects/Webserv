@@ -4,7 +4,9 @@
 #include <exception>
 #include "Logger.hpp"
 
-AHttpMessage::AHttpMessage()
+AHttpMessage::AHttpMessage() :
+	m_method(),
+	m_body("")
 {
 }
 
