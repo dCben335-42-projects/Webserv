@@ -46,10 +46,16 @@ void CgiPipe::waitChild()
 				m_client->setEvents(POLLOUT);
 			}
 			else
+			{
+				std::cout << "Wrong error code" << std::endl;
 				onError();
+			}
 		}
 		else
+		{
+			std::cout << "Exited with signal" << std::endl;
 			onError();
+		}
 	}
 }
 
@@ -62,15 +68,14 @@ void CgiPipe::onPollIn()
 	{
 		HttpResponse &res = m_client->getResponse();
 		res.appendToFulFullResponse(buffer, bytes_read);
-		std::cerr << "salope va" << std::endl;
-		return;
 	}
-	if (bytes_read == 0)
+	if (bytes_read < 8192)
 	{
 		close(m_fd);
 		waitChild();
 		m_events = 0;
 		m_client->setEvents(POLLOUT);
+		m_connectionClosed = true;
 		return;
 	}
 	onError();

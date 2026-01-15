@@ -71,7 +71,7 @@ void EventLoop::run()
 					handler->onPollOut();
 				if (m_pollFds[i].revents & (POLLERR | POLLHUP))
 					handler->onPollErr();
-				if (!handler->getEvents())
+				if (handler->getConnectionClosed())
 				{
 					deletePollable(fd, i);
 				}

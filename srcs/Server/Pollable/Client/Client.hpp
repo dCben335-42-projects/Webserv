@@ -22,6 +22,7 @@ class Client : public Pollable
 		void prepareResponse();
 		void test(const std::string &root);
 
+		bool isCgi();
 		bool isRequestComplete();
 
 	public:

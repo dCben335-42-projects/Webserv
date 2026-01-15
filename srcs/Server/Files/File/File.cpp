@@ -16,7 +16,8 @@ File::File(
 	struct stat fileStat;
 
 	if (stat(fullPath.c_str(), &fileStat) != 0)
-		throw std::runtime_error("Failed to get file stats for: " + fullPath);
+		throw FileHandler::FileDoesNotExistException(fullPath);
+	// 	throw std::runtime_error("Failed to get file stats for: " + fullPath);
 
 	m_name				= name;
 	m_path				= cleanPath;

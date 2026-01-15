@@ -75,23 +75,17 @@ void CgiSpawner::setupEnv()
 void CgiSpawner::childprocess(const std::string &script_path)
 {
 	const std::string bin	  = m_server->getCgiBin();
-	char			 *argv[3] = {
-		const_cast<char *>(bin.c_str()),
-		const_cast<char *>(script_path.c_str()),
-		NULL};
-
+	char *const		  argv[3] = {
+		  const_cast<char *>(bin.c_str()),
+		  const_cast<char *>(script_path.c_str()),
+		  NULL};
 	generateEnvp();
-	std::cerr << bin << std::endl;
-	std::cerr << argv[0] << std::endl;
 	if (dup2(m_stdout_pipe[1], STDOUT_FILENO) == -1)
 		throw std::runtime_error("Dup2 failed");
 	close(m_stdout_pipe[0]);
 	close(m_stdout_pipe[1]);
-	std::cerr << argv[0] << std::endl;
 	execve(argv[0], argv, m_envp);
-	std::cerr << argv[0] << std::endl;
 	perror("execve:");
-	std::cerr << "SUUUU" << std::endl;
 	exit(127);
 }
 

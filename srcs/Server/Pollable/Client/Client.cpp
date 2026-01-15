@@ -99,37 +99,54 @@ void Client::handleGetRequest()
 
 	try
 	{
-		spawnCgi(ROOT + m_req.getTarget());
-		// if (m_req.getHeader("Host") == "localhost:9090")
-		// {
-		// 	test(ROOT);
-		// 	return;
-		// }
-		// if (m_req.getTarget() == "/")
-		// 	resource = ROOT + "/index.html";
-		// else
-		// {
-		// 	target	 = m_req.getTarget();
-		// 	target	 = target.at(0) == '/' ? target.substr(1) : target;
-		// 	resource = FileHandler::getSafePath(ROOT, target);
-		// }
-		// m_res.setBody(FileHandler::readFile(resource));
-		// m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
-		// std::string fileDate = FileHandler::findLastModifiedDate(resource);
-		// if (!fileDate.empty())
-		// 	m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-		// std::string date = Date::getCurrentDate();
-		// if (!date.empty())
-		// 	m_res.setHeader(HEADER_DATE, date);
+		if (m_req.getHeader("Host") == "localhost:9090")
+		{
+			test(ROOT);
+			return;
+		}
+		if (m_req.getTarget() == "/")
+			resource = ROOT + "/index.html";
+		else
+		{
+			target	 = m_req.getTarget();
+			target	 = target.at(0) == '/' ? target.substr(1) : target;
+			resource = FileHandler::getSafePath(ROOT, target);
+		}
+		m_res.setBody(FileHandler::readFile(resource));
+		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
+		std::string fileDate = FileHandler::findLastModifiedDate(resource);
+		if (!fileDate.empty())
+			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+		std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+
+		m_res.setStatusCode(200);
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
 		std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
-	m_res.setStatusCode(200);
 }
 
+
+bool Client::isCgi()
+{
+	try
+	{
+		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
+		const std::string ext = file.getExtension();
+
+		return ext == ".py";
+	}
+	catch (const FileHandler::FileHandlerException &e)
+	{
+		std::cerr << e.what() << '\n';
+		throw e.getHttpException();
+	}
+	return false;
+}
 
 
 
@@ -151,6 +168,11 @@ void Client::prepareResponse()
 	const std::string method = m_req.getMethod();
 	try
 	{
+		if (isCgi())
+		{
+			spawnCgi(m_server->getDocumentRoot() + m_req.getTarget());
+			return;
+		}
 		if (method == "GET")
 			handleGetRequest();
 		else if (method == "POST")
@@ -168,6 +190,7 @@ void Client::prepareResponse()
 		m_res.setBody(e.getPage());
 	}
 	m_res.build();
+	m_events = POLLOUT;
 }
 
 
@@ -227,7 +250,6 @@ void Client::onPollIn()
 	}
 	m_req.parse();
 	prepareResponse();
-	m_events = POLLOUT;
 }
 
 
@@ -248,7 +270,8 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		m_events = 0;
+		m_events		   = 0;
+		m_connectionClosed = true;
 		return;
 	}
 	m_events = POLLOUT;
