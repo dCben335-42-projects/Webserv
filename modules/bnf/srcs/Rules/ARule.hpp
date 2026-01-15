@@ -27,7 +27,6 @@ class ARule
 	public:
 		virtual ~ARule();
 
-		ARule					 &operator=(const ARule &other);
 		ERuleType				  getType() const;
 		virtual const std::string getTypeName() const			  = 0;
 		virtual void			  addItem(const std::string &val) = 0;
@@ -43,6 +42,7 @@ class ARule
 		std::set<ARule *>		*getNextRules(Vec<ARule *> supRuleParent);
 		std::string				 printNext() const;
 		bool					 isTerminalCharAt(size_t index) const;
+		ARule					*tryGetAdjacentRules();
 
 		void setNextRules(ARule *nextRule);
 };

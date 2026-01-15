@@ -1,6 +1,7 @@
 #include "./Symbol.hpp"
 #include "Logger.hpp"
 #include "../../utils/utils.hpp"
+using namespace bnf;
 
 Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
@@ -25,14 +26,7 @@ Vec<std::string> Symbol::getItems() const
 
 void Symbol::addItem(const std::string &val)
 {
-	if (startsWith(val, "'"))
-	{
-		m_terminalChars.push_back(true);
-	}
-	else
-	{
-		m_terminalChars.push_back(false);
-	}
+	m_terminalChars.push_back(startsWith(val, DQSQ));
 	value = val;
 }
 

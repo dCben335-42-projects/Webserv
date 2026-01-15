@@ -24,13 +24,13 @@ typedef Vec<ARulePath> ARulePaths;
 class SemanticDescriptor
 {
 	private:
-		ConceptNode		*tree;
-		Vec<std::string> blocks;
-		Map<ConceptNode> m_data;
-		Vec<Concept>	 m_concepts_data;
-		Map<ARulePaths>	 m_startPath;
-		Map<Concept *>	 m_concepts;
-		std::string		 m_lastKey;
+		ConceptNode				*tree;
+		Vec<std::string>		 blocks;
+		Map<ConceptNode>		 m_data;
+		Vec<Concept>			 m_concepts_data;
+		Map<ARule *, ARulePaths> m_startPath;
+		Map<Concept *>			 m_concepts;
+		std::string				 m_lastKey;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);
@@ -46,7 +46,8 @@ class SemanticDescriptor
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void addParent();
 		void findAllNext();
-		void ndw(Vec<std::string> &items, ARule *rule, Vec<std::string> &conceptPaths);
+		void ndw(ARule *rule, Vec<std::string> &conceptPaths);
+		void getStartPath();
 
 	public:
 		SemanticDescriptor();

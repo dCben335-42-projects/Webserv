@@ -18,14 +18,6 @@ ARule::~ARule()
 {
 }
 
-ARule &ARule::operator=(const ARule &other)
-{
-	if (this == &other)
-		return *this;
-
-	return *this;
-}
-
 ERuleType ARule::getType() const
 {
 	return m_type;
@@ -142,6 +134,12 @@ std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 		}
 	}
 	return &m_nextRules;
+}
+
+ARule *ARule::tryGetAdjacentRules()
+{
+	std::set<ARule *>::iterator it = m_nextRules.begin();
+	return *it;
 }
 
 std::string ARule::printNext() const
