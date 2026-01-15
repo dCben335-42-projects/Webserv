@@ -16,7 +16,11 @@
 #include <iostream>
 
 // ANCHOR Constructors / Destructors
-HttpRequest::HttpRequest()
+HttpRequest::HttpRequest() :
+	AHttpMessage(),
+	m_rawStr(""),
+	m_target(""),
+	m_queryString("")
 {
 }
 HttpRequest::~HttpRequest()
@@ -32,15 +36,16 @@ std::string HttpRequest::getTarget() const
 {
 	return m_target;
 }
+std::string HttpRequest::getQueryString() const
+{
+	return m_queryString;
+}
+
 
 // ANCHOR Setters
 void HttpRequest::setRawRequest(const std::string &rawRequest)
 {
 	m_rawStr = rawRequest;
-}
-void HttpRequest::setTarget(const std::string &path)
-{
-	m_target = path;
 }
 
 
@@ -110,7 +115,27 @@ HttpRequest &HttpRequest::parse()
 }
 
 
+/**
+ *
+ * @brief Parses the target path to separate the query string from the target.
+ *
+ * @param path The full request target path.
+ *
+ * @note Updates m_target and m_queryString members.
+ *
+ */
+void HttpRequest::parseTargetQuery(const std::string &path)
+{
+	const size_t queryPos = m_target.find('?');
 
+	if (queryPos != std::string::npos)
+	{
+		m_target	  = path.substr(0, queryPos);
+		m_queryString = path.substr(queryPos + 1);
+		return;
+	}
+	m_target = path;
+}
 
 
 // ANCHOR Parsing Private methods
@@ -144,7 +169,7 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 		std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
 		if (path.empty() || path[0] != '/')
 			throw std::invalid_argument("Invalid Request Target: " + path);
-		setTarget(path);
+		parseTargetQuery(path);
 	}
 
 	const size_t versionPos = requestLine.find(' ', targetEnd + 1);
@@ -225,8 +250,11 @@ std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 	log("----- HTTP Request -----\n");
 	log(BLUE "Method: " + message.getMethod() + RESET);
 	log("\n" GREEN "Target: " + message.getTarget() + RESET);
+	log("\n" CYAN "Query String: " + message.getQueryString() + RESET);
 	log("\n" YELLOW "Headers:\n");
 	log(message.getHeaders());
+	log("\n" MAGENTA "Body:\n" RESET);
+	log(message.getBody());
 	log(RESET "\n------------------------");
 	return o;
 }
