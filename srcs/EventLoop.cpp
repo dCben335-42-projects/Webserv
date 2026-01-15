@@ -35,7 +35,7 @@ void EventLoop::init()
 }
 
 
-
+#include "Logger.hpp"
 
 void EventLoop::run()
 {

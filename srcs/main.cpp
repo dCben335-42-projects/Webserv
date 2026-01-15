@@ -1,7 +1,7 @@
 #include "Lexer.hpp"
-#include "Logger.hpp"
 #include "config.hpp"
 #include "EventLoop.hpp"
+
 
 int main()
 {
@@ -12,6 +12,6 @@ int main()
 	}
 	catch (const std::exception &e)
 	{
-		log("Fatal error: " + std::string(e.what()));
+		Logger::log("Fatal error: " + std::string(e.what()));
 	}
 }

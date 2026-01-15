@@ -146,6 +146,6 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 // ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
-	log(message.getHeaders());
+	Logger::log(message.getHeaders());
 	return o;
 }

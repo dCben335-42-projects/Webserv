@@ -163,17 +163,6 @@ bool ARule::isTerminalCharAt(size_t index) const
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
-	os << Log::indent() << "{\n";
-	Log::incrementIndent();
-	os << Log::indent() << "position: " << data.getConceptName() << "_" << data.getConceptDefIndex() << ",\n"
-	   << Log::indent() << "type: " << data.getTypeName() << ",\n"
-	   << Log::indent() << "index: " << data.getRuleIndex() << ",\n"
-	   << Log::indent() << "ptr: " << &data << ",\n"
-	   << Log::indent() << "content: " << data.getPrintableValue() << "\n";
-
-	data.printNext();
-
-	Log::decrementIndent();
-	os << Log::indent() << "}";
+	os << Logger::indent() << data.getPrintableValue();
 	return os;
 }

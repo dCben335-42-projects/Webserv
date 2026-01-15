@@ -5,7 +5,6 @@
 #include <string>
 #include <cctype>
 
-
 class String
 {
 	private:

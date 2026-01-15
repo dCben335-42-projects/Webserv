@@ -143,6 +143,41 @@ class VecBase
 		{
 			static_cast<Derived &>(*this).push_back(value);
 		}
+
+
+		/**
+		 *
+		 * @brief Adds a value to the front of the vector.
+		 *
+		 * @param value The value to be added.
+		 *
+		 */
+		void push_front(const V &value)
+		{
+			static_cast<Derived &>(*this).insert(
+				static_cast<Derived &>(*this).begin(), value);
+		}
+
+		/**
+		 *
+		 * @brief Reverts the order of elements in the vector.
+		 *
+		 * @note This method modifies the vector in place.
+		 *
+		 */
+		void revert()
+		{
+			Derived &derived = static_cast<Derived &>(*this);
+			size_t	 left	 = 0;
+			size_t	 right	 = derived.size() - 1;
+
+			while (left < right)
+			{
+				std::swap(derived[left], derived[right]);
+				++left;
+				--right;
+			}
+		}
 };
 
 template <typename V>

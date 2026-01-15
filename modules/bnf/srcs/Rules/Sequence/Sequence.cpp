@@ -35,5 +35,5 @@ const std::string Sequence::getTypeName() const
 
 std::string Sequence::getPrintableValue() const
 {
-	return getLogJson(items);
+	return LoggerJson::get(items);
 }

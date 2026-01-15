@@ -43,7 +43,7 @@ const std::string &Symbol::getValue() const
 
 std::string Symbol::getPrintableValue() const
 {
-	return getLogJson(value);
+	return LoggerJson::get(value);
 }
 
 const std::string Symbol::getTypeName() const

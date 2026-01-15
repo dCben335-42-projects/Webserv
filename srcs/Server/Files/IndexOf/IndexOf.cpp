@@ -220,6 +220,8 @@ IndexOf &IndexOf::generate()
 	String::replaceAll(foot, "{{SERVER_NAME}}", SERVER_NAME);
 	result += foot;
 	m_page = result;
+
+
 	return *this;
 }
 
