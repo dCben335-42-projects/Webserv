@@ -232,7 +232,6 @@ void SemanticDescriptor::ndw(Vec<std::string> &items, ARule *rule, Vec<std::stri
 
 void SemanticDescriptor::findAllNext()
 {
-	// Map<std::set<ARule *>> items;
 	Vec<std::string> conceptPaths;
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
@@ -243,21 +242,6 @@ void SemanticDescriptor::findAllNext()
 			Vec<std::string> subItems = arule->getItems();
 			ndw(subItems, arule, conceptPaths);
 		}
-
-
-		// V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
-		// {
-		// 	Vec<std::string> items = (*conceptIt)->getItemsOfARule(0);
-		// 	Concept			*conceptPtr;
-
-		// 	for (size_t i = 0; i < items.size(); ++i)
-		// 	{
-		// 		if (m_concepts.try_get(items[i], conceptPtr))
-		// 		{
-		// 		}
-		// 	}
-		// }
-
 		conceptPaths.clear();
 	}
 }
