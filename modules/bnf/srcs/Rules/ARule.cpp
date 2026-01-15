@@ -113,35 +113,40 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-const std::set<ARule *> &ARule::getNextRules() const
+
+
+const std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
+{
+	if (!m_nextRules.empty())
+		return &m_nextRules;
+	if (supRuleParent.size() == 1)
+		return NULL;
+	ARule *val = supRuleParent.back();
+	supRuleParent.pop_back();
+	return val->getNextRules(supRuleParent);
+}
+
+std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
-		if (m_conceptPtr == NULL)
+		if (supRuleParent.size() == 1)
 		{
-			return m_nextRules;
+			return NULL; // Nous somme revenu sur <head> donc nous avons fini
 		}
 		else
 		{
-			Concept *conceptPtr = m_conceptPtr;
-			conceptPtr->getParents();
-			
+			ARule *val = supRuleParent.back();
+			supRuleParent.pop_back();
+			val->getNextRules(supRuleParent);
 		}
 	}
-
-
-
-
-	return m_nextRules;
+	return &m_nextRules;
 }
 
-std::set<ARule *> &ARule::getNextRules()
+void ARule::printNext() const
 {
-
-
-
-
-	return m_nextRules;
+	printSet(m_nextRules);
 }
 
 void ARule::setNextRules(ARule *nextRule)
@@ -159,7 +164,7 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	   << Log::indent() << "ptr: " << &data << ",\n"
 	   << Log::indent() << "content: " << data.getPrintableValue() << "\n";
 
-	printSet(data.getNextRules());
+	data.printNext();
 
 	Log::decrementIndent();
 	os << Log::indent() << "}";

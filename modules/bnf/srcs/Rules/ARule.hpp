@@ -38,8 +38,9 @@ class ARule
 		const std::string		 getConceptName() const;
 		size_t					 getConceptDefIndex() const;
 		size_t					 getRuleIndex() const;
-		const std::set<ARule *> &getNextRules() const;
-		std::set<ARule *>		&getNextRules();
+		const std::set<ARule *> *getNextRules(Vec<ARule *> supRuleParent) const;
+		std::set<ARule *>		*getNextRules(Vec<ARule *> supRuleParent);
+		void					 printNext() const;
 
 		void setNextRules(ARule *nextRule);
 };
