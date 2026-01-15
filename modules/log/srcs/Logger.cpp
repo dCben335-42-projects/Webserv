@@ -58,5 +58,5 @@ size_t Logger::getIndent()
 }
 std::string Logger::indent()
 {
-	return std::string(m_indent * 4, ' ');
+	return std::string(m_indent * INDENT_SIZE, INDENT_CHAR);
 }

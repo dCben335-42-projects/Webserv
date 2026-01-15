@@ -7,6 +7,8 @@
 #include <Vector.hpp>
 #include <Set.hpp>
 
+
+
 class Logger
 {
 	public:
@@ -18,6 +20,9 @@ class Logger
 		};
 
 	private:
+		static const size_t INDENT_SIZE = 4;
+		static const char	INDENT_CHAR = ' ';
+
 		static size_t		 m_indent;
 		static Target		 m_target;
 		static std::ofstream m_file;
