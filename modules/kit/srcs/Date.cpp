@@ -32,3 +32,12 @@ bool Date::compareHttpDates(const std::string &date1, const std::string &date2)
 
 	return difftime(time1, time2) > 0;
 }
+
+std::string Date::toHumanFormat(const tm *timeInfo)
+{
+	if (!timeInfo)
+		return "";
+	char buf[32];
+	strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M", timeInfo);
+	return std::string(buf);
+}

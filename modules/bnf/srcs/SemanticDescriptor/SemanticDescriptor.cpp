@@ -338,6 +338,6 @@ ConceptNode *SemanticDescriptor::getTree() const
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 {
-	log(data.getConcepts());
+	Logger::log(data.getConcepts());
 	return (os);
 }

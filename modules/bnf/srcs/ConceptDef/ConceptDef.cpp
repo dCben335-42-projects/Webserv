@@ -111,6 +111,6 @@ std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {
 	(void) os;
 	Vec<ARule *> values = data.getValues();
-	log(values);
+	Logger::log(values);
 	return os;
 }

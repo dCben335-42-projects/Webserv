@@ -1,19 +1,16 @@
-#include "HttpServer.hpp"
 #include "Lexer.hpp"
-#include "Logger.hpp"
 #include "config.hpp"
+#include "EventLoop.hpp"
+
 
 int main()
 {
 	try
 	{
 		Lexer lex("config/def_language.txt");
-		// HttpServer server(8080);
-		HttpServer server;
-		server.run();
 	}
 	catch (const std::exception &e)
 	{
-		log("Fatal error: " + std::string(e.what()));
+		Logger::log("Fatal error: " + std::string(e.what()));
 	}
 }

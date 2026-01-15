@@ -34,5 +34,5 @@ const std::string Option::getTypeName() const
 
 std::string Option::getPrintableValue() const
 {
-	return getLogJson(items);
+	return LoggerJson::get(items);
 }

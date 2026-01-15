@@ -53,17 +53,17 @@ const std::set<ARule *> &Concept::getTerminalChars() const
 
 std::ostream &operator<<(std::ostream &os, const Concept &data)
 {
-	os << Log::indent() << "{\n";
-	Log::incrementIndent();
-	os << Log::indent() << "Concept Name: " << data.getConceptName() << "\n"
-	   << Log::indent() << "Definitions:\n";
-	log(data.getDefinitions());
-	Log::decrementIndent();
+	os << Logger::indent() << "{\n";
+	Logger::incrementIndent();
+	os << Logger::indent() << "Concept Name: " << data.getConceptName() << "\n"
+	   << Logger::indent() << "Definitions:\n";
+	Logger::log(data.getDefinitions());
+	Logger::decrementIndent();
 	os << "\n"
-	   << Log::indent() << "Parents: ";
+	   << Logger::indent() << "Parents: ";
 	printSet(data.getParents());
-	os << Log::indent() << "Terminal Chars: ";
+	os << Logger::indent() << "Terminal Chars: ";
 	printSet(data.getTerminalChars());
-	os << Log::indent() << "}";
+	os << Logger::indent() << "}";
 	return os;
 }

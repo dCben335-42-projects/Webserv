@@ -12,6 +12,7 @@ class Date
 		static std::string getCurrentDate();
 		static std::string toHttpDateFormat(const tm *timeInfo);
 		static bool		   compareHttpDates(const std::string &date1, const std::string &date2);
+		static std::string toHumanFormat(const tm *timeInfo);
 };
 
 #endif

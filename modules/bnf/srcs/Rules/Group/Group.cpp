@@ -34,5 +34,5 @@ const std::string Group::getTypeName() const
 
 std::string Group::getPrintableValue() const
 {
-	return getLogJson(items);
+	return LoggerJson::get(items);
 }

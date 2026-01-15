@@ -1,0 +1,126 @@
+// EventLoop.cpp
+#include "EventLoop.hpp"
+#include "VirtualServer.hpp"
+#include <unistd.h>
+#include <cstring>
+#include <stdexcept>
+#include <fcntl.h>
+#include <iostream>
+#include <cerrno>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+Map<int, Pollable *> EventLoop::m_handlers;
+Vec<pollfd>			 EventLoop::m_pollFds;
+
+void EventLoop::init()
+{
+	VirtualServer::Config config1 = {
+		.root	   = "files/www/website",
+		.cgiBin	   = "files/www/website/cgi-bin",
+		.indexFile = "index.html",
+		.ip		   = "127.0.0.1",
+		.port	   = 8080,
+		.domain	   = "localhost"};
+	new VirtualServer(config1.ip, config1.port, config1);
+
+	VirtualServer::Config config2 = {
+		.root	   = "files/www/test",
+		.cgiBin	   = "files/www/test/cgi-bin",
+		.indexFile = "index.html",
+		.ip		   = "127.0.0.1",
+		.port	   = 9090,
+		.domain	   = "localhost"};
+	new VirtualServer(config2.ip, config2.port, config2);
+}
+
+
+#include "Logger.hpp"
+
+void EventLoop::run()
+{
+	const int POLL_TIMEOUT = 1000;
+
+	while (true)
+	{
+		updatePollStatus();
+		int ready = poll(&m_pollFds[0], m_pollFds.size(), POLL_TIMEOUT);
+		if (ready < 0)
+			break;
+		for (size_t i = 0; i < m_pollFds.size() && ready > 0; ++i)
+		{
+			if (!m_pollFds[i].revents)
+				continue;
+			ready--;
+
+			const int fd = m_pollFds[i].fd;
+			if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
+			{
+				deletePollable(fd, i);
+				continue;
+			}
+
+			Pollable *handler = getHandler(fd);
+			if (handler)
+			{
+				handler->setRevents(m_pollFds[i].revents);
+
+				if (m_pollFds[i].revents & POLLIN)
+					handler->onPollIn();
+				if (m_pollFds[i].revents & POLLOUT)
+					handler->onPollOut();
+				if (m_pollFds[i].revents & (POLLERR | POLLHUP))
+					handler->onPollErr();
+				if (!handler->getEvents())
+				{
+					deletePollable(fd, i);
+				}
+			}
+		}
+	}
+}
+
+
+
+void EventLoop::addHandler(Pollable *handler)
+{
+	if (!handler)
+		return;
+	const int	fd	   = handler->getFd();
+	const short events = handler->getEvents();
+
+	m_handlers.set(handler->getFd(), handler);
+	pollfd pfd = {fd, events, 0};
+	m_pollFds.push(pfd);
+}
+
+
+void EventLoop::deletePollable(const int &fd, const size_t &index)
+{
+	Pollable *handler = getHandler(fd);
+	if (handler)
+	{
+		delete handler;
+		m_handlers.remove(fd);
+	}
+	m_pollFds.remove(index);
+	close(fd);
+}
+
+void EventLoop::updatePollStatus()
+{
+	for (size_t i = 0; i < m_pollFds.size(); i++)
+	{
+		Pollable *handler = getHandler(m_pollFds[i].fd);
+		if (handler)
+			m_pollFds[i].events = handler->getEvents();
+	}
+}
+
+
+Pollable *EventLoop::getHandler(int fd)
+{
+	Pollable *handler = NULL;
+	m_handlers.try_get(fd, handler);
+	return handler;
+}

@@ -92,7 +92,7 @@ std::ostream &operator<<(std::ostream &os, const PathSegment &data)
 		   << ", conceptIndex: " << data.getConceptIndex()
 		   << ", position: " << data.getPosition()
 		   << ", positionInSpecial: " << data.getPositionInSpecial()
-		   << ", nextPathSegments: " << getLogJson(data.getNextPathSegments())
+		   << ", nextPathSegments: " << LoggerJson::get(data.getNextPathSegments())
 		   << ", depth: " << data.getDepth()
 		   << ")";
 	}
