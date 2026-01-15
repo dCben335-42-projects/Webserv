@@ -19,9 +19,12 @@ class Concept
 		const std::string		 getConceptName() const;
 		void					 addParent(ARule *parent);
 		const std::set<ARule *> &getParents() const;
+		void					 addTerminalChar(ARule *terminalChar);
+		const std::set<ARule *> &getTerminalChars() const;
 
 	private:
 		const std::string m_conceptName;
+		std::set<ARule *> m_terminalChars;
 		std::set<ARule *> m_parents;
 		Vec<ConceptDef *> definitions;
 };

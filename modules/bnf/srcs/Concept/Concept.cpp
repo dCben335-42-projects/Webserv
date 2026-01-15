@@ -41,6 +41,16 @@ const std::set<ARule *> &Concept::getParents() const
 	return m_parents;
 }
 
+void Concept::addTerminalChar(ARule *terminalChar)
+{
+	m_terminalChars.insert(terminalChar);
+}
+
+const std::set<ARule *> &Concept::getTerminalChars() const
+{
+	return m_terminalChars;
+}
+
 std::ostream &operator<<(std::ostream &os, const Concept &data)
 {
 	os << Log::indent() << "{\n";
@@ -52,6 +62,8 @@ std::ostream &operator<<(std::ostream &os, const Concept &data)
 	os << "\n"
 	   << Log::indent() << "Parents: ";
 	printSet(data.getParents());
+	os << Log::indent() << "Terminal Chars: ";
+	printSet(data.getTerminalChars());
 	os << Log::indent() << "}";
 	return os;
 }

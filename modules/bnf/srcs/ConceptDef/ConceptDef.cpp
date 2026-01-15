@@ -40,7 +40,7 @@ ConceptDef::~ConceptDef()
 void ConceptDef::setRule(ARule *rule)
 {
 	if (values.size() > 0)
-		values.back()->setNextRule(rule);
+		values.back()->setNextRules(rule);
 	values.push_back(rule);
 }
 
@@ -91,6 +91,21 @@ Vec<ARule *> ConceptDef::getValues() const
 {
 	return values;
 }
+
+ARule *ConceptDef::getARule(size_t index)
+{
+	if (values.size() > index)
+		return values[index];
+	return NULL;
+}
+
+Vec<std::string> ConceptDef::getItemsOfARule(size_t index)
+{
+	if (values.size() > index)
+		return values[index]->getItems();
+	throw std::runtime_error("Index out of range in getItemsOfARule");
+}
+
 
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {

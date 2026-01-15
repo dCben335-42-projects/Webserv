@@ -1,7 +1,7 @@
 #include "./Option.hpp"
 #include "Logger.hpp"
 
-Option::Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex)
+Option::Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
 }
 Option::~Option()

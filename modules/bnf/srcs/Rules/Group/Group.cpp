@@ -1,7 +1,7 @@
 #include "./Group.hpp"
 #include "Logger.hpp"
 
-Group::Group(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex) : ARule(GROUP, conceptName, conceptDefIndex, ruleIndex)
+Group::Group(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(GROUP, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
 }
 Group::~Group()
