@@ -99,6 +99,6 @@ BnfMap ARule::getMap(const std::string &opener)
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
-	os << Log::indent() << data.getPrintableValue();
+	os << Logger::indent() << data.getPrintableValue();
 	return os;
 }

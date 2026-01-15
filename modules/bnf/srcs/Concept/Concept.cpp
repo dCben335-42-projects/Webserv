@@ -83,7 +83,7 @@ std::ostream &operator<<(std::ostream &os, const Concept &data)
 
 	Vec<ARule *> values = data.getValues();
 
-	log(values);
+	Logger::log(values);
 
 	// for (Vec<ARule *>::const_iterator it = values.begin(); it != values.end(); ++it) {
 	// ARule* rule = *it;

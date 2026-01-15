@@ -30,7 +30,7 @@ Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 {
 	// V_FOREACH(ConceptNode *, java, node->getChildren())
 	// {
-	// 	log(*java);
+	// 	Logger::log(*java);
 	// }
 
 	while (node->hasChildren())
@@ -44,17 +44,17 @@ Vec<std::string> Parser::getFirstCharAccepted(ConceptNode *node) const
 	}
 	Vec<char> eventualChar;
 	ARule	 *rule = m_semantic.getConcepts()[node->getName()][0]->getValues()[0];
-	// log(m_semantic.getConcepts());
+	// Logger::logm_semantic.getConcepts());
 
-	// log(m_semantic.getConcepts()[node->content.name]);
+	// Logger::logm_semantic.getConcepts()[node->content.name]);
 
-	// log(m_semantic.getConcepts()[node->content.name][0]);
+	// Logger::logm_semantic.getConcepts()[node->content.name][0]);
 
-	// log(m_semantic.getConcepts()[node->content.name][0]->getValues());
+	// Logger::logm_semantic.getConcepts()[node->content.name][0]->getValues());
 
-	// log(m_semantic.getConcepts()[node->content.name][0]->getValues()[0]);
+	// Logger::logm_semantic.getConcepts()[node->content.name][0]->getValues()[0]);
 
-	// log(m_semantic.getConcepts()[node->content.name][0]->getValues()[0]->getItems());
+	// Logger::logm_semantic.getConcepts()[node->content.name][0]->getValues()[0]->getItems());
 
 	// if (rule->getType() == OPTION)
 	// {
@@ -90,9 +90,9 @@ void Parser::parse(const std::string &stringToParsed)
 
 	// std::cout << getFirstCharAccepted(m_semantic.getTree()->children[0]);
 
-	log("\n------------------\n");
-	log(getFirstCharAccepted(m_semantic.getTree()->getChildren()[0]));
-	log("\n");
+	Logger::log("\n------------------\n");
+	Logger::log(getFirstCharAccepted(m_semantic.getTree()->getChildren()[0]));
+	Logger::log("\n");
 
 
 	// for (std::string::const_iterator it = stringToParsed.begin(); it != stringToParsed.end(); ++it)

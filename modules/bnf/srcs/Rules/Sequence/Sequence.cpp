@@ -21,5 +21,5 @@ Vec<std::string> Sequence::getItems() const
 
 std::string Sequence::getPrintableValue() const
 {
-	return getLogJson(items);
+	return LoggerJson::get(items);
 }

@@ -42,15 +42,14 @@ Derived &TreeNode<Derived>::setPath(Vec<std::string> newPath)
 template <typename Derived>
 std::ostream &operator<<(std::ostream &os, const TreeNode<Derived> &data)
 {
-	Log::incrementIndent();
+	Logger::incrementIndent();
 	std::cout << "\n";
 	for (size_t i = 0; i < data.getChildren().size(); i++)
 	{
-		std::cout << Log::indent();
+		std::cout << Logger::indent();
 		log(data.getChildren()[i]);
 	}
-	Log::decrementIndent();
-
+	Logger::decrementIndent();
 	return os;
 }
 

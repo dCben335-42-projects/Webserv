@@ -1,1 +1,1 @@
-LOG_SRCS += ./srcs/Log/Log.cpp
+LOG_SRCS += ./srcs/Logger.cpp

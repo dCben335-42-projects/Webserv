@@ -34,7 +34,7 @@ const std::string &Symbol::getValue() const
 
 std::string Symbol::getPrintableValue() const
 {
-	return getLogJson(value);
+	return LoggerJson::get(value);
 }
 
 std::ostream &operator<<(std::ostream &os, const Symbol &data)

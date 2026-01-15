@@ -20,5 +20,5 @@ Vec<std::string> Group::getItems() const
 
 std::string Group::getPrintableValue() const
 {
-	return getLogJson(items);
+	return LoggerJson::get(items);
 }

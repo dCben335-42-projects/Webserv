@@ -247,14 +247,14 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 // ANCHOR Overloaded Operators
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 {
-	log("----- HTTP Request -----\n");
-	log(BLUE "Method: " + message.getMethod() + RESET);
-	log("\n" GREEN "Target: " + message.getTarget() + RESET);
-	log("\n" CYAN "Query String: " + message.getQueryString() + RESET);
-	log("\n" YELLOW "Headers:\n");
-	log(message.getHeaders());
-	log("\n" MAGENTA "Body:\n" RESET);
-	log(message.getBody());
-	log(RESET "\n------------------------");
+	Logger::log("----- HTTP Request -----\n");
+	Logger::log(BLUE "Method: " + message.getMethod() + RESET);
+	Logger::log(GREEN "Target: " + message.getTarget() + RESET);
+	Logger::log(CYAN "Query String: " + message.getQueryString() + RESET);
+	Logger::log(YELLOW "Headers:");
+	Logger::log(message.getHeaders());
+	Logger::log(MAGENTA "Body:" RESET "\n");
+	Logger::log(message.getBody());
+	Logger::log(RESET "------------------------");
 	return o;
 }
