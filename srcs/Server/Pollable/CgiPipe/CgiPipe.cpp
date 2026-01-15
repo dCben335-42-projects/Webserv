@@ -41,13 +41,13 @@ void CgiPipe::waitChild()
 			exit_status = WEXITSTATUS(status);
 			if (exit_status == 0)
 			{
-				close(m_fd);
+				// close(m_fd);
 				m_events = 0;
 				m_client->setEvents(POLLOUT);
 			}
 			else
 			{
-				std::cout << "Wrong error code" << std::endl;
+				std::cout << "Wrong error code " << exit_status << std::endl;
 				onError();
 			}
 		}
@@ -69,7 +69,7 @@ void CgiPipe::onPollIn()
 		HttpResponse &res = m_client->getResponse();
 		res.appendToFulFullResponse(buffer, bytes_read);
 	}
-	if (bytes_read < 8192)
+	if (bytes_read == 0)
 	{
 		close(m_fd);
 		waitChild();

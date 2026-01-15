@@ -5,6 +5,8 @@
 #include "config.hpp"
 #include <unistd.h>
 
+char body[20] = "My name is Benoit";
+
 CgiSpawner::CgiSpawner(Client *client, VirtualServer *server) :
 	m_client(client),
 	m_server(server),
@@ -27,16 +29,21 @@ int CgiSpawner::spawn(const std::string &script_path)
 	if (m_pid == 0)
 		childprocess(script_path);
 	parentProcess();
-	return m_stdout_pipe[0];
+	// return m_stdout_pipe[0];
+	return m_sockPair[0];
 }
 
 void CgiSpawner::setupPipes()
 {
-	if (m_has_post_data)
-	{
-		pipe2(m_stdin_pipe, O_NONBLOCK | O_CLOEXEC);
-	}
-	pipe2(m_stdout_pipe, O_NONBLOCK | O_CLOEXEC);
+	// TODO safe this
+	socketpair(AF_UNIX, SOCK_STREAM, 0, m_sockPair);
+	// if (m_has_post_data)
+	// {
+	// if (pipe(m_stdin_pipe) == -1)
+	// std::cerr << "Pipe creation failed" << std::endl;
+	// }
+	// if (pipe(m_stdout_pipe) == -1)
+	// std::cerr << "Pipe creation failed" << std::endl;
 }
 
 std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &value)
@@ -62,6 +69,9 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
 	m_env.push(makeEnvVar("PATH_INFO", "\"\""));
 
+	m_env.push(makeEnvVar("CONTENT_TYPE", "text/plain"));
+	m_env.push(makeEnvVar("CONTENT_LENGTH", "20"));
+
 	// if (m_has_post_data)
 	// {
 	// 		m_env.push(makeEnvVar("CONTENT_TYPE", req.getHeader(HEADER_CONTENT_TYPE)));
@@ -80,10 +90,18 @@ void CgiSpawner::childprocess(const std::string &script_path)
 		  const_cast<char *>(script_path.c_str()),
 		  NULL};
 	generateEnvp();
-	if (dup2(m_stdout_pipe[1], STDOUT_FILENO) == -1)
-		throw std::runtime_error("Dup2 failed");
-	close(m_stdout_pipe[0]);
-	close(m_stdout_pipe[1]);
+	// if (dup2(m_stdout_pipe[1], STDOUT_FILENO) == -1)
+	// 	throw std::runtime_error("Dup2 failed");
+	// close(m_stdout_pipe[0]);
+	// close(m_stdout_pipe[1]);
+	if (dup2(m_sockPair[1], STDIN_FILENO) == -1)
+		std::cerr << "Dup2 failed: " << std::endl;
+	if (dup2(m_sockPair[1], STDOUT_FILENO) == -1)
+		std::cerr << "Dup2 failed: " << std::endl;
+	// if (dup2(m_sockPair[1], STDERR_FILENO) == -1)
+	// 	std::cerr << "Dup2 failed: " << std::endl;
+	close(m_sockPair[0]);
+	close(m_sockPair[1]);
 	execve(argv[0], argv, m_envp);
 	perror("execve:");
 	exit(127);
@@ -99,32 +117,34 @@ void CgiSpawner::generateEnvp()
 
 void CgiSpawner::parentProcess()
 {
-	closeUnusedPipes();
-	if (m_has_post_data)
-	{
-		writePostData();
-	}
+	write(m_sockPair[1], body, std::strlen(body));
+	close(m_sockPair[1]);
+	// closeUnusedPipes();
+	// if (m_has_post_data)
+	// {
+	// writePostData();
+	// }
 }
 
 void CgiSpawner::writePostData()
 {
-	const std::string &body = m_client->getRequest().getBody();
-	close(m_stdin_pipe[0]);
-	ssize_t bytes_written = write(m_stdin_pipe[1],
-								  body.data(),
-								  body.size());
-	(void) bytes_written;
-	(void) m_server;
-	close(m_stdin_pipe[1]);
+	// const std::string &body = m_client->getRequest().getBody();
+	// close(m_stdin_pipe[0]);
+	// ssize_t bytes_written = write(m_stdin_pipe[1],
+	//   body.data(),
+	//   body.size());
+	// (void) bytes_written;
+	// (void) m_server;
+	// close(m_stdin_pipe[1]);
 }
 
 void CgiSpawner::closeUnusedPipes()
 {
-	if (m_has_post_data)
-	{
-		if (m_pid != 0)
-			close(m_stdin_pipe[0]);
-	}
-	if (m_pid != 0)
-		close(m_stdout_pipe[1]);
+	// if (m_has_post_data)
+	// {
+	// 	if (m_pid != 0)
+	// 		close(m_stdin_pipe[0]);
+	// }
+	// if (m_pid != 0)
+	// 	close(m_stdout_pipe[1]);
 }

@@ -11,10 +11,13 @@
 class CgiSpawner
 {
 	private:
-		Client			*m_client;
-		VirtualServer	*m_server;
-		int				 m_stdin_pipe[2];
-		int				 m_stdout_pipe[2];
+		Client		  *m_client;
+		VirtualServer *m_server;
+		// int			   m_stdin_pipe[2];
+		// int			   m_stdout_pipe[2];
+
+		int m_sockPair[2];
+
 		pid_t			 m_pid;
 		bool			 m_has_post_data;
 		Vec<std::string> m_env;
