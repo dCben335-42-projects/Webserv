@@ -52,7 +52,7 @@ void Parser::getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARule
 	{
 		std::string key = conceptName.substr(1, 1);
 		if (allTerminalChars.has(key) == false)
-			allTerminalChars.set(key, std::set<ARule *>());
+			allTerminalChars.set(key, Set<ARule *>());
 		else
 			allTerminalChars.get(key).insert(rule);
 		return;

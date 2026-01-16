@@ -15,7 +15,7 @@
 #include "../PathSegment/PathSegment.hpp"
 #include <set>
 
-typedef std::set<ARule *> ARuleSet;
+typedef Set<ARule *> ARuleSet;
 
 class Parser
 {

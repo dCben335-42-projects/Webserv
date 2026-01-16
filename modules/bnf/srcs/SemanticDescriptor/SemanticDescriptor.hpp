@@ -47,6 +47,7 @@ class SemanticDescriptor
 		void addParent();
 		void findAllNext();
 		void ndw(ARule *rule, Vec<std::string> &conceptPaths);
+		void ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path);
 		void getStartPath();
 
 	public:

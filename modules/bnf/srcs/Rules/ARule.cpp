@@ -107,7 +107,7 @@ size_t ARule::getRuleIndex() const
 
 
 
-const std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
+const Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
 {
 	if (!m_nextRules.empty())
 		return &m_nextRules;
@@ -118,7 +118,7 @@ const std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
 	return val->getNextRules(supRuleParent);
 }
 
-std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
+Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
@@ -138,7 +138,7 @@ std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
 
 ARule *ARule::tryGetAdjacentRules()
 {
-	std::set<ARule *>::iterator it = m_nextRules.begin();
+	Set<ARule *>::iterator it = m_nextRules.begin();
 	return *it;
 }
 
@@ -157,6 +157,11 @@ bool ARule::isTerminalCharAt(size_t index) const
 	if (!m_terminalChars.has(index))
 		return false;
 	return m_terminalChars[index];
+}
+
+Concept *ARule::getConceptPtr() const
+{
+	return m_conceptPtr;
 }
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
