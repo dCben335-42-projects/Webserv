@@ -113,8 +113,6 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-
-
 const std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
 {
 	if (!m_nextRules.empty())
@@ -165,12 +163,12 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << "{\n";
 	Logger::incrementIndent();
-	os << Logger::indent() << "position: " << data.getConceptName() << "_" << data.getConceptDefIndex() << ",\n"
-	   << Logger::indent() << "type: " << data.getTypeName() << ",\n"
-	   << Logger::indent() << "index: " << data.getRuleIndex() << ",\n"
-	   << Logger::indent() << "ptr: " << &data << ",\n"
-	   << Logger::indent() << "content: " << data.getPrintableValue() << "\n"
-	   << Logger::indent() << "next: " << data.printNext() << "\n";
+	os << Logger::indent() << "\"position\": " << "\"" << data.getConceptName() << "_" << data.getConceptDefIndex() << "\",\n";
+	os << Logger::indent() << "\"type\": " << "\"" << data.getTypeName() << "\",\n";
+	os << Logger::indent() << "\"index\": " << data.getRuleIndex() << ",\n";
+	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
+	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
+	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";
 	Logger::decrementIndent();
 	os << Logger::indent() << "}";
 	return os;
