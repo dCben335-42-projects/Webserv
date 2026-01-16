@@ -244,46 +244,46 @@ void Parser::searchNextRules()
 }
 
 
-// void Parser::recursive_parse(char c, ARuleSet &currentRuleSet, ARuleSet &nextRuleSet, Vec<ARule *> &path)
-// {
-// 	for (ARuleSet::iterator it = currentRuleSet.begin(); it != currentRuleSet.end(); ++it)
-// 	{
-// 		ARule			*rule  = *it;
-// 		Vec<std::string> items = rule->getItems();
+void Parser::recursive_parse(char c, ARuleSet &currentRuleSet, ARuleSet &nextRuleSet, Vec<ARule *> &path)
+{
+	for (ARuleSet::iterator it = currentRuleSet.begin(); it != currentRuleSet.end(); ++it)
+	{
+		ARule			*rule  = *it;
+		Vec<std::string> items = rule->getItems();
 
-// 		for (size_t i = 0; i < items.size(); ++i)
-// 		{
-// 			if (rule->isTerminalCharAt(i))
-// 			{
-// 				if (adaptTerminalChar(items[i]) == c)
-// 				{
-// 					// rule->getNextRules();
-// 				}
-// 			}
-// 		}
-// 		// if (rule->getType() == OPTION)
-// 		// {
+		for (size_t i = 0; i < items.size(); ++i)
+		{
+			if (rule->isTerminalCharAt(i))
+			{
+				if (adaptTerminalChar(items[i]) == c)
+				{
+					// rule->getNextRules();
+				}
+			}
+		}
+		// if (rule->getType() == OPTION)
+		// {
 
-// 		// }
-// 	}
-// }
+		// }
+	}
+}
 
 void Parser::parse(const std::string &stringToParsed)
 {
-	// log("------------------\n");
-	// if (stringToParsed.empty())
-	// 	return;
+	Logger::log("------------------\n");
+	if (stringToParsed.empty())
+		return;
 
-	// ARuleSet	 currentARuleMap = m_semantic.getConcept(CURSOR)->getTerminalChars();
-	// ARuleSet	 nextARuleMap;
-	// Vec<ARule *> path;
+	ARuleSet	 currentARuleMap = m_semantic.getConcept(CURSOR)->getTerminalChars();
+	ARuleSet	 nextARuleMap;
+	Vec<ARule *> path;
 
-	// for (size_t i = 0; i < stringToParsed.size(); ++i)
-	// {
-	// 	char c = stringToParsed[i];
-	// 	recursive_parse(c, currentARuleMap, nextARuleMap, path);
-	// 	currentARuleMap = nextARuleMap;
-	// 	nextARuleMap.clear();
-	// }
-	(void) stringToParsed;
+	for (size_t i = 0; i < stringToParsed.size(); ++i)
+	{
+		char c = stringToParsed[i];
+		recursive_parse(c, currentARuleMap, nextARuleMap, path);
+		currentARuleMap = nextARuleMap;
+		nextARuleMap.clear();
+	}
+	// (void) stringToParsed;
 }

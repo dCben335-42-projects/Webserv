@@ -42,13 +42,14 @@ class SemanticDescriptor
 		void checkValidity();
 		bool hasRecursiveError(ConceptNode &node);
 
-		void parseBlocks();
-		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
-		void addParent();
-		void findAllNext();
-		void ndw(ARule *rule, Vec<std::string> &conceptPaths);
-		void ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path);
-		void getStartPath();
+		void					 parseBlocks();
+		bool					 hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
+		void					 addParent();
+		void					 findAllNext();
+		void					 ndw(ARule *rule, Vec<std::string> &conceptPaths);
+		void					 ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path);
+		Map<ARule *, ARulePaths> getStartPath();
+		void					 printStartPath();
 
 	public:
 		SemanticDescriptor();
