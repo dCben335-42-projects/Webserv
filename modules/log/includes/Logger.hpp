@@ -19,6 +19,12 @@ class Logger
 			File
 		};
 
+		enum FileMode
+		{
+			Append,
+			Truncate,
+		};
+
 	private:
 		static const size_t INDENT_SIZE = 2;
 		static const char	INDENT_CHAR = ' ';
@@ -31,7 +37,8 @@ class Logger
 
 	public:
 		static void setTarget(Target t);
-		static void setFile(const std::string &path);
+		static void setFile(const std::string &path, const FileMode mode = Append);
+		static void closeFile();
 
 		static size_t	   incrementIndent();
 		static size_t	   decrementIndent();

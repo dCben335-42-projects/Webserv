@@ -8,6 +8,7 @@ int main()
 	try
 	{
 		Lexer lex("config/def_language.txt");
+		Logger::FileMode mode = Logger::Append;
 	}
 	catch (const std::exception &e)
 	{
