@@ -11,6 +11,17 @@
 #define RED "\033[31m"
 #define RESET "\033[0m"
 
+
+/**
+ *
+ * @brief Generates a JSON representation of a map.
+ *
+ * @param m The map to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the values instead of their content.
+ *
+ * @return A string containing the JSON representation of the map.
+ *
+ */
 template <typename MapType>
 std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 {
@@ -64,6 +75,16 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 }
 
 
+/**
+ *
+ * @brief Generates a JSON representation of a vector.
+ *
+ * @param vec The vector to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the elements instead of their content.
+ *
+ * @return A string containing the JSON representation of the vector.
+ *
+ */
 template <typename VectorType>
 std::string LoggerJson::vectorGet(const VectorType &vec, const bool getAddress)
 {
@@ -81,6 +102,17 @@ std::string LoggerJson::vectorGet(const VectorType &vec, const bool getAddress)
 	return result;
 }
 
+
+/**
+ *
+ * @brief Generates a JSON representation of a set.
+ *
+ * @param set The set to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the elements instead of their content.
+ *
+ * @return A string containing the JSON representation of the set.
+ *
+ */
 template <typename SetType>
 std::string LoggerJson::setGet(const SetType &set, const bool getAddress)
 {
@@ -101,6 +133,16 @@ std::string LoggerJson::setGet(const SetType &set, const bool getAddress)
 }
 
 
+/**
+ *
+ * @brief Generates a string representation of a value.
+ *
+ * @param v The value to be converted to a string.
+ * @param getAddress If true, returns the memory address of the value instead of its content.
+ *
+ * @return A string containing the representation of the value.
+ *
+ */
 template <typename V>
 std::string LoggerJson::get(const V &v, const bool getAddress)
 {
@@ -114,6 +156,19 @@ std::string LoggerJson::get(const V &v, const bool getAddress)
 	return oss.str();
 }
 
+
+
+
+/**
+ *
+ * @brief Generates a string representation of a pointer.
+ *
+ * @param ptr The pointer to be converted to a string.
+ * @param getAddress If true, returns the memory address of the value instead of its content.
+ *
+ * @return A string containing the representation of the pointer.
+ *
+ */
 template <typename V>
 std::string LoggerJson::get(V *ptr, const bool getAddress)
 {
@@ -122,39 +177,94 @@ std::string LoggerJson::get(V *ptr, const bool getAddress)
 	return "null";
 }
 
-
-
-
-
+/**
+ *
+ * @brief Generates a JSON representation of a map.
+ *
+ * @param m The map to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the values instead of their content.
+ *
+ * @return A string containing the JSON representation of the map.
+ *
+ */
 template <typename K, typename V>
 std::string LoggerJson::get(const std::map<K, V> &m, const bool getAddress)
 {
 	return mapGet(m, getAddress);
 }
+
+/**
+ *
+ * @brief Generates a JSON representation of a Map.
+ *
+ * @param m The Map to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the values instead of their content.
+ *
+ * @return A string containing the JSON representation of the Map.
+ *
+ */
 template <typename K, typename V>
 std::string LoggerJson::get(const Map<K, V> &m, const bool getAddress)
 {
 	return mapGet(m, getAddress);
 }
 
-
+/**
+ *
+ * @brief Generates a JSON representation of a vector.
+ *
+ * @param vec The vector to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the elements instead of their content.
+ *
+ * @return A string containing the JSON representation of the vector.
+ *
+ */
 template <typename V>
 std::string LoggerJson::get(const std::vector<V> &vec, const bool getAddress)
 {
 	return vectorGet(vec, getAddress);
 }
+/**
+ *
+ * @brief Generates a JSON representation of a Vec.
+ *
+ * @param vec The Vec to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the elements instead of their content.
+ *
+ * @return A string containing the JSON representation of the Vec.
+ *
+ */
 template <typename V>
 std::string LoggerJson::get(const Vec<V> &vec, const bool getAddress)
 {
 	return vectorGet(vec, getAddress);
 }
 
-
+/**
+ *
+ * @brief Generates a JSON representation of a set.
+ *
+ * @param set The set to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the elements instead of their content.
+ *
+ * @return A string containing the JSON representation of the set.
+ *
+ */
 template <typename V>
 std::string LoggerJson::get(const std::set<V> &set, const bool getAddress)
 {
 	return setGet(set, getAddress);
 }
+/**
+ *
+ * @brief Generates a JSON representation of a Set.
+ *
+ * @param set The Set to be converted to JSON.
+ * @param getAddress If true, returns the memory address of the elements instead of their content.
+ *
+ * @return A string containing the JSON representation of the Set.
+ *
+ */
 template <typename V>
 std::string LoggerJson::get(const Set<V> &set, const bool getAddress)
 {
