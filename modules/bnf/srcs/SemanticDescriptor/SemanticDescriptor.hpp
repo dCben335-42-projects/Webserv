@@ -19,7 +19,7 @@
 #include "../Exception/EmptyConceptNameException.hpp"
 
 typedef Vec<ARule *>   ARulePath;
-typedef Vec<ARulePath> ARulePaths;
+typedef Set<ARulePath> ARulePaths;
 
 class SemanticDescriptor
 {
@@ -42,26 +42,27 @@ class SemanticDescriptor
 		void checkValidity();
 		bool hasRecursiveError(ConceptNode &node);
 
-		void					 parseBlocks();
-		bool					 hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
-		void					 addParent();
-		void					 findAllNext();
-		void					 ndw(ARule *rule, Vec<std::string> &conceptPaths);
-		void					 ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path);
-		Map<ARule *, ARulePaths> getStartPath();
-		void					 printStartPath();
+		void parseBlocks();
+		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
+		void addParent();
+		void findAllNext();
+		void ndw(ARule *rule, Vec<std::string> &conceptPaths);
+		void ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, Map<ARule *, ARulePaths> &mapPath, std::string conceptName) const;
+		void printStartPath();
 
 	public:
 		SemanticDescriptor();
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		Map<Concept *> getConcepts() const;
-		Concept		 *&getConcept(const std::string &key);
-		const Concept *getConcept(const std::string &key) const;
+		Map<ARule *, ARulePaths> getStartPath() const;
+		Map<Concept *>			 getConcepts() const;
+		Concept				   *&getConcept(const std::string &key);
+		const Concept			*getConcept(const std::string &key) const;
 		// const Concept *&getConcept(const std::string &key) const;
 		// bool		 tryGetConcept(const std::string &key, ConceptList &conceptList) const;
-		ConceptNode *getTree() const;
+		ConceptNode				*getTree() const;
+		Map<ARule *, ARulePaths> getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

@@ -105,36 +105,55 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-
-
-const Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
-{
-	if (!m_nextRules.empty())
-		return &m_nextRules;
-	if (supRuleParent.size() == 1)
-		return NULL;
-	ARule *val = supRuleParent.back();
-	supRuleParent.pop_back();
-	return val->getNextRules(supRuleParent);
-}
-
-Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
+Vec<ARule *> ARule::getNextRules(Vec<ARule *> supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
-		if (supRuleParent.size() == 0)
+		if (supRuleParent.size() == 1)
 		{
-			return NULL;
+			return Vec<ARule *>();
 		}
 		else
 		{
-			ARule *val = supRuleParent.back();
 			supRuleParent.pop_back();
+			ARule *val = supRuleParent.back();
 			return val->getNextRules(supRuleParent);
 		}
 	}
-	return &m_nextRules;
+	supRuleParent.back() = *m_nextRules.begin();
+	return supRuleParent;
 }
+
+// const Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
+// {
+// 	if (!m_nextRules.empty())
+// 		return &m_nextRules;
+// 	if (supRuleParent.size() == 1)
+// 		return NULL;
+// 	ARule *val = supRuleParent.back();
+// 	supRuleParent.pop_back();
+// 	return val->getNextRules(supRuleParent);
+// }
+
+// Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
+// {
+// 	if (m_nextRules.empty())
+// 	{
+// 		if (supRuleParent.size() == 0)
+// 		{
+// 			return NULL;
+// 		}
+// 		else
+// 		{
+// 			ARule *val = supRuleParent.back();
+// 			supRuleParent.pop_back();
+// 			return val->getNextRules(supRuleParent);
+// 		}
+// 	}
+// 	return &m_nextRules;
+// }
+
+
 
 ARule *ARule::tryGetAdjacentRules()
 {

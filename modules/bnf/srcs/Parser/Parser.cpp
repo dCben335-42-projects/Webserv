@@ -239,16 +239,55 @@ char Parser::adaptTerminalChar(const std::string &str)
 	return '\0';
 }
 
-void Parser::searchNextRules()
+void Parser::searchNextRules(Map<ARule *, ARulePaths> &mapPathNext, ARulePaths paths, ARule *rule)
 {
+	for (Set<ARulePath>::iterator j = paths.begin(); j != paths.end(); ++j)
+	{
+		ARulePath path = *j;
+
+		ARulePath nextRule = rule->getNextRules(path);
+		if (nextRule.empty())
+		{
+			Logger::log("No next rule");
+			continue;
+		}
+		ARule			*ptr   = nextRule.back();
+		Vec<std::string> items = ptr->getItems();
+
+		ARulePaths prefix = ARulePaths();
+		prefix.insert(nextRule);
+		Map<ARule *, ARulePaths> mapPathCurrentTemp;
+
+		for (size_t k = 0; k < items.size(); ++k)
+		{
+			Map<ARule *, ARulePaths> newPaths = m_semantic.getPathsTerminalChars(prefix, items[k]);
+			mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
+		}
+
+		for (Map<ARule *, ARulePaths>::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
+		{
+			ARule	  *key = (*it).first;
+			ARulePaths val = (*it).second;
+
+			for (Set<ARulePath>::iterator m = val.begin(); m != val.end(); ++m)
+			{
+				if (!mapPathNext.has(key))
+				{
+					mapPathNext.set(key, ARulePaths());
+				}
+				mapPathNext.get(key).insert(*m);
+			}
+		}
+	}
 }
 
-
-void Parser::recursive_parse(char c, ARuleSet &currentRuleSet, ARuleSet &nextRuleSet, Vec<ARule *> &path)
+bool Parser::recursive_parse(char c, Map<ARule *, ARulePaths> &mapPathCurrent, Map<ARule *, ARulePaths> &mapPathNext)
 {
-	for (ARuleSet::iterator it = currentRuleSet.begin(); it != currentRuleSet.end(); ++it)
+	bool isValidWithCurrentPath = false;
+	for (Map<ARule *, ARulePaths>::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
-		ARule			*rule  = *it;
+		ARule *rule = (*it).first;
+		Logger::log(rule->getConceptName());
 		Vec<std::string> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
@@ -257,33 +296,58 @@ void Parser::recursive_parse(char c, ARuleSet &currentRuleSet, ARuleSet &nextRul
 			{
 				if (adaptTerminalChar(items[i]) == c)
 				{
-					// rule->getNextRules();
+					searchNextRules(mapPathNext, mapPathCurrent.get(rule), rule);
+					isValidWithCurrentPath = true;
 				}
 			}
 		}
-		// if (rule->getType() == OPTION)
-		// {
-
-		// }
 	}
+	return isValidWithCurrentPath;
 }
 
 void Parser::parse(const std::string &stringToParsed)
 {
-	Logger::log("------------------\n");
+	Logger::log("========Parsing========\n");
 	if (stringToParsed.empty())
 		return;
 
-	ARuleSet	 currentARuleMap = m_semantic.getConcept(CURSOR)->getTerminalChars();
-	ARuleSet	 nextARuleMap;
-	Vec<ARule *> path;
+	Map<ARule *, ARulePaths> mapPathCurrent = m_semantic.getStartPath();
+
+	// Logger::log("Initial paths: " + LoggerJson::get(mapPathCurrent, false));
+	Map<ARule *, ARulePaths> mapPathNext;
+	Vec<ARule *>			 path;
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		char c = stringToParsed[i];
-		recursive_parse(c, currentARuleMap, nextARuleMap, path);
-		currentARuleMap = nextARuleMap;
-		nextARuleMap.clear();
+		Logger::log("Char to test: " + LoggerJson::get(c));
+		bool isValidWithCurrentPath = recursive_parse(c, mapPathCurrent, mapPathNext);
+		if (!isValidWithCurrentPath)
+		{
+			Logger::log("Pattern false ❌");
+			return;
+		}
+		if (mapPathNext.empty() && i != stringToParsed.size() - 1)
+		{
+			Logger::log("Pattern false ❌");
+			return;
+		}
+		else
+		{
+			Logger::log("✅");
+		}
+		mapPathCurrent = mapPathNext;
+		mapPathNext.clear();
 	}
-	// (void) stringToParsed;
+	if (mapPathCurrent.empty()) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
+	{
+		Logger::log("Parsing complete ✅");
+		return;
+	}
+	else
+	{
+		Logger::log("Parsing uncomplete ❌");
+		return;
+	}
+	(void) stringToParsed;
 }

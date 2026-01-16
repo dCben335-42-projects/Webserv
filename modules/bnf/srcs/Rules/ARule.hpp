@@ -39,10 +39,11 @@ class ARule
 		size_t				getConceptDefIndex() const;
 		size_t				getRuleIndex() const;
 		const Set<ARule *> *getNextRules(Vec<ARule *> supRuleParent) const;
-		Set<ARule *>	   *getNextRules(Vec<ARule *> supRuleParent);
-		std::string			printNext() const;
-		bool				isTerminalCharAt(size_t index) const;
-		ARule			   *tryGetAdjacentRules();
+		// Set<ARule *>	   *getNextRules(Vec<ARule *> supRuleParent);
+		Vec<ARule *> getNextRules(Vec<ARule *> supRuleParent);
+		std::string	 printNext() const;
+		bool		 isTerminalCharAt(size_t index) const;
+		ARule		*tryGetAdjacentRules();
 
 		void	 setNextRules(ARule *nextRule);
 		Concept *getConceptPtr() const;
