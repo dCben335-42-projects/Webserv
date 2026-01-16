@@ -14,12 +14,12 @@
 template <typename MapType>
 std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 {
-	std::string result = "\n" + Logger::indent() + "{\n";
+	std::string result = "{\n";
 	Logger::incrementIndent();
 
-	typename MapType::const_iterator it	 = m.begin();
-	typename MapType::const_iterator end = m.end();
-
+	typename MapType::const_iterator	 it	 = m.begin();
+	typename MapType::const_iterator	 end = m.end();
+	typedef typename MapType::value_type ValueType;
 
 	while (it != end)
 	{
@@ -37,7 +37,7 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 		}
 		else
 		{
-			if (!is_string<typename MapType::mapped_type>::value)
+			if (!is_string<ValueType>::value)
 			{
 				result += "\n";
 				Logger::incrementIndent();
@@ -59,7 +59,7 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 			result += "\n";
 	}
 	Logger::decrementIndent();
-	result += Logger::indent() + "}";
+	result += "}";
 	return result;
 }
 
@@ -67,8 +67,7 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 template <typename VectorType>
 std::string LoggerJson::vectorGet(const VectorType &vec, const bool getAddress)
 {
-	(void) vec; // To avoid unused parameter warning for now
-	std::string result = "\n" + Logger::indent() + "[\n";
+	std::string result = "[\n";
 	Logger::incrementIndent();
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
@@ -85,7 +84,7 @@ std::string LoggerJson::vectorGet(const VectorType &vec, const bool getAddress)
 template <typename SetType>
 std::string LoggerJson::setGet(const SetType &set, const bool getAddress)
 {
-	std::string result = "\n" + Logger::indent() + "[\n";
+	std::string result = "[\n";
 	Logger::incrementIndent();
 	typename SetType::const_iterator it	 = set.begin();
 	typename SetType::const_iterator end = set.end();
