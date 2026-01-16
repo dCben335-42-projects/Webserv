@@ -17,7 +17,7 @@ void EventLoop::init()
 {
 	VirtualServer::Config config1 = {
 		.root	   = "files/www/website",
-		.cgiBin	   = "/usr/bin/python3",
+		.cgiBin	   = "/usr/bin/php",
 		.indexFile = "index.html",
 		.ip		   = "127.0.0.1",
 		.port	   = 8080,
@@ -54,12 +54,12 @@ void EventLoop::run()
 			ready--;
 
 			const int fd = m_pollFds[i].fd;
-			if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
-			{
-				std::cerr << "QUI A LE PROBLEME DE FOU LÀ ?" << std::endl;
-				deletePollable(fd, i);
-				continue;
-			}
+			// if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
+			// {
+			// 	std::cerr << "QUI A LE PROBLEME DE FOU LÀ ?" << std::endl;
+			// 	deletePollable(fd, i);
+			// 	continue;
+			// }
 
 			Pollable *handler = getHandler(fd);
 			if (handler)
@@ -70,8 +70,10 @@ void EventLoop::run()
 					handler->onPollIn();
 				if (m_pollFds[i].revents & POLLOUT)
 					handler->onPollOut();
-				if (m_pollFds[i].revents & (POLLERR | POLLHUP))
+				if (m_pollFds[i].revents & POLLERR)
 					handler->onPollErr();
+				if (m_pollFds[i].revents & POLLHUP)
+					handler->onPollHangUp();
 				if (handler->getConnectionClosed())
 				{
 					deletePollable(fd, i);

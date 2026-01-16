@@ -21,7 +21,6 @@ CgiPipe::CgiPipe(
 
 CgiPipe::~CgiPipe()
 {
-	std::cerr << RED "destructor" << RESET << std::endl;
 	if (m_pid > 0)
 	{
 		kill(m_pid, SIGTERM);
@@ -66,56 +65,27 @@ void CgiPipe::waitChild()
 }
 
 
-#include <dirent.h>
-#include <vector>
-#include <string>
-#include "Logger.hpp"
-#include "stdlib.h"
-#include "stdio.h"
-#include "unistd.h"
-#include <poll.h>
-
-
-std::vector<int> get_open_fds()
-{
-	std::vector<int> fds;
-	int				 max_fd = sysconf(_SC_OPEN_MAX);
-
-	for (int fd = 0; fd < max_fd; ++fd)
-	{
-		if (fcntl(fd, F_GETFD) != -1 || errno != EBADF)
-		{
-			fds.push_back(fd);
-		}
-	}
-	log(fds);
-	return fds;
-}
-
-
 void CgiPipe::onPollIn()
 {
-	char	buffer[8192] = {'\0'};
-	ssize_t bytes_read	 = read(m_fd, buffer, 8192);
+	char buffer[8192] = {'\0'};
+	int	 bytes_read	  = read(m_fd, buffer, 4096);
 
-	std::cerr << strerror(errno) << std::endl;
-	std::cerr << m_fd << std::endl;
-	get_open_fds();
 	if (bytes_read > 0)
 	{
 		HttpResponse &res = m_client->getResponse();
 		res.appendToFulFullResponse(buffer, bytes_read);
-	}
-	if (bytes_read == 0)
-	{
-		std::cerr << "salope" << std::endl;
-		waitChild();
-		m_events = 0;
-		m_client->setEvents(POLLOUT);
-		m_connectionClosed = true;
 		return;
 	}
-	std::cerr << "ICI Ta mere" << std::endl;
+	// if (bytes_read == 0)
+	// {
+	// 	std::cerr << "Read ended" << std::endl;
+	// 	waitChild();
+	// 	m_events = 0;
+	// 	m_client->setEvents(POLLOUT);
+	// 	m_connectionClosed = true;
+	// 	return;
+	// }
+	std::cerr << "Read error" << std::endl;
 	onError();
 }
 
@@ -143,4 +113,15 @@ void CgiPipe::onPollErr()
 {
 	std::cerr << "CgiPipe error on fd " << m_fd << " for script " << m_scriptPath << std::endl;
 	onError();
+}
+
+#include "Logger.hpp"
+void CgiPipe::onPollHangUp()
+{
+	std::cerr << "Read ended" << std::endl;
+	waitChild();
+	m_events = 0;
+	m_client->setEvents(POLLOUT);
+	m_connectionClosed = true;
+	std::cout << "Response: " << m_client->getResponse().getFullResponse() << std::endl;
 }

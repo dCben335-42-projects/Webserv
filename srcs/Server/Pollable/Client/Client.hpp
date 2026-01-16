@@ -32,6 +32,7 @@ class Client : public Pollable
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
+		void onPollHangUp();
 
 		void setEvents(short events)
 		{

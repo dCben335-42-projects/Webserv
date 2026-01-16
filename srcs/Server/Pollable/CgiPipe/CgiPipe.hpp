@@ -27,6 +27,7 @@ class CgiPipe : public Pollable
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
+		void onPollHangUp();
 };
 
 

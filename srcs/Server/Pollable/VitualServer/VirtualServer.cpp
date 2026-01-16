@@ -140,3 +140,7 @@ void VirtualServer::onPollErr()
 {
 	std::cerr << "VirtualServer error on fd " << m_fd << std::endl;
 }
+
+void VirtualServer::onPollHangUp()
+{
+}

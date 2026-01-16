@@ -41,6 +41,7 @@ class VirtualServer : public Pollable
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
+		void onPollHangUp();
 };
 
 #endif

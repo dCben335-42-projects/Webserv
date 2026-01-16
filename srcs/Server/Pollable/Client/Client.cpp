@@ -138,7 +138,7 @@ bool Client::isCgi()
 		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
 		const std::string ext = file.getExtension();
 
-		return ext == ".py";
+		return ext == ".php";
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
@@ -282,6 +282,10 @@ void Client::onPollErr()
 {
 	std::cerr << "Client error on fd " << m_fd << std::endl;
 	m_events = 0;
+}
+
+void Client::onPollHangUp()
+{
 }
 
 

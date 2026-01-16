@@ -69,8 +69,8 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
 	m_env.push(makeEnvVar("PATH_INFO", "\"\""));
 
-	m_env.push(makeEnvVar("CONTENT_TYPE", "text/plain"));
-	m_env.push(makeEnvVar("CONTENT_LENGTH", "20"));
+	m_env.push(makeEnvVar("CONTENT_TYPE", ""));
+	m_env.push(makeEnvVar("CONTENT_LENGTH", "0"));
 
 	// if (m_has_post_data)
 	// {
@@ -128,7 +128,7 @@ void CgiSpawner::parentProcess()
 {
 	// write(m_sockPair[0], body, std::strlen(body));
 	// close(m_sockPair[1]);
-	write(m_stdin_pipe[1], body, std::strlen(body));
+	// write(m_stdin_pipe[1], body, std::strlen(body));
 	close(m_stdin_pipe[1]);
 	close(m_stdin_pipe[0]);
 	close(m_stdout_pipe[1]);
