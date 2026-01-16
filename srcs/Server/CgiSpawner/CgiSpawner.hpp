@@ -16,7 +16,6 @@ class CgiSpawner
 		int			   m_stdin_pipe[2];
 		int			   m_stdout_pipe[2];
 
-		// int m_sockPair[2];
 
 		pid_t			 m_pid;
 		bool			 m_has_post_data;

@@ -138,7 +138,7 @@ bool Client::isCgi()
 		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
 		const std::string ext = file.getExtension();
 
-		return ext == ".php";
+		return ext == ".py";
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{

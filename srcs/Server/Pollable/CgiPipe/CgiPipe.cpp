@@ -68,7 +68,7 @@ void CgiPipe::waitChild()
 void CgiPipe::onPollIn()
 {
 	char buffer[8192] = {'\0'};
-	int	 bytes_read	  = read(m_fd, buffer, 4096);
+	int	 bytes_read	  = read(m_fd, buffer, 8192);
 
 	if (bytes_read > 0)
 	{
@@ -85,7 +85,8 @@ void CgiPipe::onPollIn()
 	// 	m_connectionClosed = true;
 	// 	return;
 	// }
-	std::cerr << "Read error" << std::endl;
+	if (bytes_read < 0)
+		std::cerr << "Read error" << std::endl;
 	onError();
 }
 
