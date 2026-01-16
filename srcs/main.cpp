@@ -29,10 +29,6 @@ void testPrintAddress()
 	myMap["two"]   = 2;
 	myMap["three"] = 3;
 	Logger::log("Address of myMap: " + LoggerJson::get(myMap, true));
-
-	char *str = NULL;
-	
-	Logger::log(str == Null ?: "null pointer");
 }
 
 int main()
