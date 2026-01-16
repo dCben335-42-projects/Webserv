@@ -4,7 +4,7 @@ Pollable::Pollable(int f) :
 	m_fd(f),
 	m_events(0),
 	m_revents(0),
-	m_connectionClosed(0)
+	m_connectionClosed(false)
 {
 }
 

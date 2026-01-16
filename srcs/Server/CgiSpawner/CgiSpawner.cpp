@@ -29,21 +29,21 @@ int CgiSpawner::spawn(const std::string &script_path)
 	if (m_pid == 0)
 		childprocess(script_path);
 	parentProcess();
-	// return m_stdout_pipe[0];
-	return m_sockPair[0];
+	return m_stdout_pipe[0];
+	// return m_sockPair[0];
 }
 
 void CgiSpawner::setupPipes()
 {
-	// TODO safe this
-	socketpair(AF_UNIX, SOCK_STREAM, 0, m_sockPair);
+	// if (socketpair(AF_UNIX, SOCK_STREAM, 0, m_sockPair) != 0)
+	// 	std::cerr << "Socketpair error :" << std::endl;
 	// if (m_has_post_data)
 	// {
-	// if (pipe(m_stdin_pipe) == -1)
-	// std::cerr << "Pipe creation failed" << std::endl;
+	if (pipe(m_stdin_pipe) == -1)
+		std::cerr << "Pipe creation failed" << std::endl;
 	// }
-	// if (pipe(m_stdout_pipe) == -1)
-	// std::cerr << "Pipe creation failed" << std::endl;
+	if (pipe(m_stdout_pipe) == -1)
+		std::cerr << "Pipe creation failed" << std::endl;
 }
 
 std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &value)
@@ -90,20 +90,29 @@ void CgiSpawner::childprocess(const std::string &script_path)
 		  const_cast<char *>(script_path.c_str()),
 		  NULL};
 	generateEnvp();
-	// if (dup2(m_stdout_pipe[1], STDOUT_FILENO) == -1)
-	// 	throw std::runtime_error("Dup2 failed");
-	// close(m_stdout_pipe[0]);
-	// close(m_stdout_pipe[1]);
-	if (dup2(m_sockPair[1], STDIN_FILENO) == -1)
-		std::cerr << "Dup2 failed: " << std::endl;
-	if (dup2(m_sockPair[1], STDOUT_FILENO) == -1)
-		std::cerr << "Dup2 failed: " << std::endl;
-	// if (dup2(m_sockPair[1], STDERR_FILENO) == -1)
+
+
+	if (dup2(m_stdin_pipe[0], STDIN_FILENO) == -1)
+		throw std::runtime_error("Dup2 failed");
+	if (dup2(m_stdout_pipe[1], STDOUT_FILENO) == -1)
+		throw std::runtime_error("Dup2 failed");
+	close(m_stdout_pipe[0]);
+	close(m_stdout_pipe[1]);
+	close(m_stdin_pipe[0]);
+	close(m_stdin_pipe[1]);
+
+
+	// Socketpair part
+	// close(m_sockPair[0]);
+	// if (dup2(m_sockPair[1], STDIN_FILENO) == -1)
 	// 	std::cerr << "Dup2 failed: " << std::endl;
-	close(m_sockPair[0]);
-	close(m_sockPair[1]);
+	// if (dup2(m_sockPair[1], STDOUT_FILENO) == -1)
+	// 	std::cerr << "Dup2 failed: " << std::endl;
+	// close(m_sockPair[1]);
+
+
 	execve(argv[0], argv, m_envp);
-	perror("execve:");
+	perror("execve: ");
 	exit(127);
 }
 
@@ -117,8 +126,12 @@ void CgiSpawner::generateEnvp()
 
 void CgiSpawner::parentProcess()
 {
-	write(m_sockPair[1], body, std::strlen(body));
-	close(m_sockPair[1]);
+	// write(m_sockPair[0], body, std::strlen(body));
+	// close(m_sockPair[1]);
+	write(m_stdin_pipe[1], body, std::strlen(body));
+	close(m_stdin_pipe[1]);
+	close(m_stdin_pipe[0]);
+	close(m_stdout_pipe[1]);
 	// closeUnusedPipes();
 	// if (m_has_post_data)
 	// {

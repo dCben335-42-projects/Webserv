@@ -306,7 +306,8 @@ void Client::spawnCgi(const std::string &script_path)
 
 	if (stdout_fd >= 0)
 	{
-		CgiPipe *cgi_pipe = new CgiPipe(stdout_fd, this, script_path);
+		CgiPipe *cgi_pipe = new CgiPipe(spawner.getPid(),
+										stdout_fd, this, script_path);
 		EventLoop::addHandler(cgi_pipe);
 		m_events = 0;
 	}

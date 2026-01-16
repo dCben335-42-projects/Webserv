@@ -3,11 +3,17 @@
 #include <sys/wait.h>
 #include <cstring>
 #include <fcntl.h>
+#include "config.hpp"
+#include <errno.h>
 
-CgiPipe::CgiPipe(int stdout_pipe_fd, Client *client, const std::string &script_path) :
+CgiPipe::CgiPipe(
+	pid_t			   pid,
+	int				   stdout_pipe_fd,
+	Client			  *client,
+	const std::string &script_path) :
 	Pollable(stdout_pipe_fd),
 	m_client(client),
-	m_pid(-1),
+	m_pid(pid),
 	m_scriptPath(script_path)
 {
 	m_events = POLLIN;
@@ -15,6 +21,7 @@ CgiPipe::CgiPipe(int stdout_pipe_fd, Client *client, const std::string &script_p
 
 CgiPipe::~CgiPipe()
 {
+	std::cerr << RED "destructor" << RESET << std::endl;
 	if (m_pid > 0)
 	{
 		kill(m_pid, SIGTERM);
@@ -41,7 +48,6 @@ void CgiPipe::waitChild()
 			exit_status = WEXITSTATUS(status);
 			if (exit_status == 0)
 			{
-				// close(m_fd);
 				m_events = 0;
 				m_client->setEvents(POLLOUT);
 			}
@@ -59,11 +65,42 @@ void CgiPipe::waitChild()
 	}
 }
 
+
+#include <dirent.h>
+#include <vector>
+#include <string>
+#include "Logger.hpp"
+#include "stdlib.h"
+#include "stdio.h"
+#include "unistd.h"
+#include <poll.h>
+
+
+std::vector<int> get_open_fds()
+{
+	std::vector<int> fds;
+	int				 max_fd = sysconf(_SC_OPEN_MAX);
+
+	for (int fd = 0; fd < max_fd; ++fd)
+	{
+		if (fcntl(fd, F_GETFD) != -1 || errno != EBADF)
+		{
+			fds.push_back(fd);
+		}
+	}
+	log(fds);
+	return fds;
+}
+
+
 void CgiPipe::onPollIn()
 {
 	char	buffer[8192] = {'\0'};
-	ssize_t bytes_read	 = read(m_fd, buffer, sizeof(buffer));
+	ssize_t bytes_read	 = read(m_fd, buffer, 8192);
 
+	std::cerr << strerror(errno) << std::endl;
+	std::cerr << m_fd << std::endl;
+	get_open_fds();
 	if (bytes_read > 0)
 	{
 		HttpResponse &res = m_client->getResponse();
@@ -71,19 +108,19 @@ void CgiPipe::onPollIn()
 	}
 	if (bytes_read == 0)
 	{
-		close(m_fd);
+		std::cerr << "salope" << std::endl;
 		waitChild();
 		m_events = 0;
 		m_client->setEvents(POLLOUT);
 		m_connectionClosed = true;
 		return;
 	}
+	std::cerr << "ICI Ta mere" << std::endl;
 	onError();
 }
 
 void CgiPipe::onError()
 {
-	close(m_fd);
 	m_events		  = 0;
 	HttpResponse &res = m_client->getResponse();
 	// Send 500 error to client

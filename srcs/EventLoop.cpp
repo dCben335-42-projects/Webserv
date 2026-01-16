@@ -56,6 +56,7 @@ void EventLoop::run()
 			const int fd = m_pollFds[i].fd;
 			if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
 			{
+				std::cerr << "QUI A LE PROBLEME DE FOU LÀ ?" << std::endl;
 				deletePollable(fd, i);
 				continue;
 			}
@@ -104,7 +105,7 @@ void EventLoop::deletePollable(const int &fd, const size_t &index)
 		m_handlers.remove(fd);
 	}
 	m_pollFds.remove(index);
-	close(fd);
+	// close(fd);
 }
 
 void EventLoop::updatePollStatus()

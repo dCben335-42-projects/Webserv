@@ -13,10 +13,10 @@ class CgiSpawner
 	private:
 		Client		  *m_client;
 		VirtualServer *m_server;
-		// int			   m_stdin_pipe[2];
-		// int			   m_stdout_pipe[2];
+		int			   m_stdin_pipe[2];
+		int			   m_stdout_pipe[2];
 
-		int m_sockPair[2];
+		// int m_sockPair[2];
 
 		pid_t			 m_pid;
 		bool			 m_has_post_data;
@@ -32,10 +32,15 @@ class CgiSpawner
 		void		writePostData();
 		void		closeUnusedPipes();
 
+
 	public:
 		CgiSpawner(Client *client, VirtualServer *server);
 
-		int spawn(const std::string &script_path);
+		int	  spawn(const std::string &script_path);
+		pid_t getPid() const
+		{
+			return m_pid;
+		}
 };
 
 #endif

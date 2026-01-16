@@ -2,9 +2,9 @@
 import os
 import sys
 
-request_method = os.environ.get('REQUEST_METHOD', 'GET')
-
 body = sys.stdin.read().strip()
+
+request_method = os.environ.get('REQUEST_METHOD', 'GET')
 
 print("HTTP/1.1 200 OK\r")
 print("Content-type: text/html\r")
