@@ -207,3 +207,38 @@ std::string String::removeDuplicateSlashes(const std::string &path)
 	}
 	return result;
 }
+#include <iostream>
+/**
+ *
+ * @brief Splits a string into tokens based on specified delimiters.
+ *
+ * @param str The input string to be split.
+ * @param delimiters A C-string containing delimiter characters.
+ *
+ * @return A vector of strings, each representing a token from the input string.
+ *
+ */
+Vec<std::string> String::split(const std::string &str, const char *delimiters)
+{
+	Vec<std::string> result;
+	size_t			 start = 0;
+	size_t			 end   = 0;
+
+	while (end != std::string::npos)
+	{
+		end				  = str.find_first_of(delimiters, start);
+		std::string token = str.substr(start, end - start);
+		if (!token.empty())
+			result.push_back(token);
+		start = (end == std::string::npos) ? end : end + 1;
+	}
+
+
+	std::cout << "Split result for string: \"" << str << "\" with delimiters: \"" << delimiters << "\"" << std::endl;
+	// loop to print all the tokens
+	for (size_t i = 0; i < result.size(); ++i)
+	{
+		std::cout << "Token " << i << ": " << result[i] << std::endl;
+	}
+	return result;
+}
