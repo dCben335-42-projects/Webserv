@@ -5,8 +5,6 @@
 #include "config.hpp"
 #include <unistd.h>
 
-char body[80] = "My name is Benoit";
-
 CgiSpawner::CgiSpawner(Client *client, VirtualServer *server) :
 	m_client(client),
 	m_server(server),
@@ -14,6 +12,7 @@ CgiSpawner::CgiSpawner(Client *client, VirtualServer *server) :
 	m_has_post_data(false)
 {
 	m_has_post_data = !m_client->getRequest().getBody().empty();
+	std::cout << m_has_post_data << std::endl;
 }
 
 int CgiSpawner::spawn(const std::string &script_path)
@@ -61,16 +60,14 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar("SERVER_NAME", PROJECT_NAME));
 	m_env.push(makeEnvVar("SCRIPT_NAME", req.getTarget()));
 	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
+	// m_env.push(makeEnvVar("REDIRECT_STATUS", "1"));
 	m_env.push(makeEnvVar("PATH_INFO", "\"\""));
 
-	m_env.push(makeEnvVar("CONTENT_TYPE", "test/plain"));
-	m_env.push(makeEnvVar("CONTENT_LENGTH", "20"));
-
-	// if (m_has_post_data)
-	// {
-	// 		m_env.push(makeEnvVar("CONTENT_TYPE", req.getHeader(HEADER_CONTENT_TYPE)));
-	// 		m_env.push(makeEnvVar("CONTENT_LENGTH", req.getHeader(HEADER_CONTENT_LENGTH)));
-	// }
+	if (m_has_post_data)
+	{
+		m_env.push(makeEnvVar("CONTENT_TYPE", req.getHeader(HEADER_CONTENT_TYPE)));
+		m_env.push(makeEnvVar("CONTENT_LENGTH", req.getHeader(HEADER_CONTENT_LENGTH)));
+	}
 }
 
 
@@ -86,12 +83,12 @@ void CgiSpawner::childprocess(const std::string &script_path)
 	generateEnvp();
 	if (dup2(m_stdin_pipe[0], STDIN_FILENO) == -1)
 		throw std::runtime_error("Dup2 failed");
+	close(m_stdin_pipe[1]);
+	close(m_stdin_pipe[0]);
 	if (dup2(m_stdout_pipe[1], STDOUT_FILENO) == -1)
 		throw std::runtime_error("Dup2 failed");
 	close(m_stdout_pipe[0]);
 	close(m_stdout_pipe[1]);
-	close(m_stdin_pipe[0]);
-	close(m_stdin_pipe[1]);
 	execve(argv[0], argv, m_envp);
 	perror("execve: ");
 	exit(127);
@@ -107,10 +104,11 @@ void CgiSpawner::generateEnvp()
 
 void CgiSpawner::parentProcess()
 {
-	write(m_stdin_pipe[1], body, std::strlen(body));
-	close(m_stdin_pipe[1]);
-	close(m_stdin_pipe[0]);
 	close(m_stdout_pipe[1]);
+	const std::string &body = m_client->getRequest().getBody();
+	write(m_stdin_pipe[1], body.data(), body.size());
+	close(m_stdin_pipe[0]);
+	close(m_stdin_pipe[1]);
 	// closeUnusedPipes();
 	// if (m_has_post_data)
 	// {
@@ -123,8 +121,8 @@ void CgiSpawner::writePostData()
 	// const std::string &body = m_client->getRequest().getBody();
 	// close(m_stdin_pipe[0]);
 	// ssize_t bytes_written = write(m_stdin_pipe[1],
-	//   body.data(),
-	//   body.size());
+	// 							  body.data(),
+	// 							  body.size());
 	// (void) bytes_written;
 	// (void) m_server;
 	// close(m_stdin_pipe[1]);
