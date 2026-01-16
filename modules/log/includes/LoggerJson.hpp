@@ -20,39 +20,34 @@ class LoggerJson
 {
 	private:
 		template <typename MapType>
-		static std::string mapGet(const MapType &m);
+		static std::string mapGet(const MapType &m, const bool getAddress = false);
 
 		template <typename VecType>
-		static std::string vectorGet(const VecType &vec);
+		static std::string vectorGet(const VecType &vec, const bool getAddress = false);
 
 		template <typename SetType>
-		static std::string setGet(const SetType &set);
-
-		template <typename SetType>
-		static std::string setGetAddress(const SetType &set);
+		static std::string setGet(const SetType &set, const bool getAddress = false);
 
 	public:
 		template <typename V>
-		static std::string get(const V &v);
+		static std::string get(const V &v, const bool getAddress = false);
 		template <typename V>
-		static std::string get(V *ptr);
+		static std::string get(V *ptr, const bool getAddress = false);
 
 		template <typename V>
-		static std::string get(const std::vector<V> &vec);
+		static std::string get(const std::vector<V> &vec, const bool getAddress = false);
 		template <typename V>
-		static std::string get(const Vec<V> &vec);
+		static std::string get(const Vec<V> &vec, const bool getAddress = false);
 
 		template <typename K, typename V>
-		static std::string get(const std::map<K, V> &m);
+		static std::string get(const std::map<K, V> &m, const bool getAddress = false);
 		template <typename K, typename V>
-		static std::string get(const Map<K, V> &m);
+		static std::string get(const Map<K, V> &m, const bool getAddress = false);
 
 		template <typename V>
-		static std::string get(const std::set<V> &set);
+		static std::string get(const std::set<V> &set, const bool getAddress = false);
 		template <typename V>
-		static std::string get(const Set<V> &set);
-		template <typename V>
-		static std::string get(const V &v, const bool getAddress);
+		static std::string get(const Set<V> &set, const bool getAddress = false);
 };
 
 #include "../srcs/LoggerJson.tpp"

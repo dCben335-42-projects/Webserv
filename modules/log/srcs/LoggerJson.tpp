@@ -12,7 +12,7 @@
 #define RESET "\033[0m"
 
 template <typename MapType>
-std::string LoggerJson::mapGet(const MapType &m)
+std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 {
 	std::string result = "\n" + Logger::indent() + "{\n";
 	Logger::incrementIndent();
@@ -29,20 +29,28 @@ std::string LoggerJson::mapGet(const MapType &m)
 		result += "\"";
 		result += ": ";
 
-		if (!is_string<typename MapType::mapped_type>::value)
+		if (getAddress)
 		{
-			Logger::incrementIndent();
-			result += "\n";
-			result += Logger::indent();
-			result += get(it->second);
-
-			Logger::decrementIndent();
+			std::ostringstream oss;
+			oss << &it->second;
+			result += oss.str();
 		}
 		else
 		{
-			result += "\"";
-			result += get(it->second);
-			result += "\"";
+			if (!is_string<typename MapType::mapped_type>::value)
+			{
+				result += "\n";
+				Logger::incrementIndent();
+				result += Logger::indent();
+				result += get(it->second);
+				Logger::decrementIndent();
+			}
+			else
+			{
+				result += "\"";
+				result += get(it->second);
+				result += "\"";
+			}
 		}
 
 		if (++it != end)
@@ -57,7 +65,7 @@ std::string LoggerJson::mapGet(const MapType &m)
 
 
 template <typename VectorType>
-std::string LoggerJson::vectorGet(const VectorType &vec)
+std::string LoggerJson::vectorGet(const VectorType &vec, const bool getAddress)
 {
 	(void) vec; // To avoid unused parameter warning for now
 	std::string result = "\n" + Logger::indent() + "[\n";
@@ -65,7 +73,7 @@ std::string LoggerJson::vectorGet(const VectorType &vec)
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		result += Logger::indent();
-		result += get(vec[i]);
+		result += get(vec[i], getAddress);
 		if (i + 1 < vec.size())
 			result += ",\n";
 	}
@@ -75,7 +83,7 @@ std::string LoggerJson::vectorGet(const VectorType &vec)
 }
 
 template <typename SetType>
-std::string LoggerJson::setGet(const SetType &set)
+std::string LoggerJson::setGet(const SetType &set, const bool getAddress)
 {
 	std::string result = "\n" + Logger::indent() + "[\n";
 	Logger::incrementIndent();
@@ -84,7 +92,7 @@ std::string LoggerJson::setGet(const SetType &set)
 	while (it != end)
 	{
 		result += Logger::indent();
-		result += get(*it);
+		result += get(*it, getAddress);
 		if (++it != end)
 			result += ",\n";
 	}
@@ -92,45 +100,26 @@ std::string LoggerJson::setGet(const SetType &set)
 	result += "\n" + Logger::indent() + "]";
 	return result;
 }
-
-
-template <typename SetType>
-std::string LoggerJson::setGetAddress(const SetType &set)
-{
-	std::string result = "\n" + Logger::indent() + "[\n";
-	Logger::incrementIndent();
-	typename SetType::const_iterator it	 = set.begin();
-	typename SetType::const_iterator end = set.end();
-	while (it != end)
-	{
-		result += Logger::indent();
-		std::ostringstream oss;
-		oss << *it;
-		result += oss.str();
-		if (++it != end)
-			result += ",\n";
-	}
-	Logger::decrementIndent();
-	result += "\n" + Logger::indent() + "]";
-	return result;
-}
-
-
 
 
 template <typename V>
-std::string LoggerJson::get(const V &v)
+std::string LoggerJson::get(const V &v, const bool getAddress)
 {
 	std::ostringstream oss;
+	if (getAddress)
+	{
+		oss << &v;
+		return oss.str();
+	}
 	oss << v;
 	return oss.str();
 }
 
 template <typename V>
-std::string LoggerJson::get(V *ptr)
+std::string LoggerJson::get(V *ptr, const bool getAddress)
 {
 	if (ptr)
-		return get(*ptr);
+		return get(*ptr, getAddress);
 	return "null";
 }
 
@@ -139,44 +128,38 @@ std::string LoggerJson::get(V *ptr)
 
 
 template <typename K, typename V>
-std::string LoggerJson::get(const std::map<K, V> &m)
+std::string LoggerJson::get(const std::map<K, V> &m, const bool getAddress)
 {
-	return mapGet(m);
+	return mapGet(m, getAddress);
 }
 template <typename K, typename V>
-std::string LoggerJson::get(const Map<K, V> &m)
+std::string LoggerJson::get(const Map<K, V> &m, const bool getAddress)
 {
-	return mapGet(m);
+	return mapGet(m, getAddress);
 }
 
 
 template <typename V>
-std::string LoggerJson::get(const std::vector<V> &vec)
+std::string LoggerJson::get(const std::vector<V> &vec, const bool getAddress)
 {
-	return vectorGet(vec);
+	return vectorGet(vec, getAddress);
 }
 template <typename V>
-std::string LoggerJson::get(const Vec<V> &vec)
+std::string LoggerJson::get(const Vec<V> &vec, const bool getAddress)
 {
-	return vectorGet(vec);
+	return vectorGet(vec, getAddress);
 }
 
 
-
 template <typename V>
-std::string LoggerJson::get(const std::set<V> &set)
+std::string LoggerJson::get(const std::set<V> &set, const bool getAddress)
 {
-	return setGet(set);
+	return setGet(set, getAddress);
 }
 template <typename V>
-std::string LoggerJson::get(const Set<V> &set)
+std::string LoggerJson::get(const Set<V> &set, const bool getAddress)
 {
-	return setGet(set);
-}
-template <typename V>
-std::string LoggerJson::get(const V &v, const bool getAddress)
-{
-	return getAddress ? setGetAddress(v) : get(v);
+	return setGet(set, getAddress);
 }
 
 
