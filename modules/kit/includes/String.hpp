@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include <cctype>
+#include "Vector.hpp"
 
 class String
 {
@@ -29,6 +30,8 @@ class String
 			const std::string &to);
 
 		static std::string removeDuplicateSlashes(const std::string &path);
+
+		static Vec<std::string> split(const std::string &str, const char *delimiters);
 };
 
 

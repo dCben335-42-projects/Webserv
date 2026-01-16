@@ -40,7 +40,10 @@ std::string HttpRequest::getQueryString() const
 {
 	return m_queryString;
 }
-
+Vec<std::string> HttpRequest::getSegments() const
+{
+	return m_segments;
+}
 
 // ANCHOR Setters
 void HttpRequest::setRawRequest(const std::string &rawRequest)
@@ -126,7 +129,8 @@ HttpRequest &HttpRequest::parse()
  */
 void HttpRequest::parseTargetQuery(const std::string &path)
 {
-	const size_t queryPos = m_target.find('?');
+	const size_t queryPos = path.find('?');
+	m_segments			  = String::split(path, "/");
 
 	if (queryPos != std::string::npos)
 	{
@@ -251,6 +255,7 @@ std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 	Logger::log(BLUE "Method: " + message.getMethod() + RESET);
 	Logger::log(GREEN "Target: " + message.getTarget() + RESET);
 	Logger::log(CYAN "Query String: " + message.getQueryString() + RESET);
+	Logger::log(CYAN "Segments: " + LoggerJson::get(message.getSegments()) + RESET);
 	Logger::log(YELLOW "Headers:");
 	Logger::log(message.getHeaders());
 	Logger::log(MAGENTA "Body:" RESET "\n");

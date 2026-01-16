@@ -7,8 +7,10 @@ int main()
 {
 	try
 	{
-		Lexer lex("config/def_language.txt");
-		Logger::FileMode mode = Logger::Append;
+		// Lexer lex("config/def_language.txt");
+		EventLoop::init();
+		EventLoop::run();
+		return 0;
 	}
 	catch (const std::exception &e)
 	{
