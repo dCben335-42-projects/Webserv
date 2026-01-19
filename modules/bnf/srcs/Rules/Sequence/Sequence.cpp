@@ -11,15 +11,14 @@ Sequence::~Sequence()
 {
 }
 
-void Sequence::addItem(const std::string &val)
+void Sequence::addItem(const ATerminalSymbol &val)
 {
-	m_terminalChars.push_back(startsWith(val, DQSQ));
-	items.push_back(val);
+	m_items.push_back(val);
 }
 
-Vec<std::string> Sequence::getItems() const
+Vec<ATerminalSymbol> Sequence::getItems() const
 {
-	return items;
+	return m_items;
 }
 
 const std::string Sequence::getTypeName() const
@@ -29,5 +28,5 @@ const std::string Sequence::getTypeName() const
 
 std::string Sequence::getPrintableValue() const
 {
-	return LoggerJson::get(items);
+	return LoggerJson::get(m_items);
 }

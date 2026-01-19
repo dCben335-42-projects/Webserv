@@ -13,12 +13,12 @@ class Option : public ARule
 	public:
 		Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 		~Option();
-		void			  addItem(const std::string &val);
-		Vec<std::string>  getItems() const;
-		const std::string getTypeName() const;
-		std::string		  getPrintableValue() const;
+		void				 addItem(const ATerminalSymbol &val);
+		Vec<ATerminalSymbol> getItems() const;
+		const std::string	 getTypeName() const;
+		std::string			 getPrintableValue() const;
 
 	private:
-		Vec<std::string> items;
+		Vec<ATerminalSymbol> m_items;
 };
 #endif

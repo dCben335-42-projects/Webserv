@@ -7,37 +7,36 @@ Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ru
 {
 }
 
-Symbol::Symbol(const std::string &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Symbol::Symbol(const ATerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
-	value = val;
+	m_items.push_back(val);
 }
 
 Symbol::~Symbol()
 {
 }
 
-Vec<std::string> Symbol::getItems() const
+Vec<ATerminalSymbol> Symbol::getItems() const
 {
-	Vec<std::string> items;
-	items.push_back(value);
-	return items;
+	return m_items;
 }
 
-
-void Symbol::addItem(const std::string &val)
+void Symbol::addItem(const ATerminalSymbol &val)
 {
-	m_terminalChars.push_back(startsWith(val, DQSQ));
-	value = val;
+	m_items.clear();
+	m_items.push_back(val);
 }
 
 const std::string &Symbol::getValue() const
 {
-	return value;
+	if (m_items.empty())
+		throw std::runtime_error("Symbol::getValue(): No items in symbol");
+	return m_items[0].getValue();
 }
 
 std::string Symbol::getPrintableValue() const
 {
-	return LoggerJson::get(value);
+	return LoggerJson::get(m_items[0].getValue());
 }
 
 const std::string Symbol::getTypeName() const

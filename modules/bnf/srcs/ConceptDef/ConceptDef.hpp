@@ -13,13 +13,14 @@ class ConceptDef
 		ConceptDef(const std::string conceptName);
 		~ConceptDef();
 
-		Vec<ARule *>	 getRules();
-		Vec<ARule *>	 getValues() const;
-		ARule			*getARule(size_t index = 0);
-		Vec<std::string> getItemsOfARule(size_t index = 0);
-		Vec<std::string> getItems();
-		Vec<std::string> getItemsWithOption();
-		bool			 getIsTerminal() const;
+		Vec<ARule *>		 getRules();
+		Vec<ARule *>		 getValues() const;
+		ARule				*getARule(size_t index = 0);
+		Vec<ATerminalSymbol> getItemsOfARule(size_t index = 0);
+		Vec<ATerminalSymbol> getItems();
+		Vec<std::string>	 getItemsValue();
+		Vec<std::string>	 getItemsWithOption();
+		bool				 getIsTerminal() const;
 
 		void finish();
 		void setRule(ARule *rule);

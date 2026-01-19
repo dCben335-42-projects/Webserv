@@ -4,6 +4,7 @@
 #include "bnf_defs.hpp"
 #include "Vector.hpp"
 #include "Set.hpp"
+#include "../TerminalSymbol/ATerminalSymbol.hpp"
 
 using bnf::ERuleType;
 
@@ -14,36 +15,35 @@ class Concept;
 class ARule
 {
 	protected:
-		const ERuleType	  m_type;
-		const std::string m_conceptName;
-		const size_t	  m_conceptDefIndex;
-		const size_t	  m_ruleIndex;
-		Vec<bool>		  m_terminalChars;
-		Concept			 *m_conceptPtr;
-		Set<ARule *>	  m_nextRules;
+		const ERuleType		 m_type;
+		const std::string	 m_conceptName;
+		const size_t		 m_conceptDefIndex;
+		const size_t		 m_ruleIndex;
+		Vec<bool>			 m_terminalChars;
+		Concept				*m_conceptPtr;
+		Set<ARule *>		 m_nextRules;
+		Vec<ATerminalSymbol> m_items;
 
 		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 
 	public:
 		virtual ~ARule();
 
-		ERuleType				  getType() const;
-		virtual const std::string getTypeName() const			  = 0;
-		virtual void			  addItem(const std::string &val) = 0;
-		virtual Vec<std::string>  getItems() const				  = 0;
-		virtual std::string		  getPrintableValue() const		  = 0;
-		static BnfMap			  getMap(const std::string &opener);
-		static bool				  isKeyWord(const std::string &word, bool onlyClose);
+		ERuleType					 getType() const;
+		virtual const std::string	 getTypeName() const				 = 0;
+		virtual void				 addItem(const ATerminalSymbol &val) = 0;
+		virtual Vec<ATerminalSymbol> getItems() const					 = 0;
+		virtual std::string			 getPrintableValue() const			 = 0;
+		static BnfMap				 getMap(const std::string &opener);
+		static bool					 isKeyWord(const std::string &word, bool onlyClose);
 
-		const std::string	getConceptName() const;
-		size_t				getConceptDefIndex() const;
-		size_t				getRuleIndex() const;
-		const Set<ARule *> *getNextRules(Vec<ARule *> supRuleParent) const;
-		// Set<ARule *>	   *getNextRules(Vec<ARule *> supRuleParent);
-		Vec<ARule *> getNextRules(Vec<ARule *> supRuleParent);
-		std::string	 printNext() const;
-		bool		 isTerminalCharAt(size_t index) const;
-		ARule		*tryGetAdjacentRules();
+		const std::string getConceptName() const;
+		size_t			  getConceptDefIndex() const;
+		size_t			  getRuleIndex() const;
+		Vec<ARule *>	  getNextRules(Vec<ARule *> supRuleParent);
+		std::string		  printNext() const;
+		bool			  isTerminalCharAt(size_t index) const;
+		ARule			 *tryGetAdjacentRules();
 
 		void	 setNextRules(ARule *nextRule);
 		Concept *getConceptPtr() const;

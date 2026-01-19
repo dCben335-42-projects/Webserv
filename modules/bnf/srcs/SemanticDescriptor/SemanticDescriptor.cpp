@@ -123,6 +123,8 @@ void SemanticDescriptor::parseBlocks()
 }
 
 
+
+
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
 	Concept *concept;
@@ -158,7 +160,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			{
 				if (!validate_string_strict(word))
 					throw InvalidConceptNameException(word);
-				arule->addItem(word);
+				arule->addItem(ATerminalSymbol::specify(word));
 				if (!map.hasClosure)
 					break;
 			}
@@ -179,13 +181,13 @@ void SemanticDescriptor::addParent()
 		{
 			V_FOREACH(ARule *, ruleIt, (*conceptIt)->getValues())
 			{
-				Concept			*conceptPtr;
-				ARule			*rule  = *ruleIt;
-				Vec<std::string> items = rule->getItems();
+				Concept				*conceptPtr;
+				ARule				*rule  = *ruleIt;
+				Vec<ATerminalSymbol> items = rule->getItems();
 
 				for (size_t i = 0; i < items.size(); ++i)
 				{
-					if (m_concepts.try_get(items[i], conceptPtr))
+					if (m_concepts.try_get(items[i].getValue(), conceptPtr))
 						conceptPtr->addParent(rule);
 				}
 			}
@@ -195,17 +197,17 @@ void SemanticDescriptor::addParent()
 
 void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 {
-	Concept			*conceptPtr;
-	Vec<std::string> conceptPathsCopy;
-	Vec<std::string> items = rule->getItems();
+	Concept				*conceptPtr;
+	Vec<std::string>	 conceptPathsCopy;
+	Vec<ATerminalSymbol> items = rule->getItems();
 	for (size_t i = 0; i < items.size(); ++i)
 	{
-		if (conceptPaths.contains(items[i]))
+		if (conceptPaths.contains(items[i].getValue()))
 			continue;
-		if (m_concepts.try_get(items[i], conceptPtr))
+		if (m_concepts.try_get(items[i].getValue(), conceptPtr))
 		{
 			conceptPathsCopy = conceptPaths;
-			conceptPathsCopy.push_back(items[i]);
+			conceptPathsCopy.push_back(items[i].getValue());
 			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
 			{
 				ndw((*conceptIt)->getARule(0), conceptPathsCopy);
@@ -225,20 +227,20 @@ void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 
 void SemanticDescriptor::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, Map<ARule *, ARulePaths> &mapPath, std::string conceptName) const
 {
-	Concept			*conceptPtr;
-	Vec<std::string> conceptPathsCopy;
-	Vec<std::string> items = rule->getItems();
+	Concept				*conceptPtr;
+	Vec<std::string>	 conceptPathsCopy;
+	Vec<ATerminalSymbol> items = rule->getItems();
 
 	path.push_back(rule);
 
 	for (size_t i = 0; i < items.size(); ++i)
 	{
-		if (conceptPaths.contains(items[i]))
+		if (conceptPaths.contains(items[i].getValue()))
 			continue;
-		if (m_concepts.try_get(items[i], conceptPtr))
+		if (m_concepts.try_get(items[i].getValue(), conceptPtr))
 		{
 			conceptPathsCopy = conceptPaths;
-			conceptPathsCopy.push_back(items[i]);
+			conceptPathsCopy.push_back(items[i].getValue());
 			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
 			{
 				ndw2((*conceptIt)->getARule(0), conceptPathsCopy, path, mapPath, conceptName);
@@ -377,25 +379,25 @@ bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNod
 
 bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 {
-	Vec<std::string> items;
-	unsigned int	 hasInfRecursivity;
+	Vec<ATerminalSymbol> items;
+	unsigned int		 hasInfRecursivity;
 
 	for (ConceptList::const_iterator it = node.getConcepts().begin(); it != node.getConcepts().end(); ++it)
 	{
 		items			  = (*it)->getItems();
 		hasInfRecursivity = 0;
 
-		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+		for (Vec<ATerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 		{
-			const std::string &item = *itemIt;
+			const ATerminalSymbol &item = *itemIt;
 
-			if (startsWith(item, DQSQ))
+			if (item.isTerminalChar())
 				continue;
 
-			if (!isInMap(m_concepts, item))
-				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
+			if (!isInMap(m_concepts, item.getValue()))
+				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item.getValue());
 
-			hasInfRecursivity += isInContainer(node.getPath(), item) || hasRecursiveErrorOnNewNode(item, &node);
+			hasInfRecursivity += isInContainer(node.getPath(), item.getValue()) || hasRecursiveErrorOnNewNode(item.getValue(), &node);
 		}
 		if (!hasInfRecursivity)
 			node.setHasInfRecursivity(false);

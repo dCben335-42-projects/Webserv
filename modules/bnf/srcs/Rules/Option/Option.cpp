@@ -10,15 +10,14 @@ Option::~Option()
 {
 }
 
-void Option::addItem(const std::string &val)
+void Option::addItem(const ATerminalSymbol &val)
 {
-	m_terminalChars.push_back(startsWith(val, DQSQ));
-	items.push_back(val);
+	m_items.push_back(val);
 }
 
-Vec<std::string> Option::getItems() const
+Vec<ATerminalSymbol> Option::getItems() const
 {
-	return items;
+	return m_items;
 }
 
 const std::string Option::getTypeName() const
@@ -28,5 +27,5 @@ const std::string Option::getTypeName() const
 
 std::string Option::getPrintableValue() const
 {
-	return LoggerJson::get(items);
+	return LoggerJson::get(m_items);
 }
