@@ -7,7 +7,6 @@
 #include "Vector.hpp"
 #include <set>
 
-
 /**
  *
  * @brief Utility class to convert values to JSON-like strings for logging

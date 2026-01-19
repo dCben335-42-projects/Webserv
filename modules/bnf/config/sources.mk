@@ -3,6 +3,7 @@ BNF_SRCS += ./srcs/ConceptDef/ConceptDef.cpp
 BNF_SRCS += ./srcs/ConceptNode/ConceptNode.cpp
 BNF_SRCS += ./srcs/Exception/SemanticException.cpp
 BNF_SRCS += ./srcs/Parser/Parser.cpp
+BNF_SRCS += ./srcs/PathSegment/PathSegment.cpp
 BNF_SRCS += ./srcs/Rules/ARule.cpp
 BNF_SRCS += ./srcs/Rules/Group/Group.cpp
 BNF_SRCS += ./srcs/Rules/Option/Option.cpp

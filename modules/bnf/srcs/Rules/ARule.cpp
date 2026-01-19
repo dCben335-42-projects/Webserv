@@ -18,14 +18,6 @@ ARule::~ARule()
 {
 }
 
-ARule &ARule::operator=(const ARule &other)
-{
-	if (this == &other)
-		return *this;
-
-	return *this;
-}
-
 ERuleType ARule::getType() const
 {
 	return m_type;
@@ -113,33 +105,60 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-const std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
-{
-	if (!m_nextRules.empty())
-		return &m_nextRules;
-	if (supRuleParent.size() == 1)
-		return NULL;
-	ARule *val = supRuleParent.back();
-	supRuleParent.pop_back();
-	return val->getNextRules(supRuleParent);
-}
-
-std::set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
+Vec<ARule *> ARule::getNextRules(Vec<ARule *> supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
-		if (supRuleParent.size() == 0)
+		if (supRuleParent.size() == 1)
 		{
-			return NULL;
+			return Vec<ARule *>();
 		}
 		else
 		{
-			ARule *val = supRuleParent.back();
 			supRuleParent.pop_back();
+			ARule *val = supRuleParent.back();
 			return val->getNextRules(supRuleParent);
 		}
 	}
-	return &m_nextRules;
+	supRuleParent.back() = *m_nextRules.begin();
+	return supRuleParent;
+}
+
+// const Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
+// {
+// 	if (!m_nextRules.empty())
+// 		return &m_nextRules;
+// 	if (supRuleParent.size() == 1)
+// 		return NULL;
+// 	ARule *val = supRuleParent.back();
+// 	supRuleParent.pop_back();
+// 	return val->getNextRules(supRuleParent);
+// }
+
+// Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
+// {
+// 	if (m_nextRules.empty())
+// 	{
+// 		if (supRuleParent.size() == 0)
+// 		{
+// 			return NULL;
+// 		}
+// 		else
+// 		{
+// 			ARule *val = supRuleParent.back();
+// 			supRuleParent.pop_back();
+// 			return val->getNextRules(supRuleParent);
+// 		}
+// 	}
+// 	return &m_nextRules;
+// }
+
+
+
+ARule *ARule::tryGetAdjacentRules()
+{
+	Set<ARule *>::iterator it = m_nextRules.begin();
+	return *it;
 }
 
 std::string ARule::printNext() const
@@ -159,16 +178,21 @@ bool ARule::isTerminalCharAt(size_t index) const
 	return m_terminalChars[index];
 }
 
+Concept *ARule::getConceptPtr() const
+{
+	return m_conceptPtr;
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << "{\n";
 	Logger::incrementIndent();
-	os << Logger::indent() << "\"position\": " << "\"" << data.getConceptName() << "_" << data.getConceptDefIndex() << "\",\n";
-	os << Logger::indent() << "\"type\": " << "\"" << data.getTypeName() << "\",\n";
-	os << Logger::indent() << "\"index\": " << data.getRuleIndex() << ",\n";
-	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
-	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
-	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";
+	os << Logger::indent() << "position: " << data.getConceptName() << "_" << data.getConceptDefIndex() << ",\n"
+	   << Logger::indent() << "type: " << data.getTypeName() << ",\n"
+	   << Logger::indent() << "index: " << data.getRuleIndex() << ",\n"
+	   << Logger::indent() << "ptr: " << &data << ",\n"
+	   << Logger::indent() << "content: " << data.getPrintableValue() << "\n"
+	   << Logger::indent() << "next: " << data.printNext() << "\n";
 	Logger::decrementIndent();
 	os << Logger::indent() << "}";
 	return os;

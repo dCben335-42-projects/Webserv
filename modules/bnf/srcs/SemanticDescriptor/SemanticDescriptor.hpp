@@ -19,18 +19,18 @@
 #include "../Exception/EmptyConceptNameException.hpp"
 
 typedef Vec<ARule *>   ARulePath;
-typedef Vec<ARulePath> ARulePaths;
+typedef Set<ARulePath> ARulePaths;
 
 class SemanticDescriptor
 {
 	private:
-		ConceptNode		*tree;
-		Vec<std::string> blocks;
-		Map<ConceptNode> m_data;
-		Vec<Concept>	 m_concepts_data;
-		Map<ARulePaths>	 m_startPath;
-		Map<Concept *>	 m_concepts;
-		std::string		 m_lastKey;
+		ConceptNode				*tree;
+		Vec<std::string>		 blocks;
+		Map<ConceptNode>		 m_data;
+		Vec<Concept>			 m_concepts_data;
+		Map<ARule *, ARulePaths> m_startPath;
+		Map<Concept *>			 m_concepts;
+		std::string				 m_lastKey;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);
@@ -46,19 +46,23 @@ class SemanticDescriptor
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void addParent();
 		void findAllNext();
-		void ndw(Vec<std::string> &items, ARule *rule, Vec<std::string> &conceptPaths);
+		void ndw(ARule *rule, Vec<std::string> &conceptPaths);
+		void ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, Map<ARule *, ARulePaths> &mapPath, std::string conceptName) const;
+		void printStartPath();
 
 	public:
 		SemanticDescriptor();
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		Map<Concept *> getConcepts() const;
-		Concept		 *&getConcept(const std::string &key);
-		const Concept *getConcept(const std::string &key) const;
+		Map<ARule *, ARulePaths> getStartPath() const;
+		Map<Concept *>			 getConcepts() const;
+		Concept				   *&getConcept(const std::string &key);
+		const Concept			*getConcept(const std::string &key) const;
 		// const Concept *&getConcept(const std::string &key) const;
 		// bool		 tryGetConcept(const std::string &key, ConceptList &conceptList) const;
-		ConceptNode *getTree() const;
+		ConceptNode				*getTree() const;
+		Map<ARule *, ARulePaths> getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

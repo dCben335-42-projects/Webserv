@@ -193,57 +193,163 @@ void SemanticDescriptor::addParent()
 	}
 }
 
-
-
-
-
-void SemanticDescriptor::ndw(Vec<std::string> &items, ARule *rule, Vec<std::string> &conceptPaths)
+void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 {
 	Concept			*conceptPtr;
 	Vec<std::string> conceptPathsCopy;
+	Vec<std::string> items = rule->getItems();
 	for (size_t i = 0; i < items.size(); ++i)
 	{
 		if (conceptPaths.contains(items[i]))
 			continue;
 		if (m_concepts.try_get(items[i], conceptPtr))
 		{
-			Vec<ConceptDef *> defs = conceptPtr->getDefinitions();
-
 			conceptPathsCopy = conceptPaths;
 			conceptPathsCopy.push_back(items[i]);
-			V_FOREACH(ConceptDef *, conceptIt, defs)
+			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
 			{
-				ARule			*arule	  = (*conceptIt)->getARule(0);
-				Vec<std::string> subItems = arule->getItems();
-				ndw(subItems, arule, conceptPathsCopy);
+				ndw((*conceptIt)->getARule(0), conceptPathsCopy);
 			}
+			continue;
 		}
-		else
+		for (size_t j = 0; j < conceptPaths.size(); ++j)
 		{
-			for (size_t j = 0; j < conceptPaths.size(); ++j)
-			{
-				m_concepts.get(conceptPaths[j])->addTerminalChar(rule); // Peut etre faire en map  (key)char -> (value)set<ARule *>
-			}
+			m_concepts.get(conceptPaths[j])->addTerminalChar(rule); // Peut etre faire en map  (key)char -> (value)set<ARule *>
 		}
 	}
 }
 
 
 
+
+
+void SemanticDescriptor::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, Map<ARule *, ARulePaths> &mapPath, std::string conceptName) const
+{
+	Concept			*conceptPtr;
+	Vec<std::string> conceptPathsCopy;
+	Vec<std::string> items = rule->getItems();
+
+	path.push_back(rule);
+
+	for (size_t i = 0; i < items.size(); ++i)
+	{
+		if (conceptPaths.contains(items[i]))
+			continue;
+		if (m_concepts.try_get(items[i], conceptPtr))
+		{
+			conceptPathsCopy = conceptPaths;
+			conceptPathsCopy.push_back(items[i]);
+			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
+			{
+				ndw2((*conceptIt)->getARule(0), conceptPathsCopy, path, mapPath, conceptName);
+			}
+			continue;
+		}
+	}
+
+	Set<ARule *> terminalChars = m_concepts.get(conceptName)->getTerminalChars();
+	for (Set<ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
+	{
+		if (rule == (*it))
+		{
+			if (!mapPath.has(rule))
+			{
+				mapPath.set(rule, ARulePaths());
+			}
+			mapPath.get(rule).insert(path);
+		}
+	}
+}
+
 void SemanticDescriptor::findAllNext()
 {
 	Vec<std::string> conceptPaths;
+	ARulePath		 path;
+
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
 		conceptPaths.push_back((*it).first);
 		V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
 		{
-			ARule			*arule	  = (*conceptIt)->getARule(0);
-			Vec<std::string> subItems = arule->getItems();
-			ndw(subItems, arule, conceptPaths);
+			ndw((*conceptIt)->getARule(0), conceptPaths);
 		}
 		conceptPaths.clear();
 	}
+
+	m_startPath = getPathsTerminalChars(ARulePaths(), CURSOR);
+	conceptPaths.clear();
+	// printStartPath();
+}
+
+Map<ARule *, ARulePaths> SemanticDescriptor::getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const
+{
+	Vec<std::string>		 conceptPaths;
+	Map<ARule *, ARulePaths> mapPath;
+	ARulePath				 path;
+
+	conceptPaths.push_back(conceptName);
+
+	V_FOREACH(ConceptDef *, conceptIt, m_concepts.get(conceptName)->getDefinitions())
+	{
+		ndw2((*conceptIt)->getARule(0), conceptPaths, path, mapPath, conceptName);
+	}
+	if (prefixs.empty())
+		return mapPath;
+
+	Map<ARule *, ARulePaths> mapPathPrefixed;
+
+	for (Map<ARule *, ARulePaths>::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
+	{
+		mapPathPrefixed.set(it->first, ARulePaths());
+	}
+
+	for (Map<ARule *, ARulePaths>::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
+	{
+		// Logger::log("Processing rule: " + LoggerJson::get(*(it->first), true));
+		ARulePaths *paths = &mapPathPrefixed.get(it->first);
+		for (ARulePaths::iterator x = prefixs.begin(); x != prefixs.end(); ++x)
+		{
+
+
+			ARulePath vec1 = *x;
+			// Logger::log("vec1: " + LoggerJson::get(vec1, true));
+			// Logger::log("it->second size: " + LoggerJson::get(it->second.size()));
+
+			for (ARulePaths::iterator j = it->second.begin(); j != it->second.end(); ++j)
+			{
+				// Logger::log("\ndwid\n");
+				ARulePath vec2 = *j;
+				vec1.insert(vec1.end(), vec2.begin(), vec2.end());
+				// Logger::log("vec1-2: " + LoggerJson::get(vec1, true));
+				paths->insert(vec1);
+			}
+		}
+	}
+	return mapPathPrefixed;
+}
+
+// Map<ARule *, ARulePaths> getMapPath
+
+// void SemanticDescriptor::printStartPath()
+// {
+// 	for (Map<ARule *, ARulePaths>::iterator it = m_startPath.begin(); it != m_startPath.end(); ++it)
+// 	{
+// 		Logger::log(LoggerJson::get(*(it->first), true) + "(" + LoggerJson::get(it->second.size()) + " paths) : ");
+// 		for (size_t i = 0; i < it->second.size(); ++i)
+// 		{
+// 			Logger::log("[");
+// 			for (size_t j = 0; j < it->second[i].size(); ++j)
+// 			{
+// 				Logger::log(LoggerJson::get(*(it->second[i][j]), true) + (j + 1 < it->second[i].size() ? ", " : ""));
+// 			}
+// 			Logger::log("]");
+// 		}
+// 	}
+// }
+
+Map<ARule *, ARulePaths> SemanticDescriptor::getStartPath() const
+{
+	return m_startPath;
 }
 
 void SemanticDescriptor::parseConceptName(std::string s)
@@ -312,7 +418,7 @@ Map<Concept *> SemanticDescriptor::getConcepts() const
 
 Concept *&SemanticDescriptor::getConcept(const std::string &key)
 {
-	return m_concepts[key];
+	return m_concepts.get(key);
 }
 
 const Concept *SemanticDescriptor::getConcept(const std::string &key) const

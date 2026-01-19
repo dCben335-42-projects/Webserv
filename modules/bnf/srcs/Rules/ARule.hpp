@@ -3,7 +3,8 @@
 
 #include "bnf_defs.hpp"
 #include "Vector.hpp"
-#include <set>
+#include "Set.hpp"
+#include "../TerminalSymbol/ATerminalSymbol.hpp"
 
 using bnf::ERuleType;
 
@@ -20,14 +21,13 @@ class ARule
 		const size_t	  m_ruleIndex;
 		Vec<bool>		  m_terminalChars;
 		Concept			 *m_conceptPtr;
-		std::set<ARule *> m_nextRules;
+		Set<ARule *>	  m_nextRules;
 
 		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 
 	public:
 		virtual ~ARule();
 
-		ARule					 &operator=(const ARule &other);
 		ERuleType				  getType() const;
 		virtual const std::string getTypeName() const			  = 0;
 		virtual void			  addItem(const std::string &val) = 0;
@@ -36,15 +36,16 @@ class ARule
 		static BnfMap			  getMap(const std::string &opener);
 		static bool				  isKeyWord(const std::string &word, bool onlyClose);
 
-		const std::string		 getConceptName() const;
-		size_t					 getConceptDefIndex() const;
-		size_t					 getRuleIndex() const;
-		const std::set<ARule *> *getNextRules(Vec<ARule *> supRuleParent) const;
-		std::set<ARule *>		*getNextRules(Vec<ARule *> supRuleParent);
-		std::string				 printNext() const;
-		bool					 isTerminalCharAt(size_t index) const;
+		const std::string getConceptName() const;
+		size_t			  getConceptDefIndex() const;
+		size_t			  getRuleIndex() const;
+		Vec<ARule *>	  getNextRules(Vec<ARule *> supRuleParent);
+		std::string		  printNext() const;
+		bool			  isTerminalCharAt(size_t index) const;
+		ARule			 *tryGetAdjacentRules();
 
-		void setNextRules(ARule *nextRule);
+		void	 setNextRules(ARule *nextRule);
+		Concept *getConceptPtr() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);

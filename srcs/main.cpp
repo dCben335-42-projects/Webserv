@@ -5,6 +5,7 @@
 
 int main()
 {
+	// testPrintAddress();
 	try
 	{
 		// Lexer lex("config/def_language.txt");
