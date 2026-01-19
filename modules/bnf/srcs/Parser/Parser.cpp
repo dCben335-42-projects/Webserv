@@ -12,6 +12,27 @@ Parser::~Parser()
 
 // on doit regarder si rule est optional ici si optional il faut faire le chemin vers leleement suivant aussi
 
+void Parser::rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
+{
+	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
+	{
+		ARulePaths val = (*it).second;
+		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
+		{
+			ARulePath rules = *path;
+
+			size_t index = rules.indexOf(ruleRef);
+
+			for (size_t k = index + 1; k < rules.size(); ++k)
+			{
+				ARule *rule = rules[k];
+				if (rule->getType() == OPTION)
+					recursiveSearchNextRules(mapPathNext, rules, rule);
+			}
+		}
+	}
+}
+
 
 void Parser::recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule)
 {
@@ -31,6 +52,7 @@ void Parser::recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARu
 		ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue());
 		mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
 	}
+	rec(mapPathCurrentTemp, mapPathNext, nextRule.back());
 
 	for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
 	{
@@ -68,6 +90,7 @@ void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rul
 			ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue()); // DOIT FAIRE RECURSIVITE OPTIONAL SUR CHAQUE LEVEL
 			mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
 		}
+		rec(mapPathCurrentTemp, mapPathNext, nextRule.back());
 
 		for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
 		{

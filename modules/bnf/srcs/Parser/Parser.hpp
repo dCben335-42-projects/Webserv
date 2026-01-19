@@ -24,6 +24,7 @@ class Parser
 		bool parseCurrentChar(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		void searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule);
 		void recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule);
+		void rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef);
 
 	public:
 		~Parser();

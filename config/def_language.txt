@@ -2,7 +2,7 @@
 
 IDENT			::= LETTER ALL
 
-ALL				::= LETTER LETTER [ DIGIT ] LETTER
+ALL				::= LETTER LETTER [ DIGIT ] [ DIGIT ] LETTER
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
 LOCASE_LETTER	::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
 					'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
