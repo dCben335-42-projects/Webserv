@@ -13,6 +13,8 @@ class EventLoop
 
 		static void init();
 		static void run();
+		static void destroy();
+
 		static void addHandler(Pollable *handler);
 		static void removeHandler(size_t index);
 		static int	getNfds()

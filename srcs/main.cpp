@@ -8,8 +8,11 @@ int main()
 	try
 	{
 		// Lexer lex("config/def_language.txt");
+
+
 		EventLoop::init();
 		EventLoop::run();
+		EventLoop::destroy();
 		return 0;
 	}
 	catch (const std::exception &e)

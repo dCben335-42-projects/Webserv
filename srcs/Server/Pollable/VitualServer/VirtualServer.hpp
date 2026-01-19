@@ -11,7 +11,7 @@
 class VirtualServer : public Pollable
 {
 	private:
-		const Config   m_config;
+		const Config  &m_config;
 		std::string	   m_bindIp;
 		unsigned short m_bindPort;
 

@@ -26,10 +26,10 @@ Config::Config(
 
 Config::~Config()
 {
+	Logger::log("[Config] Destructor called");
 	for (Map<Location *>::iterator it = locations.begin(); it != locations.end(); ++it)
-	{
 		delete it->second;
-	}
+	delete defaultLocation;
 }
 
 
@@ -181,6 +181,7 @@ const std::string &Config::getIndexFile(const std::string &locationPath) const
  */
 bool Config::getAutoIndex(const std::string &locationPath) const
 {
+	std::cout << "Checking auto-index for location: " << locationPath << std::endl;
 	if (locations.has(locationPath))
 	{
 		if (locations.get(locationPath)->getAutoIndex())

@@ -1,7 +1,6 @@
 #include "Client.hpp"
 #include "config.hpp"
 #include <unistd.h>
-#include <cstring>
 #include "FileHandler.hpp"
 #include "httpExceptions.hpp"
 #include "Date.hpp"
@@ -146,21 +145,43 @@ void Client::test(const std::string &ROOT)
  */
 void Client::handleGetRequest()
 {
-	std::string		  target		= m_req.getTarget();
-	const std::string ROOT			= m_serverConfig.getRoot(m_req.getTarget());
-	const std::string FALLBACK_TEST = ROOT + "/index.html";
-	std::string		  resource;
+	const std::string target   = m_req.getTarget();
+	const std::string root	   = m_serverConfig.getRoot(target);
+	std::string		  resource = root;
 
 	try
 	{
-		if (m_req.getTarget() == "/")
-			resource = ROOT + "/index.html";
-		else
+		if (FileHandler::folderExists(root + target))
 		{
-			target	 = m_req.getTarget();
-			target	 = target.at(0) == '/' ? target.substr(1) : target;
-			resource = FileHandler::getSafePath(ROOT, target);
+			if (m_serverConfig.getAutoIndex(target))
+			{
+				if (!FileHandler::fileExists(resource))
+				{
+					IndexOf index(root, target);
+					m_res.setBody(index.getPage());
+					m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+					std::string date = Date::getCurrentDate();
+					if (!date.empty())
+						m_res.setHeader(HEADER_DATE, date);
+					m_res.setStatusCode(200);
+					return;
+				}
+				resource = root + "/" + m_serverConfig.getIndexFile(target);
+				m_res.setBody(FileHandler::readFile(resource));
+				m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
+				std::string fileDate = FileHandler::findLastModifiedDate(resource);
+				if (!fileDate.empty())
+					m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+				std::string date = Date::getCurrentDate();
+				if (!date.empty())
+					m_res.setHeader(HEADER_DATE, date);
+				m_res.setStatusCode(200);
+				return;
+			}
+			throw Http403Exception();
 		}
+		resource = target.at(0) == '/' ? target.substr(1) : target;
+		resource = FileHandler::getSafePath(root, resource);
 		m_res.setBody(FileHandler::readFile(resource));
 		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
 		std::string fileDate = FileHandler::findLastModifiedDate(resource);

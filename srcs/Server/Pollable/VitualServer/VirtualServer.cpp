@@ -29,8 +29,10 @@ VirtualServer::VirtualServer(const Config &config) :
 
 VirtualServer::~VirtualServer()
 {
+	Logger::log("[VirtualServer] Destructor called");
 	if (m_fd != -1)
 		close(m_fd);
+	delete &m_config;
 }
 
 /**

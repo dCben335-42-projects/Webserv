@@ -25,6 +25,7 @@ Config::Location::Location(
 
 Config::Location::~Location()
 {
+	
 }
 
 

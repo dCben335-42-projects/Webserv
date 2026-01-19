@@ -9,21 +9,34 @@
 #include <cerrno>
 #include <sys/socket.h>
 #include <netinet/in.h>
-
 #include "Config.hpp"
 #include "Location.hpp"
+#include "Logger.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	Config::Location *defaultLocation = new Config::Location("/", "files/www/website", "index.html", true, NULL);
-	Config			  config1("127.0.0.1", 8080, "localhost", defaultLocation, Map<Config::Location *>());
-	new VirtualServer(config1);
+	Config::Location	   *defaultLocation = new Config::Location("/", "files/www/website", "index.html", true, NULL);
+	Config::Location	   *loc1			= new Config::Location("/assets", "files/www/website", "", false, NULL);
+	Map<Config::Location *> locations;
+	locations.set(loc1->getPath(), loc1);
+	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
+	new VirtualServer(*(config1));
 }
 
-#include "Logger.hpp"
+void EventLoop::destroy()
+{
+	for (size_t i = 0; i < m_pollFds.size(); ++i)
+	{
+		const int fd = m_pollFds[i].fd;
+		deletePollable(fd, i);
+	}
+	m_pollFds.clear();
+	m_handlers.clear();
+}
+
 
 void EventLoop::run()
 {
