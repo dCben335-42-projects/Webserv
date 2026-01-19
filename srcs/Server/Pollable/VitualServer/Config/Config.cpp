@@ -1,14 +1,14 @@
 #include "Config.hpp"
 #include "Location.hpp"
+#include "Logger.hpp"
 
-Config::Config() :
-	m_ip(""),
-	m_port(0),
-	m_domain(""),
-	defaultLocation(NULL),
-	locations()
-{
-}
+// Config::Config() :
+// 	m_ip(""),
+// 	m_port(0),
+// 	m_domain(""),
+// 	locations()
+// {
+// }
 
 Config::Config(
 	const std::string	  &ip,
@@ -26,7 +26,6 @@ Config::Config(
 
 Config::~Config()
 {
-	delete defaultLocation;
 	for (Map<Location *>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
 		delete it->second;
@@ -104,7 +103,6 @@ void Config::setDomain(const std::string &domain)
 {
 	m_domain = domain;
 }
-
 
 /**
  *
@@ -189,4 +187,18 @@ bool Config::getAutoIndex(const std::string &locationPath) const
 			return true;
 	}
 	return defaultLocation->getAutoIndex();
+}
+
+
+
+
+
+std::ostream &operator<<(std::ostream &os, const Config &config)
+{
+	os << "Config(ip=" << config.getIp()
+	   << ", port=" << config.getPort()
+	   << ", domain=" << config.getDomain()
+	   << ", defaultLocation=" << LoggerJson::get(config.getDefaultLocation())
+	   << ")";
+	return os;
 }

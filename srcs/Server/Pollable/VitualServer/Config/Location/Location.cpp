@@ -141,3 +141,17 @@ void Config::Location::setCgiParams(Config::CgiParams *cgi)
 {
 	m_cgi = cgi;
 }
+
+
+
+
+
+std::ostream &operator<<(std::ostream &os, const Config::Location &location)
+{
+	os << "Location(path: " << location.getPath();
+	os << ", root: " << location.getRoot();
+	os << ", indexFile: " << location.getIndexFile();
+	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
+	os << ")";
+	return os;
+}

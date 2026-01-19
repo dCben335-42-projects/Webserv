@@ -37,4 +37,6 @@ class Config::Location
 		void setCgiParams(Config::CgiParams *cgi);
 };
 
+std::ostream &operator<<(std::ostream &os, const Config::Location &location);
+
 #endif

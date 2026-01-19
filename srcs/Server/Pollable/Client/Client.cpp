@@ -9,10 +9,12 @@
 #include "CgiSpawner.hpp"
 #include "CgiPipe.hpp"
 #include "EventLoop.hpp"
+#include "Logger.hpp"
 
-Client::Client(int fd, VirtualServer *server) :
+Client::Client(int fd, VirtualServer *server, const Config &config) :
 	Pollable(fd),
-	m_server(server)
+	m_server(server),
+	m_serverConfig(config)
 {
 	m_events = POLLIN;
 }
@@ -21,6 +23,56 @@ Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
+}
+
+
+/**
+ *
+ * @brief Gets the HTTP request associated with the client.
+ *
+ * @note It is used to access the request details and headers.
+ *
+ * @return A constant reference to the HttpRequest object.
+ *
+ */
+const HttpRequest &Client::getRequest() const
+{
+	return m_req;
+}
+
+/**
+ *
+ * @brief Gets the HTTP response associated with the client.
+ *
+ * @note You can modify the response using the returned reference.
+ * It is useful for preparing and sending responses to the client
+ * from the CgiPipe or other components.
+ *
+ * @return A non-constant reference to the HttpResponse object.
+ *
+ */
+HttpResponse &Client::getResponse()
+{
+	return m_res;
+}
+
+
+/**
+ *
+ * @brief Sets the events for the client.
+ *
+ * @note This method updates the event flags
+ * used for polling the client socket.
+ *
+ * @see Pollable::setEvents(short events)
+ *
+ * @param events The events to be set.
+ * (e.g., POLLIN, POLLOUT)
+ *
+ */
+void Client::setEvents(const short events)
+{
+	m_events = events;
 }
 
 
@@ -78,6 +130,8 @@ void Client::test(const std::string &ROOT)
 		throw Http404Exception();
 }
 
+#include "Logger.hpp"
+
 /**
  *
  * @brief Handles HTTP GET requests.
@@ -92,18 +146,13 @@ void Client::test(const std::string &ROOT)
  */
 void Client::handleGetRequest()
 {
-	const std::string ROOT			= "files/www/website";
+	std::string		  target		= m_req.getTarget();
+	const std::string ROOT			= m_serverConfig.getRoot(m_req.getTarget());
 	const std::string FALLBACK_TEST = ROOT + "/index.html";
 	std::string		  resource;
-	std::string		  target;
 
 	try
 	{
-		if (m_req.getHeader("Host") == "localhost:9090")
-		{
-			test(ROOT);
-			return;
-		}
 		if (m_req.getTarget() == "/")
 			resource = ROOT + "/index.html";
 		else

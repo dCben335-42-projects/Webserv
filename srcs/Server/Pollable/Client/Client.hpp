@@ -5,6 +5,7 @@
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include <string>
+#include "Config.hpp"
 
 class VirtualServer;
 
@@ -12,6 +13,7 @@ class Client : public Pollable
 {
 	private:
 		VirtualServer *m_server;
+		const Config  &m_serverConfig;
 		HttpRequest	   m_req;
 		HttpResponse   m_res;
 
@@ -25,26 +27,17 @@ class Client : public Pollable
 		bool isRequestComplete();
 
 	public:
-		Client(int fd, VirtualServer *server);
+		Client(int fd, VirtualServer *server, const Config &config);
 		~Client();
 
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
 
-		void setEvents(short events)
-		{
-			m_events = events;
-		}
+		void setEvents(const short events);
 
-		HttpRequest &getRequest()
-		{
-			return m_req;
-		}
-		HttpResponse &getResponse()
-		{
-			return m_res;
-		}
+		const HttpRequest &getRequest() const;
+		HttpResponse	  &getResponse();
 
 		void spawn_cgi(const std::string &script_path);
 };

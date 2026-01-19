@@ -11,16 +11,18 @@
 class VirtualServer : public Pollable
 {
 	private:
-		bool		   setupSocket(const std::string &ip, unsigned short port);
+		const Config   m_config;
 		std::string	   m_bindIp;
 		unsigned short m_bindPort;
-		Config		   m_config;
+
+		bool setupSocket(const std::string &ip, unsigned short port);
 
 	public:
 		VirtualServer(const Config &config);
 		~VirtualServer();
 
-		Client *createClient(int clientFd);
+		Client		 *createClient(int clientFd);
+		const Config &getConfig() const;
 
 		std::string	   getBindIp() const;
 		unsigned short getBindPort() const;

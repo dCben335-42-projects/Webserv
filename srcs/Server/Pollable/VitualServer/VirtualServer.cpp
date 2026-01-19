@@ -10,13 +10,14 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include "config.hpp"
+#include "Logger.hpp"
 
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
+	m_config(config),
 	m_bindIp(config.getIp()),
-	m_bindPort(config.getPort()),
-	m_config(config)
+	m_bindPort(config.getPort())
 {
 	if (!setupSocket(m_bindIp, m_bindPort))
 	{
@@ -55,6 +56,13 @@ unsigned short VirtualServer::getBindPort() const
 {
 	return m_bindPort;
 }
+
+const Config &VirtualServer::getConfig() const
+{
+	return m_config;
+}
+
+
 
 /**
  *
@@ -107,13 +115,7 @@ bool VirtualServer::setupSocket(const std::string &ip, unsigned short port)
 	return true;
 }
 
-// Client *VirtualServer::createClient(int clientFd)
-// {
-// 	fcntl(clientFd, F_SETFL, O_NONBLOCK);
-// 	Client *client = new Client(clientFd, this);
-// 	EventLoop::addHandler(client);
-// 	return client;
-// }
+
 
 Client *VirtualServer::createClient(int clientFd)
 {
@@ -123,7 +125,7 @@ Client *VirtualServer::createClient(int clientFd)
 		close(clientFd);
 		return NULL;
 	}
-	Client *client = new Client(clientFd, this);
+	Client *client = new Client(clientFd, this, m_config);
 	EventLoop::addHandler(client);
 	return client;
 }

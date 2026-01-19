@@ -18,10 +18,8 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	Config::Location *defaultLocation = new Config::Location(
-		"/", "", "", false, NULL);
-	Config config1("127.0.0.1", 8080, "localhost", defaultLocation, Map<Config::Location *>());
-
+	Config::Location *defaultLocation = new Config::Location("/", "files/www/website", "index.html", true, NULL);
+	Config			  config1("127.0.0.1", 8080, "localhost", defaultLocation, Map<Config::Location *>());
 	new VirtualServer(config1);
 }
 
@@ -54,7 +52,6 @@ void EventLoop::run()
 			if (handler)
 			{
 				handler->setRevents(m_pollFds[i].revents);
-
 				if (m_pollFds[i].revents & POLLIN)
 					handler->onPollIn();
 				if (m_pollFds[i].revents & POLLOUT)

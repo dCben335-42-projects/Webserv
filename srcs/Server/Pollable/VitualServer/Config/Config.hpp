@@ -21,7 +21,7 @@ class Config
 		Map<Location *> locations;
 
 	public:
-		Config();
+		// Config();
 		Config(const std::string	 &ip,
 			   unsigned short		  port,
 			   const std::string	 &domain,
@@ -33,6 +33,10 @@ class Config
 		const std::string &getIp() const;
 		unsigned short	   getPort() const;
 		const std::string &getDomain() const;
+		const Location	  *getDefaultLocation() const
+		{
+			return defaultLocation;
+		}
 
 		void setIp(const std::string &ip);
 		void setPort(unsigned short port);
@@ -45,5 +49,7 @@ class Config
 		bool			   getAutoIndex(const std::string &locationPath) const;
 };
 
+
+std::ostream &operator<<(std::ostream &os, const Config &config);
 
 #endif
