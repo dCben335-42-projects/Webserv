@@ -31,7 +31,7 @@ bool ConceptDef::getIsTerminal() const
 
 ConceptDef::~ConceptDef()
 {
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		delete (*it);
 	}
@@ -44,7 +44,7 @@ void ConceptDef::setRule(ARule *rule)
 	values.push_back(rule);
 }
 
-Vec<ARule *> ConceptDef::getRules()
+ARulePath ConceptDef::getRules()
 {
 	return values;
 }
@@ -52,7 +52,7 @@ Vec<ARule *> ConceptDef::getRules()
 Vec<TerminalSymbol> ConceptDef::getItems()
 {
 	Vec<TerminalSymbol> allItems;
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		ARule *rule = *it;
 		if (rule->getType() == OPTION)
@@ -72,7 +72,7 @@ Vec<TerminalSymbol> ConceptDef::getItems()
 Vec<std::string> ConceptDef::getItemsValue()
 {
 	Vec<std::string> allItems;
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		ARule *rule = *it;
 		if (rule->getType() == OPTION)
@@ -92,7 +92,7 @@ Vec<std::string> ConceptDef::getItemsValue()
 Vec<std::string> ConceptDef::getItemsWithOption()
 {
 	Vec<std::string> allItems;
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		ARule			   *rule  = *it;
 		Vec<TerminalSymbol> items = rule->getItems();
@@ -107,7 +107,7 @@ Vec<std::string> ConceptDef::getItemsWithOption()
 }
 
 
-Vec<ARule *> ConceptDef::getValues() const
+ARulePath ConceptDef::getValues() const
 {
 	return values;
 }

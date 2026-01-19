@@ -4,8 +4,6 @@
 #include <string>
 #include "bnf_defs.hpp"
 #include "../ConceptDef/ConceptDef.hpp"
-#include "Vector.hpp"
-#include "Set.hpp"
 
 class Concept
 {

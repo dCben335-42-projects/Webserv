@@ -1,8 +1,6 @@
 #ifndef CONCEPTNODE_HPP
 #define CONCEPTNODE_HPP
 
-#include <map>
-#include <vector>
 #include <iostream>
 #include "bnf_defs.hpp"
 #include "../Rules/ARule.hpp"

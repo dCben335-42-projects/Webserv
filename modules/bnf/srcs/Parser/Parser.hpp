@@ -12,12 +12,6 @@
 #include "../ConceptNode/ConceptNode.hpp"
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
-#include "../PathSegment/PathSegment.hpp"
-
-typedef Set<ARule *>			 ARuleSet;
-typedef Vec<ARule *>			 ARulePath;
-typedef Set<ARulePath>			 ARulePaths;
-typedef Map<ARule *, ARulePaths> ARuleMap;
 
 class Parser
 {
@@ -25,7 +19,6 @@ class Parser
 		const SemanticDescriptor &m_semantic;
 
 		bool recursive_parse(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
-		char adaptTerminalChar(const std::string &str);
 		void searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule);
 
 	public:

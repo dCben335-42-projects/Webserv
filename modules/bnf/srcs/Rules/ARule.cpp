@@ -105,13 +105,13 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-Vec<ARule *> ARule::getNextRules(Vec<ARule *> supRuleParent)
+ARulePath ARule::getNextRules(ARulePath supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
 		if (supRuleParent.size() == 1)
 		{
-			return Vec<ARule *>();
+			return ARulePath();
 		}
 		else
 		{
@@ -138,13 +138,6 @@ std::string ARule::printNext() const
 void ARule::setNextRules(ARule *nextRule)
 {
 	m_nextRules.insert(nextRule);
-}
-
-bool ARule::isTerminalCharAt(size_t index) const
-{
-	if (!m_terminalChars.has(index))
-		return false;
-	return m_terminalChars[index];
 }
 
 Concept *ARule::getConceptPtr() const

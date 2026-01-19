@@ -4,8 +4,6 @@
 #include <string>
 #include "bnf_defs.hpp"
 #include "../Rules/ARule.hpp"
-#include "Vector.hpp"
-#include <set>
 
 class ConceptDef
 {
@@ -13,8 +11,8 @@ class ConceptDef
 		ConceptDef(const std::string conceptName);
 		~ConceptDef();
 
-		Vec<ARule *>		getRules();
-		Vec<ARule *>		getValues() const;
+		ARulePath			getRules();
+		ARulePath			getValues() const;
 		ARule			   *getARule(size_t index = 0);
 		Vec<TerminalSymbol> getItemsOfARule(size_t index = 0);
 		Vec<TerminalSymbol> getItems();
@@ -27,7 +25,7 @@ class ConceptDef
 
 	private:
 		const std::string m_conceptName;
-		Vec<ARule *>	  values;
+		ARulePath		  values;
 		bool			  isTerminal;
 };
 

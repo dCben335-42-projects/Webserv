@@ -2,6 +2,10 @@
 #define BNF_DEFS_HPP
 
 #include <string>
+#include "Map.hpp"
+#include "Set.hpp"
+#include "Vector.hpp"
+#include "Logger.hpp"
 
 namespace bnf
 {
@@ -33,8 +37,8 @@ static const std::string ERR_CONCEPT_NOT_DEFINED	 = "\033[33mError: Concept not 
 } // namespace bnf
 
 #define V_FOREACH(TYPE, op, container) \
-	Vec<TYPE> vec = (container); \
-	for (Vec<TYPE>::const_iterator op = vec.begin(); op != vec.end(); ++op) 
+	Vec<TYPE> vec = (container);       \
+	for (Vec<TYPE>::const_iterator op = vec.begin(); op != vec.end(); ++op)
 
 
 #endif

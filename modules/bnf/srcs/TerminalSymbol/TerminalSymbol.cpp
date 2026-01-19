@@ -25,7 +25,6 @@ bool TerminalSymbol::operator==(const TerminalSymbol &rhs) const
 	return m_str == rhs.m_str && m_isTerminalChar == rhs.m_isTerminalChar;
 }
 
-
 const std::string &TerminalSymbol::getValue() const
 {
 	return m_str;

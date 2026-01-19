@@ -1,9 +1,6 @@
 #include <sstream>
 #include <iostream>
 #include "./Parser.hpp"
-#include "Vector.hpp"
-#include "Map.hpp"
-#include "Logger.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -15,7 +12,7 @@ Parser::~Parser()
 
 void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule)
 {
-	for (Set<ARulePath>::iterator path = paths.begin(); path != paths.end(); ++path)
+	for (ARulePaths::iterator path = paths.begin(); path != paths.end(); ++path)
 	{
 		ARulePath nextRule = rule->getNextRules(*path);
 		if (nextRule.empty())
@@ -39,7 +36,7 @@ void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rul
 		{
 			ARule	  *key = (*it).first;
 			ARulePaths val = (*it).second;
-			for (Set<ARulePath>::iterator m = val.begin(); m != val.end(); ++m)
+			for (ARulePaths::iterator m = val.begin(); m != val.end(); ++m)
 			{
 				if (!mapPathNext.has(key))
 					mapPathNext.set(key, ARulePaths());
@@ -81,8 +78,8 @@ void Parser::parse(const std::string &stringToParsed)
 
 	ARuleMap mapPathCurrent = m_semantic.getStartPath();
 
-	ARuleMap	 mapPathNext;
-	Vec<ARule *> path;
+	ARuleMap  mapPathNext;
+	ARulePath path;
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
