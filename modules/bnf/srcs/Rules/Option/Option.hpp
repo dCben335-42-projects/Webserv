@@ -1,7 +1,6 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
-#include <vector>
 #include <string>
 #include "bnf_defs.hpp"
 #include "../ARule.hpp"

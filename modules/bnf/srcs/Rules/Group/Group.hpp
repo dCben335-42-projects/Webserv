@@ -1,7 +1,6 @@
 #ifndef GROUP_HPP
 #define GROUP_HPP
 
-#include <vector>
 #include <string>
 #include "bnf_defs.hpp"
 #include "../ARule.hpp"

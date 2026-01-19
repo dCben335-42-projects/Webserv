@@ -2,16 +2,24 @@
 #define ARULE_HPP
 
 #include "bnf_defs.hpp"
-#include "Vector.hpp"
-#include "Set.hpp"
 #include "../TerminalSymbol/TerminalSymbol.hpp"
 
 using bnf::ERuleType;
 
-
-struct BnfMap;
-
 class Concept;
+class ARule;
+
+struct BnfMap
+{
+		std::string opener;
+		std::string closer;
+		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		bool hasClosure;
+};
+
+typedef Vec<ARule *>			 ARulePath;
+typedef Set<ARulePath>			 ARulePaths;
+typedef Map<ARule *, ARulePaths> ARuleMap;
 
 class ARule
 {
@@ -40,7 +48,7 @@ class ARule
 		const std::string getConceptName() const;
 		size_t			  getConceptDefIndex() const;
 		size_t			  getRuleIndex() const;
-		Vec<ARule *>	  getNextRules(Vec<ARule *> supRuleParent);
+		ARulePath		  getNextRules(ARulePath supRuleParent);
 		std::string		  printNext() const;
 		ARule			 *tryGetAdjacentRules();
 
@@ -49,17 +57,5 @@ class ARule
 };
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);
-
-struct BnfMap
-{
-		std::string opener;
-		std::string closer;
-		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
-		bool hasClosure;
-};
-
-typedef Vec<ARule *>			 ARulePath;
-typedef Set<ARulePath>			 ARulePaths;
-typedef Map<ARule *, ARulePaths> ARuleMap;
 
 #endif

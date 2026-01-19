@@ -1,7 +1,6 @@
 #ifndef SEMANTIC_DESCRIPTOR_HPP
 #define SEMANTIC_DESCRIPTOR_HPP
 
-#include "Map.hpp"
 #include "bnf_defs.hpp"
 
 #include "../Rules/Group/Group.hpp"

@@ -1,7 +1,6 @@
 #ifndef SEQUENCE_HPP
 #define SEQUENCE_HPP
 
-#include <vector>
 #include <string>
 #include "bnf_defs.hpp"
 #include "../ARule.hpp"
