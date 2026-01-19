@@ -28,14 +28,32 @@ class HttpMethod
 
 	public:
 		HttpMethod();
-		explicit HttpMethod(const std::string &method);
-		explicit HttpMethod(const Type &method);
+		HttpMethod(const std::string &method);
+		HttpMethod(const Type &method);
 		~HttpMethod();
+
 
 		HttpMethod &operator=(const HttpMethod &other);
 
 		Type		getType() const;
 		std::string getStrType() const;
+
+
+
+		bool operator<(const HttpMethod &other) const
+		{
+			return m_type < other.m_type;
+		}
+
+		bool operator==(const HttpMethod &other) const
+		{
+			return m_type == other.m_type;
+		}
+
+		bool operator!=(const HttpMethod &other) const
+		{
+			return !(*this == other);
+		}
 };
 
 #endif

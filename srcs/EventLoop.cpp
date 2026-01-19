@@ -10,30 +10,20 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "Config.hpp"
+#include "Location.hpp"
+
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	VirtualServer::Config config1 = {
-		.root	   = "files/www/website",
-		.cgiBin	   = "files/www/website/cgi-bin",
-		.indexFile = "index.html",
-		.ip		   = "127.0.0.1",
-		.port	   = 8080,
-		.domain	   = "localhost"};
-	new VirtualServer(config1.ip, config1.port, config1);
+	Config::Location *defaultLocation = new Config::Location(
+		"/", "", "", false, NULL);
+	Config config1("127.0.0.1", 8080, "localhost", defaultLocation, Map<Config::Location *>());
 
-	VirtualServer::Config config2 = {
-		.root	   = "files/www/test",
-		.cgiBin	   = "files/www/test/cgi-bin",
-		.indexFile = "index.html",
-		.ip		   = "127.0.0.1",
-		.port	   = 9090,
-		.domain	   = "localhost"};
-	new VirtualServer(config2.ip, config2.port, config2);
+	new VirtualServer(config1);
 }
-
 
 #include "Logger.hpp"
 

@@ -223,22 +223,15 @@ Vec<std::string> String::split(const std::string &str, const char *delimiters)
 	Vec<std::string> result;
 	size_t			 start = 0;
 	size_t			 end   = 0;
+	std::string		 token;
 
 	while (end != std::string::npos)
 	{
-		end				  = str.find_first_of(delimiters, start);
-		std::string token = str.substr(start, end - start);
+		end	  = str.find_first_of(delimiters, start);
+		token = str.substr(start, end - start);
 		if (!token.empty())
 			result.push_back(token);
 		start = (end == std::string::npos) ? end : end + 1;
-	}
-
-
-	std::cout << "Split result for string: \"" << str << "\" with delimiters: \"" << delimiters << "\"" << std::endl;
-	// loop to print all the tokens
-	for (size_t i = 0; i < result.size(); ++i)
-	{
-		std::cout << "Token " << i << ": " << result[i] << std::endl;
 	}
 	return result;
 }
