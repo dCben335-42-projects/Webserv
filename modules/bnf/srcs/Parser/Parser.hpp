@@ -13,13 +13,17 @@
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
+#include "../Exception/Parser/InvalidEntryException.hpp"
+#include "../Exception/Parser/FileNotFinishedException.hpp"
+
 class Parser
 {
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		bool recursive_parse(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+		bool parseCurrentChar(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		void searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule);
+		void recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule);
 
 	public:
 		~Parser();

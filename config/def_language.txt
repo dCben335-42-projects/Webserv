@@ -1,8 +1,8 @@
 <head>			::= IDENT
 
-IDENT			::= ALL
+IDENT			::= LETTER ALL
 
-ALL				::= ( LETTER | DIGIT ) ( LETTER | DIGIT ) ( LETTER | DIGIT ) ( LETTER | DIGIT ) ( LETTER | DIGIT ) ( LETTER | DIGIT ) LOCASE_LETTER
+ALL				::= LETTER LETTER [ DIGIT ] LETTER
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
 LOCASE_LETTER	::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
 					'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )

@@ -21,7 +21,15 @@ Lexer::Lexer(std::string const &filepath)
 
 	std::cout << val;
 	Parser parser(val);
-	parser.parse("d12abcp");
+
+	try
+	{
+		parser.parse("AmDl");
+	}
+	catch (const SemanticException &e)
+	{
+		std::cout << e;
+	}
 
 	ifs.close();
 }
