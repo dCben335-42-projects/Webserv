@@ -9,12 +9,18 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <errno.h>
+#include "config.hpp"
 
-VirtualServer::VirtualServer(const std::string &ip, unsigned short port, const Config &config) : Pollable(-1), m_bindIp(ip), m_bindPort(port), m_config(config)
+
+VirtualServer::VirtualServer(const Config &config) :
+	Pollable(-1),
+	m_bindIp(config.getIp()),
+	m_bindPort(config.getPort()),
+	m_config(config)
 {
-	if (!setupSocket(ip, port))
+	if (!setupSocket(m_bindIp, m_bindPort))
 	{
-		throw std::runtime_error("VirtualServer socket setup failed: " + ip);
+		throw std::runtime_error("VirtualServer socket setup failed: " + m_bindIp);
 	}
 	m_events = POLLIN;
 	EventLoop::addHandler(this);
@@ -26,28 +32,40 @@ VirtualServer::~VirtualServer()
 		close(m_fd);
 }
 
+/**
+ *
+ * @brief Gets the bind IP address of the virtual server.
+ *
+ * @return The bind IP address as a string.
+ *
+ */
 std::string VirtualServer::getBindIp() const
 {
 	return m_bindIp;
 }
 
+/**
+ *
+ * @brief Gets the bind port of the virtual server.
+ *
+ * @return The bind port as an unsigned short.
+ *
+ */
 unsigned short VirtualServer::getBindPort() const
 {
 	return m_bindPort;
 }
 
-std::string VirtualServer::getDocumentRoot() const
-{
-	return m_config.root;
-}
-
-std::string VirtualServer::getCgiBin() const
-{
-	return m_config.cgiBin;
-}
-
-#include "config.hpp"
-
+/**
+ *
+ * @brief Sets up the server socket for the virtual server.
+ *
+ * @param ip The IP address to bind to.
+ * @param port The port number to bind to.
+ *
+ * @return true if the socket setup was successful, false otherwise.
+ *
+ */
 bool VirtualServer::setupSocket(const std::string &ip, unsigned short port)
 {
 	struct sockaddr_in serverAddr;
@@ -84,10 +102,8 @@ bool VirtualServer::setupSocket(const std::string &ip, unsigned short port)
 		close(sockFd);
 		return false;
 	}
-
 	m_fd = sockFd;
-	std::cout << "[VirtualServer] Bound to " << ip << ":" << port
-			  << " root=\"" << m_config.root << "\"," << "try to go on http://" << m_config.domain << ":" << port << "/" << std::endl;
+	std::cout << "[VirtualServer] Bound to " << ip << ":" << port << "\"," << "try to go on http://" << m_config.getDomain() << ":" << port << "/" << std::endl;
 	return true;
 }
 
@@ -114,8 +130,13 @@ Client *VirtualServer::createClient(int clientFd)
 
 
 
-
-
+/**
+ *
+ * @brief Handles incoming connections on the virtual server.
+ *
+ * @note This method is called when a new connection is ready to be accepted.
+ *
+ */
 void VirtualServer::onPollIn()
 {
 	struct sockaddr_in clientAddr;
@@ -129,7 +150,6 @@ void VirtualServer::onPollIn()
 	}
 	createClient(clientFd);
 }
-
 
 
 void VirtualServer::onPollOut()
