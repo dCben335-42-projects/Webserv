@@ -19,8 +19,6 @@ typedef Vec<ARule *>			 ARulePath;
 typedef Set<ARulePath>			 ARulePaths;
 typedef Map<ARule *, ARulePaths> ARuleMap;
 
-typedef std::set<ARule *> ARuleSet;
-
 class Parser
 {
 	private:

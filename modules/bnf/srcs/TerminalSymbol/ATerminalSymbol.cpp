@@ -1,9 +1,5 @@
 #include "ATerminalSymbol.hpp"
 
-ATerminalSymbol::ATerminalSymbol() : str("")
-{
-}
-
 ATerminalSymbol::~ATerminalSymbol()
 {
 }
