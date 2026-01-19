@@ -10,17 +10,21 @@
 class Config::CgiParams
 {
 	private:
-		bool			m_allowCgi;
-		Set<HttpMethod> m_allowedMethods;
+		bool			 m_allowCgi;
+		Set<HttpMethod>	 m_allowedMethods;
+		Map<std::string> m_binMap;
 
 	public:
 		CgiParams();
 		~CgiParams();
 
-		bool			getAllowCgi() const;
-		Set<HttpMethod> getAllowedMethods() const;
-		void			setAllowCgi(const bool &allowCgi);
-		void			addAllowedMethod(HttpMethod method);
+		CgiParams(Map<std::string> binMap);
+		CgiParams(Map<std::string> binMap, Set<HttpMethod> allowedMethods);
+		bool			   getAllowCgi() const;
+		Set<HttpMethod>	   getAllowedMethods() const;
+		void			   setAllowCgi(const bool &allowCgi);
+		void			   addAllowedMethod(HttpMethod method);
+		const std::string &getBinFromMap(std::string &fileExt) const;
 
 		bool isAllowedMethod(HttpMethod method) const;
 };

@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 
 #include "Config.hpp"
+#include "CgiParams.hpp"
 #include "Location.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
@@ -18,9 +19,12 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-
+	Map<std::string> binMap;
+	binMap.set(".py", "/usr/bin/python3");
+	binMap.set(".php", "/usr/bin/php");
+	Config::CgiParams cgiParams(binMap);
 	Config::Location *defaultLocation = new Config::Location(
-		"/", "", "", false, NULL);
+		"/", "", "", false, &cgiParams);
 	Config config1("127.0.0.1", 8080, "localhost", defaultLocation, Map<Config::Location *>());
 	new VirtualServer(config1);
 }

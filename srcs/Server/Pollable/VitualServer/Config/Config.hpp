@@ -40,7 +40,7 @@ class Config
 
 
 		const std::string &getRoot(const std::string &locationPath) const;
-		const std::string &getCgiBin(const std::string &locationPath) const;
+		const std::string &getCgiBin(const std::string &locationPath, std::string &fileExt) const;
 		const std::string &getIndexFile(const std::string &locationPath) const;
 		bool			   getAutoIndex(const std::string &locationPath) const;
 };

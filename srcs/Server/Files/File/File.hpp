@@ -51,8 +51,8 @@ class File
 
 		std::string getContent() const;
 
-		void determineExtension();
-		void determineIcon();
+		static std::string determineExtension(const std::string &fileName, size_t *extPos);
+		void			   determineIcon();
 };
 
 

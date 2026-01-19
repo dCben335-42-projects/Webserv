@@ -79,11 +79,10 @@ bool Config::Location::getAutoIndex() const
  * @return A constant reference to the CGI parameters as a string.
  *
  */
-const Config::CgiParams &Config::Location::getCgiParams() const
+const Config::CgiParams *Config::Location::getCgiParams() const
 {
-	return *m_cgi;
+	return m_cgi;
 }
-
 
 /**
  *

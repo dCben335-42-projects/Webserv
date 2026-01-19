@@ -36,6 +36,9 @@ class HttpRequest : public AHttpMessage
 
 		ssize_t readOnce(int socketFd);
 		size_t	readContentLength(std::string request, const size_t headersEnd);
+
+		const std::string getPathInfo() const;
+		const std::string getScriptName() const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

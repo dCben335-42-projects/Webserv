@@ -67,8 +67,8 @@ void CgiPipe::waitChild()
 
 void CgiPipe::onPollIn()
 {
-	char buffer[8192] = {'\0'};
-	int	 bytes_read	  = read(m_fd, buffer, 8192);
+	char buffer[READ_BUFFER_SIZE] = {'\0'};
+	int	 bytes_read				  = read(m_fd, buffer, READ_BUFFER_SIZE);
 
 	if (bytes_read > 0)
 	{

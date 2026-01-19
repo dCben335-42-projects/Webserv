@@ -25,6 +25,8 @@ class VirtualServer : public Pollable
 		std::string	   getBindIp() const;
 		unsigned short getBindPort() const;
 
+		const Config &getConfig() const;
+
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();

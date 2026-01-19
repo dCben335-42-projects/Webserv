@@ -11,13 +11,13 @@
 class CgiSpawner
 {
 	private:
-		Client		  *m_client;
-		VirtualServer *m_server;
-		int			   m_stdin_pipe[2];
-		int			   m_stdout_pipe[2];
+		const HttpRequest &m_req;
+		const Config	  &m_config;
 
+		int	  m_stdin_pipe[2];
+		int	  m_stdout_pipe[2];
+		pid_t m_pid;
 
-		pid_t			 m_pid;
 		bool			 m_has_post_data;
 		Vec<std::string> m_env;
 		char			*m_envp[32];
@@ -28,11 +28,10 @@ class CgiSpawner
 		void		setupEnv();
 		void		childprocess(const std::string &script_path);
 		void		parentProcess();
-		void		writePostData();
-		void		closeUnusedPipes();
+
 
 	public:
-		CgiSpawner(Client *client, VirtualServer *server);
+		CgiSpawner(const HttpRequest &req, const Config &config);
 
 		int	  spawn(const std::string &script_path);
 		pid_t getPid() const

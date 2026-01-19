@@ -1,5 +1,6 @@
 #include "Config.hpp"
 #include "Location.hpp"
+#include "CgiParams.hpp"
 
 Config::Config() :
 	m_ip(""),
@@ -133,23 +134,18 @@ const std::string &Config::getRoot(const std::string &locationPath) const
  * @return The CGI binary directory as a constant reference to a string.
  *
  */
-const std::string &Config::getCgiBin(const std::string &locationPath) const
+const std::string &Config::getCgiBin(const std::string &locationPath, std::string &fileExt) const
 {
-	(void) locationPath;
 	static const std::string emptyString = "";
+	CgiParams const			*cgiParams;
+
+	if (locations.has(locationPath))
+		cgiParams = locations.get(locationPath)->getCgiParams();
+	if (!cgiParams)
+		cgiParams = defaultLocation->getCgiParams();
+	if (cgiParams)
+		return cgiParams->getBinFromMap(fileExt);
 	return emptyString;
-	// CgiParams *cgiParams;
-	// if (locations.has(locationPath))
-	// {
-	// 	CgiParams *cgiParams = locations.get(locationPath);
-	// }
-	// cgiParams = defaultLocation->m_cgi;
-	// if (cgiParams)
-	// {
-	// 	return cgiParams->getCgiBin();
-	// }
-	// static const std::string emptyString = "";
-	// return emptyString;
 }
 
 /**

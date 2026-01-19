@@ -14,6 +14,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <iostream>
+#include "File.hpp"
 
 // ANCHOR Constructors / Destructors
 HttpRequest::HttpRequest() :
@@ -52,6 +53,20 @@ void HttpRequest::setRawRequest(const std::string &rawRequest)
 }
 
 
+const std::string HttpRequest::getPathInfo() const
+{
+	for (int i = 0; i < m_segments.size(); i++)
+	{
+	}
+}
+
+const std::string HttpRequest::getScriptName() const
+{
+	for (int i = 0; i < m_segments.size(); i++)
+	{
+		m_segments[i].find('.');
+	}
+}
 
 // ANCHOR Socket Reading Public method
 

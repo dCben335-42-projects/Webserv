@@ -56,6 +56,11 @@ unsigned short VirtualServer::getBindPort() const
 	return m_bindPort;
 }
 
+const Config &VirtualServer::getConfig() const
+{
+	return m_config;
+}
+
 /**
  *
  * @brief Sets up the server socket for the virtual server.

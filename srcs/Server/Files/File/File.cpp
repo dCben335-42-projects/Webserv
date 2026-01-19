@@ -17,7 +17,6 @@ File::File(
 
 	if (stat(fullPath.c_str(), &fileStat) != 0)
 		throw FileHandler::FileDoesNotExistException(fullPath);
-	// 	throw std::runtime_error("Failed to get file stats for: " + fullPath);
 
 	m_name				= name;
 	m_path				= cleanPath;
@@ -28,7 +27,7 @@ File::File(
 	m_createdAtHuman	= Date::toHumanFormat(gmtime(&fileStat.st_ctime));
 	m_lastModifiedHuman = Date::toHumanFormat(localtime(&fileStat.st_mtime));
 
-	determineExtension();
+	m_extension	  = determineExtension(name, &m_extensionPos);
 	m_sizeHuman	  = Number::bytesToHumanSize(m_size);
 	m_icon		  = FileHandler::getIcon(*this);
 	m_contentType = FileHandler::getContentType(fullPath);
@@ -102,12 +101,11 @@ std::string File::getCreatedAtHuman() const
 }
 
 
-void File::determineExtension()
+std::string File::determineExtension(const std::string &fileName, size_t *extPos)
 {
-	size_t dotPos  = m_name.rfind('.');
-	m_extensionPos = dotPos;
-	if (dotPos != std::string::npos && dotPos != 0 && dotPos != m_name.length() - 1)
-		m_extension = m_name.substr(dotPos);
-	else
-		m_extension = "";
+	size_t dotPos = fileName.rfind('.');
+	*extPos		  = dotPos;
+	if (dotPos != std::string::npos && dotPos != 0 && dotPos != fileName.length() - 1)
+		return fileName.substr(dotPos);
+	return "";
 }
