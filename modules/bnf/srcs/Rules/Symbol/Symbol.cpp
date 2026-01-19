@@ -7,7 +7,7 @@ Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ru
 {
 }
 
-Symbol::Symbol(const ATerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Symbol::Symbol(const TerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
 {
 	m_items.push_back(val);
 }
@@ -16,12 +16,12 @@ Symbol::~Symbol()
 {
 }
 
-Vec<ATerminalSymbol> Symbol::getItems() const
+Vec<TerminalSymbol> Symbol::getItems() const
 {
 	return m_items;
 }
 
-void Symbol::addItem(const ATerminalSymbol &val)
+void Symbol::addItem(const TerminalSymbol &val)
 {
 	m_items.clear();
 	m_items.push_back(val);

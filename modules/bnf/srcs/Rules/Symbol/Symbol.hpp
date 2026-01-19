@@ -9,13 +9,13 @@ class Symbol : public ARule
 {
 	public:
 		Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
-		Symbol(const ATerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		Symbol(const TerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 		~Symbol();
-		void				 addItem(const ATerminalSymbol &val);
-		Vec<ATerminalSymbol> getItems() const;
-		const std::string	&getValue() const;
-		const std::string	 getTypeName() const;
-		std::string			 getPrintableValue() const;
+		void				addItem(const TerminalSymbol &val);
+		Vec<TerminalSymbol> getItems() const;
+		const std::string  &getValue() const;
+		const std::string	getTypeName() const;
+		std::string			getPrintableValue() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Symbol &data);

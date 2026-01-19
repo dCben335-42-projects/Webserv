@@ -10,12 +10,12 @@ Option::~Option()
 {
 }
 
-void Option::addItem(const ATerminalSymbol &val)
+void Option::addItem(const TerminalSymbol &val)
 {
 	m_items.push_back(val);
 }
 
-Vec<ATerminalSymbol> Option::getItems() const
+Vec<TerminalSymbol> Option::getItems() const
 {
 	return m_items;
 }

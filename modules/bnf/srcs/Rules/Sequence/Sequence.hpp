@@ -13,10 +13,10 @@ class Sequence : public ARule
 	public:
 		Sequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
 		~Sequence();
-		void				 addItem(const ATerminalSymbol &val);
-		Vec<ATerminalSymbol> getItems() const;
-		const std::string	 getTypeName() const;
-		std::string			 getPrintableValue() const;
+		void				addItem(const TerminalSymbol &val);
+		Vec<TerminalSymbol> getItems() const;
+		const std::string	getTypeName() const;
+		std::string			getPrintableValue() const;
 };
 
 #endif

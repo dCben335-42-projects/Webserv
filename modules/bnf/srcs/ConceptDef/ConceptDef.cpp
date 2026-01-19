@@ -49,15 +49,15 @@ Vec<ARule *> ConceptDef::getRules()
 	return values;
 }
 
-Vec<ATerminalSymbol> ConceptDef::getItems()
+Vec<TerminalSymbol> ConceptDef::getItems()
 {
-	Vec<ATerminalSymbol> allItems;
+	Vec<TerminalSymbol> allItems;
 	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		ARule *rule = *it;
 		if (rule->getType() == OPTION)
 			continue;
-		Vec<ATerminalSymbol> items = rule->getItems();
+		Vec<TerminalSymbol> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
 		{
@@ -77,7 +77,7 @@ Vec<std::string> ConceptDef::getItemsValue()
 		ARule *rule = *it;
 		if (rule->getType() == OPTION)
 			continue;
-		Vec<ATerminalSymbol> items = rule->getItems();
+		Vec<TerminalSymbol> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
 		{
@@ -94,8 +94,8 @@ Vec<std::string> ConceptDef::getItemsWithOption()
 	Vec<std::string> allItems;
 	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
 	{
-		ARule				*rule  = *it;
-		Vec<ATerminalSymbol> items = rule->getItems();
+		ARule			   *rule  = *it;
+		Vec<TerminalSymbol> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
 		{
@@ -119,7 +119,7 @@ ARule *ConceptDef::getARule(size_t index)
 	return NULL;
 }
 
-Vec<ATerminalSymbol> ConceptDef::getItemsOfARule(size_t index)
+Vec<TerminalSymbol> ConceptDef::getItemsOfARule(size_t index)
 {
 	if (values.size() > index)
 		return values[index]->getItems();

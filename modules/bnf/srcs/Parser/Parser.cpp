@@ -13,13 +13,6 @@ Parser::~Parser()
 {
 }
 
-// char Parser::adaptTerminalChar(const std::string &str)
-// {
-// 	if (str.length() >= 2 && (str[0] == '\'' && str[str.length() - 1] == '\''))
-// 		return str[1];
-// 	return '\0';
-// }
-
 void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule)
 {
 	for (Set<ARulePath>::iterator path = paths.begin(); path != paths.end(); ++path)
@@ -30,7 +23,7 @@ void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rul
 			Logger::log("No next rule");
 			continue;
 		}
-		Vec<ATerminalSymbol> items = nextRule.back()->getItems();
+		Vec<TerminalSymbol> items = nextRule.back()->getItems();
 
 		ARulePaths prefixs;
 		prefixs.insert(nextRule);
@@ -63,13 +56,13 @@ bool Parser::recursive_parse(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPath
 	{
 		ARule *rule = (*it).first;
 		Logger::log(rule->getConceptName());
-		Vec<ATerminalSymbol> items = rule->getItems();
+		Vec<TerminalSymbol> items = rule->getItems();
 
-		for (size_t i = 0; i < items.size(); ++i)
+		for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
 		{
-			if (items[i].isTerminalChar())
+			if (item->isTerminalChar())
 			{
-				if (items[i] == c)
+				if (*item == c)
 				{
 					searchNextRules(mapPathNext, mapPathCurrent.get(rule), rule);
 					isValidWithCurrentPath = true;

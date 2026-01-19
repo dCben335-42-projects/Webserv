@@ -160,7 +160,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			{
 				if (!validate_string_strict(word))
 					throw InvalidConceptNameException(word);
-				arule->addItem(ATerminalSymbol::specify(word));
+				arule->addItem(TerminalSymbol::specify(word));
 				if (!map.hasClosure)
 					break;
 			}
@@ -181,9 +181,9 @@ void SemanticDescriptor::addParent()
 		{
 			V_FOREACH(ARule *, ruleIt, (*conceptIt)->getValues())
 			{
-				Concept				*conceptPtr;
-				ARule				*rule  = *ruleIt;
-				Vec<ATerminalSymbol> items = rule->getItems();
+				Concept			   *conceptPtr;
+				ARule			   *rule  = *ruleIt;
+				Vec<TerminalSymbol> items = rule->getItems();
 
 				for (size_t i = 0; i < items.size(); ++i)
 				{
@@ -197,9 +197,9 @@ void SemanticDescriptor::addParent()
 
 void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 {
-	Concept				*conceptPtr;
-	Vec<std::string>	 conceptPathsCopy;
-	Vec<ATerminalSymbol> items = rule->getItems();
+	Concept			   *conceptPtr;
+	Vec<std::string>	conceptPathsCopy;
+	Vec<TerminalSymbol> items = rule->getItems();
 	for (size_t i = 0; i < items.size(); ++i)
 	{
 		if (conceptPaths.contains(items[i].getValue()))
@@ -227,9 +227,9 @@ void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 
 void SemanticDescriptor::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, Map<ARule *, ARulePaths> &mapPath, std::string conceptName) const
 {
-	Concept				*conceptPtr;
-	Vec<std::string>	 conceptPathsCopy;
-	Vec<ATerminalSymbol> items = rule->getItems();
+	Concept			   *conceptPtr;
+	Vec<std::string>	conceptPathsCopy;
+	Vec<TerminalSymbol> items = rule->getItems();
 
 	path.push_back(rule);
 
@@ -379,17 +379,17 @@ bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNod
 
 bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 {
-	Vec<ATerminalSymbol> items;
-	unsigned int		 hasInfRecursivity;
+	Vec<TerminalSymbol> items;
+	unsigned int		hasInfRecursivity;
 
 	for (ConceptList::const_iterator it = node.getConcepts().begin(); it != node.getConcepts().end(); ++it)
 	{
 		items			  = (*it)->getItems();
 		hasInfRecursivity = 0;
 
-		for (Vec<ATerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+		for (Vec<TerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 		{
-			const ATerminalSymbol &item = *itemIt;
+			const TerminalSymbol &item = *itemIt;
 
 			if (item.isTerminalChar())
 				continue;

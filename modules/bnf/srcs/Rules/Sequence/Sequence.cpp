@@ -11,12 +11,12 @@ Sequence::~Sequence()
 {
 }
 
-void Sequence::addItem(const ATerminalSymbol &val)
+void Sequence::addItem(const TerminalSymbol &val)
 {
 	m_items.push_back(val);
 }
 
-Vec<ATerminalSymbol> Sequence::getItems() const
+Vec<TerminalSymbol> Sequence::getItems() const
 {
 	return m_items;
 }

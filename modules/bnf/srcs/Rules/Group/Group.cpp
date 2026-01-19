@@ -10,12 +10,12 @@ Group::~Group()
 {
 }
 
-void Group::addItem(const ATerminalSymbol &val)
+void Group::addItem(const TerminalSymbol &val)
 {
 	m_items.push_back(val);
 }
 
-Vec<ATerminalSymbol> Group::getItems() const
+Vec<TerminalSymbol> Group::getItems() const
 {
 	return m_items;
 }
