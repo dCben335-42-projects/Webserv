@@ -24,5 +24,4 @@ typedef ::SemanticDescriptor SemanticDescriptor;
 typedef ::Parser			 Parser;
 } // namespace bnf
 
-
 #endif

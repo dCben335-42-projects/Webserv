@@ -1,9 +1,6 @@
 #include <sstream>
 #include <iostream>
 #include "./Parser.hpp"
-#include "Vector.hpp"
-#include "Map.hpp"
-#include "Logger.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -13,67 +10,77 @@ Parser::~Parser()
 {
 }
 
-void Parser::getAllTerminalChars(std::string conceptName, ARule *rule, Map<ARuleSet> &allTerminalChars)
+// on doit regarder si rule est optional ici si optional il faut faire le chemin vers leleement suivant aussi
+
+void Parser::rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
 {
-	if (startsWith(conceptName, "\'"))
+	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
 	{
-		std::string key = conceptName.substr(1, 1);
-		if (allTerminalChars.has(key) == false)
-			allTerminalChars.set(key, Set<ARule *>());
-		else
-			allTerminalChars.get(key).insert(rule);
-		return;
-	}
-
-	ConceptList conceptList = m_semantic.getConcept(conceptName)->getDefinitions();
-
-	for (size_t i = 0; i < conceptList.size(); ++i)
-	{
-		ConceptDef *concept = conceptList[i];
-		Vec<ARule *> values = concept->getValues();
-		for (size_t j = 0; j < values.size(); ++j)
+		ARulePaths val = (*it).second;
+		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
 		{
-			if (values[j]->getType() == OPTION)
+			ARulePath rules = *path;
+
+			size_t index = rules.indexOf(ruleRef);
+
+			for (size_t k = index + 1; k < rules.size(); ++k)
 			{
-				Vec<std::string> items = values[j]->getItems();
-				for (size_t k = 0; k < items.size(); ++k)
-					getAllTerminalChars(items[k], values[j], allTerminalChars);
-			}
-			else if (values[j]->getType() == SYMBOL)
-			{
-				Vec<std::string> items = values[j]->getItems();
-				getAllTerminalChars(items[0], values[j], allTerminalChars);
-				break;
-			}
-			else
-			{
-				Vec<std::string> items = values[j]->getItems();
-				for (size_t k = 0; k < items.size(); ++k)
-					getAllTerminalChars(items[k], values[j], allTerminalChars);
-				break;
+				ARule *rule = rules[k];
+				if (rule->getType() == OPTION)
+					recursiveSearchNextRules(mapPathNext, rules, rule);
 			}
 		}
 	}
 }
 
-char Parser::adaptTerminalChar(const std::string &str)
+void Parser::recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule)
 {
-	if (str.length() >= 2 && (str[0] == '\'' && str[str.length() - 1] == '\''))
-		return str[1];
-	return '\0';
+	ARulePath nextRule = rule->getNextRules(path);
+
+	if (nextRule.empty())
+		return;
+
+	if (nextRule.back()->getType() == OPTION)
+		recursiveSearchNextRules(mapPathNext, nextRule, nextRule.back());
+
+	Vec<TerminalSymbol> items = nextRule.back()->getItems();
+
+	ARulePaths prefixs;
+	prefixs.insert(nextRule);
+	ARuleMap mapPathCurrentTemp;
+
+	for (size_t k = 0; k < items.size(); ++k)
+	{
+		ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue());
+		mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
+	}
+	rec(mapPathCurrentTemp, mapPathNext, nextRule.back());
+
+	for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
+	{
+		ARule	  *key = (*it).first;
+		ARulePaths val = (*it).second;
+		for (ARulePaths::iterator m = val.begin(); m != val.end(); ++m)
+		{
+			if (!mapPathNext.has(key))
+				mapPathNext.set(key, ARulePaths());
+			mapPathNext.get(key).insert(*m);
+		}
+	}
 }
 
 void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule)
 {
-	for (Set<ARulePath>::iterator path = paths.begin(); path != paths.end(); ++path)
+	for (ARulePaths::iterator path = paths.begin(); path != paths.end(); ++path)
 	{
 		ARulePath nextRule = rule->getNextRules(*path);
 		if (nextRule.empty())
-		{
-			Logger::log("No next rule");
 			continue;
-		}
-		Vec<std::string> items = nextRule.back()->getItems();
+
+		if (nextRule.back()->getType() == OPTION)
+			recursiveSearchNextRules(mapPathNext, nextRule, nextRule.back());
+
+		Vec<TerminalSymbol> items = nextRule.back()->getItems();
 
 		ARulePaths prefixs;
 		prefixs.insert(nextRule);
@@ -81,15 +88,16 @@ void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rul
 
 		for (size_t k = 0; k < items.size(); ++k)
 		{
-			ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k]);
+			ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue()); // DOIT FAIRE RECURSIVITE OPTIONAL SUR CHAQUE LEVEL
 			mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
 		}
+		rec(mapPathCurrentTemp, mapPathNext, nextRule.back());
 
 		for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
 		{
 			ARule	  *key = (*it).first;
 			ARulePaths val = (*it).second;
-			for (Set<ARulePath>::iterator m = val.begin(); m != val.end(); ++m)
+			for (ARulePaths::iterator m = val.begin(); m != val.end(); ++m)
 			{
 				if (!mapPathNext.has(key))
 					mapPathNext.set(key, ARulePaths());
@@ -99,20 +107,21 @@ void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rul
 	}
 }
 
-bool Parser::recursive_parse(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
+bool Parser::parseCurrentChar(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
 {
+	Logger::log("Char to test: " + LoggerJson::get(c));
 	bool isValidWithCurrentPath = false;
 	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
 		ARule *rule = (*it).first;
 		Logger::log(rule->getConceptName());
-		Vec<std::string> items = rule->getItems();
+		Vec<TerminalSymbol> items = rule->getItems();
 
-		for (size_t i = 0; i < items.size(); ++i)
+		for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
 		{
-			if (rule->isTerminalCharAt(i))
+			if (item->isTerminalChar())
 			{
-				if (adaptTerminalChar(items[i]) == c)
+				if (*item == c)
 				{
 					searchNextRules(mapPathNext, mapPathCurrent.get(rule), rule);
 					isValidWithCurrentPath = true;
@@ -123,48 +132,102 @@ bool Parser::recursive_parse(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPath
 	return isValidWithCurrentPath;
 }
 
+bool Parser::isFullyOptional(ARule *rule)
+{
+	if (rule->getType() == OPTION)
+		return true;
+
+	Vec<TerminalSymbol> items = rule->getItems();
+	for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
+	{
+		if (item->isTerminalChar())
+			continue;
+		Concept *concept	  = m_semantic.getConcepts().get(item->getValue());
+		Vec<ConceptDef *> def = concept->getDefinitions();
+
+		for (Vec<ConceptDef *>::iterator cdef = def.begin(); cdef != def.end(); ++cdef)
+		{
+			ARulePath rules				= (*cdef)->getRules();
+			size_t	  isOptionalCounter = 0;
+
+			for (size_t k = 0; k < rules.size(); ++k)
+			{
+				isOptionalCounter += isFullyOptional(rules[k]);
+			}
+			if (isOptionalCounter == rules.size())
+				return true;
+		}
+	}
+	return false;
+}
+
+
+bool Parser::isFullyOptionalEnd(ARulePath path)
+{
+	path = path.back()->getNextRules(path);
+	while (path.size() > 0)
+	{
+		ARule *rule = path.back();
+		if (!isFullyOptional(rule))
+			return false;
+		path = rule->getNextRules(path);
+	}
+	return true;
+}
+
+bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent, char c)
+{
+	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
+	{
+		ARulePaths val = it->second;
+
+		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
+		{
+			ARulePath rules = *path;
+
+			Vec<TerminalSymbol> items = rules.back()->getItems();
+
+			for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
+			{
+				if (item->isTerminalChar())
+				{
+					if (*item == c)
+					{
+						if (isFullyOptionalEnd(rules))
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void Parser::parse(const std::string &stringToParsed)
 {
 	Logger::log("========Parsing========\n");
 	if (stringToParsed.empty())
-		return;
-
+		throw FileNotFinishedException("START: The file ended before reaching a valid end state.");
 	ARuleMap mapPathCurrent = m_semantic.getStartPath();
-
-	ARuleMap	 mapPathNext;
-	Vec<ARule *> path;
+	ARuleMap mapPathNext;
+	char	 c;
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
-		char c = stringToParsed[i];
-		Logger::log("Char to test: " + LoggerJson::get(c));
-		bool isValidWithCurrentPath = recursive_parse(c, mapPathCurrent, mapPathNext);
-		if (!isValidWithCurrentPath)
-		{
-			Logger::log("Pattern false ❌");
-			return;
-		}
-		if (mapPathNext.empty() && i != stringToParsed.size() - 1)
-		{
-			Logger::log("Pattern false ❌");
-			return;
-		}
+		c = stringToParsed[i];
+		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
+			throw InvalidEntryException(std::string("Invalid character '") + c);
 		else
-		{
 			Logger::log("✅");
-		}
-		mapPathCurrent = mapPathNext;
+		if (i == stringToParsed.size() - 1)
+			break;
+		std::swap(mapPathCurrent, mapPathNext);
 		mapPathNext.clear();
 	}
-	if (mapPathCurrent.empty()) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
-	{
+	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
 		Logger::log("Parsing complete ✅");
-		return;
-	}
 	else
-	{
-		Logger::log("Parsing uncomplete ❌");
-		return;
-	}
-	(void) stringToParsed;
+		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 }

@@ -1,24 +1,27 @@
 #include "./Option.hpp"
-#include "Logger.hpp"
 #include "../../utils/utils.hpp"
 using namespace bnf;
 
-Option::Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Option::Option(
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 }
 Option::~Option()
 {
 }
 
-void Option::addItem(const std::string &val)
+void Option::addItem(const TerminalSymbol &val)
 {
-	m_terminalChars.push_back(startsWith(val, DQSQ));
-	items.push_back(val);
+	m_items.push_back(val);
 }
 
-Vec<std::string> Option::getItems() const
+Vec<TerminalSymbol> Option::getItems() const
 {
-	return items;
+	return m_items;
 }
 
 const std::string Option::getTypeName() const
@@ -28,5 +31,5 @@ const std::string Option::getTypeName() const
 
 std::string Option::getPrintableValue() const
 {
-	return LoggerJson::get(items);
+	return LoggerJson::get(m_items);
 }

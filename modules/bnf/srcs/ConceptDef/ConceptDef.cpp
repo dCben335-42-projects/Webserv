@@ -2,7 +2,6 @@
 #include <iostream>
 #include <algorithm>
 #include "../utils/utils.hpp"
-#include "Logger.hpp"
 
 using namespace bnf;
 
@@ -31,7 +30,7 @@ bool ConceptDef::getIsTerminal() const
 
 ConceptDef::~ConceptDef()
 {
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		delete (*it);
 	}
@@ -44,25 +43,45 @@ void ConceptDef::setRule(ARule *rule)
 	values.push_back(rule);
 }
 
-Vec<ARule *> ConceptDef::getRules()
+ARulePath ConceptDef::getRules()
 {
 	return values;
 }
 
-Vec<std::string> ConceptDef::getItems()
+Vec<TerminalSymbol> ConceptDef::getItems()
 {
-	Vec<std::string> allItems;
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	Vec<TerminalSymbol> allItems;
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
 		ARule *rule = *it;
 		if (rule->getType() == OPTION)
 			continue;
-		Vec<std::string> items = rule->getItems();
+		Vec<TerminalSymbol> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
 		{
 			if (std::find(allItems.begin(), allItems.end(), items[i]) == allItems.end())
 				allItems.push_back(items[i]);
+		}
+	}
+
+	return allItems;
+}
+
+Vec<std::string> ConceptDef::getItemsValue()
+{
+	Vec<std::string> allItems;
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
+	{
+		ARule *rule = *it;
+		if (rule->getType() == OPTION)
+			continue;
+		Vec<TerminalSymbol> items = rule->getItems();
+
+		for (size_t i = 0; i < items.size(); ++i)
+		{
+			if (std::find(allItems.begin(), allItems.end(), items[i].getValue()) == allItems.end())
+				allItems.push_back(items[i].getValue());
 		}
 	}
 
@@ -72,22 +91,22 @@ Vec<std::string> ConceptDef::getItems()
 Vec<std::string> ConceptDef::getItemsWithOption()
 {
 	Vec<std::string> allItems;
-	for (Vec<ARule *>::iterator it = values.begin(); it != values.end(); ++it)
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
-		ARule			*rule  = *it;
-		Vec<std::string> items = rule->getItems();
+		ARule			   *rule  = *it;
+		Vec<TerminalSymbol> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
 		{
-			if (std::find(allItems.begin(), allItems.end(), items[i]) == allItems.end())
-				allItems.push_back(items[i]);
+			if (std::find(allItems.begin(), allItems.end(), items[i].getValue()) == allItems.end())
+				allItems.push_back(items[i].getValue());
 		}
 	}
 	return allItems;
 }
 
 
-Vec<ARule *> ConceptDef::getValues() const
+ARulePath ConceptDef::getValues() const
 {
 	return values;
 }
@@ -99,13 +118,32 @@ ARule *ConceptDef::getARule(size_t index)
 	return NULL;
 }
 
-Vec<std::string> ConceptDef::getItemsOfARule(size_t index)
+Vec<TerminalSymbol> ConceptDef::getItemsOfARule(size_t index)
 {
 	if (values.size() > index)
 		return values[index]->getItems();
 	throw std::runtime_error("Index out of range in getItemsOfARule");
 }
 
+
+void ConceptDef::computeOptionalIndex()
+{
+	size_t size		 = values.size();
+	optionalEndIndex = size;
+	for (int i = values.size() - 1; i >= 0; --i)
+	{
+		ARule *rule = values[i];
+		if (rule->getType() == OPTION)
+			optionalEndIndex = i;
+		else
+			break;
+	}
+}
+
+size_t ConceptDef::getOptionalEndIndex() const
+{
+	return optionalEndIndex;
+}
 
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {

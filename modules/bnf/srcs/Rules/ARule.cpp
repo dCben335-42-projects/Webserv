@@ -10,7 +10,19 @@
 
 using namespace bnf;
 
-ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex), m_conceptPtr(conceptPtr)
+ARule::ARule(
+	ERuleType		   t,
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) :
+	m_type(t),
+	m_conceptName(conceptName),
+	m_conceptDefIndex(conceptDefIndex),
+	m_ruleIndex(ruleIndex),
+	m_conceptPtr(conceptPtr),
+	m_conceptDefPtr(conceptDefPtr)
 {
 }
 
@@ -23,24 +35,24 @@ ERuleType ARule::getType() const
 	return m_type;
 }
 
-ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Group(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Group(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
-ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Sequence(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Sequence(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
-ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Option(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Option(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
-ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Symbol(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Symbol(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
 static const BnfMap rules[] = {
@@ -90,6 +102,11 @@ BnfMap ARule::getMap(const std::string &opener)
 	return rules[i];
 }
 
+ConceptDef *ARule::getConceptDefPtr()
+{
+	return m_conceptDefPtr;
+}
+
 const std::string ARule::getConceptName() const
 {
 	return m_conceptName;
@@ -105,13 +122,13 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-Vec<ARule *> ARule::getNextRules(Vec<ARule *> supRuleParent)
+ARulePath ARule::getNextRules(ARulePath supRuleParent)
 {
 	if (m_nextRules.empty())
 	{
 		if (supRuleParent.size() == 1)
 		{
-			return Vec<ARule *>();
+			return ARulePath();
 		}
 		else
 		{
@@ -123,37 +140,6 @@ Vec<ARule *> ARule::getNextRules(Vec<ARule *> supRuleParent)
 	supRuleParent.back() = *m_nextRules.begin();
 	return supRuleParent;
 }
-
-// const Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent) const
-// {
-// 	if (!m_nextRules.empty())
-// 		return &m_nextRules;
-// 	if (supRuleParent.size() == 1)
-// 		return NULL;
-// 	ARule *val = supRuleParent.back();
-// 	supRuleParent.pop_back();
-// 	return val->getNextRules(supRuleParent);
-// }
-
-// Set<ARule *> *ARule::getNextRules(Vec<ARule *> supRuleParent)
-// {
-// 	if (m_nextRules.empty())
-// 	{
-// 		if (supRuleParent.size() == 0)
-// 		{
-// 			return NULL;
-// 		}
-// 		else
-// 		{
-// 			ARule *val = supRuleParent.back();
-// 			supRuleParent.pop_back();
-// 			return val->getNextRules(supRuleParent);
-// 		}
-// 	}
-// 	return &m_nextRules;
-// }
-
-
 
 ARule *ARule::tryGetAdjacentRules()
 {
@@ -169,13 +155,6 @@ std::string ARule::printNext() const
 void ARule::setNextRules(ARule *nextRule)
 {
 	m_nextRules.insert(nextRule);
-}
-
-bool ARule::isTerminalCharAt(size_t index) const
-{
-	if (!m_terminalChars.has(index))
-		return false;
-	return m_terminalChars[index];
 }
 
 Concept *ARule::getConceptPtr() const

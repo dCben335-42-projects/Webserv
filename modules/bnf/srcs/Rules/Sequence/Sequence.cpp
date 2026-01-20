@@ -1,9 +1,13 @@
 #include "./Sequence.hpp"
-#include "Logger.hpp"
 #include "../../utils/utils.hpp"
 using namespace bnf;
 
-Sequence::Sequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SEQUENCE, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Sequence::Sequence(
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) : ARule(SEQUENCE, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 }
 
@@ -11,15 +15,14 @@ Sequence::~Sequence()
 {
 }
 
-void Sequence::addItem(const std::string &val)
+void Sequence::addItem(const TerminalSymbol &val)
 {
-	m_terminalChars.push_back(startsWith(val, DQSQ));
-	items.push_back(val);
+	m_items.push_back(val);
 }
 
-Vec<std::string> Sequence::getItems() const
+Vec<TerminalSymbol> Sequence::getItems() const
 {
-	return items;
+	return m_items;
 }
 
 const std::string Sequence::getTypeName() const
@@ -29,5 +32,5 @@ const std::string Sequence::getTypeName() const
 
 std::string Sequence::getPrintableValue() const
 {
-	return LoggerJson::get(items);
+	return LoggerJson::get(m_items);
 }

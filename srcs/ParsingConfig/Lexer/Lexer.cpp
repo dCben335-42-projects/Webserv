@@ -19,9 +19,45 @@ Lexer::Lexer(std::string const &filepath)
 
 	SemanticDescriptor val(m_content);
 
+
 	std::cout << val;
 	Parser parser(val);
-	parser.parse("d12abcp");
+
+	try
+	{
+		// parser.parse("AmD88l2");
+		// parser.parse("AmD88l");
+		// parser.parse("L2");
+
+		// OE sans ! DONC BON
+		parser.parse("Abb11b1");
+
+		// // OE avec ! DONC BON
+		parser.parse("Abb11b1!");
+
+		// // ALL sans dernier LETTER, OE avec DIGIT 1 DONC BON
+		parser.parse("Abb111");
+
+		// // ALL sans dernier DIGIT,DIGIT,LETTER, OE avec DIGIT 1 DONC BON
+		parser.parse("Abb1");
+
+		// // ALL sans dernier DIGIT,DIGIT,LETTER, OE avec DIGIT 1 DONC BON
+		parser.parse("Abb11");
+
+		// IDENT sans ALL, OE sans !
+		parser.parse("A1");
+
+		// IDENT sans ALL, OE avec !
+		parser.parse("A1!");
+
+		parser.parse("bsa6!");
+
+		parser.parse("Zz9");
+	}
+	catch (const SemanticException &e)
+	{
+		std::cout << e;
+	}
 
 	ifs.close();
 }

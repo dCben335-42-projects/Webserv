@@ -1,8 +1,6 @@
 #include <sstream>
 #include <iostream>
 #include "./SemanticDescriptor.hpp"
-#include "Vector.hpp"
-#include "Logger.hpp"
 #include "../utils/utils.hpp"
 
 using namespace bnf;
@@ -13,6 +11,8 @@ SemanticDescriptor::SemanticDescriptor() : tree(NULL)
 
 SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
 {
+	Logger::setTarget(Logger::Stderr);
+
 	std::istringstream iss(m_content);
 	splitBlocks(iss);
 	parseBlocks();
@@ -122,7 +122,6 @@ void SemanticDescriptor::parseBlocks()
 	}
 }
 
-
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
 	Concept *concept;
@@ -147,7 +146,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
-		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept);
+		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept, conceptDef);
 		if (map.hasClosure && !(iss >> word))
 			throw std::runtime_error("Unexpected end of rule after " + map.opener);
 		while (word != map.closer)
@@ -158,7 +157,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			{
 				if (!validate_string_strict(word))
 					throw InvalidConceptNameException(word);
-				arule->addItem(word);
+				arule->addItem(TerminalSymbol::specify(word));
 				if (!map.hasClosure)
 					break;
 			}
@@ -169,6 +168,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		aruleIndex++;
 	}
 	conceptDef->finish();
+	conceptDef->computeOptionalIndex();
 }
 
 void SemanticDescriptor::addParent()
@@ -179,13 +179,13 @@ void SemanticDescriptor::addParent()
 		{
 			V_FOREACH(ARule *, ruleIt, (*conceptIt)->getValues())
 			{
-				Concept			*conceptPtr;
-				ARule			*rule  = *ruleIt;
-				Vec<std::string> items = rule->getItems();
+				Concept			   *conceptPtr;
+				ARule			   *rule  = *ruleIt;
+				Vec<TerminalSymbol> items = rule->getItems();
 
 				for (size_t i = 0; i < items.size(); ++i)
 				{
-					if (m_concepts.try_get(items[i], conceptPtr))
+					if (m_concepts.try_get(items[i].getValue(), conceptPtr))
 						conceptPtr->addParent(rule);
 				}
 			}
@@ -195,17 +195,17 @@ void SemanticDescriptor::addParent()
 
 void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 {
-	Concept			*conceptPtr;
-	Vec<std::string> conceptPathsCopy;
-	Vec<std::string> items = rule->getItems();
+	Concept			   *conceptPtr;
+	Vec<std::string>	conceptPathsCopy;
+	Vec<TerminalSymbol> items = rule->getItems();
 	for (size_t i = 0; i < items.size(); ++i)
 	{
-		if (conceptPaths.contains(items[i]))
+		if (conceptPaths.contains(items[i].getValue()))
 			continue;
-		if (m_concepts.try_get(items[i], conceptPtr))
+		if (m_concepts.try_get(items[i].getValue(), conceptPtr))
 		{
 			conceptPathsCopy = conceptPaths;
-			conceptPathsCopy.push_back(items[i]);
+			conceptPathsCopy.push_back(items[i].getValue());
 			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
 			{
 				ndw((*conceptIt)->getARule(0), conceptPathsCopy);
@@ -219,26 +219,22 @@ void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 	}
 }
 
-
-
-
-
-void SemanticDescriptor::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, Map<ARule *, ARulePaths> &mapPath, std::string conceptName) const
+void SemanticDescriptor::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName) const
 {
-	Concept			*conceptPtr;
-	Vec<std::string> conceptPathsCopy;
-	Vec<std::string> items = rule->getItems();
+	Concept			   *conceptPtr;
+	Vec<std::string>	conceptPathsCopy;
+	Vec<TerminalSymbol> items = rule->getItems();
 
 	path.push_back(rule);
 
 	for (size_t i = 0; i < items.size(); ++i)
 	{
-		if (conceptPaths.contains(items[i]))
+		if (conceptPaths.contains(items[i].getValue()))
 			continue;
-		if (m_concepts.try_get(items[i], conceptPtr))
+		if (m_concepts.try_get(items[i].getValue(), conceptPtr))
 		{
 			conceptPathsCopy = conceptPaths;
-			conceptPathsCopy.push_back(items[i]);
+			conceptPathsCopy.push_back(items[i].getValue());
 			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
 			{
 				ndw2((*conceptIt)->getARule(0), conceptPathsCopy, path, mapPath, conceptName);
@@ -278,14 +274,13 @@ void SemanticDescriptor::findAllNext()
 
 	m_startPath = getPathsTerminalChars(ARulePaths(), CURSOR);
 	conceptPaths.clear();
-	// printStartPath();
 }
 
-Map<ARule *, ARulePaths> SemanticDescriptor::getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const
+ARuleMap SemanticDescriptor::getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const
 {
-	Vec<std::string>		 conceptPaths;
-	Map<ARule *, ARulePaths> mapPath;
-	ARulePath				 path;
+	Vec<std::string> conceptPaths;
+	ARuleMap		 mapPath;
+	ARulePath		 path;
 
 	conceptPaths.push_back(conceptName);
 
@@ -296,31 +291,24 @@ Map<ARule *, ARulePaths> SemanticDescriptor::getPathsTerminalChars(ARulePaths pr
 	if (prefixs.empty())
 		return mapPath;
 
-	Map<ARule *, ARulePaths> mapPathPrefixed;
+	ARuleMap mapPathPrefixed;
 
-	for (Map<ARule *, ARulePaths>::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
+	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
 	{
 		mapPathPrefixed.set(it->first, ARulePaths());
 	}
 
-	for (Map<ARule *, ARulePaths>::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
+	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
 	{
-		// Logger::log("Processing rule: " + LoggerJson::get(*(it->first), true));
 		ARulePaths *paths = &mapPathPrefixed.get(it->first);
 		for (ARulePaths::iterator x = prefixs.begin(); x != prefixs.end(); ++x)
 		{
-
-
 			ARulePath vec1 = *x;
-			// Logger::log("vec1: " + LoggerJson::get(vec1, true));
-			// Logger::log("it->second size: " + LoggerJson::get(it->second.size()));
 
 			for (ARulePaths::iterator j = it->second.begin(); j != it->second.end(); ++j)
 			{
-				// Logger::log("\ndwid\n");
 				ARulePath vec2 = *j;
 				vec1.insert(vec1.end(), vec2.begin(), vec2.end());
-				// Logger::log("vec1-2: " + LoggerJson::get(vec1, true));
 				paths->insert(vec1);
 			}
 		}
@@ -328,26 +316,7 @@ Map<ARule *, ARulePaths> SemanticDescriptor::getPathsTerminalChars(ARulePaths pr
 	return mapPathPrefixed;
 }
 
-// Map<ARule *, ARulePaths> getMapPath
-
-// void SemanticDescriptor::printStartPath()
-// {
-// 	for (Map<ARule *, ARulePaths>::iterator it = m_startPath.begin(); it != m_startPath.end(); ++it)
-// 	{
-// 		Logger::log(LoggerJson::get(*(it->first), true) + "(" + LoggerJson::get(it->second.size()) + " paths) : ");
-// 		for (size_t i = 0; i < it->second.size(); ++i)
-// 		{
-// 			Logger::log("[");
-// 			for (size_t j = 0; j < it->second[i].size(); ++j)
-// 			{
-// 				Logger::log(LoggerJson::get(*(it->second[i][j]), true) + (j + 1 < it->second[i].size() ? ", " : ""));
-// 			}
-// 			Logger::log("]");
-// 		}
-// 	}
-// }
-
-Map<ARule *, ARulePaths> SemanticDescriptor::getStartPath() const
+ARuleMap SemanticDescriptor::getStartPath() const
 {
 	return m_startPath;
 }
@@ -377,25 +346,25 @@ bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNod
 
 bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 {
-	Vec<std::string> items;
-	unsigned int	 hasInfRecursivity;
+	Vec<TerminalSymbol> items;
+	unsigned int		hasInfRecursivity;
 
 	for (ConceptList::const_iterator it = node.getConcepts().begin(); it != node.getConcepts().end(); ++it)
 	{
 		items			  = (*it)->getItems();
 		hasInfRecursivity = 0;
 
-		for (Vec<std::string>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+		for (Vec<TerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 		{
-			const std::string &item = *itemIt;
+			const TerminalSymbol &item = *itemIt;
 
-			if (startsWith(item, DQSQ))
+			if (item.isTerminalChar())
 				continue;
 
-			if (!isInMap(m_concepts, item))
-				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item);
+			if (!isInMap(m_concepts, item.getValue()))
+				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item.getValue());
 
-			hasInfRecursivity += isInContainer(node.getPath(), item) || hasRecursiveErrorOnNewNode(item, &node);
+			hasInfRecursivity += isInContainer(node.getPath(), item.getValue()) || hasRecursiveErrorOnNewNode(item.getValue(), &node);
 		}
 		if (!hasInfRecursivity)
 			node.setHasInfRecursivity(false);
@@ -425,17 +394,6 @@ const Concept *SemanticDescriptor::getConcept(const std::string &key) const
 {
 	return m_concepts.get(key);
 }
-
-// const Concept *&SemanticDescriptor::getConcept(const std::string &key) const
-// {
-// 	return m_concepts.get(key);
-// }
-
-
-// bool SemanticDescriptor::tryGetConcept(const std::string &key, Concept &conceptList) const
-// {
-// 	return m_concepts.try_get(key, conceptList);
-// }
 
 ConceptNode *SemanticDescriptor::getTree() const
 {

@@ -1,7 +1,6 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
-#include <vector>
 #include <string>
 #include "bnf_defs.hpp"
 #include "../ARule.hpp"
@@ -11,14 +10,14 @@ using bnf::OPTION;
 class Option : public ARule
 {
 	public:
-		Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		~Option();
-		void			  addItem(const std::string &val);
-		Vec<std::string>  getItems() const;
-		const std::string getTypeName() const;
-		std::string		  getPrintableValue() const;
+		void				addItem(const TerminalSymbol &val);
+		Vec<TerminalSymbol> getItems() const;
+		const std::string	getTypeName() const;
+		std::string			getPrintableValue() const;
 
 	private:
-		Vec<std::string> items;
+		Vec<TerminalSymbol> m_items;
 };
 #endif
