@@ -1,7 +1,7 @@
 #ifndef TREENODE_HPP
 #define TREENODE_HPP
 
-#include "Vector.hpp"
+#include "Vec.hpp"
 #include <string>
 
 template <typename Derived>

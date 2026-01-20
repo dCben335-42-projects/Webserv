@@ -2,7 +2,7 @@
 #define VIRTUALSERVER_CONFIG_HPP
 
 #include <string>
-#include "Vector.hpp"
+#include "Vec.hpp"
 #include "Map.hpp"
 #include "HttpMethod.hpp"
 

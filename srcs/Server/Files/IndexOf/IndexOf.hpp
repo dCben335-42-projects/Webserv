@@ -2,7 +2,7 @@
 #define INDEXOF_HPP
 
 #include <string>
-#include <Vector.hpp>
+#include "Vec.hpp"
 
 #include "File.hpp"
 
