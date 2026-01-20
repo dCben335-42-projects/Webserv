@@ -104,7 +104,8 @@ std::string File::getCreatedAtHuman() const
 std::string File::determineExtension(const std::string &fileName, size_t *extPos)
 {
 	size_t dotPos = fileName.rfind('.');
-	*extPos		  = dotPos;
+	if (extPos)
+		*extPos = dotPos;
 	if (dotPos != std::string::npos && dotPos != 0 && dotPos != fileName.length() - 1)
 		return fileName.substr(dotPos);
 	return "";

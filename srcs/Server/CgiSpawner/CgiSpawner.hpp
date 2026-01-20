@@ -14,9 +14,10 @@ class CgiSpawner
 		const HttpRequest &m_req;
 		const Config	  &m_config;
 
-		int	  m_stdin_pipe[2];
-		int	  m_stdout_pipe[2];
-		pid_t m_pid;
+		int							   m_stdin_pipe[2];
+		int							   m_stdout_pipe[2];
+		pid_t						   m_pid;
+		Vec<const Config::CgiParams &> m_cgiParams;
 
 		bool			 m_has_post_data;
 		Vec<std::string> m_env;

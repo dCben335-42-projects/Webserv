@@ -53,20 +53,19 @@ void HttpRequest::setRawRequest(const std::string &rawRequest)
 }
 
 
-const std::string HttpRequest::getPathInfo() const
-{
-	for (int i = 0; i < m_segments.size(); i++)
-	{
-	}
-}
+// const std::string HttpRequest::getPathInfo() const
+// {
+// 	for (int i = 0; i < m_segments.size(); i++)
+// 	{
+// 	}
+// }
 
-const std::string HttpRequest::getScriptName() const
-{
-	for (int i = 0; i < m_segments.size(); i++)
-	{
-		m_segments[i].find('.');
-	}
-}
+// const std::string HttpRequest::getScriptName() const
+// {
+// 	for (int i = 0; i < m_segments.size(); i++)
+// 	{
+// 	}
+// }
 
 // ANCHOR Socket Reading Public method
 
@@ -145,15 +144,16 @@ HttpRequest &HttpRequest::parse()
 void HttpRequest::parseTargetQuery(const std::string &path)
 {
 	const size_t queryPos = path.find('?');
-	m_segments			  = String::split(path, "/");
 
 	if (queryPos != std::string::npos)
 	{
 		m_target	  = path.substr(0, queryPos);
+		m_segments	  = String::split(m_target, "/");
 		m_queryString = path.substr(queryPos + 1);
 		return;
 	}
-	m_target = path;
+	m_segments = String::split(path, "/");
+	m_target   = path;
 }
 
 

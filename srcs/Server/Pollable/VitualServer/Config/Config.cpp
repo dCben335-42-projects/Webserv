@@ -137,7 +137,7 @@ const std::string &Config::getRoot(const std::string &locationPath) const
 const std::string &Config::getCgiBin(const std::string &locationPath, std::string &fileExt) const
 {
 	static const std::string emptyString = "";
-	CgiParams const			*cgiParams;
+	CgiParams const			*cgiParams	 = NULL;
 
 	if (locations.has(locationPath))
 		cgiParams = locations.get(locationPath)->getCgiParams();

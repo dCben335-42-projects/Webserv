@@ -41,6 +41,7 @@ int CgiSpawner::spawn(const std::string &script_path)
 
 void CgiSpawner::setupPipes()
 {
+	// TODO maybe need to throw ?
 	if (pipe(m_stdin_pipe) == -1)
 	{
 		std::cerr << "Pipe creation failed" << std::endl;
@@ -86,7 +87,7 @@ void CgiSpawner::setupEnv()
 #include <stdio.h>
 void CgiSpawner::childprocess(const std::string &script_path)
 {
-	const std::string &fileExt = File::determineExtension();
+	const std::string &fileExt = File::determineExtension(, NULL);
 	const std::string &bin	   = m_config.getCgiBin(m_req.getTarget(), );
 	char *const		   argv[3] = {
 		   const_cast<char *>(bin.c_str()),

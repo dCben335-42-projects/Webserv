@@ -170,7 +170,7 @@ void Client::prepareResponse()
 	{
 		if (isCgi())
 		{
-			spawnCgi(m_server->getDocumentRoot() + m_req.getTarget());
+			spawnCgi("files/www/website/" + m_req.getTarget());
 			return;
 		}
 		if (method == "GET")
@@ -305,7 +305,7 @@ void Client::onPollHangUp()
  */
 void Client::spawnCgi(const std::string &script_path)
 {
-	CgiSpawner spawner(this, m_server);
+	CgiSpawner spawner(getRequest(), m_server->getConfig());
 	int		   stdout_fd = spawner.spawn(script_path);
 
 	if (stdout_fd >= 0)

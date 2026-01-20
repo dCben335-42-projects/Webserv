@@ -98,4 +98,5 @@ const std::string &Config::CgiParams::getBinFromMap(std::string &fileExt) const
 {
 	// TODO need to check get() return value in case of no value;
 	const std::string &binary = m_binMap.get(fileExt);
+	return (binary);
 }
