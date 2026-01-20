@@ -25,7 +25,7 @@ class Parser
 		void searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule);
 		void recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule);
 		void rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef);
-		bool verifyOptionalEnd(ARuleMap &mapPathCurrent);
+		bool verifyOptionalEnd(ARuleMap &mapPathCurrent, char c);
 		bool detect(ARulePath rules);
 		bool isFullyOptional(ARule *rule);
 		bool isFullyOptionalEnd(ARulePath path);

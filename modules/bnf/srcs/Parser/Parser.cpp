@@ -175,44 +175,7 @@ bool Parser::isFullyOptionalEnd(ARulePath path)
 	return true;
 }
 
-// bool Parser::detect(ARulePath rules)
-// {
-// 	Logger::log("ok1");
-// 	bool isOptionalEnd = false;
-
-// 	for (int k = rules.size() - 2; k >= 0; k--)
-// 	{
-// 		Logger::log("ok2");
-// 		ARule *rule = rules[k];
-// 		Logger::log(rule);
-// 		size_t optionalEndIndex = rules[k]->getConceptDefPtr()->getOptionalEndIndex();
-// 		Logger::log("Optional end index: " + LoggerJson::get(optionalEndIndex));
-// 		Logger::log("Current rule index: " + LoggerJson::get(rule->getRuleIndex()));
-// 		if (rule->getRuleIndex() < optionalEndIndex)
-// 		{
-// 			if (rule->getRuleIndex() == rule->getConceptDefPtr()->getValues().size() - 1 && isOptionalEnd)
-// 			{
-// 				continue;
-// 			}
-
-// 			Logger::log("ok3");
-// 			if (rule->getRuleIndex() != 0)
-// 			{
-// 				Logger::log("ok4");
-// 				return false;
-// 			}
-// 		}
-// 		else
-// 		{
-// 			isOptionalEnd = true;
-// 			continue;
-// 		}
-// 	}
-// 	Logger::log("ok5");
-// 	return true;
-// }
-
-bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent)
+bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent, char c)
 {
 	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
@@ -221,9 +184,21 @@ bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent)
 		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
 		{
 			ARulePath rules = *path;
-			if (isFullyOptionalEnd(rules))
+
+			Vec<TerminalSymbol> items = rules.back()->getItems();
+
+			for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
 			{
-				return true;
+				if (item->isTerminalChar())
+				{
+					if (*item == c)
+					{
+						if (isFullyOptionalEnd(rules))
+						{
+							return true;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -237,10 +212,11 @@ void Parser::parse(const std::string &stringToParsed)
 		throw FileNotFinishedException("START: The file ended before reaching a valid end state.");
 	ARuleMap mapPathCurrent = m_semantic.getStartPath();
 	ARuleMap mapPathNext;
+	char	 c;
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
-		char c = stringToParsed[i];
+		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
 		else
@@ -250,7 +226,7 @@ void Parser::parse(const std::string &stringToParsed)
 		std::swap(mapPathCurrent, mapPathNext);
 		mapPathNext.clear();
 	}
-	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
+	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
