@@ -45,7 +45,7 @@ Lexer::Lexer(std::string const &filepath)
 		// parser.parse("Abb11");
 
 		// IDENT sans ALL, OE sans !
-		parser.parse("A1");
+		// parser.parse("A1");
 
 		// IDENT sans ALL, OE avec !
 		// parser.parse("A1!");

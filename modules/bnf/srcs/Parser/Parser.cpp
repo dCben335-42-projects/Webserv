@@ -132,43 +132,98 @@ bool Parser::parseCurrentChar(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPat
 	return isValidWithCurrentPath;
 }
 
-bool Parser::detect(ARulePath rules)
+bool Parser::isFullyOptional(ARule *rule)
 {
-	for (int k = rules.size() - 2; k >= 0; k--)
+	if (rule->getType() == OPTION)
+		return true;
+
+	Vec<TerminalSymbol> items = rule->getItems();
+	for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
 	{
-		ARule *rule				= rules[k];
-		size_t optionalEndIndex = rules[k]->getConceptDefPtr()->getOptionalEndIndex();
-		if (rule->getRuleIndex() < optionalEndIndex)
+		if (item->isTerminalChar())
+			continue;
+		Concept *concept	  = m_semantic.getConcepts().get(item->getValue());
+		Vec<ConceptDef *> def = concept->getDefinitions();
+
+		for (Vec<ConceptDef *>::iterator cdef = def.begin(); cdef != def.end(); ++cdef)
 		{
-			if (rule->getRuleIndex() != 0)
-				return false;
+			ARulePath rules				= (*cdef)->getRules();
+			size_t	  isOptionalCounter = 0;
+
+			for (size_t k = 0; k < rules.size(); ++k)
+			{
+				isOptionalCounter += isFullyOptional(rules[k]);
+			}
+			if (isOptionalCounter == rules.size())
+				return true;
 		}
+	}
+	return false;
+}
+
+
+bool Parser::isFullyOptionalEnd(ARulePath path)
+{
+	path = path.back()->getNextRules(path);
+	while (path.size() > 0)
+	{
+		ARule *rule = path.back();
+		if (!isFullyOptional(rule))
+			return false;
+		path = rule->getNextRules(path);
 	}
 	return true;
 }
+
+// bool Parser::detect(ARulePath rules)
+// {
+// 	Logger::log("ok1");
+// 	bool isOptionalEnd = false;
+
+// 	for (int k = rules.size() - 2; k >= 0; k--)
+// 	{
+// 		Logger::log("ok2");
+// 		ARule *rule = rules[k];
+// 		Logger::log(rule);
+// 		size_t optionalEndIndex = rules[k]->getConceptDefPtr()->getOptionalEndIndex();
+// 		Logger::log("Optional end index: " + LoggerJson::get(optionalEndIndex));
+// 		Logger::log("Current rule index: " + LoggerJson::get(rule->getRuleIndex()));
+// 		if (rule->getRuleIndex() < optionalEndIndex)
+// 		{
+// 			if (rule->getRuleIndex() == rule->getConceptDefPtr()->getValues().size() - 1 && isOptionalEnd)
+// 			{
+// 				continue;
+// 			}
+
+// 			Logger::log("ok3");
+// 			if (rule->getRuleIndex() != 0)
+// 			{
+// 				Logger::log("ok4");
+// 				return false;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			isOptionalEnd = true;
+// 			continue;
+// 		}
+// 	}
+// 	Logger::log("ok5");
+// 	return true;
+// }
 
 bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent)
 {
 	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
-		ARule	  *key				= it->first;
-		ARulePaths val				= it->second;
-		size_t	   optionalEndIndex = key->getConceptDefPtr()->getOptionalEndIndex();
+		ARulePaths val = it->second;
 
-		if (key->getRuleIndex() < optionalEndIndex && key->getRuleIndex() != 0)
+		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
 		{
-			Logger::log(LoggerJson::get(key));
-			continue;
-		}
-		else
-		{
-			for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
+			ARulePath rules = *path;
+			if (isFullyOptionalEnd(rules))
 			{
-				ARulePath rules = *path;
-				if (detect(rules))
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 	}
@@ -190,10 +245,12 @@ void Parser::parse(const std::string &stringToParsed)
 			throw InvalidEntryException(std::string("Invalid character '") + c);
 		else
 			Logger::log("✅");
+		if (i == stringToParsed.size() - 1)
+			break;
 		std::swap(mapPathCurrent, mapPathNext);
 		mapPathNext.clear();
 	}
-	if (mapPathCurrent.empty() || verifyOptionalEnd(mapPathCurrent)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
+	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");

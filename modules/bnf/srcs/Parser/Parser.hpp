@@ -27,6 +27,8 @@ class Parser
 		void rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef);
 		bool verifyOptionalEnd(ARuleMap &mapPathCurrent);
 		bool detect(ARulePath rules);
+		bool isFullyOptional(ARule *rule);
+		bool isFullyOptionalEnd(ARulePath path);
 
 	public:
 		~Parser();
