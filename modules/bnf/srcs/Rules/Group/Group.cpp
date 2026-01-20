@@ -2,7 +2,12 @@
 #include "../../utils/utils.hpp"
 using namespace bnf;
 
-Group::Group(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(GROUP, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Group::Group(
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) : ARule(GROUP, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 }
 Group::~Group()

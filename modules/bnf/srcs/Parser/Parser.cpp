@@ -33,10 +33,12 @@ void Parser::rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
 	}
 }
 
-
 void Parser::recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule)
 {
 	ARulePath nextRule = rule->getNextRules(path);
+
+	if (nextRule.empty())
+		return;
 
 	if (nextRule.back()->getType() == OPTION)
 		recursiveSearchNextRules(mapPathNext, nextRule, nextRule.back());
@@ -66,7 +68,6 @@ void Parser::recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARu
 		}
 	}
 }
-
 
 void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule)
 {
@@ -131,6 +132,49 @@ bool Parser::parseCurrentChar(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPat
 	return isValidWithCurrentPath;
 }
 
+bool Parser::detect(ARulePath rules)
+{
+	for (int k = rules.size() - 2; k >= 0; k--)
+	{
+		ARule *rule				= rules[k];
+		size_t optionalEndIndex = rules[k]->getConceptDefPtr()->getOptionalEndIndex();
+		if (rule->getRuleIndex() < optionalEndIndex)
+		{
+			if (rule->getRuleIndex() != 0)
+				return false;
+		}
+	}
+	return true;
+}
+
+bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent)
+{
+	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
+	{
+		ARule	  *key				= it->first;
+		ARulePaths val				= it->second;
+		size_t	   optionalEndIndex = key->getConceptDefPtr()->getOptionalEndIndex();
+
+		if (key->getRuleIndex() < optionalEndIndex && key->getRuleIndex() != 0)
+		{
+			Logger::log(LoggerJson::get(key));
+			continue;
+		}
+		else
+		{
+			for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
+			{
+				ARulePath rules = *path;
+				if (detect(rules))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void Parser::parse(const std::string &stringToParsed)
 {
 	Logger::log("========Parsing========\n");
@@ -149,7 +193,7 @@ void Parser::parse(const std::string &stringToParsed)
 		std::swap(mapPathCurrent, mapPathNext);
 		mapPathNext.clear();
 	}
-	if (mapPathCurrent.empty()) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
+	if (mapPathCurrent.empty() || verifyOptionalEnd(mapPathCurrent)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");

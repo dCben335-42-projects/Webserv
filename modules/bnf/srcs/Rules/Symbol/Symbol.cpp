@@ -1,13 +1,24 @@
 #include "./Symbol.hpp"
-#include "Logger.hpp"
 #include "../../utils/utils.hpp"
+
 using namespace bnf;
 
-Symbol::Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Symbol::Symbol(
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 }
 
-Symbol::Symbol(const TerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Symbol::Symbol(
+	const TerminalSymbol &val,
+	const std::string	 &conceptName,
+	size_t				  conceptDefIndex,
+	size_t				  ruleIndex,
+	Concept				 *conceptPtr,
+	ConceptDef			 *conceptDefPtr) : ARule(SYMBOL, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 	m_items.push_back(val);
 }

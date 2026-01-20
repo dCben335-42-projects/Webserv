@@ -10,7 +10,7 @@ using bnf::OPTION;
 class Option : public ARule
 {
 	public:
-		Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		~Option();
 		void				addItem(const TerminalSymbol &val);
 		Vec<TerminalSymbol> getItems() const;

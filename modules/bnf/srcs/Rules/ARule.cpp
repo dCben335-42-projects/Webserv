@@ -10,7 +10,19 @@
 
 using namespace bnf;
 
-ARule::ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : m_type(t), m_conceptName(conceptName), m_conceptDefIndex(conceptDefIndex), m_ruleIndex(ruleIndex), m_conceptPtr(conceptPtr)
+ARule::ARule(
+	ERuleType		   t,
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) :
+	m_type(t),
+	m_conceptName(conceptName),
+	m_conceptDefIndex(conceptDefIndex),
+	m_ruleIndex(ruleIndex),
+	m_conceptPtr(conceptPtr),
+	m_conceptDefPtr(conceptDefPtr)
 {
 }
 
@@ -23,24 +35,24 @@ ERuleType ARule::getType() const
 	return m_type;
 }
 
-ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Group(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Group(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
-ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createSequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Sequence(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Sequence(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
-ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createOption(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Option(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Option(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
-ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr)
+ARule *createSymbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
-	return new Symbol(conceptName, conceptDefIndex, ruleIndex, conceptPtr);
+	return new Symbol(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);
 }
 
 static const BnfMap rules[] = {
@@ -88,6 +100,11 @@ BnfMap ARule::getMap(const std::string &opener)
 		i++;
 	}
 	return rules[i];
+}
+
+ConceptDef *ARule::getConceptDefPtr()
+{
+	return m_conceptDefPtr;
 }
 
 const std::string ARule::getConceptName() const

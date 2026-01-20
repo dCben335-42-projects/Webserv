@@ -19,6 +19,8 @@ class ConceptDef
 		Vec<std::string>	getItemsValue();
 		Vec<std::string>	getItemsWithOption();
 		bool				getIsTerminal() const;
+		void				computeOptionalIndex();
+		size_t				getOptionalEndIndex() const;
 
 		void finish();
 		void setRule(ARule *rule);
@@ -27,6 +29,7 @@ class ConceptDef
 		const std::string m_conceptName;
 		ARulePath		  values;
 		bool			  isTerminal;
+		size_t			  optionalEndIndex;
 };
 
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data);

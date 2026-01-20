@@ -10,7 +10,7 @@ using bnf::GROUP;
 class Group : public ARule
 {
 	public:
-		Group(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		Group(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		~Group();
 
 		Vec<TerminalSymbol> getItems() const;

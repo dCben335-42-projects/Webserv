@@ -2,7 +2,12 @@
 #include "../../utils/utils.hpp"
 using namespace bnf;
 
-Option::Option(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Option::Option(
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) : ARule(OPTION, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 }
 Option::~Option()

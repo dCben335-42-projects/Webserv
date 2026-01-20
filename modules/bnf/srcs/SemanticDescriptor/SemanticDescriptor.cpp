@@ -11,6 +11,8 @@ SemanticDescriptor::SemanticDescriptor() : tree(NULL)
 
 SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
 {
+	Logger::setTarget(Logger::Stderr);
+
 	std::istringstream iss(m_content);
 	splitBlocks(iss);
 	parseBlocks();
@@ -144,7 +146,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
-		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept);
+		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept, conceptDef);
 		if (map.hasClosure && !(iss >> word))
 			throw std::runtime_error("Unexpected end of rule after " + map.opener);
 		while (word != map.closer)
@@ -166,6 +168,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		aruleIndex++;
 	}
 	conceptDef->finish();
+	conceptDef->computeOptionalIndex();
 }
 
 void SemanticDescriptor::addParent()

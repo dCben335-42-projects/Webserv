@@ -10,7 +10,7 @@ using bnf::SEQUENCE;
 class Sequence : public ARule
 {
 	public:
-		Sequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		Sequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		~Sequence();
 		void				addItem(const TerminalSymbol &val);
 		Vec<TerminalSymbol> getItems() const;

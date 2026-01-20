@@ -7,13 +7,14 @@
 using bnf::ERuleType;
 
 class Concept;
+class ConceptDef;
 class ARule;
 
 struct BnfMap
 {
 		std::string opener;
 		std::string closer;
-		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		bool hasClosure;
 };
 
@@ -29,10 +30,11 @@ class ARule
 		const size_t		m_conceptDefIndex;
 		const size_t		m_ruleIndex;
 		Concept			   *m_conceptPtr;
+		ConceptDef		   *m_conceptDefPtr;
 		Set<ARule *>		m_nextRules;
 		Vec<TerminalSymbol> m_items;
 
-		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 
 	public:
 		virtual ~ARule();
@@ -51,6 +53,7 @@ class ARule
 		ARulePath		  getNextRules(ARulePath supRuleParent);
 		std::string		  printNext() const;
 		ARule			 *tryGetAdjacentRules();
+		ConceptDef		 *getConceptDefPtr();
 
 		void	 setNextRules(ARule *nextRule);
 		Concept *getConceptPtr() const;

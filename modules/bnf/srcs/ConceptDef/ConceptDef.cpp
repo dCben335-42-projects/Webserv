@@ -126,6 +126,25 @@ Vec<TerminalSymbol> ConceptDef::getItemsOfARule(size_t index)
 }
 
 
+void ConceptDef::computeOptionalIndex()
+{
+	size_t size		 = values.size();
+	optionalEndIndex = size;
+	for (int i = values.size() - 1; i >= 0; --i)
+	{
+		ARule *rule = values[i];
+		if (rule->getType() == OPTION)
+			optionalEndIndex = i;
+		else
+			break;
+	}
+}
+
+size_t ConceptDef::getOptionalEndIndex() const
+{
+	return optionalEndIndex;
+}
+
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data)
 {
 	os << LoggerJson::get(data.getValues());

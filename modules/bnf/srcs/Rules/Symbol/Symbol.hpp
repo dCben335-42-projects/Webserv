@@ -8,8 +8,8 @@ using bnf::SYMBOL;
 class Symbol : public ARule
 {
 	public:
-		Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
-		Symbol(const TerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr);
+		Symbol(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
+		Symbol(const TerminalSymbol &val, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		~Symbol();
 		void				addItem(const TerminalSymbol &val);
 		Vec<TerminalSymbol> getItems() const;

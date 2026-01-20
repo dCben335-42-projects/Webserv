@@ -2,7 +2,12 @@
 #include "../../utils/utils.hpp"
 using namespace bnf;
 
-Sequence::Sequence(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr) : ARule(SEQUENCE, conceptName, conceptDefIndex, ruleIndex, conceptPtr)
+Sequence::Sequence(
+	const std::string &conceptName,
+	size_t			   conceptDefIndex,
+	size_t			   ruleIndex,
+	Concept			  *conceptPtr,
+	ConceptDef		  *conceptDefPtr) : ARule(SEQUENCE, conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr)
 {
 }
 
