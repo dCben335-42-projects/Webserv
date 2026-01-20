@@ -17,26 +17,24 @@ class Config
 		unsigned short m_port;
 		std::string	   m_domain;
 
-		Location	   *defaultLocation;
-		Map<Location *> locations;
+		Location			 *defaultLocation;
+		Map<const Location *> m_locations;
 
 	public:
 		// Config();
-		Config(const std::string	 &ip,
-			   unsigned short		  port,
-			   const std::string	 &domain,
-			   Location				 *defaultLoc,
-			   const Map<Location *> &locs);
+		Config(const std::string		   &ip,
+			   unsigned short				port,
+			   const std::string		   &domain,
+			   Location					   *defaultLoc,
+			   const Map<const Location *> &locs);
 
 		~Config();
 
-		const std::string &getIp() const;
-		unsigned short	   getPort() const;
-		const std::string &getDomain() const;
-		const Location	  *getDefaultLocation() const
-		{
-			return defaultLocation;
-		}
+		const std::string			&getIp() const;
+		unsigned short				 getPort() const;
+		const std::string			&getDomain() const;
+		const Location				*getDefaultLocation() const;
+		const Map<const Location *> &getLocations() const;
 
 		void setIp(const std::string &ip);
 		void setPort(unsigned short port);

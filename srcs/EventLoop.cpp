@@ -18,10 +18,22 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	Config::Location	   *defaultLocation = new Config::Location("/", "files/www/website", "index.html", true, NULL);
-	Config::Location	   *loc1			= new Config::Location("/assets", "files/www/website", "", false, NULL);
-	Map<Config::Location *> locations;
+	Config::Location			 *defaultLocation = new Config::Location("/", "files/www/website", "index.html", false, NULL);
+	Config::Location			 *loc1			  = new Config::Location("/assets", "", "", false, NULL);
+	Config::Location			 *loc2			  = new Config::Location("/assets/", "", "", false, NULL);
+	Config::Location			 *loc3			  = new Config::Location("/assets/test/", "", "", false, NULL);
+	Config::Location			 *loc4			  = new Config::Location("/assets/test/dwad", "", "", false, NULL);
+	Config::Location			 *loc40			  = new Config::Location("/assets/test/dwad/", "", "", false, NULL);
+	Config::Location			 *loc5			  = new Config::Location("/shrek", "", "", false, NULL);
+	Config::Location			 *loc6			  = new Config::Location("/shrek/", "", "", false, NULL);
+	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
+	locations.set(loc2->getPath(), loc2);
+	locations.set(loc3->getPath(), loc3);
+	locations.set(loc4->getPath(), loc4);
+	locations.set(loc40->getPath(), loc40);
+	locations.set(loc5->getPath(), loc5);
+	locations.set(loc6->getPath(), loc6);
 	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 }
@@ -53,14 +65,12 @@ void EventLoop::run()
 			if (!m_pollFds[i].revents)
 				continue;
 			ready--;
-
 			const int fd = m_pollFds[i].fd;
 			if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
 			{
 				deletePollable(fd, i);
 				continue;
 			}
-
 			Pollable *handler = getHandler(fd);
 			if (handler)
 			{

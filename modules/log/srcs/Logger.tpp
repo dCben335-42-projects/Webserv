@@ -15,7 +15,6 @@
 template <typename V>
 void Logger::log(const V &v)
 {
-	std::cerr << "Value:" << std::endl;
 	stream() << indent() << LoggerJson::get(v) << std::endl;
 }
 
@@ -30,7 +29,6 @@ void Logger::log(const V &v)
 template <typename V>
 void Logger::log(V *ptr)
 {
-	std::cerr << "Pointer:" << std::endl;
 	if (ptr)
 	{
 		log(*ptr);
@@ -38,6 +36,25 @@ void Logger::log(V *ptr)
 	else
 		stream() << indent() << "null" << std::endl;
 }
+
+/**
+ *
+ * @brief Logs a const pointer to a value with the current indentation.
+ *
+ * @param ptr The const pointer to the value to log.
+ *
+ */
+template <typename V>
+void Logger::log(V const *ptr)
+{
+	if (ptr)
+	{
+		log(*ptr);
+	}
+	else
+		stream() << indent() << "null" << std::endl;
+}
+
 
 /**
  *

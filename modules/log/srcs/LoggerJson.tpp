@@ -156,9 +156,6 @@ std::string LoggerJson::get(const V &v, const bool getAddress)
 	return oss.str();
 }
 
-
-
-
 /**
  *
  * @brief Generates a string representation of a pointer.
@@ -176,6 +173,26 @@ std::string LoggerJson::get(V *ptr, const bool getAddress)
 		return get(*ptr, getAddress);
 	return "null";
 }
+
+
+/**
+ *
+ * @brief Generates a string representation of a const pointer.
+ *
+ * @param ptr The const pointer to be converted to a string.
+ * @param getAddress If true, returns the memory address of the value instead of its content.
+ *
+ * @return A string containing the representation of the const pointer.
+ *
+ */
+template <typename V>
+std::string LoggerJson::get(V const *ptr, const bool getAddress)
+{
+	if (ptr)
+		return get(*ptr, getAddress);
+	return "null";
+}
+
 
 /**
  *

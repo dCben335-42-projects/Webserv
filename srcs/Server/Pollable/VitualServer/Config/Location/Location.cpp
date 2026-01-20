@@ -1,4 +1,5 @@
 #include "Location.hpp"
+#include "Logger.hpp"
 
 Config::Location::Location() :
 	m_path(""),
@@ -25,7 +26,6 @@ Config::Location::Location(
 
 Config::Location::~Location()
 {
-	
 }
 
 
@@ -144,9 +144,6 @@ void Config::Location::setCgiParams(Config::CgiParams *cgi)
 }
 
 
-
-
-
 std::ostream &operator<<(std::ostream &os, const Config::Location &location)
 {
 	os << "Location(path: " << location.getPath();
@@ -154,5 +151,23 @@ std::ostream &operator<<(std::ostream &os, const Config::Location &location)
 	os << ", indexFile: " << location.getIndexFile();
 	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
 	os << ")";
+	return os;
+}
+
+
+std::ostream &operator<<(std::ostream &os, Config::Location const *location)
+{
+	if (location)
+	{
+		os << "Location(path: " << location->getPath();
+		os << ", root: " << location->getRoot();
+		os << ", indexFile: " << location->getIndexFile();
+		os << ", autoIndex: " << (location->getAutoIndex() ? "true" : "false");
+		os << ")";
+	}
+	else
+	{
+		os << "Location(NULL)";
+	}
 	return os;
 }

@@ -32,8 +32,11 @@ class LoggerJson
 	public:
 		template <typename V>
 		static std::string get(const V &v, const bool getAddress = false);
+
 		template <typename V>
 		static std::string get(V *ptr, const bool getAddress = false);
+		template <typename V>
+		static std::string get(V const *ptr, const bool getAddress = false);
 
 		template <typename V>
 		static std::string get(const std::vector<V> &vec, const bool getAddress = false);

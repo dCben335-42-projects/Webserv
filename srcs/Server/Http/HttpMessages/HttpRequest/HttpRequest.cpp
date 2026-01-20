@@ -15,6 +15,9 @@
 #include <stdexcept>
 #include <iostream>
 
+#include "Config.hpp"
+#include "Location.hpp"
+
 // ANCHOR Constructors / Destructors
 HttpRequest::HttpRequest() :
 	AHttpMessage(),
@@ -94,7 +97,7 @@ ssize_t HttpRequest::readOnce(int socketFd)
  * @throws std::invalid_argument if the request is malformed or missing required fields.
  *
  */
-HttpRequest &HttpRequest::parse()
+HttpRequest &HttpRequest::parse(const Config &serverConfig)
 {
 	const size_t headerEndSize = std::strlen(HEADER_ENDING);
 	const size_t lineEndSize   = std::strlen(HEADER_LINE_ENDING);
@@ -114,6 +117,7 @@ HttpRequest &HttpRequest::parse()
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
+	parseMatchedLocations(serverConfig);
 	return *this;
 }
 
@@ -139,6 +143,43 @@ void HttpRequest::parseTargetQuery(const std::string &path)
 		return;
 	}
 	m_target = path;
+}
+
+/**
+ *
+ * @brief Parses and stores the matched locations from the server configuration
+ * based on the request target segments.
+ *
+ * @param config The server configuration containing location mappings.
+ *
+ */
+void HttpRequest::parseMatchedLocations(const Config &config)
+{
+	Vec<const Config::Location *>		 empty;
+	const Map<const Config::Location *> &locs = config.getLocations();
+
+	for (Vec<std::string>::size_type i = 0; i < m_segments.size(); ++i)
+	{
+		std::string currentPath = "/";
+		for (Vec<std::string>::size_type j = 0; j <= i; ++j)
+		{
+			if (j > 0)
+				currentPath += "/";
+			currentPath += m_segments[j];
+		}
+		if (locs.has(currentPath))
+			empty.push(locs.get(currentPath));
+		if (i == m_segments.size() - 1)
+		{
+			if (m_target[m_target.size() - 1] != '/')
+				break;
+		}
+		currentPath += "/";
+		if (locs.has(currentPath))
+			empty.push(locs.get(currentPath));
+	}
+
+	m_activeLocations = empty;
 }
 
 
@@ -245,6 +286,12 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 	return Number::toSizeT(request.substr(clPos, endPos - clPos));
 }
 
+
+
+const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
+{
+	return m_activeLocations;
+}
 
 
 

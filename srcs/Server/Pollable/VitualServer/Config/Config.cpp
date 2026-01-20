@@ -11,23 +11,23 @@
 // }
 
 Config::Config(
-	const std::string	  &ip,
-	unsigned short		   port,
-	const std::string	  &domain,
-	Location			  *defaultLoc,
-	const Map<Location *> &locs) :
+	const std::string			&ip,
+	unsigned short				 port,
+	const std::string			&domain,
+	Location					*defaultLoc,
+	const Map<const Location *> &locs) :
 	m_ip(ip),
 	m_port(port),
 	m_domain(domain),
 	defaultLocation(defaultLoc),
-	locations(locs)
+	m_locations(locs)
 {
 }
 
 Config::~Config()
 {
 	Logger::log("[Config] Destructor called");
-	for (Map<Location *>::iterator it = locations.begin(); it != locations.end(); ++it)
+	for (Map<const Location *>::iterator it = m_locations.begin(); it != m_locations.end(); ++it)
 		delete it->second;
 	delete defaultLocation;
 }
@@ -115,9 +115,9 @@ void Config::setDomain(const std::string &domain)
  */
 const std::string &Config::getRoot(const std::string &locationPath) const
 {
-	if (locations.has(locationPath))
+	if (m_locations.has(locationPath))
 	{
-		const std::string &root = locations.get(locationPath)->getRoot();
+		const std::string &root = m_locations.get(locationPath)->getRoot();
 		if (!root.empty())
 			return root;
 	}
@@ -161,9 +161,9 @@ const std::string &Config::getCgiBin(const std::string &locationPath) const
  */
 const std::string &Config::getIndexFile(const std::string &locationPath) const
 {
-	if (locations.has(locationPath))
+	if (m_locations.has(locationPath))
 	{
-		const std::string &indexFile = locations.get(locationPath)->getIndexFile();
+		const std::string &indexFile = m_locations.get(locationPath)->getIndexFile();
 		if (!indexFile.empty())
 			return indexFile;
 	}
@@ -181,13 +181,22 @@ const std::string &Config::getIndexFile(const std::string &locationPath) const
  */
 bool Config::getAutoIndex(const std::string &locationPath) const
 {
-	std::cout << "Checking auto-index for location: " << locationPath << std::endl;
-	if (locations.has(locationPath))
+	if (m_locations.has(locationPath))
 	{
-		if (locations.get(locationPath)->getAutoIndex())
+		if (m_locations.get(locationPath)->getAutoIndex())
 			return true;
 	}
 	return defaultLocation->getAutoIndex();
+}
+
+Config::Location const *Config::getDefaultLocation() const
+{
+	return defaultLocation;
+}
+
+const Map<const Config::Location *> &Config::getLocations() const
+{
+	return m_locations;
 }
 
 

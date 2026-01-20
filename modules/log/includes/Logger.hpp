@@ -56,6 +56,9 @@ class Logger
 		static void log(V *ptr);
 
 		template <typename V>
+		static void log(V const *ptr);
+
+		template <typename V>
 		static void log(const std::vector<V> &vec);
 		template <typename V>
 		static void log(const Vec<V> &vec);

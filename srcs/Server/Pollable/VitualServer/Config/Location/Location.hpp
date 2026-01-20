@@ -9,6 +9,7 @@ class Config::Location
 	private:
 		std::string		   m_path;
 		std::string		   m_root;
+		std::string		   m_alias;
 		std::string		   m_indexFile;
 		bool			   m_autoIndex;
 		Config::CgiParams *m_cgi;
@@ -32,11 +33,14 @@ class Config::Location
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
+		void setAlias(const std::string &alias);
 		void setIndexFile(const std::string &indexFile);
 		void setAutoIndex(bool autoIndex);
 		void setCgiParams(Config::CgiParams *cgi);
 };
 
 std::ostream &operator<<(std::ostream &os, const Config::Location &location);
+std::ostream &operator<<(std::ostream &os, Config::Location const *location);
+
 
 #endif

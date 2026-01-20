@@ -1,6 +1,5 @@
 #include "Client.hpp"
 #include "config.hpp"
-#include <unistd.h>
 #include "FileHandler.hpp"
 #include "httpExceptions.hpp"
 #include "Date.hpp"
@@ -8,6 +7,7 @@
 #include "CgiSpawner.hpp"
 #include "CgiPipe.hpp"
 #include "EventLoop.hpp"
+#include "Location.hpp"
 #include "Logger.hpp"
 
 Client::Client(int fd, VirtualServer *server, const Config &config) :
@@ -149,8 +149,13 @@ void Client::handleGetRequest()
 	const std::string root	   = m_serverConfig.getRoot(target);
 	std::string		  resource = root;
 
+	const Vec<const Config::Location *> &locations = m_req.getActiveLocations();
+	Logger::log("Matched Locations:" + LoggerJson::get(locations));
+
 	try
 	{
+
+
 		if (FileHandler::folderExists(root + target))
 		{
 			if (m_serverConfig.getAutoIndex(target))
@@ -294,7 +299,7 @@ void Client::onPollIn()
 		m_events = POLLIN;
 		return;
 	}
-	m_req.parse();
+	m_req.parse(m_serverConfig);
 	prepareResponse();
 	m_events = POLLOUT;
 }
