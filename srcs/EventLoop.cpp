@@ -12,6 +12,7 @@
 #include "Config.hpp"
 #include "Location.hpp"
 #include "Logger.hpp"
+#include "CgiParams.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
@@ -66,11 +67,13 @@ void EventLoop::run()
 				continue;
 			ready--;
 			const int fd = m_pollFds[i].fd;
-			if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
-			{
-				deletePollable(fd, i);
-				continue;
-			}
+			// if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
+			// {
+			// 	std::cerr << "QUI A LE PROBLEME DE FOU LÀ ?" << std::endl;
+			// 	deletePollable(fd, i);
+			// 	continue;
+			// }
+
 			Pollable *handler = getHandler(fd);
 			if (handler)
 			{
@@ -79,12 +82,15 @@ void EventLoop::run()
 					handler->onPollIn();
 				if (m_pollFds[i].revents & POLLOUT)
 					handler->onPollOut();
-				if (m_pollFds[i].revents & (POLLERR | POLLHUP))
+				if (m_pollFds[i].revents & POLLERR)
 					handler->onPollErr();
-				if (!handler->getEvents())
+				if (m_pollFds[i].revents & POLLHUP)
+					handler->onPollHangUp();
+				if (handler->getConnectionClosed())
 				{
 					deletePollable(fd, i);
 				}
+				strerror(errno);
 			}
 		}
 	}
@@ -114,7 +120,7 @@ void EventLoop::deletePollable(const int &fd, const size_t &index)
 		m_handlers.remove(fd);
 	}
 	m_pollFds.remove(index);
-	close(fd);
+	// close(fd);
 }
 
 void EventLoop::updatePollStatus()

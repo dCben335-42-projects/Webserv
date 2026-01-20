@@ -21,15 +21,17 @@ class VirtualServer : public Pollable
 		VirtualServer(const Config &config);
 		~VirtualServer();
 
-		Client		 *createClient(int clientFd);
-		const Config &getConfig() const;
+		Client *createClient(int clientFd);
 
+		const Config  &getConfig() const;
 		std::string	   getBindIp() const;
 		unsigned short getBindPort() const;
+
 
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
+		void onPollHangUp();
 };
 
 #endif

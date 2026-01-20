@@ -14,14 +14,20 @@ class CgiPipe : public Pollable
 		std::string m_scriptPath;
 
 		void onError();
+		void waitChild();
 
 	public:
-		CgiPipe(int pipe_fd, Client *client, const std::string &scriptPath);
+		CgiPipe(
+			pid_t			   pid,
+			int				   pipe_fd,
+			Client			  *client,
+			const std::string &scriptPath);
 		~CgiPipe();
 
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
+		void onPollHangUp();
 };
 
 

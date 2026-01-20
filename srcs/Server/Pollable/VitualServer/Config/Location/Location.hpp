@@ -29,7 +29,7 @@ class Config::Location
 		const std::string		&getRoot() const;
 		const std::string		&getIndexFile() const;
 		bool					 getAutoIndex() const;
-		const Config::CgiParams &getCgiParams() const;
+		const Config::CgiParams *getCgiParams() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);

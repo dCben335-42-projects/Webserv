@@ -7,9 +7,6 @@ int main()
 {
 	try
 	{
-		// Lexer lex("config/def_language.txt");
-
-
 		EventLoop::init();
 		EventLoop::run();
 		EventLoop::destroy();

@@ -1,14 +1,7 @@
 #include "Config.hpp"
 #include "Location.hpp"
 #include "Logger.hpp"
-
-// Config::Config() :
-// 	m_ip(""),
-// 	m_port(0),
-// 	m_domain(""),
-// 	locations()
-// {
-// }
+#include "CgiParams.hpp"
 
 Config::Config(
 	const std::string			&ip,
@@ -19,7 +12,7 @@ Config::Config(
 	m_ip(ip),
 	m_port(port),
 	m_domain(domain),
-	defaultLocation(defaultLoc),
+	m_defaultLocation(defaultLoc),
 	m_locations(locs)
 {
 }
@@ -29,7 +22,7 @@ Config::~Config()
 	Logger::log("[Config] Destructor called");
 	for (Map<const Location *>::iterator it = m_locations.begin(); it != m_locations.end(); ++it)
 		delete it->second;
-	delete defaultLocation;
+	delete m_defaultLocation;
 }
 
 
@@ -121,7 +114,7 @@ const std::string &Config::getRoot(const std::string &locationPath) const
 		if (!root.empty())
 			return root;
 	}
-	return defaultLocation->getRoot();
+	return m_defaultLocation->getRoot();
 }
 /**
  *
@@ -131,23 +124,18 @@ const std::string &Config::getRoot(const std::string &locationPath) const
  * @return The CGI binary directory as a constant reference to a string.
  *
  */
-const std::string &Config::getCgiBin(const std::string &locationPath) const
+const std::string &Config::getCgiBin(const std::string &locationPath, std::string &fileExt) const
 {
-	(void) locationPath;
 	static const std::string emptyString = "";
+	const Config::CgiParams *cgiParams	 = NULL;
+
+	if (m_locations.has(locationPath))
+		cgiParams = m_locations.get(locationPath)->getCgiParams();
+	if (!cgiParams)
+		cgiParams = m_defaultLocation->getCgiParams();
+	if (cgiParams)
+		return cgiParams->getBinFromMap(fileExt);
 	return emptyString;
-	// CgiParams *cgiParams;
-	// if (locations.has(locationPath))
-	// {
-	// 	CgiParams *cgiParams = locations.get(locationPath);
-	// }
-	// cgiParams = defaultLocation->m_cgi;
-	// if (cgiParams)
-	// {
-	// 	return cgiParams->getCgiBin();
-	// }
-	// static const std::string emptyString = "";
-	// return emptyString;
 }
 
 /**
@@ -167,7 +155,7 @@ const std::string &Config::getIndexFile(const std::string &locationPath) const
 		if (!indexFile.empty())
 			return indexFile;
 	}
-	return defaultLocation->getIndexFile();
+	return m_defaultLocation->getIndexFile();
 }
 
 /**
@@ -186,12 +174,12 @@ bool Config::getAutoIndex(const std::string &locationPath) const
 		if (m_locations.get(locationPath)->getAutoIndex())
 			return true;
 	}
-	return defaultLocation->getAutoIndex();
+	return m_defaultLocation->getAutoIndex();
 }
 
 Config::Location const *Config::getDefaultLocation() const
 {
-	return defaultLocation;
+	return m_defaultLocation;
 }
 
 const Map<const Config::Location *> &Config::getLocations() const

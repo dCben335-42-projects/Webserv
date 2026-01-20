@@ -24,6 +24,7 @@ class Client : public Pollable
 		void prepareResponse();
 		void test(const std::string &root);
 
+		bool isCgi();
 		bool isRequestComplete();
 
 	public:
@@ -33,13 +34,14 @@ class Client : public Pollable
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
+		void onPollHangUp();
 
 		void setEvents(const short events);
 
 		const HttpRequest &getRequest() const;
 		HttpResponse	  &getResponse();
 
-		void spawn_cgi(const std::string &script_path);
+		void spawnCgi(const std::string &script_path);
 };
 
 

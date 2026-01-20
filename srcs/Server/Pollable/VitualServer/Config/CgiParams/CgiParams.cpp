@@ -6,6 +6,22 @@ Config::CgiParams::CgiParams() :
 {
 }
 
+Config::CgiParams::CgiParams(Map<std::string> binMap) :
+	m_allowCgi(true),
+	m_allowedMethods(),
+	m_binMap(binMap)
+{
+	m_allowedMethods.push(HttpMethod("GET"));
+	m_allowedMethods.push(HttpMethod("POST"));
+}
+
+Config::CgiParams::CgiParams(Map<std::string> binMap, Set<HttpMethod> allowedMethods) :
+	m_allowCgi(true),
+	m_allowedMethods(allowedMethods),
+	m_binMap(binMap)
+{
+}
+
 Config::CgiParams::~CgiParams()
 {
 }
@@ -76,4 +92,11 @@ void Config::CgiParams::addAllowedMethod(HttpMethod method)
 bool Config::CgiParams::isAllowedMethod(HttpMethod method) const
 {
 	return m_allowedMethods.contains(method);
+}
+
+const std::string &Config::CgiParams::getBinFromMap(std::string &fileExt) const
+{
+	// TODO need to check get() return value in case of no value;
+	const std::string &binary = m_binMap.get(fileExt);
+	return (binary);
 }

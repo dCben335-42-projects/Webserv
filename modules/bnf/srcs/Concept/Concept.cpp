@@ -36,7 +36,7 @@ void Concept::addParent(ARule *parent)
 	m_parents.insert(parent);
 }
 
-const std::set<ARule *> &Concept::getParents() const
+const Set<ARule *> &Concept::getParents() const
 {
 	return m_parents;
 }
@@ -46,7 +46,7 @@ void Concept::addTerminalChar(ARule *terminalChar)
 	m_terminalChars.insert(terminalChar);
 }
 
-const std::set<ARule *> &Concept::getTerminalChars() const
+const Set<ARule *> &Concept::getTerminalChars() const
 {
 	return m_terminalChars;
 }

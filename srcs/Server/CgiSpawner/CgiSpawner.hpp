@@ -6,28 +6,39 @@
 #include <string>
 #include <unistd.h>
 #include <sys/types.h>
+#include "Vector.hpp"
 
 class CgiSpawner
 {
 	private:
-		Client		  *m_client;
-		VirtualServer *m_server;
-		int			   m_stdin_pipe[2];
-		int			   m_stdout_pipe[2];
-		pid_t		   m_pid;
-		bool		   m_has_post_data;
+		const HttpRequest &m_req;
+		const Config	  &m_config;
 
-		void setupPipes();
-		void setupEnv(const std::string &script_path);
-		void childprocess(const std::string &script_path);
-		void parentProcess();
-		void writePostData();
-		void closeUnusedPipes();
+		int							   m_stdin_pipe[2];
+		int							   m_stdout_pipe[2];
+		pid_t						   m_pid;
+		Vec<const Config::CgiParams *> m_cgiParams;
+
+		bool			 m_has_post_data;
+		Vec<std::string> m_env;
+		char			*m_envp[32];
+
+		void		setupPipes();
+		std::string makeEnvVar(const std::string &key, const std::string &value);
+		void		generateEnvp();
+		void		setupEnv();
+		void		childprocess(const std::string &script_path);
+		void		parentProcess();
+
 
 	public:
-		CgiSpawner(Client *client, VirtualServer *server);
+		CgiSpawner(const HttpRequest &req, const Config &config);
 
-		int spawn(const std::string &script_path);
+		int	  spawn(const std::string &script_path);
+		pid_t getPid() const
+		{
+			return m_pid;
+		}
 };
 
 #endif

@@ -13,6 +13,7 @@
 #define MAX_CONNECTIONS 1024
 
 #define PROTOCOL "HTTP/1.1"
+#define GATEWAY_INTERFACE "CGI/1.1"
 #define HEADER_ENDING "\r\n\r\n"
 #define HEADER_LINE_ENDING "\r\n"
 #define HEADER_SEPARATOR ": "

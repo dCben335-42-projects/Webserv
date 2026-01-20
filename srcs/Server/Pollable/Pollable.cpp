@@ -3,7 +3,8 @@
 Pollable::Pollable(int f) :
 	m_fd(f),
 	m_events(0),
-	m_revents(0)
+	m_revents(0),
+	m_connectionClosed(false)
 {
 }
 
@@ -23,6 +24,14 @@ short Pollable::getRevents() const
 	return m_revents;
 }
 
+bool Pollable::getConnectionClosed() const
+{
+	return m_connectionClosed;
+}
+
+
+
+
 
 void Pollable::setEvents(short events)
 {
@@ -31,4 +40,8 @@ void Pollable::setEvents(short events)
 void Pollable::setRevents(short revents)
 {
 	m_revents = revents;
+}
+void Pollable::setConnectionClosed(bool isCLosed)
+{
+	m_connectionClosed = isCLosed;
 }

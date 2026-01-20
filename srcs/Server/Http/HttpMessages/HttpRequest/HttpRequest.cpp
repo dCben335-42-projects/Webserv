@@ -14,6 +14,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <iostream>
+#include "File.hpp"
 
 #include "Config.hpp"
 #include "Location.hpp"
@@ -55,9 +56,7 @@ void HttpRequest::setRawRequest(const std::string &rawRequest)
 }
 
 
-
 // ANCHOR Socket Reading Public method
-
 /**
  *
  * @brief Reads data from the given socket file descriptor
@@ -134,15 +133,16 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 void HttpRequest::parseTargetQuery(const std::string &path)
 {
 	const size_t queryPos = path.find('?');
-	m_segments			  = String::split(path, "/");
 
 	if (queryPos != std::string::npos)
 	{
 		m_target	  = path.substr(0, queryPos);
+		m_segments	  = String::split(m_target, "/");
 		m_queryString = path.substr(queryPos + 1);
 		return;
 	}
-	m_target = path;
+	m_segments = String::split(path, "/");
+	m_target   = path;
 }
 
 /**

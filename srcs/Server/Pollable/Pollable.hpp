@@ -20,6 +20,7 @@ class Pollable
 		int	  m_fd;
 		short m_events;
 		short m_revents;
+		bool  m_connectionClosed;
 
 		Pollable(int f);
 
@@ -30,12 +31,15 @@ class Pollable
 		int	  getFd() const;
 		short getEvents() const;
 		short getRevents() const;
+		bool  getConnectionClosed() const;
 
 		void setEvents(short events);
 		void setRevents(short revents);
+		void setConnectionClosed(bool isClosed);
 
-		virtual void onPollIn()	 = 0;
-		virtual void onPollOut() = 0;
+		virtual void onPollIn()		= 0;
+		virtual void onPollOut()	= 0;
+		virtual void onPollHangUp() = 0;
 		virtual void onPollErr()
 		{
 			std::cerr << "Pollable error on fd " << m_fd << std::endl;

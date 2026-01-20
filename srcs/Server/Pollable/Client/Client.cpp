@@ -195,15 +195,33 @@ void Client::handleGetRequest()
 		std::string date = Date::getCurrentDate();
 		if (!date.empty())
 			m_res.setHeader(HEADER_DATE, date);
+
+		m_res.setStatusCode(200);
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
 		std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
-	m_res.setStatusCode(200);
 }
 
+
+bool Client::isCgi()
+{
+	try
+	{
+		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
+		const std::string ext = file.getExtension();
+
+		return ext == ".php" || ext == ".py";
+	}
+	catch (const FileHandler::FileHandlerException &e)
+	{
+		std::cerr << e.what() << '\n';
+		throw e.getHttpException();
+	}
+	return false;
+}
 
 
 
@@ -225,6 +243,11 @@ void Client::prepareResponse()
 	const std::string method = m_req.getMethod();
 	try
 	{
+		if (isCgi())
+		{
+			spawnCgi("files/www/website/" + m_req.getTarget());
+			return;
+		}
 		if (method == "GET")
 			handleGetRequest();
 		else if (method == "POST")
@@ -242,6 +265,7 @@ void Client::prepareResponse()
 		m_res.setBody(e.getPage());
 	}
 	m_res.build();
+	m_events = POLLOUT;
 }
 
 
@@ -301,7 +325,6 @@ void Client::onPollIn()
 	}
 	m_req.parse(m_serverConfig);
 	prepareResponse();
-	m_events = POLLOUT;
 }
 
 
@@ -322,7 +345,8 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		m_events = 0;
+		m_events		   = 0;
+		m_connectionClosed = true;
 		return;
 	}
 	m_events = POLLOUT;
@@ -333,6 +357,10 @@ void Client::onPollErr()
 {
 	std::cerr << "Client error on fd " << m_fd << std::endl;
 	m_events = 0;
+}
+
+void Client::onPollHangUp()
+{
 }
 
 
@@ -350,14 +378,15 @@ void Client::onPollErr()
  * @param script_path The path to the CGI script to be executed.
  *
  */
-void Client::spawn_cgi(const std::string &script_path)
+void Client::spawnCgi(const std::string &script_path)
 {
-	CgiSpawner spawner(this, m_server);
+	CgiSpawner spawner(getRequest(), m_server->getConfig());
 	int		   stdout_fd = spawner.spawn(script_path);
 
 	if (stdout_fd >= 0)
 	{
-		CgiPipe *cgi_pipe = new CgiPipe(stdout_fd, this, script_path);
+		CgiPipe *cgi_pipe = new CgiPipe(spawner.getPid(),
+										stdout_fd, this, script_path);
 		EventLoop::addHandler(cgi_pipe);
 		m_events = 0;
 	}

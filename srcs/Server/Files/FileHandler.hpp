@@ -75,7 +75,7 @@ class FileHandler
 				}
 		};
 
-	private:
+
 		class FileReadException : public FileHandlerException
 		{
 			public:

@@ -17,7 +17,7 @@ class Config
 		unsigned short m_port;
 		std::string	   m_domain;
 
-		Location			 *defaultLocation;
+		Location			 *m_defaultLocation;
 		Map<const Location *> m_locations;
 
 	public:
@@ -42,7 +42,7 @@ class Config
 
 
 		const std::string &getRoot(const std::string &locationPath) const;
-		const std::string &getCgiBin(const std::string &locationPath) const;
+		const std::string &getCgiBin(const std::string &locationPath, std::string &fileExt) const;
 		const std::string &getIndexFile(const std::string &locationPath) const;
 		bool			   getAutoIndex(const std::string &locationPath) const;
 };

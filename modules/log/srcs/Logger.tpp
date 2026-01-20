@@ -48,13 +48,10 @@ template <typename V>
 void Logger::log(V const *ptr)
 {
 	if (ptr)
-	{
 		log(*ptr);
-	}
 	else
 		stream() << indent() << "null" << std::endl;
 }
-
 
 /**
  *
