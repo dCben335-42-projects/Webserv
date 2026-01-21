@@ -162,6 +162,16 @@ Concept *ARule::getConceptPtr() const
 	return m_conceptPtr;
 }
 
+bool ARule::isOption() const
+{
+	return m_type == OPTION;
+}
+
+bool ARule::isSequence() const
+{
+	return m_type == SEQUENCE;
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << "{\n";

@@ -1,4 +1,4 @@
-<head>			::= PP 
+<head>			::= [ PP ] PP BB TT
 
 PP				::= NN
 BB				::= [ TT ]

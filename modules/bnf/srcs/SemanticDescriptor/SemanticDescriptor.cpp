@@ -400,6 +400,11 @@ ConceptNode *SemanticDescriptor::getTree() const
 	return tree;
 }
 
+const Vec<ConceptDef *> &SemanticDescriptor::getConceptDefs(const std::string &conceptName) const
+{
+	return m_concepts.get(conceptName)->getDefinitions();
+}
+
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 {
 	Logger::log(data.getConcepts());

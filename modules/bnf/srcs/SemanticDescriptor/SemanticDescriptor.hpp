@@ -50,12 +50,13 @@ class SemanticDescriptor
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		ARuleMap	   getStartPath() const;
-		Map<Concept *> getConcepts() const;
-		Concept		 *&getConcept(const std::string &key);
-		const Concept *getConcept(const std::string &key) const;
-		ConceptNode	  *getTree() const;
-		ARuleMap	   getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const;
+		ARuleMap				 getStartPath() const;
+		Map<Concept *>			 getConcepts() const;
+		Concept				   *&getConcept(const std::string &key);
+		const Concept			*getConcept(const std::string &key) const;
+		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
+		ConceptNode				*getTree() const;
+		ARuleMap				 getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

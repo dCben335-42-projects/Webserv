@@ -21,14 +21,12 @@ class Parser
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		bool parseCurrentChar(char c, ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
-		void searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rule);
-		void recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARule *rule);
-		void rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef);
-		bool verifyOptionalEnd(ARuleMap &mapPathCurrent, char c);
-		bool detect(ARulePath rules);
-		bool isFullyOptional(ARule *rule);
-		bool isFullyOptionalEndAdvance(ARulePath path);
+		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+		void addNextPaths(ARuleMap &mapPathNext, ARulePath path, ARule *rule);
+		void addOptionalPaths(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef);
+		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
+		bool isFullyOptional(const ARule &rule);
+		bool isFullyOptionalEndAdvance(const ARulePath &path);
 		bool isFullyOptionalEnd(ARulePath path);
 		void prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		bool isValidEmptyFile();

@@ -55,6 +55,10 @@ class ARule
 		ARule			 *tryGetAdjacentRules();
 		ConceptDef		 *getConceptDefPtr();
 
+
+		bool isOption() const;
+		bool isSequence() const;
+
 		void	 setNextRules(ARule *nextRule);
 		Concept *getConceptPtr() const;
 };
