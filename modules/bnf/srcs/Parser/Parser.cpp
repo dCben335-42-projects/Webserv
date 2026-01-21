@@ -10,7 +10,7 @@ Parser::~Parser()
 {
 }
 
-void Parser::addOptionalPaths(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
+void Parser::addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
 {
 	ARule *currentRule;
 	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
@@ -25,20 +25,43 @@ void Parser::addOptionalPaths(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *r
 			{
 				currentRule = rules.back();
 				if (currentRule->isOption())
-					addNextPaths(mapPathNext, rules, currentRule);
+					addNextPaths(mapPathCurrent, mapPathNext, rules, currentRule);
 				rules.pop_back();
 			}
 		}
 	}
 }
 
-void Parser::addNextPaths(ARuleMap &mapPathNext, ARulePath path, ARule *rule)
+// TODO: ascend the path to find the last rule with adjacent rules
+// size_t Parser::getLastRule(const ARulePath &path, ARuleMap &mapPathNext)
+// {
+// 	for (int i = path.size() - 1; i >= 0; --i)
+// 	{
+// 		if (path[i]->tryGetAdjacentRules())
+// 			return i;
+// 		else
+// 		{
+// 			if (path[i])
+// 		}
+// 	}
+// 	return 0;
+// }
+
+void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, ARule *rule)
 {
+	if (rule->isSequence())
+	{
+		const ARulePaths &paths = mapPathCurrent.get(rule);
+		if (!mapPathNext.has(rule))
+			mapPathNext.set(rule, ARulePaths());
+		for (ARulePaths::iterator path = paths.begin(); path != paths.end(); ++path)
+			mapPathNext.get(rule).insert(*path);
+	}
 	ARulePath nextRule = rule->getNextRules(path);
 	if (nextRule.empty())
 		return;
 	if (nextRule.back()->isOption())
-		addNextPaths(mapPathNext, nextRule, nextRule.back());
+		addNextPaths(mapPathCurrent, mapPathNext, nextRule, nextRule.back());
 
 	Vec<TerminalSymbol> items = nextRule.back()->getItems();
 	ARulePaths			prefixs;
@@ -59,7 +82,7 @@ void Parser::addNextPaths(ARuleMap &mapPathNext, ARulePath path, ARule *rule)
 				mapPathCurrentTemp.set(key, val);
 		}
 	}
-	addOptionalPaths(mapPathCurrentTemp, mapPathNext, nextRule.back());
+	addOptionalPaths(mapPathCurrent, mapPathCurrentTemp, mapPathNext, nextRule.back());
 	for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
 	{
 		ARule	  *key = (*it).first;
@@ -88,7 +111,7 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 			if (item->isTerminalChar() && *item == c)
 			{
 				for (ARulePaths::iterator path = paths.begin(); path != paths.end(); ++path)
-					addNextPaths(mapPathNext, *path, rule);
+					addNextPaths(mapPathCurrent, mapPathNext, *path, rule);
 				isValidWithCurrentPath = true;
 			}
 		}
@@ -165,7 +188,7 @@ void Parser::prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPat
 			for (int i = path.size() - 1; i >= 0; --i)
 			{
 				if (path[i]->isOption())
-					addNextPaths(mapPathNext, path, path.back());
+					addNextPaths(mapPathCurrent, mapPathNext, path, path.back());
 				path.pop_back();
 			}
 		}

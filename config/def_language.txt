@@ -1,9 +1,9 @@
-<head>			::= [ PP ] PP BB TT
+<head>			::= NN TT
 
-PP				::= NN
+PP				::= [ NN ]
 BB				::= [ TT ]
 
-NN				::= ( '=' )
+NN				::= { '=' }
 TT				::= ( '-' | ')' )
 
 
