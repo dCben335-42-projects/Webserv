@@ -19,14 +19,14 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	Config::Location			 *defaultLocation = new Config::Location("", "files/www/website", "index.html", false, NULL);
-	Config::Location			 *loc1			  = new Config::Location("/assets", "", "", false, NULL);
-	Config::Location			 *loc2			  = new Config::Location("/assets/", "", "", false, NULL);
-	Config::Location			 *loc3			  = new Config::Location("/assets/test/", "", "", false, NULL);
-	Config::Location			 *loc4			  = new Config::Location("/assets/test/dwad", "", "", false, NULL);
-	Config::Location			 *loc40			  = new Config::Location("/assets/test/dwad/", "", "", false, NULL);
-	Config::Location			 *loc5			  = new Config::Location("/shrek", "", "", false, NULL);
-	Config::Location			 *loc6			  = new Config::Location("/shrek/", "", "", false, NULL);
+	Config::Location			 *defaultLocation = new Config::Location("", "files/www/website", "", "index.html", false, NULL);
+	Config::Location			 *loc1			  = new Config::Location("/assets", "", "", "", false, NULL);
+	Config::Location			 *loc2			  = new Config::Location("/assets/", "", "", "", false, NULL);
+	Config::Location			 *loc3			  = new Config::Location("/assets/test/", "", "", "", false, NULL);
+	Config::Location			 *loc4			  = new Config::Location("/assets/test/dwad", "", "", "", false, NULL);
+	Config::Location			 *loc40			  = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
+	Config::Location			 *loc5			  = new Config::Location("/shrek", "", "", "", false, NULL);
+	Config::Location			 *loc6			  = new Config::Location("/shrek/", "", "", "", false, NULL);
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);

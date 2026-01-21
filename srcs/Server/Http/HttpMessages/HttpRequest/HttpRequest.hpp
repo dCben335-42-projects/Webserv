@@ -30,8 +30,9 @@ class HttpRequest : public AHttpMessage
 		std::string							 getRawRequest() const;
 		std::string							 getTarget() const;
 		std::string							 getQueryString() const;
-		Vec<std::string>					 getSegments() const;
+		const Vec<std::string>				&getSegments() const;
 		const Vec<const Config::Location *> &getActiveLocations() const;
+
 
 		void setRawRequest(const std::string &rawRequest);
 
@@ -40,6 +41,8 @@ class HttpRequest : public AHttpMessage
 
 		ssize_t readOnce(int socketFd);
 		size_t	readContentLength(std::string request, const size_t headersEnd);
+
+		std::string buildResourcePath(const Config &config, const size_t segmentIndex) const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

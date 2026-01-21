@@ -40,14 +40,37 @@ std::string HttpRequest::getTarget() const
 {
 	return m_target;
 }
+
 std::string HttpRequest::getQueryString() const
 {
 	return m_queryString;
 }
-Vec<std::string> HttpRequest::getSegments() const
+/**
+ *
+ * @brief Retrieves the segments of the request target path.
+ *
+ * @return A constant reference to a vector of strings representing the path segments.
+ *
+ */
+const Vec<std::string> &HttpRequest::getSegments() const
 {
 	return m_segments;
 }
+/**
+ *
+ * @brief Retrieves the active locations matched for the request.
+ *
+ * @return A constant reference to a vector of pointers to the active Config::Location objects.
+ *
+ */
+const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
+{
+	return m_activeLocations;
+}
+
+
+
+
 
 // ANCHOR Setters
 void HttpRequest::setRawRequest(const std::string &rawRequest)
@@ -289,11 +312,52 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 
 
 
-const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
-{
-	return m_activeLocations;
-}
 
+std::string HttpRequest::buildResourcePath(const Config &config, const size_t segmentIndex) const
+{
+	std::string lastAlias;
+	ssize_t		lastAliasIndex = -1;
+
+	std::string lastRoot;
+	ssize_t		lastRootIndex = -1;
+
+	for (size_t i = 0; i <= segmentIndex && i < m_activeLocations.size(); ++i)
+	{
+		const Config::Location *loc = m_activeLocations[i];
+		if (loc->hasAlias())
+		{
+			lastAlias	   = loc->getAlias();
+			lastAliasIndex = i;
+		}
+		if (loc->hasRoot())
+		{
+			lastRoot	  = loc->getRoot();
+			lastRootIndex = i;
+		}
+	}
+	// if (lastAliasIndex > lastRootIndex)
+	// {
+	// 	std::string resourcePath = lastAlias;
+	// 	for (size_t i = lastAliasIndex + 1; i <= segmentIndex && i < m_segments.size(); ++i)
+	// 	{
+	// 		if (resourcePath.back() != '/')
+	// 			resourcePath += '/';
+	// 		resourcePath += m_segments[i];
+	// 	}
+	// 	return resourcePath;
+	// }
+	// else if (lastRootIndex > lastAliasIndex)
+	// {
+	// 	std::string resourcePath = lastRoot;
+	// 	for (size_t i = lastRootIndex + 1; i <= segmentIndex && i < m_segments.size(); ++i)
+	// 	{
+	// 		if (resourcePath.back() != '/')
+	// 			resourcePath += '/';
+	// 		resourcePath += m_segments[i];
+	// 	}
+	// 	return resourcePath;
+	// }
+}
 
 
 // ANCHOR Overloaded Operators
