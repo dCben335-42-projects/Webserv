@@ -19,7 +19,7 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	Config::Location			 *defaultLocation = new Config::Location("/", "files/www/website", "index.html", false, NULL);
+	Config::Location			 *defaultLocation = new Config::Location("", "files/www/website", "index.html", false, NULL);
 	Config::Location			 *loc1			  = new Config::Location("/assets", "", "", false, NULL);
 	Config::Location			 *loc2			  = new Config::Location("/assets/", "", "", false, NULL);
 	Config::Location			 *loc3			  = new Config::Location("/assets/test/", "", "", false, NULL);

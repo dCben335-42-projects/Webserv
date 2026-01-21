@@ -20,7 +20,7 @@ class HttpRequest : public AHttpMessage
 		size_t parseFirstLine(const std::string &rawRequest);
 		size_t parseHeaderLine(const std::string &rawRequest, const size_t pos);
 		void   parseTargetQuery(const std::string &path);
-		void   parseMatchedLocations(const Config &config);
+		void   parseActiveLocations(const Config &config);
 
 
 	public:

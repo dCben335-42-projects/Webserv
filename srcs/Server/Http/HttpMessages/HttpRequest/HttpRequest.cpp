@@ -116,7 +116,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
-	parseMatchedLocations(serverConfig);
+	parseActiveLocations(serverConfig);
 	return *this;
 }
 
@@ -153,11 +153,12 @@ void HttpRequest::parseTargetQuery(const std::string &path)
  * @param config The server configuration containing location mappings.
  *
  */
-void HttpRequest::parseMatchedLocations(const Config &config)
+void HttpRequest::parseActiveLocations(const Config &config)
 {
 	Vec<const Config::Location *>		 empty;
 	const Map<const Config::Location *> &locs = config.getLocations();
 
+	empty.push(config.getDefaultLocation());
 	for (Vec<std::string>::size_type i = 0; i < m_segments.size(); ++i)
 	{
 		std::string currentPath = "/";
