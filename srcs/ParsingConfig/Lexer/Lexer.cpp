@@ -30,29 +30,33 @@ Lexer::Lexer(std::string const &filepath)
 		// parser.parse("L2");
 
 		// OE sans ! DONC BON
-		parser.parse("Abb11b1");
+		// parser.parse("Abb11b1");
 
-		// // OE avec ! DONC BON
-		parser.parse("Abb11b1!");
+		// // // OE avec ! DONC BON
+		// parser.parse("Abb11b1!");
 
-		// // ALL sans dernier LETTER, OE avec DIGIT 1 DONC BON
-		parser.parse("Abb111");
+		// // // ALL sans dernier LETTER, OE avec DIGIT 1 DONC BON
+		// parser.parse("Abb111");
 
-		// // ALL sans dernier DIGIT,DIGIT,LETTER, OE avec DIGIT 1 DONC BON
-		parser.parse("Abb1");
+		// // // ALL sans dernier DIGIT,DIGIT,LETTER, OE avec DIGIT 1 DONC BON
+		// parser.parse("Abb1");
 
-		// // ALL sans dernier DIGIT,DIGIT,LETTER, OE avec DIGIT 1 DONC BON
-		parser.parse("Abb11");
+		// // // ALL sans dernier DIGIT,DIGIT,LETTER, OE avec DIGIT 1 DONC BON
+		// parser.parse("Abb11");
 
-		// IDENT sans ALL, OE sans !
-		parser.parse("A1");
+		// // IDENT sans ALL, OE sans !
+		// parser.parse("A1");
 
-		// IDENT sans ALL, OE avec !
-		parser.parse("A1!");
+		// // IDENT sans ALL, OE avec !
+		// parser.parse("A1!");
 
-		parser.parse("bsa6!");
+		// parser.parse("bsa6!");
 
-		parser.parse("Zz9");
+		// parser.parse("Zz9");
+
+
+		// parser.parse("&");
+		parser.parse("-");
 	}
 	catch (const SemanticException &e)
 	{
