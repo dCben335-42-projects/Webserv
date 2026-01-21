@@ -7,14 +7,12 @@
 #include <errno.h>
 
 CgiPipe::CgiPipe(
-	pid_t			   pid,
-	int				   stdout_pipe_fd,
-	Client			  *client,
-	const std::string &script_path) :
+	pid_t		  pid,
+	int			  stdout_pipe_fd,
+	Client *const client) :
 	Pollable(stdout_pipe_fd),
 	m_client(client),
-	m_pid(pid),
-	m_scriptPath(script_path)
+	m_pid(pid)
 {
 	m_events = POLLIN;
 }
@@ -112,7 +110,7 @@ void CgiPipe::onPollOut()
 
 void CgiPipe::onPollErr()
 {
-	std::cerr << "CgiPipe error on fd " << m_fd << " for script " << m_scriptPath << std::endl;
+	std::cerr << "CgiPipe error on fd " << m_fd << std::endl;
 	onError();
 }
 

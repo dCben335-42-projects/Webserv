@@ -9,6 +9,9 @@
 #include "EventLoop.hpp"
 #include "Location.hpp"
 #include "Logger.hpp"
+#include "Vec.hpp"
+#include "CgiParams.hpp"
+#include "Config.hpp"
 
 Client::Client(int fd, VirtualServer *server, const Config &config) :
 	Pollable(fd),
@@ -97,8 +100,6 @@ void Client::handleDeleteRequest()
 	(void) 0;
 }
 
-
-
 void Client::test(const std::string &ROOT)
 {
 	(void) m_server;
@@ -154,8 +155,6 @@ void Client::handleGetRequest()
 
 	try
 	{
-
-
 		if (FileHandler::folderExists(root + target))
 		{
 			if (m_serverConfig.getAutoIndex(target))
@@ -205,26 +204,6 @@ void Client::handleGetRequest()
 	}
 }
 
-
-bool Client::isCgi()
-{
-	try
-	{
-		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
-		const std::string ext = file.getExtension();
-
-		return ext == ".php" || ext == ".py";
-	}
-	catch (const FileHandler::FileHandlerException &e)
-	{
-		std::cerr << e.what() << '\n';
-		throw e.getHttpException();
-	}
-	return false;
-}
-
-
-
 /**
  *
  * @brief Prepares the HTTP response based on the client's request.
@@ -240,12 +219,15 @@ bool Client::isCgi()
  */
 void Client::prepareResponse()
 {
+	CgiSpawner		  cgiHandler(m_req, m_serverConfig);
 	const std::string method = m_req.getMethod();
 	try
 	{
-		if (isCgi())
+
+		if (cgiHandler.isCgi())
 		{
-			spawnCgi("files/www/website/" + m_req.getTarget());
+			cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
+			m_events = 0;
 			return;
 		}
 		if (method == "GET")
@@ -361,41 +343,4 @@ void Client::onPollErr()
 
 void Client::onPollHangUp()
 {
-}
-
-
-
-
-/**
- *
- * @brief Spawns a CGI script for the client request.
- *
- * This function creates a CgiSpawner instance to handle the CGI script execution.
- * It sets up the necessary pipes and spawns the CGI process.
- * If successful, it creates a CgiPipe to read the CGI output.
- * If spawning fails, it prepares a 500 Internal Server Error response.
- *
- * @param script_path The path to the CGI script to be executed.
- *
- */
-void Client::spawnCgi(const std::string &script_path)
-{
-	CgiSpawner spawner(getRequest(), m_server->getConfig());
-	int		   stdout_fd = spawner.spawn(script_path);
-
-	if (stdout_fd >= 0)
-	{
-		CgiPipe *cgi_pipe = new CgiPipe(spawner.getPid(),
-										stdout_fd, this, script_path);
-		EventLoop::addHandler(cgi_pipe);
-		m_events = 0;
-	}
-	else
-	{
-		m_res.reset();
-		m_res.setStatusCode(500);
-		m_res.setBody("CGI spawn failed");
-		m_res.build();
-		m_events = POLLOUT;
-	}
 }

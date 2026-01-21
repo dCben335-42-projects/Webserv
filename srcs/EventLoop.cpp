@@ -19,8 +19,13 @@ Vec<pollfd>			 EventLoop::m_pollFds;
 
 void EventLoop::init()
 {
-	Config::Location			 *defaultLocation = new Config::Location("", "files/www/website", "index.html", false, NULL);
-	Config::Location			 *loc1			  = new Config::Location("/assets", "", "", false, NULL);
+	Map<std::string> binmap1;
+	binmap1.set(".py", "/usr/bin/python3");
+	binmap1.set(".php", "/usr/bin/php");
+	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
+
+	Config::Location			 *defaultLocation = new Config::Location("", "files/www/website", "index.html", false, param2);
+	Config::Location			 *loc1			  = new Config::Location("/assets", "", "", false, param2);
 	Config::Location			 *loc2			  = new Config::Location("/assets/", "", "", false, NULL);
 	Config::Location			 *loc3			  = new Config::Location("/assets/test/", "", "", false, NULL);
 	Config::Location			 *loc4			  = new Config::Location("/assets/test/dwad", "", "", false, NULL);

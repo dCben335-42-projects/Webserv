@@ -14,10 +14,13 @@ class CgiSpawner
 		const HttpRequest &m_req;
 		const Config	  &m_config;
 
-		int							   m_stdin_pipe[2];
-		int							   m_stdout_pipe[2];
-		pid_t						   m_pid;
-		Vec<const Config::CgiParams *> m_cgiParams;
+		std::string m_binPath;
+		std::string m_scriptPath;
+
+		int m_stdinPipe[2];
+		int m_stdoutPipe[2];
+
+		pid_t m_pid;
 
 		bool			 m_has_post_data;
 		Vec<std::string> m_env;
@@ -34,11 +37,10 @@ class CgiSpawner
 	public:
 		CgiSpawner(const HttpRequest &req, const Config &config);
 
-		int	  spawn(const std::string &script_path);
-		pid_t getPid() const
-		{
-			return m_pid;
-		}
+		void spawn(const std::string &script_path);
+		void spawnCgi(const std::string &script_path, Client *const client);
+
+		bool isCgi();
 };
 
 #endif

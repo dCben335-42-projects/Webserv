@@ -9,19 +9,17 @@
 class CgiPipe : public Pollable
 {
 	private:
-		Client	   *m_client;
-		pid_t		m_pid;
-		std::string m_scriptPath;
+		Client *const m_client;
+		pid_t		  m_pid;
 
 		void onError();
 		void waitChild();
 
 	public:
 		CgiPipe(
-			pid_t			   pid,
-			int				   pipe_fd,
-			Client			  *client,
-			const std::string &scriptPath);
+			pid_t		  pid,
+			int			  pipe_fd,
+			Client *const client);
 		~CgiPipe();
 
 		void onPollIn();

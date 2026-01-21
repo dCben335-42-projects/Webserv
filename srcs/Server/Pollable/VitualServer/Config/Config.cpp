@@ -126,15 +126,17 @@ const std::string &Config::getRoot(const std::string &locationPath) const
  */
 const std::string &Config::getCgiBin(const std::string &locationPath, std::string &fileExt) const
 {
+	(void) locationPath;
+	(void) fileExt;
 	static const std::string emptyString = "";
-	const Config::CgiParams *cgiParams	 = NULL;
+	// const Config::CgiParams *cgiParams	 = NULL;
 
-	if (m_locations.has(locationPath))
-		cgiParams = m_locations.get(locationPath)->getCgiParams();
-	if (!cgiParams)
-		cgiParams = m_defaultLocation->getCgiParams();
-	if (cgiParams)
-		return cgiParams->getBinFromMap(fileExt);
+	// if (m_locations.has(locationPath))
+	// 	cgiParams = m_locations.get(locationPath)->getCgiParams();
+	// if (!cgiParams)
+	// 	cgiParams = m_defaultLocation->getCgiParams();
+	// if (cgiParams)
+	// 	return cgiParams->getBinFromMap(fileExt);
 	return emptyString;
 }
 
