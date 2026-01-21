@@ -28,7 +28,10 @@ class Parser
 		bool verifyOptionalEnd(ARuleMap &mapPathCurrent, char c);
 		bool detect(ARulePath rules);
 		bool isFullyOptional(ARule *rule);
+		bool isFullyOptionalEndAdvance(ARulePath path);
 		bool isFullyOptionalEnd(ARulePath path);
+		void prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+		bool isValidEmptyFile();
 
 	public:
 		~Parser();

@@ -21,13 +21,14 @@ void Parser::rec(ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
 		{
 			ARulePath rules = *path;
 
-			size_t index = rules.indexOf(ruleRef);
+			int index	 = rules.indexOf(ruleRef);
+			int ruleSize = rules.size();
 
-			for (size_t k = index + 1; k < rules.size(); ++k)
+			for (int k = ruleSize - 1; k >= index + 1; --k)
 			{
-				ARule *rule = rules[k];
-				if (rule->getType() == OPTION)
-					recursiveSearchNextRules(mapPathNext, rules, rule);
+				if (rules.back()->getType() == OPTION)
+					recursiveSearchNextRules(mapPathNext, rules, rules.back());
+				rules.pop_back();
 			}
 		}
 	}
@@ -52,8 +53,18 @@ void Parser::recursiveSearchNextRules(ARuleMap &mapPathNext, ARulePath path, ARu
 	for (size_t k = 0; k < items.size(); ++k)
 	{
 		ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue());
-		mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
+
+		for (ARuleMap::iterator it = newPaths.begin(); it != newPaths.end(); ++it)
+		{
+			ARule	  *key = (*it).first;
+			ARulePaths val = (*it).second;
+			if (mapPathCurrentTemp.has(key))
+				mapPathCurrentTemp.get(key).insert(val.begin(), val.end()); // A verifier si tous les chemins sont bien insere
+			else
+				mapPathCurrentTemp.set(key, val);
+		}
 	}
+
 	rec(mapPathCurrentTemp, mapPathNext, nextRule.back());
 
 	for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
@@ -88,8 +99,19 @@ void Parser::searchNextRules(ARuleMap &mapPathNext, ARulePaths paths, ARule *rul
 
 		for (size_t k = 0; k < items.size(); ++k)
 		{
-			ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue()); // DOIT FAIRE RECURSIVITE OPTIONAL SUR CHAQUE LEVEL
-			mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
+			ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue());
+			for (ARuleMap::iterator it = newPaths.begin(); it != newPaths.end(); ++it)
+			{
+				ARule	  *key = (*it).first;
+				ARulePaths val = (*it).second;
+				if (mapPathCurrentTemp.has(key))
+					mapPathCurrentTemp.get(key).insert(val.begin(), val.end()); // A verifier si tous les chemins sont bien insere
+				else
+					mapPathCurrentTemp.set(key, val);
+			}
+
+
+			// mapPathCurrentTemp.insert(newPaths.begin(), newPaths.end());
 		}
 		rec(mapPathCurrentTemp, mapPathNext, nextRule.back());
 
@@ -136,14 +158,12 @@ bool Parser::isFullyOptional(ARule *rule)
 {
 	if (rule->getType() == OPTION)
 		return true;
-
 	Vec<TerminalSymbol> items = rule->getItems();
 	for (Vec<TerminalSymbol>::iterator item = items.begin(); item != items.end(); ++item)
 	{
 		if (item->isTerminalChar())
 			continue;
-		Concept *concept	  = m_semantic.getConcepts().get(item->getValue());
-		Vec<ConceptDef *> def = concept->getDefinitions();
+		Vec<ConceptDef *> def = m_semantic.getConcept(item->getValue())->getDefinitions();
 
 		for (Vec<ConceptDef *>::iterator cdef = def.begin(); cdef != def.end(); ++cdef)
 		{
@@ -151,9 +171,7 @@ bool Parser::isFullyOptional(ARule *rule)
 			size_t	  isOptionalCounter = 0;
 
 			for (size_t k = 0; k < rules.size(); ++k)
-			{
 				isOptionalCounter += isFullyOptional(rules[k]);
-			}
 			if (isOptionalCounter == rules.size())
 				return true;
 		}
@@ -161,10 +179,8 @@ bool Parser::isFullyOptional(ARule *rule)
 	return false;
 }
 
-
 bool Parser::isFullyOptionalEnd(ARulePath path)
 {
-	path = path.back()->getNextRules(path);
 	while (path.size() > 0)
 	{
 		ARule *rule = path.back();
@@ -173,6 +189,12 @@ bool Parser::isFullyOptionalEnd(ARulePath path)
 		path = rule->getNextRules(path);
 	}
 	return true;
+}
+
+bool Parser::isFullyOptionalEndAdvance(ARulePath path)
+{
+	path = path.back()->getNextRules(path);
+	return isFullyOptionalEnd(path);
 }
 
 bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent, char c)
@@ -193,7 +215,7 @@ bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent, char c)
 				{
 					if (*item == c)
 					{
-						if (isFullyOptionalEnd(rules))
+						if (isFullyOptionalEndAdvance(rules))
 						{
 							return true;
 						}
@@ -205,14 +227,67 @@ bool Parser::verifyOptionalEnd(ARuleMap &mapPathCurrent, char c)
 	return false;
 }
 
+void Parser::prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
+{
+	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
+	{
+		ARulePaths val = (*it).second;
+		for (ARulePaths::iterator m = val.begin(); m != val.end(); ++m)
+		{
+			ARulePath path = *m;
+			int		  size = path.size();
+
+			for (int i = size - 1; i >= 0; --i)
+			{
+				if (path[i]->getType() == OPTION)
+					recursiveSearchNextRules(mapPathNext, path, path.back());
+				path.pop_back();
+			}
+		}
+	}
+	for (ARuleMap::iterator it = mapPathNext.begin(); it != mapPathNext.end(); ++it)
+	{
+		ARule	  *key = (*it).first;
+		ARulePaths val = (*it).second;
+		if (mapPathCurrent.has(key))
+			mapPathCurrent.get(key).insert(val.begin(), val.end()); // A verifier si tous les chemins sont bien insere
+		else
+			mapPathCurrent.set(key, val);
+	}
+	mapPathNext.clear();
+}
+
+bool Parser::isValidEmptyFile()
+{
+	ARulePath				startPath;
+	const Vec<ConceptDef *> defs = m_semantic.getConcept(CURSOR)->getDefinitions();
+	for (Vec<ConceptDef *>::const_iterator defIt = defs.begin(); defIt != defs.end(); ++defIt)
+	{
+		startPath.clear();
+		startPath.push_back((*defIt)->getARule(0));
+		if (isFullyOptionalEnd(startPath))
+			return true;
+	}
+	return false;
+}
+
 void Parser::parse(const std::string &stringToParsed)
 {
 	Logger::log("========Parsing========\n");
-	if (stringToParsed.empty())
-		throw FileNotFinishedException("START: The file ended before reaching a valid end state.");
 	ARuleMap mapPathCurrent = m_semantic.getStartPath();
 	ARuleMap mapPathNext;
 	char	 c;
+
+	prepareOptionalStartPath(mapPathCurrent, mapPathNext);
+
+	if (stringToParsed.empty())
+	{
+		if (isValidEmptyFile())
+			Logger::log("Parsing complete ✅");
+		else
+			throw FileNotFinishedException("The file must not be empty.");
+		return;
+	}
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
