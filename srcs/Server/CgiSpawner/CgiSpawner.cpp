@@ -23,7 +23,7 @@ CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	std::cout << m_has_post_data << std::endl;
 }
 
-void CgiSpawner::spawn(const std::string &script_path)
+void CgiSpawner::spawn()
 {
 	setupPipes();
 	setupEnv();
@@ -40,7 +40,7 @@ void CgiSpawner::spawn(const std::string &script_path)
 			close(m_stdinPipe[0]);
 	}
 	if (m_pid == 0)
-		childprocess(script_path);
+		childprocess();
 	parentProcess();
 }
 
@@ -90,29 +90,26 @@ void CgiSpawner::setupEnv()
 }
 
 #include <stdio.h>
-void CgiSpawner::childprocess(const std::string &script_path)
+void CgiSpawner::childprocess()
 {
-	(void) script_path;
 	(void) m_config;
-	return;
-	// const std::string &fileExt = File::determineExtension(, NULL);
-	// const std::string &bin	   = m_config.getCgiBin(m_req.getTarget(), );
-	// char *const		   argv[3] = {
-	// 	   const_cast<char *>(bin.c_str()),
-	// 	   const_cast<char *>(script_path.c_str()),
-	// 	   NULL};
-	// generateEnvp();
-	// if (dup2(m_stdinPipe[0], STDIN_FILENO) == -1)
-	// 	throw std::runtime_error("Dup2 failed");
-	// close(m_stdinPipe[1]);
-	// close(m_stdinPipe[0]);
-	// if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
-	// 	throw std::runtime_error("Dup2 failed");
-	// close(m_stdoutPipe[0]);
-	// close(m_stdoutPipe[1]);
-	// execve(argv[0], argv, m_envp);
-	// perror("execve: ");
-	// exit(127);
+	// return;
+	char *const argv[3] = {
+		const_cast<char *>(m_binPath.c_str()),
+		const_cast<char *>(m_scriptPath.c_str()),
+		NULL};
+	generateEnvp();
+	if (dup2(m_stdinPipe[0], STDIN_FILENO) == -1)
+		throw std::runtime_error("Dup2 failed");
+	close(m_stdinPipe[1]);
+	close(m_stdinPipe[0]);
+	if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
+		throw std::runtime_error("Dup2 failed");
+	close(m_stdoutPipe[0]);
+	close(m_stdoutPipe[1]);
+	execve(argv[0], argv, m_envp);
+	perror("execve: ");
+	exit(127);
 }
 
 void CgiSpawner::generateEnvp()
@@ -154,19 +151,20 @@ bool CgiSpawner::isCgi()
 				activeBinMap.set(first, mit->second);
 			}
 		}
-		Logger::log("active bin map " + LoggerJson::get(activeBinMap));
+		Logger::log("Active bin map " + LoggerJson::get(activeBinMap));
 		// TODO change to ref
 		Vec<std::string> urlSegments = m_req.getSegments();
-		for (Vec<std::string>::iterator it = urlSegments.begin(); it != urlSegments.end(); it++)
+		for (size_t i = 0; i < urlSegments.size(); i++)
 		{
-			std::string fileExtension = File::determineExtension((*it), NULL);
+			std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
 			if (fileExtension.empty())
 				continue;
 			if (!activeBinMap.has(fileExtension))
 				continue;
 			m_binPath = activeBinMap.get(fileExtension);
 			Logger::log(m_binPath);
-			break;
+			m_scriptPath = m_req.buildResourcePath(i);
+			return true;
 		}
 	}
 	catch (const FileHandler::FileHandlerException &e)
@@ -189,9 +187,9 @@ bool CgiSpawner::isCgi()
  * @param scriptPath The path to the CGI script to be executed.
  *
  */
-void CgiSpawner::spawnCgi(const std::string &scriptPath, Client *const client)
+void CgiSpawner::spawnCgi(Client *const client)
 {
-	spawn(scriptPath);
+	spawn();
 	if (m_stdoutPipe[0] >= 0)
 	{
 		CgiPipe *cgiPipeOut = new CgiPipe(m_pid, m_stdoutPipe[0], client);

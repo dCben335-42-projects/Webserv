@@ -117,6 +117,7 @@ void CgiPipe::onPollErr()
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
+	//TODO Read loop in case there is still data
 	std::cerr << "Read ended" << std::endl;
 	waitChild();
 	m_events = 0;

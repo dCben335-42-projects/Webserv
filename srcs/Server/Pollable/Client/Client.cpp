@@ -27,7 +27,6 @@ Client::~Client()
 		close(m_fd);
 }
 
-
 /**
  *
  * @brief Gets the HTTP request associated with the client.
@@ -58,7 +57,6 @@ HttpResponse &Client::getResponse()
 	return m_res;
 }
 
-
 /**
  *
  * @brief Sets the events for the client.
@@ -76,7 +74,6 @@ void Client::setEvents(const short events)
 {
 	m_events = events;
 }
-
 
 /**
  *
@@ -101,9 +98,6 @@ void Client::handleDeleteRequest()
 {
 	(void) 0;
 }
-
-
-
 
 #include "Logger.hpp"
 
@@ -204,7 +198,7 @@ void Client::prepareResponse()
 	{
 		if (cgiHandler.isCgi())
 		{
-			cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
+			cgiHandler.spawnCgi(this);
 			m_events = 0;
 			return;
 		}
@@ -253,9 +247,6 @@ bool Client::isRequestComplete()
 }
 
 
-
-
-
 /**
  *
  * @brief Handles reading data from the client socket.
@@ -284,8 +275,6 @@ void Client::onPollIn()
 	m_req.parse(m_serverConfig);
 	prepareResponse();
 }
-
-
 
 
 /**

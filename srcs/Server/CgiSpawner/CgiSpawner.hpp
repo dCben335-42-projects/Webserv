@@ -30,15 +30,15 @@ class CgiSpawner
 		std::string makeEnvVar(const std::string &key, const std::string &value);
 		void		generateEnvp();
 		void		setupEnv();
-		void		childprocess(const std::string &script_path);
+		void		childprocess();
 		void		parentProcess();
 
 
 	public:
 		CgiSpawner(const HttpRequest &req, const Config &config);
 
-		void spawn(const std::string &script_path);
-		void spawnCgi(const std::string &script_path, Client *const client);
+		void spawn();
+		void spawnCgi(Client *const client);
 
 		bool isCgi();
 };
