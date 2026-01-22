@@ -177,10 +177,10 @@ void SemanticDescriptor::addParent()
 	{
 		V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
 		{
-			V_FOREACH(ARule *, ruleIt, (*conceptIt)->getValues())
+			V_FOREACH(const ARule *, ruleIt, (*conceptIt)->getValues())
 			{
 				Concept			   *conceptPtr;
-				ARule			   *rule  = *ruleIt;
+				const ARule		   *rule  = *ruleIt;
 				Vec<TerminalSymbol> items = rule->getItems();
 
 				for (size_t i = 0; i < items.size(); ++i)
@@ -193,7 +193,7 @@ void SemanticDescriptor::addParent()
 	}
 }
 
-void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
+void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 {
 	Concept			   *conceptPtr;
 	Vec<std::string>	conceptPathsCopy;

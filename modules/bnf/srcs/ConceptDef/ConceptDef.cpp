@@ -41,10 +41,13 @@ ConceptDef::~ConceptDef()
 	}
 }
 
-void ConceptDef::setRule(ARule *rule)
+void ConceptDef::setRule(const ARule *rule)
 {
 	if (values.size() > 0)
-		values.back()->setNextRules(rule);
+	{
+		ARule *lastRule = const_cast<ARule *>(values.back());
+		lastRule->setNextRules(rule);
+	}
 	values.push_back(rule);
 }
 
@@ -58,7 +61,7 @@ Vec<TerminalSymbol> ConceptDef::getItems()
 	Vec<TerminalSymbol> allItems;
 	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
-		ARule *rule = *it;
+		const ARule *rule = *it;
 		if (rule->getType() == OPTION)
 			continue;
 		Vec<TerminalSymbol> items = rule->getItems();
@@ -78,7 +81,7 @@ Vec<std::string> ConceptDef::getItemsValue()
 	Vec<std::string> allItems;
 	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
-		ARule *rule = *it;
+		const ARule *rule = *it;
 		if (rule->getType() == OPTION)
 			continue;
 		Vec<TerminalSymbol> items = rule->getItems();
@@ -98,7 +101,7 @@ Vec<std::string> ConceptDef::getItemsWithOption()
 	Vec<std::string> allItems;
 	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
 	{
-		ARule			   *rule  = *it;
+		const ARule		   *rule  = *it;
 		Vec<TerminalSymbol> items = rule->getItems();
 
 		for (size_t i = 0; i < items.size(); ++i)
@@ -116,7 +119,7 @@ ARulePath ConceptDef::getValues() const
 	return values;
 }
 
-ARule *ConceptDef::getARule(size_t index)
+const ARule *ConceptDef::getARule(const size_t index) const
 {
 	if (values.size() > index)
 		return values[index];
@@ -137,7 +140,7 @@ void ConceptDef::computeOptionalIndex()
 	optionalEndIndex = size;
 	for (int i = values.size() - 1; i >= 0; --i)
 	{
-		ARule *rule = values[i];
+		const ARule *rule = values[i];
 		if (rule->getType() == OPTION)
 			optionalEndIndex = i;
 		else

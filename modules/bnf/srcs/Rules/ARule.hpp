@@ -18,9 +18,9 @@ struct BnfMap
 		bool hasClosure;
 };
 
-typedef Vec<ARule *>			 ARulePath;
-typedef Set<ARulePath>			 ARulePaths;
-typedef Map<ARule *, ARulePaths> ARuleMap;
+typedef Vec<const ARule *>					ARulePath;
+typedef Set<ARulePath>						ARulePaths;
+typedef Map<const ARule *const, ARulePaths> ARuleMap;
 
 class ARule
 {
@@ -31,7 +31,7 @@ class ARule
 		const size_t		m_ruleIndex;
 		Concept			   *m_conceptPtr;
 		ConceptDef		   *m_conceptDefPtr;
-		Set<ARule *>		m_nextRules;
+		Set<const ARule *>	m_nextRules;
 		Vec<TerminalSymbol> m_items;
 
 		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
@@ -50,16 +50,18 @@ class ARule
 		const std::string getConceptName() const;
 		size_t			  getConceptDefIndex() const;
 		size_t			  getRuleIndex() const;
-		ARulePath		  getNextRules(ARulePath supRuleParent);
-		std::string		  printNext() const;
-		ARule			 *tryGetAdjacentRules();
-		ConceptDef		 *getConceptDefPtr();
+		ARulePath		  getNextRules(ARulePath supRuleParent) const;
+
+
+		std::string	 printNext() const;
+		const ARule *tryGetAdjacentRules() const;
+		ConceptDef	*getConceptDefPtr();
 
 
 		bool isOption() const;
 		bool isSequence() const;
 
-		void	 setNextRules(ARule *nextRule);
+		void	 setNextRules(const ARule *nextRule);
 		Concept *getConceptPtr() const;
 };
 

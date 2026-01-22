@@ -21,19 +21,22 @@ class Parser
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		bool   parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
-		void   addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, ARule *rule);
-		void   addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARule *ruleRef);
-		bool   verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
-		bool   isFullyOptional(const ARule &rule);
-		bool   isFullyOptionalEndAdvance(const ARulePath &path);
-		bool   isFullyOptionalEnd(ARulePath path);
-		void   prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
-		bool   isValidEmptyFile();
-		size_t addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext, ARuleMap &mapPathCurrent, ARule *rule);
-		void   getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath) const;
-		void   getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const;
-		void   addPathPossibility(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const;
+		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+
+		bool isFullyOptional(const ARule &rule) const;
+		bool isFullyOptionalEndAdvance(const ARulePath &path);
+		bool isFullyOptionalEnd(ARulePath path);
+
+		bool isValidEmptyFile();
+		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
+
+		// void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath) const;
+		void getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const;
+
+		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, const ARule *const rule);
+		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const;
+
+		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path) const;
 
 	public:
 		~Parser();

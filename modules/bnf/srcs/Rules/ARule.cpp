@@ -122,7 +122,7 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-ARulePath ARule::getNextRules(ARulePath supRuleParent)
+ARulePath ARule::getNextRules(ARulePath supRuleParent) const
 {
 	if (m_nextRules.empty())
 	{
@@ -133,7 +133,7 @@ ARulePath ARule::getNextRules(ARulePath supRuleParent)
 		else
 		{
 			supRuleParent.pop_back();
-			ARule *val = supRuleParent.back();
+			const ARule *val = supRuleParent.back();
 			return val->getNextRules(supRuleParent);
 		}
 	}
@@ -141,9 +141,9 @@ ARulePath ARule::getNextRules(ARulePath supRuleParent)
 	return supRuleParent;
 }
 
-ARule *ARule::tryGetAdjacentRules()
+const ARule *ARule::tryGetAdjacentRules() const
 {
-	Set<ARule *>::iterator it = m_nextRules.begin();
+	Set<const ARule *>::iterator it = m_nextRules.begin();
 	return *it;
 }
 
@@ -152,7 +152,7 @@ std::string ARule::printNext() const
 	return LoggerJson::get(m_nextRules, true);
 }
 
-void ARule::setNextRules(ARule *nextRule)
+void ARule::setNextRules(const ARule *nextRule)
 {
 	m_nextRules.insert(nextRule);
 }

@@ -31,22 +31,22 @@ const std::string Concept::getConceptName() const
 	return m_conceptName;
 }
 
-void Concept::addParent(ARule *parent)
+void Concept::addParent(const ARule *parent)
 {
 	m_parents.insert(parent);
 }
 
-const Set<ARule *> &Concept::getParents() const
+const Set<const ARule *> &Concept::getParents() const
 {
 	return m_parents;
 }
 
-void Concept::addTerminalChar(ARule *terminalChar)
+void Concept::addTerminalChar(const ARule *terminalChar)
 {
 	m_terminalChars.insert(terminalChar);
 }
 
-const Set<ARule *> &Concept::getTerminalChars() const
+const Set<const ARule *> &Concept::getTerminalChars() const
 {
 	return m_terminalChars;
 }

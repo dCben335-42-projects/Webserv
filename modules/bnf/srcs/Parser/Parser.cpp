@@ -10,7 +10,13 @@ Parser::~Parser()
 {
 }
 
-void Parser::addPathPossibility(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const
+void Parser::addPathPossibility(
+	const ARule *const rule,
+	Vec<std::string>  &conceptPaths,
+	ARulePath		   path,
+	ARuleMap		  &mapPath,
+	std::string		   conceptName,
+	ARulePath		   prefix) const
 {
 	Concept			   *conceptPtr;
 	Vec<std::string>	conceptPathsCopy;
@@ -24,32 +30,13 @@ void Parser::addPathPossibility(ARule *rule, Vec<std::string> &conceptPaths, ARu
 			continue;
 		if (m_semantic.getConcepts().try_get(item, conceptPtr))
 		{
-			conceptPathsCopy = conceptPaths;
-			conceptPathsCopy.push_back(item);
-			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
-			{
-				size_t size = (*conceptIt)->size();
-				size_t k	= 0;
-				while (k < size)
-				{
-					ARule *subRule = (*conceptIt)->getARule(k);
-					addPathPossibility(subRule, conceptPathsCopy, path, mapPath, conceptName, prefix);
-					if (!subRule->isOption())
-						break;
-					++k;
-				}
-				// for (size_t k = 0; k < size; ++k)
-				// {
-				// 	while ((*conceptIt)->getARule(k)->isOption)
-				// 		addPathPossibility((*conceptIt)->getARule(k), conceptPathsCopy, path, mapPath, conceptName, prefix);
-				// }
-			}
+			getPathsTerminalChars(prefix, item, mapPath, conceptPathsCopy, path);
 			continue;
 		}
 	}
 
-	Set<ARule *> terminalChars = m_semantic.getConcept(conceptName)->getTerminalChars();
-	for (Set<ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
+	Set<const ARule *> terminalChars = m_semantic.getConcept(conceptName)->getTerminalChars();
+	for (Set<const ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
 	{
 		if (rule == *it)
 		{
@@ -60,11 +47,8 @@ void Parser::addPathPossibility(ARule *rule, Vec<std::string> &conceptPaths, ARu
 	}
 }
 
-void Parser::getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath) const
+void Parser::getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path) const
 {
-	Vec<std::string> conceptPaths;
-	ARulePath		 path;
-
 	conceptPaths.push_back(conceptName);
 	V_FOREACH(ConceptDef *, conceptIt, m_semantic.getConceptDefs(conceptName))
 	{
@@ -72,13 +56,12 @@ void Parser::getPathsTerminalChars(ARulePath prefix, std::string conceptName, AR
 		size_t k	= 0;
 		while (k < size)
 		{
-			ARule *subRule = (*conceptIt)->getARule(k);
+			const ARule *subRule = (*conceptIt)->getARule(k);
 			addPathPossibility(subRule, conceptPaths, path, mapPath, conceptName, prefix);
-			if (!subRule->isOption())
+			if (!isFullyOptional(*subRule))
 				break;
 			++k;
 		}
-		// addPathPossibility((*conceptIt)->getARule(0), conceptPaths, path, mapPath, conceptName, prefix);
 	}
 }
 
@@ -86,35 +69,11 @@ void Parser::getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols
 {
 	V_FOREACH(TerminalSymbol, terminalSymbol, terminalSymbols)
 	{
-		getPathsTerminalChars(prefix, terminalSymbol->getValue(), mapPathNext);
+		getPathsTerminalChars(prefix, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
 	}
 }
 
-void Parser::addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARule *ruleRef)
-{
-	ARule *currentRule;
-	for (ARuleMap::iterator it = mapPathNext.begin(); it != mapPathNext.end(); ++it)
-	{
-		ARulePaths val = it->second;
-		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
-		{
-			ARulePath rules = *path;
-			int		  index = rules.indexOf(ruleRef);
-			if (index == -1)
-				continue;
-
-			for (int k = rules.size() - 1; k >= index + 1; --k)
-			{
-				currentRule = rules.back();
-				if (currentRule->isOption())
-					addNextPaths(mapPathCurrent, mapPathNext, rules, currentRule);
-				rules.pop_back();
-			}
-		}
-	}
-}
-
-void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, ARule *rule)
+void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, const ARule *const rule)
 {
 	if (rule->isSequence())
 	{
@@ -128,12 +87,11 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	if (nextRule.empty())
 		return;
 
-	ARule *lastRule = nextRule.back();
+	const ARule *const lastRule = nextRule.back();
 	if (lastRule->isOption())
 		addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
 
 	getNewMapPath(nextRule, lastRule->getItems(), mapPathNext);
-	addOptionalPaths(mapPathCurrent, mapPathNext, lastRule);
 }
 
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
@@ -142,8 +100,8 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 	bool isValidWithCurrentPath = false;
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
-		ARule	  *rule	 = (*it).first;
-		ARulePaths paths = (*it).second;
+		const ARule *rule  = (*it).first;
+		ARulePaths	 paths = (*it).second;
 		Logger::log(rule->getConceptName());
 		Vec<TerminalSymbol> items = rule->getItems();
 		for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
@@ -159,7 +117,7 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 	return isValidWithCurrentPath;
 }
 
-bool Parser::isFullyOptional(const ARule &rule)
+bool Parser::isFullyOptional(const ARule &rule) const
 {
 	if (rule.isOption())
 		return true;
@@ -187,7 +145,7 @@ bool Parser::isFullyOptionalEnd(ARulePath path)
 {
 	while (path.size() > 0)
 	{
-		ARule *rule = path.back();
+		const ARule *rule = path.back();
 		if (!isFullyOptional(*rule))
 			return false;
 		path = rule->getNextRules(path);
@@ -217,34 +175,6 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 	return false;
 }
 
-void Parser::prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
-{
-	for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
-	{
-		ARulePaths val = (*it).second;
-		for (ARulePaths::iterator m = val.begin(); m != val.end(); ++m)
-		{
-			ARulePath path = *m;
-			for (int i = path.size() - 1; i >= 0; --i)
-			{
-				if (path[i]->isOption())
-					addNextPaths(mapPathCurrent, mapPathNext, path, path.back());
-				path.pop_back();
-			}
-		}
-	}
-	for (ARuleMap::iterator it = mapPathNext.begin(); it != mapPathNext.end(); ++it)
-	{
-		ARule	  *key = (*it).first;
-		ARulePaths val = (*it).second;
-		if (mapPathCurrent.has(key))
-			mapPathCurrent.get(key).insert(val.begin(), val.end()); // A verifier si tous les chemins sont bien insere
-		else
-			mapPathCurrent.set(key, val);
-	}
-	mapPathNext.clear();
-}
-
 bool Parser::isValidEmptyFile()
 {
 	ARulePath				 startPath;
@@ -266,8 +196,7 @@ void Parser::parse(const std::string &stringToParsed)
 	ARuleMap mapPathNext;
 	char	 c;
 
-	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent);
-	// prepareOptionalStartPath(mapPathCurrent, mapPathNext);
+	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
 	if (stringToParsed.empty())
 	{
