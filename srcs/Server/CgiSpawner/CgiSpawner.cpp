@@ -93,7 +93,8 @@ void CgiSpawner::setupEnv()
 void CgiSpawner::childprocess()
 {
 	(void) m_config;
-	// return;
+	// TODO m_config still useful ?
+	//  return;
 	char *const argv[3] = {
 		const_cast<char *>(m_binPath.c_str()),
 		const_cast<char *>(m_scriptPath.c_str()),
@@ -122,6 +123,7 @@ void CgiSpawner::generateEnvp()
 
 void CgiSpawner::parentProcess()
 {
+	// TODO Write in accordance with poll()
 	close(m_stdoutPipe[1]);
 	const std::string &body = m_req.getBody();
 	write(m_stdinPipe[1], body.data(), body.size());
