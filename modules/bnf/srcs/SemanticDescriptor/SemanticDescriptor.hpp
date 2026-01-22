@@ -57,6 +57,7 @@ class SemanticDescriptor
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 		ConceptNode				*getTree() const;
 		ARuleMap				 getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const;
+		ARuleMap				 getPathsTerminalChars2(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

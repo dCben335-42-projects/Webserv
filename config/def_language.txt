@@ -1,4 +1,4 @@
-<head>			::= NN TT
+<head>			::= NN TT ALL [ DIGIT ]
 
 PP				::= [ NN ]
 BB				::= [ TT ]

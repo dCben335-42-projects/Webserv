@@ -32,21 +32,6 @@ void Parser::addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPath,
 	}
 }
 
-// TODO: ascend the path to find the last rule with adjacent rules
-// size_t Parser::getLastRule(const ARulePath &path, ARuleMap &mapPathNext)
-// {
-// 	for (int i = path.size() - 1; i >= 0; --i)
-// 	{
-// 		if (path[i]->tryGetAdjacentRules())
-// 			return i;
-// 		else
-// 		{
-// 			if (path[i])
-// 		}
-// 	}
-// 	return 0;
-// }
-
 void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, ARule *rule)
 {
 	if (rule->isSequence())
@@ -63,25 +48,8 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	if (nextRule.back()->isOption())
 		addNextPaths(mapPathCurrent, mapPathNext, nextRule, nextRule.back());
 
-	Vec<TerminalSymbol> items = nextRule.back()->getItems();
-	ARulePaths			prefixs;
-	prefixs.insert(nextRule);
+	ARuleMap mapPathCurrentTemp = m_semantic.getPathsTerminalChars2(nextRule, nextRule.back()->getItems());
 
-	ARuleMap mapPathCurrentTemp;
-	for (size_t k = 0; k < items.size(); ++k)
-	{
-		ARuleMap newPaths = m_semantic.getPathsTerminalChars(prefixs, items[k].getValue());
-
-		for (ARuleMap::iterator it = newPaths.begin(); it != newPaths.end(); ++it)
-		{
-			ARule	  *key = (*it).first;
-			ARulePaths val = (*it).second;
-			if (mapPathCurrentTemp.has(key))
-				mapPathCurrentTemp.get(key).insert(val.begin(), val.end());
-			else
-				mapPathCurrentTemp.set(key, val);
-		}
-	}
 	addOptionalPaths(mapPathCurrent, mapPathCurrentTemp, mapPathNext, nextRule.back());
 	for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
 	{
