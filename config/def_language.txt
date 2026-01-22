@@ -1,4 +1,4 @@
-<head>			::= [ OE ] [ NN ] [ NN ] TT ALL [ DIGIT ]
+<head>			::= [ OE ] [ NN ] [ NN ] { TT } { ALL } TT [ DIGIT ]
 
 PP				::= [ NN ]
 BB				::= [ TT ]

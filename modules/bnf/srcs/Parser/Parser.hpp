@@ -30,13 +30,12 @@ class Parser
 		bool isValidEmptyFile();
 		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 
-		// void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath) const;
-		void getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const;
-
 		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, const ARule *const rule);
 		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const;
 
 		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path) const;
+
+		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
 	public:
 		~Parser();

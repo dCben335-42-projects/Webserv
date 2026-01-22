@@ -238,6 +238,23 @@ class VecBase
 			}
 			return result;
 		}
+
+		/**
+		 * @brief Recreates new vector with the n primary elements of the vector.
+		 *
+		 * @param n The number of elements to keep from the start of the vector.
+		 */
+
+		Derived slice(size_t n) const
+		{
+			Derived		   result;
+			const Derived &derived = static_cast<const Derived &>(*this);
+			for (size_t i = 0; i < n && i < derived.size(); ++i)
+			{
+				result.push_back(derived[i]);
+			}
+			return result;
+		}
 };
 
 template <typename V>
