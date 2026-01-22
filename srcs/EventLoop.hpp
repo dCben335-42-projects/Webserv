@@ -8,6 +8,15 @@
 
 class EventLoop
 {
+	private:
+		static Vec<int>				m_hosts;
+		static Vec<pollfd>			m_pollFds;
+		static Map<int, Pollable *> m_handlers;
+		static size_t				m_nfds;
+
+		static void		 deletePollable(const int &fd, const size_t &index);
+		static Pollable *getHandler(const int fd);
+
 	public:
 		static const size_t maxFds = 4096;
 
@@ -19,19 +28,6 @@ class EventLoop
 		static void updatePollStatus();
 
 		static size_t getNfds();
-
-	private:
-		static Vec<int>				m_hosts;
-		static Vec<pollfd>			m_pollFds;
-		static Map<int, Pollable *> m_handlers;
-		static size_t				m_nfds;
-
-		static void createPollServer(unsigned short port);
-		static void createPoll(const int socket);
-		static void createPollClient(const int serverFd);
-		static void deletePollable(const int &fd, const size_t &index);
-
-		static Pollable *getHandler(int fd);
 };
 
 

@@ -83,11 +83,12 @@ void EventLoop::destroy()
 void EventLoop::run()
 {
 	const int POLL_TIMEOUT = 1000;
+	int		  ready;
 
 	while (true)
 	{
 		updatePollStatus();
-		int ready = poll(&m_pollFds[0], m_pollFds.size(), POLL_TIMEOUT);
+		ready = poll(&m_pollFds[0], m_pollFds.size(), POLL_TIMEOUT);
 		if (ready < 0)
 			break;
 		for (size_t i = 0; i < m_pollFds.size() && ready > 0; ++i)
@@ -109,10 +110,7 @@ void EventLoop::run()
 				if (m_pollFds[i].revents & POLLHUP)
 					handler->onPollHangUp();
 				if (handler->getConnectionClosed())
-				{
 					deletePollable(fd, i);
-				}
-				strerror(errno);
 			}
 		}
 	}
