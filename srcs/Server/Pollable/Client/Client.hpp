@@ -17,12 +17,11 @@ class Client : public Pollable
 		HttpRequest	   m_req;
 		HttpResponse   m_res;
 
-		void handleGetRequest();
+		void handleGetRequest(const std::string &ressourcePath);
 		void handlePostRequest();
 		void handleDeleteRequest();
 
 		void prepareResponse();
-		void test(const std::string &root);
 
 		bool isCgi();
 		bool isRequestComplete();

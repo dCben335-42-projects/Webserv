@@ -1,12 +1,9 @@
 #ifndef HTTP_REQUEST_HPP
 #define HTTP_REQUEST_HPP
 
-#include <string>
-#include "AHttpMessage.hpp"
 #include "Vec.hpp"
+#include "AHttpMessage.hpp"
 #include "Config.hpp"
-#include <sys/types.h>
-#include <sys/socket.h>
 
 class HttpRequest : public AHttpMessage
 {
@@ -30,6 +27,7 @@ class HttpRequest : public AHttpMessage
 		std::string							 getRawRequest() const;
 		std::string							 getTarget() const;
 		std::string							 getQueryString() const;
+		size_t								 getSegmentSize() const;
 		const Vec<std::string>				&getSegments() const;
 		const Vec<const Config::Location *> &getActiveLocations() const;
 
@@ -42,7 +40,7 @@ class HttpRequest : public AHttpMessage
 		ssize_t readOnce(int socketFd);
 		size_t	readContentLength(std::string request, const size_t headersEnd);
 
-		std::string buildResourcePath(const Config &config, const size_t segmentIndex) const;
+		std::string buildResourcePath(const ssize_t segmentIndex) const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

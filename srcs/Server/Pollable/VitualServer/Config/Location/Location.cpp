@@ -9,12 +9,12 @@ Config::Location::Location(
 	const bool				 autoIndex,
 	const Config::CgiParams *cgi) :
 	m_path(path),
-	m_alias(alias),
 	m_root(root),
+	m_alias(alias),
 	m_indexFile(indexFile),
+	m_isAutoIndex(true),
 	m_autoIndex(autoIndex),
-	m_cgi(cgi),
-	m_isAutoIndex(true)
+	m_cgi(cgi)
 {
 }
 
@@ -23,21 +23,54 @@ Config::Location::Location(
 	const std::string		 root,
 	const std::string		 alias,
 	const std::string		 indexFile,
-	const bool				 autoIndex,
 	const Config::CgiParams *cgi) :
 	m_path(path),
-	m_alias(alias),
 	m_root(root),
+	m_alias(alias),
 	m_indexFile(indexFile),
-	m_cgi(cgi),
 	m_isAutoIndex(false),
-	m_autoIndex(false)
+	m_autoIndex(false),
+	m_cgi(cgi)
 {
 }
 
 Config::Location::~Location()
 {
 }
+
+
+
+bool Config::Location::operator==(const Location &other) const
+{
+	return m_path == other.m_path;
+}
+bool Config::Location::operator!=(const Location &other) const
+{
+	return m_path != other.m_path;
+}
+bool Config::Location::operator<(const Location &other) const
+{
+	return m_path < other.m_path;
+}
+bool Config::Location::operator<=(const Location &other) const
+{
+	return m_path <= other.m_path;
+}
+bool Config::Location::operator>(const Location &other) const
+{
+	return m_path > other.m_path;
+}
+bool Config::Location::operator>=(const Location &other) const
+{
+	return m_path >= other.m_path;
+}
+bool Config::Location::compare(const Location *a, const Location *b)
+{
+	return a->m_path < b->m_path;
+}
+
+
+
 
 
 /**
@@ -72,6 +105,17 @@ const std::string &Config::Location::getRoot() const
 const std::string &Config::Location::getIndexFile() const
 {
 	return m_indexFile;
+}
+/**
+ *
+ * @brief Gets the alias of the location.
+ *
+ * @return The alias as a constant reference to a string.
+ *
+ */
+const std::string &Config::Location::getAlias() const
+{
+	return m_alias;
 }
 /**
  *
@@ -223,6 +267,7 @@ std::ostream &operator<<(std::ostream &os, const Config::Location &location)
 {
 	os << "Location(path: " << location.getPath();
 	os << ", root: " << location.getRoot();
+	os << ", alias: " << location.getAlias();
 	os << ", indexFile: " << location.getIndexFile();
 	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
 	os << ")";
