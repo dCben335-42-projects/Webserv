@@ -19,7 +19,6 @@
 #include "Config.hpp"
 #include "Location.hpp"
 
-// ANCHOR Constructors / Destructors
 HttpRequest::HttpRequest() :
 	AHttpMessage(),
 	m_rawStr(""),
@@ -31,25 +30,85 @@ HttpRequest::~HttpRequest()
 {
 }
 
-// ANCHOR Getters
+/**
+ *
+ * @brief Retrieves the raw HTTP request string.
+ *
+ * @return A string representing the raw HTTP request.
+ *
+ */
 std::string HttpRequest::getRawRequest() const
 {
 	return m_rawStr;
 }
+
+/**
+ *
+ * @brief Retrieves the request target from the HTTP request.
+ *
+ * @return A string representing the request target.
+ *
+ */
 std::string HttpRequest::getTarget() const
 {
 	return m_target;
 }
+
+/**
+ *
+ * @brief Retrieves the query string from the request target.
+ *
+ * @return A string representing the query string.
+ *
+ */
 std::string HttpRequest::getQueryString() const
 {
 	return m_queryString;
 }
-Vec<std::string> HttpRequest::getSegments() const
+/**
+ *
+ * @brief Retrieves the segments of the request target path.
+ *
+ * @return A constant reference to a vector of strings representing the path segments.
+ *
+ */
+const Vec<std::string> &HttpRequest::getSegments() const
 {
 	return m_segments;
 }
+/**
+ *
+ * @brief Retrieves the number of segments in the request target path.
+ *
+ * @return The size of the segments vector.
+ *
+ */
+size_t HttpRequest::getSegmentSize() const
+{
+	return m_segments.size();
+}
+/**
+ *
+ * @brief Retrieves the active locations matched for the request.
+ *
+ * @return A constant reference to a vector of pointers to the active Config::Location objects.
+ *
+ */
+const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
+{
+	return m_activeLocations;
+}
 
-// ANCHOR Setters
+
+
+
+/**
+ *
+ * @brief Sets the raw HTTP request string.
+ *
+ * @param rawRequest The raw HTTP request string to be set.
+ *
+ */
 void HttpRequest::setRawRequest(const std::string &rawRequest)
 {
 	m_rawStr = rawRequest;
@@ -179,7 +238,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		if (locs.has(currentPath))
 			empty.push(locs.get(currentPath));
 	}
-
+	std::sort(empty.begin(), empty.end(), Config::Location::compare);
 	m_activeLocations = empty;
 }
 
@@ -252,7 +311,7 @@ size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t 
 	const std::string headerName  = rawRequest.substr(pos, colon - pos);
 	const std::string headerValue = rawRequest.substr(colon + 1, nextLine - colon - 1);
 
-	setHeader(headerName, String::trim(headerValue));
+	setHeader(String::trim(headerName), String::trim(headerValue));
 	return nextLine + std::strlen(HEADER_LINE_ENDING);
 }
 
@@ -289,11 +348,56 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 
 
 
-const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
-{
-	return m_activeLocations;
-}
 
+
+/**
+ *
+ * @brief Builds the resource path for the request based on the active locations
+ * and the specified segment index.
+ *
+ * @param config The server configuration.
+ * @param segmentIndex The index of the segment to build the resource path for.
+ *
+ * @return The constructed resource path as a string.
+ *
+ * @throws std::out_of_range if the segment index is out of range.
+ *
+ */
+std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
+{
+	if (segmentIndex >= static_cast<ssize_t>(m_segments.size()) || segmentIndex < -1)
+		return "";
+	const Config::Location *validLocation = NULL;
+	bool					isRoot		  = true;
+
+	Vec<const Config::Location *>::const_iterator end = segmentIndex == -1 ? m_activeLocations.begin() + 1 : m_activeLocations.end();
+	for (Vec<const Config::Location *>::const_iterator loc = m_activeLocations.begin(); loc != end; ++loc)
+	{
+		if ((*loc)->hasAlias())
+		{
+			validLocation = *loc;
+			isRoot		  = false;
+			continue;
+		}
+		if ((*loc)->hasRoot())
+		{
+			validLocation = *loc;
+			isRoot		  = true;
+		}
+	}
+	std::string resourcePath = isRoot ? validLocation->getRoot() : validLocation->getAlias();
+	if (segmentIndex == -1)
+		return resourcePath;
+	const size_t startIndex = isRoot ? 0 : String::split(validLocation->getPath(), "/").size();
+	const size_t segIndex	= static_cast<size_t>(segmentIndex);
+	for (size_t i = startIndex; i <= segIndex; ++i)
+	{
+		if (resourcePath.at(resourcePath.size() - 1) != '/')
+			resourcePath += '/';
+		resourcePath += m_segments[i];
+	}
+	return resourcePath;
+}
 
 
 // ANCHOR Overloaded Operators

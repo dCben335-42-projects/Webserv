@@ -84,7 +84,7 @@ std::string AHttpMessage::getBody() const
  */
 void AHttpMessage::setHeader(const std::string &key, const std::string &value)
 {
-	m_headers[key] = value;
+	m_headers.set(key, value);
 }
 /**
  *

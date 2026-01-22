@@ -1,24 +1,35 @@
 #include "Location.hpp"
 
-Config::Location::Location() :
-	m_path(""),
-	m_root(""),
-	m_indexFile(""),
-	m_autoIndex(false),
-	m_cgi(NULL)
+
+Config::Location::Location(
+	const std::string		 path,
+	const std::string		 root,
+	const std::string		 alias,
+	const std::string		 indexFile,
+	const bool				 autoIndex,
+	const Config::CgiParams *cgi) :
+	m_path(path),
+	m_root(root),
+	m_alias(alias),
+	m_indexFile(indexFile),
+	m_isAutoIndex(true),
+	m_autoIndex(autoIndex),
+	m_cgi(cgi)
 {
 }
 
 Config::Location::Location(
-	std::string		   path,
-	std::string		   root,
-	std::string		   indexFile,
-	bool			   autoIndex,
-	Config::CgiParams *cgi) :
+	const std::string		 path,
+	const std::string		 root,
+	const std::string		 alias,
+	const std::string		 indexFile,
+	const Config::CgiParams *cgi) :
 	m_path(path),
 	m_root(root),
+	m_alias(alias),
 	m_indexFile(indexFile),
-	m_autoIndex(autoIndex),
+	m_isAutoIndex(false),
+	m_autoIndex(false),
 	m_cgi(cgi)
 {
 }
@@ -26,6 +37,40 @@ Config::Location::Location(
 Config::Location::~Location()
 {
 }
+
+
+
+bool Config::Location::operator==(const Location &other) const
+{
+	return m_path == other.m_path;
+}
+bool Config::Location::operator!=(const Location &other) const
+{
+	return m_path != other.m_path;
+}
+bool Config::Location::operator<(const Location &other) const
+{
+	return m_path < other.m_path;
+}
+bool Config::Location::operator<=(const Location &other) const
+{
+	return m_path <= other.m_path;
+}
+bool Config::Location::operator>(const Location &other) const
+{
+	return m_path > other.m_path;
+}
+bool Config::Location::operator>=(const Location &other) const
+{
+	return m_path >= other.m_path;
+}
+bool Config::Location::compare(const Location *a, const Location *b)
+{
+	return a->m_path < b->m_path;
+}
+
+
+
 
 
 /**
@@ -63,6 +108,17 @@ const std::string &Config::Location::getIndexFile() const
 }
 /**
  *
+ * @brief Gets the alias of the location.
+ *
+ * @return The alias as a constant reference to a string.
+ *
+ */
+const std::string &Config::Location::getAlias() const
+{
+	return m_alias;
+}
+/**
+ *
  * @brief Gets whether auto-indexing is enabled for the location.
  *
  * @return true if auto-indexing is enabled, false otherwise.
@@ -83,6 +139,68 @@ const Config::CgiParams *Config::Location::getCgiParams() const
 {
 	return m_cgi;
 }
+
+
+
+/**
+ *
+ * @brief Checks if the location has an alias set.
+ *
+ * @return true if an alias is set, false otherwise.
+ *
+ */
+bool Config::Location::hasAlias() const
+{
+	return !m_alias.empty();
+}
+/**
+ *
+ * @brief Checks if the location has CGI parameters set.
+ *
+ * @return true if CGI parameters are set, false otherwise.
+ *
+ */
+bool Config::Location::hasCgiParams() const
+{
+	return m_cgi != NULL;
+}
+/**
+ *
+ * @brief Checks if the location has an index file set.
+ *
+ * @return true if an index file is set, false otherwise.
+ *
+ */
+bool Config::Location::hasIndexFile() const
+{
+	return !m_indexFile.empty();
+}
+/**
+ *
+ * @brief Checks if the location has a root directory set.
+ *
+ * @return true if a root directory is set, false otherwise.
+ *
+ */
+bool Config::Location::hasRoot() const
+{
+	return !m_root.empty();
+}
+/**
+ *
+ * @brief Checks if the auto-index setting has been explicitly set.
+ *
+ * @return true if the auto-index setting has been set, false otherwise.
+ *
+ */
+bool Config::Location::hasAutoIndexSet() const
+{
+	return m_isAutoIndex;
+}
+
+
+
+
 
 /**
  *
@@ -124,7 +242,7 @@ void Config::Location::setIndexFile(const std::string &indexFile)
  * @param autoIndex A boolean indicating whether to enable auto-indexing.
  *
  */
-void Config::Location::setAutoIndex(bool autoIndex)
+void Config::Location::setAutoIndex(const bool autoIndex)
 {
 	m_autoIndex = autoIndex;
 }
@@ -136,36 +254,22 @@ void Config::Location::setAutoIndex(bool autoIndex)
  *
  *
  */
-void Config::Location::setCgiParams(Config::CgiParams *cgi)
+void Config::Location::setCgiParams(const Config::CgiParams *cgi)
 {
 	m_cgi = cgi;
 }
+
+
+
 
 
 std::ostream &operator<<(std::ostream &os, const Config::Location &location)
 {
 	os << "Location(path: " << location.getPath();
 	os << ", root: " << location.getRoot();
+	os << ", alias: " << location.getAlias();
 	os << ", indexFile: " << location.getIndexFile();
 	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
 	os << ")";
-	return os;
-}
-
-
-std::ostream &operator<<(std::ostream &os, Config::Location const *location)
-{
-	if (location)
-	{
-		os << "Location(path: " << location->getPath();
-		os << ", root: " << location->getRoot();
-		os << ", indexFile: " << location->getIndexFile();
-		os << ", autoIndex: " << (location->getAutoIndex() ? "true" : "false");
-		os << ")";
-	}
-	else
-	{
-		os << "Location(NULL)";
-	}
 	return os;
 }

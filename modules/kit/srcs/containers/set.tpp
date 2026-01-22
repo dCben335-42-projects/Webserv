@@ -54,17 +54,6 @@ class SetBase
 			static_cast<Derived &>(*this).erase(value);
 		}
 
-		/**
-		 *
-		 * @brief Gets the number of elements in the set.
-		 *
-		 * @return The size of the set.
-		 *
-		 */
-		size_t size() const
-		{
-			return static_cast<const Derived &>(*this).size();
-		}
 
 		/**
 		 *
