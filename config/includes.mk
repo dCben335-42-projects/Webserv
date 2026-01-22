@@ -3,6 +3,7 @@ INCLUDES_FLAGS += -I ./srcs/ParsingConfig/Lexer
 INCLUDES_FLAGS += -I ./srcs/Server/CgiSpawner
 INCLUDES_FLAGS += -I ./srcs/Server/Files/File
 INCLUDES_FLAGS += -I ./srcs/Server/Files
+INCLUDES_FLAGS += -I ./srcs/Server/Files/FileUpload
 INCLUDES_FLAGS += -I ./srcs/Server/Files/IndexOf
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpExceptions/4xx
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpExceptions/4xx

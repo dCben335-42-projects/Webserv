@@ -41,7 +41,8 @@ Map<std::string> AHttpMessage::getHeaders() const
  */
 std::string AHttpMessage::getHeader(const std::string &key) const
 {
-	return m_headers.get(key);
+	std::string value;
+	return m_headers.try_get(key, value) ? value : "";
 }
 
 

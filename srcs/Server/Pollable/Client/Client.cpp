@@ -12,6 +12,7 @@
 #include "Vec.hpp"
 #include "CgiParams.hpp"
 #include "Config.hpp"
+#include "FileUpload.hpp"
 
 Client::Client(int fd, VirtualServer *server, const Config &config) :
 	Pollable(fd),
@@ -91,9 +92,11 @@ void Client::setEvents(const short events)
  */
 void Client::handlePostRequest()
 {
-	(void) 0;
-}
+	FileUpload file(m_req);
 
+	if (!file.isUploadValid())
+		throw Http400Exception();
+}
 
 void Client::handleDeleteRequest()
 {
@@ -223,7 +226,6 @@ void Client::prepareResponse()
 	const std::string method = m_req.getMethod();
 	try
 	{
-
 		if (cgiHandler.isCgi())
 		{
 			cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
