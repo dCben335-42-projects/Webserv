@@ -219,44 +219,6 @@ void SemanticDescriptor::ndw(ARule *rule, Vec<std::string> &conceptPaths)
 	}
 }
 
-void SemanticDescriptor::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName) const
-{
-	Concept			   *conceptPtr;
-	Vec<std::string>	conceptPathsCopy;
-	Vec<TerminalSymbol> items = rule->getItems();
-
-	path.push_back(rule);
-
-	for (size_t i = 0; i < items.size(); ++i)
-	{
-		if (conceptPaths.contains(items[i].getValue()))
-			continue;
-		if (m_concepts.try_get(items[i].getValue(), conceptPtr))
-		{
-			conceptPathsCopy = conceptPaths;
-			conceptPathsCopy.push_back(items[i].getValue());
-			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
-			{
-				ndw2((*conceptIt)->getARule(0), conceptPathsCopy, path, mapPath, conceptName);
-			}
-			continue;
-		}
-	}
-
-	Set<ARule *> terminalChars = m_concepts.get(conceptName)->getTerminalChars();
-	for (Set<ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
-	{
-		if (rule == (*it))
-		{
-			if (!mapPath.has(rule))
-			{
-				mapPath.set(rule, ARulePaths());
-			}
-			mapPath.get(rule).insert(path);
-		}
-	}
-}
-
 void SemanticDescriptor::findAllNext()
 {
 	Vec<std::string> conceptPaths;
@@ -270,80 +232,6 @@ void SemanticDescriptor::findAllNext()
 			ndw((*conceptIt)->getARule(0), conceptPaths);
 		}
 		conceptPaths.clear();
-	}
-
-	m_startPath = getPathsTerminalChars(ARulePaths(), CURSOR);
-	conceptPaths.clear();
-}
-
-ARuleMap SemanticDescriptor::getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const
-{
-	Vec<std::string> conceptPaths;
-	ARuleMap		 mapPath;
-	ARulePath		 path;
-
-	conceptPaths.push_back(conceptName);
-
-	V_FOREACH(ConceptDef *, conceptIt, m_concepts.get(conceptName)->getDefinitions())
-	{
-		ndw2((*conceptIt)->getARule(0), conceptPaths, path, mapPath, conceptName);
-	}
-	if (prefixs.empty())
-		return mapPath;
-
-	ARuleMap mapPathPrefixed;
-
-	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
-	{
-		mapPathPrefixed.set(it->first, ARulePaths());
-	}
-
-	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
-	{
-		ARulePaths *paths = &mapPathPrefixed.get(it->first);
-		for (ARulePaths::iterator x = prefixs.begin(); x != prefixs.end(); ++x)
-		{
-			ARulePath vec1 = *x;
-
-			for (ARulePaths::iterator j = it->second.begin(); j != it->second.end(); ++j)
-			{
-				ARulePath vec2 = *j;
-				vec1.insert(vec1.end(), vec2.begin(), vec2.end());
-				paths->insert(vec1);
-			}
-		}
-	}
-	return mapPathPrefixed;
-}
-
-void SemanticDescriptor::getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const
-{
-	V_FOREACH(TerminalSymbol, terminalSymbol, terminalSymbols)
-	{
-		std::string		 value = terminalSymbol->getValue();
-		Vec<std::string> conceptPaths;
-		ARuleMap		 mapPath;
-		ARulePath		 path;
-
-		conceptPaths.push_back(value);
-
-		V_FOREACH(ConceptDef *, conceptIt, getConceptDefs(value))
-		{
-			ndw2((*conceptIt)->getARule(0), conceptPaths, path, mapPath, value);
-		}
-
-		for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
-		{
-			if (!mapPathNext.has(it->first))
-				mapPathNext.set(it->first, ARulePaths());
-
-			for (ARulePaths::iterator j = it->second.begin(); j != it->second.end(); ++j)
-			{
-				ARulePath vec2 = *j;
-				prefix.insert(prefix.end(), vec2.begin(), vec2.end());
-				mapPathNext.get(it->first).insert(prefix);
-			}
-		}
 	}
 }
 

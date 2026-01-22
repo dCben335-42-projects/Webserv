@@ -31,6 +31,9 @@ class Parser
 		void   prepareOptionalStartPath(ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		bool   isValidEmptyFile();
 		size_t addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext, ARuleMap &mapPathCurrent, ARule *rule);
+		void   getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath) const;
+		void   getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const;
+		void   ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const;
 
 	public:
 		~Parser();

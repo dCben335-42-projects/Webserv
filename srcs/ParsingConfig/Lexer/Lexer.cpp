@@ -58,6 +58,9 @@ Lexer::Lexer(std::string const &filepath)
 		// parser.parse("&");
 		// parser.parse("-Kn5p");
 		parser.parse("====-Ab9l");
+		parser.parse("====-Abl");
+		parser.parse("====-Al");
+		parser.parse("====-A9l");
 	}
 	catch (const SemanticException &e)
 	{

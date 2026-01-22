@@ -198,6 +198,46 @@ class VecBase
 				--right;
 			}
 		}
+
+		/**
+		 * @brief Merge another vector into this one.
+		 *
+		 * @param other The other vector to merge.
+		 *
+		 * @note This method appends all elements from the other vector to this vector.
+		 *
+		 */
+		void concat(const Derived &other)
+		{
+			Derived &derived = static_cast<Derived &>(*this);
+			for (size_t i = 0; i < other.size(); ++i)
+			{
+				derived.push_back(other[i]);
+			}
+		}
+
+
+		/**
+		 * @brief Merge two vectors in a new vector.
+		 *
+		 * @param vec1 The first vector.
+		 * @param vec2 The second vector.
+		 *
+		 * @return A new vector containing all elements from vec1 followed by all elements from vec2.
+		 */
+		static Derived concat(const Derived &vec1, const Derived &vec2)
+		{
+			Derived result;
+			for (size_t i = 0; i < vec1.size(); ++i)
+			{
+				result.push_back(vec1[i]);
+			}
+			for (size_t i = 0; i < vec2.size(); ++i)
+			{
+				result.push_back(vec2[i]);
+			}
+			return result;
+		}
 };
 
 template <typename V>

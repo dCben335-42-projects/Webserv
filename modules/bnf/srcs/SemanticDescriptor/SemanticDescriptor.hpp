@@ -43,7 +43,6 @@ class SemanticDescriptor
 		void addParent();
 		void findAllNext();
 		void ndw(ARule *rule, Vec<std::string> &conceptPaths);
-		void ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName) const;
 
 	public:
 		SemanticDescriptor();
@@ -56,8 +55,6 @@ class SemanticDescriptor
 		const Concept			*getConcept(const std::string &key) const;
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 		ConceptNode				*getTree() const;
-		ARuleMap				 getPathsTerminalChars(ARulePaths prefixs, std::string conceptName) const;
-		void					 getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

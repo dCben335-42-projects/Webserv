@@ -10,6 +10,62 @@ Parser::~Parser()
 {
 }
 
+void Parser::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const
+{
+	Concept			   *conceptPtr;
+	Vec<std::string>	conceptPathsCopy;
+	Vec<TerminalSymbol> items = rule->getItems();
+
+	path.push_back(rule);
+	for (Vec<TerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+	{
+		std::string item = itemIt->getValue();
+		if (conceptPaths.contains(item))
+			continue;
+		if (m_semantic.getConcepts().try_get(item, conceptPtr))
+		{
+			conceptPathsCopy = conceptPaths;
+			conceptPathsCopy.push_back(item);
+			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
+			{
+				ndw2((*conceptIt)->getARule(0), conceptPathsCopy, path, mapPath, conceptName, prefix);
+			}
+			continue;
+		}
+	}
+
+	Set<ARule *> terminalChars = m_semantic.getConcepts().get(conceptName)->getTerminalChars();
+	for (Set<ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
+	{
+		if (rule == *it)
+		{
+			if (!mapPath.has(rule))
+				mapPath.set(rule, ARulePaths());
+			mapPath.get(rule).insert(ARulePath::concat(prefix, path));
+		}
+	}
+}
+
+void Parser::getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath) const
+{
+	Vec<std::string> conceptPaths;
+	ARulePath		 path;
+
+	conceptPaths.push_back(conceptName);
+	V_FOREACH(ConceptDef *, conceptIt, m_semantic.getConceptDefs(conceptName))
+	{
+		ndw2((*conceptIt)->getARule(0), conceptPaths, path, mapPath, conceptName, prefix);
+	}
+}
+
+void Parser::getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const
+{
+	V_FOREACH(TerminalSymbol, terminalSymbol, terminalSymbols)
+	{
+		getPathsTerminalChars(prefix, terminalSymbol->getValue(), mapPathNext);
+	}
+}
+
 void Parser::addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARule *ruleRef)
 {
 	ARule *currentRule;
@@ -52,7 +108,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	if (lastRule->isOption())
 		addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
 
-	m_semantic.getNewMapPath(nextRule, lastRule->getItems(), mapPathNext);
+	getNewMapPath(nextRule, lastRule->getItems(), mapPathNext);
 	addOptionalPaths(mapPathCurrent, mapPathNext, lastRule);
 }
 
@@ -182,10 +238,11 @@ bool Parser::isValidEmptyFile()
 void Parser::parse(const std::string &stringToParsed)
 {
 	Logger::log("========Parsing========\n");
-	ARuleMap mapPathCurrent = m_semantic.getStartPath();
+	ARuleMap mapPathCurrent;
 	ARuleMap mapPathNext;
 	char	 c;
 
+	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent);
 	prepareOptionalStartPath(mapPathCurrent, mapPathNext);
 
 	if (stringToParsed.empty())
