@@ -11,7 +11,7 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"<head>\n"
 	"<meta charset=\"UTF-8\">\n"
 	"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-	"<title>Index of {{PATH}}</title>\n"
+	"<title>Index of {{LOCATION}}</title>\n"
 	"<style>\n"
 	"body {\n"
 	"  font-family: system-ui, sans-serif;\n"
@@ -87,7 +87,7 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"</style>\n"
 	"</head>\n"
 	"<body>\n"
-	"<h1>Index of {{PATH}}</h1>\n"
+	"<h1>Index of {{LOCATION}}</h1>\n"
 	"<div class=\"path\">{{PATH}}</div>\n"
 	"<table>\n"
 	"<tr>"
@@ -113,20 +113,30 @@ const std::string IndexOf::FOOT_TEMPLATE =
 	"</body>\n"
 	"</html>\n";
 
-IndexOf::IndexOf(const std::string &root, const std::string &path)
+IndexOf::IndexOf(const std::string &targetPath, const std::string &location)
 {
-	m_path = path;
-	scanDirectory(root).generate();
+	m_path	   = targetPath;
+	m_location = location;
+	scanDirectory().generate();
 }
 
 IndexOf::~IndexOf()
 {
 }
 
-
-IndexOf &IndexOf::scanDirectory(const std::string &root)
+/**
+ *
+ * @brief Scans the directory at m_path and populates m_files with File objects.
+ *
+ * @throws std::runtime_error if the directory cannot be opened.
+ *
+ * @return IndexOf& A reference to the current IndexOf object
+ * for method chaining.
+ *
+ */
+IndexOf &IndexOf::scanDirectory()
 {
-	std::string path = root + m_path;
+	std::string path = m_path;
 	DIR		   *dir	 = opendir(path.c_str());
 	if (!dir)
 		throw std::runtime_error("Failed to open directory: " + path);
@@ -140,7 +150,7 @@ IndexOf &IndexOf::scanDirectory(const std::string &root)
 		entryName = entry->d_name;
 		if (entryName == "." || entryName == "..")
 			continue;
-		m_files.push_back(File(entryName, m_path + "/" + entryName, root));
+		m_files.push_back(File(entryName, m_path + "/" + entryName, m_location));
 	}
 	closedir(dir);
 
@@ -201,15 +211,16 @@ IndexOf &IndexOf::generate()
 {
 	std::string line;
 	std::string result = HEAD_TEMPLATE;
+	String::replaceAll(result, "{{LOCATION}}", String::htmlEscape(m_location));
 	String::replaceAll(result, "{{PATH}}", String::htmlEscape(m_path));
 
-	if (m_path != "/")
+	if (m_location != "/")
 		result += generateLine("📁", "../", "..", "-", "-", "-");
 	for (Vec<File>::const_iterator it = m_files.begin(); it != m_files.end(); ++it)
 	{
 		result += generateLine(
 			it->getIcon(),
-			it->getPath(),
+			it->getUri(),
 			it->getName(),
 			it->getSizeHuman(),
 			it->getCreatedAtHuman(),
@@ -226,12 +237,25 @@ IndexOf &IndexOf::generate()
 }
 
 
-
+/**
+ *
+ * @brief Gets the generated index page.
+ *
+ * @return std::string The generated index page.
+ *
+ */
 std::string IndexOf::getPage() const
 {
 	return m_page;
 }
 
+/**
+ *
+ * @brief Gets the list of files in the directory.
+ *s
+ * @return const Vec<File>& A constant reference to the vector of File objects.
+ *
+ */
 const Vec<File> &IndexOf::getFiles() const
 {
 	return m_files;

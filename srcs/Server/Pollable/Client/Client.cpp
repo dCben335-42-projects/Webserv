@@ -116,37 +116,49 @@ void Client::handleDeleteRequest()
  */
 void Client::handleGetRequest(const std::string &ressourcePath)
 {
+	Logger::log("Resource Path: " + ressourcePath);
+	Logger::log("Req target: " + m_req.getTarget());
+
 	try
 	{
-		// if (FileHandler::folderExists(ressourcePath))
-		// {
-		// 	if (m_serverConfig.getAutoIndex(m_req.getTarget()))
-		// 	{
-		// 		if (!FileHandler::fileExists(ressourcePath))
-		// 		{
-		// 			IndexOf index(root, target);
-		// 			m_res.setBody(index.getPage());
-		// 			m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-		// 			std::string date = Date::getCurrentDate();
-		// 			if (!date.empty())
-		// 				m_res.setHeader(HEADER_DATE, date);
-		// 			m_res.setStatusCode(200);
-		// 			return;
-		// 		}
-		// 		resource = root + "/" + m_serverConfig.getIndexFile(target);
-		// 		m_res.setBody(FileHandler::readFile(ressourcePath));
-		// 		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
-		// 		std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
-		// 		if (!fileDate.empty())
-		// 			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-		// 		std::string date = Date::getCurrentDate();
-		// 		if (!date.empty())
-		// 			m_res.setHeader(HEADER_DATE, date);
-		// 		m_res.setStatusCode(200);
-		// 		return;
-		// 	}
-		// 	throw Http403Exception();
-		// }
+		if (FileHandler::folderExists(ressourcePath))
+		{
+			IndexOf index(ressourcePath, m_req.getTarget());
+			m_res.setBody(index.getPage());
+			m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+			const std::string date = Date::getCurrentDate();
+			if (!date.empty())
+				m_res.setHeader(HEADER_DATE, date);
+			m_res.setStatusCode(200);
+			return;
+			// if (m_serverConfig.getAutoIndex(m_req.getTarget()))
+			// {
+			// }
+			// {
+			// 	if (!FileHandler::fileExists(ressourcePath))
+			// 	{
+			// 		IndexOf index(root, target);
+			// 		m_res.setBody(index.getPage());
+			// 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+			// 		std::string date = Date::getCurrentDate();
+			// 		if (!date.empty())
+			// 			m_res.setHeader(HEADER_DATE, date);
+			// 		m_res.setStatusCode(200);
+			// 		return;
+			// 	}
+			// 	resource = root + "/" + m_serverConfig.getIndexFile(target);
+			// 	m_res.setBody(FileHandler::readFile(ressourcePath));
+			// 	m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
+			// 	std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
+			// 	if (!fileDate.empty())
+			// 		m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+			// 	std::string date = Date::getCurrentDate();
+			// 	if (!date.empty())
+			// 		m_res.setHeader(HEADER_DATE, date);
+			// 	m_res.setStatusCode(200);
+			// 	return;
+			throw Http403Exception();
+		}
 		m_res.setBody(FileHandler::readFile(ressourcePath));
 		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
 		const std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
@@ -169,10 +181,10 @@ bool Client::isCgi()
 {
 	try
 	{
-		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
-		const std::string ext = file.getExtension();
+		// File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
+		// const std::string ext = file.getExtension();
 
-		return ext == ".php" || ext == ".py";
+		// return ext == ".php" || ext == ".py";
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
@@ -204,7 +216,6 @@ void Client::prepareResponse()
 	try
 	{
 		const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
-		Logger::log("Resource Path: " + ressourcePath);
 		// if (isCgi())
 		// {
 		// 	spawnCgi(ressourcePath);

@@ -7,20 +7,16 @@
 
 File::File(
 	const std::string &name,
-	const std::string &path,
-	const std::string &root)
+	const std::string &ressourcePath,
+	const std::string &location)
 {
-	const std::string cleanPath = String::removeDuplicateSlashes(path);
-	std::string		  fullPath	= root + cleanPath;
-
 	struct stat fileStat;
-
-	if (stat(fullPath.c_str(), &fileStat) != 0)
-		throw FileHandler::FileDoesNotExistException(fullPath);
+	if (stat(ressourcePath.c_str(), &fileStat) != 0)
+		throw FileHandler::FileDoesNotExistException(ressourcePath);
 
 	m_name				= name;
-	m_path				= cleanPath;
-	m_fullPath			= fullPath;
+	m_uri				= String::removeDuplicateSlashes(location + "/" + name);
+	m_fullPath			= ressourcePath;
 	m_size				= static_cast<size_t>(fileStat.st_size);
 	m_isDirectory		= S_ISDIR(fileStat.st_mode);
 	m_lastModified		= Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
@@ -30,7 +26,7 @@ File::File(
 	m_extension	  = determineExtension(name, &m_extensionPos);
 	m_sizeHuman	  = Number::bytesToHumanSize(m_size);
 	m_icon		  = FileHandler::getIcon(*this);
-	m_contentType = FileHandler::getContentType(fullPath);
+	m_contentType = FileHandler::getContentType(ressourcePath);
 	m_isHidden	  = (name[0] == '.');
 }
 
@@ -43,9 +39,9 @@ std::string File::getName() const
 {
 	return m_name;
 }
-std::string File::getPath() const
+std::string File::getUri() const
 {
-	return m_path;
+	return m_uri;
 }
 std::string File::getFullPath() const
 {

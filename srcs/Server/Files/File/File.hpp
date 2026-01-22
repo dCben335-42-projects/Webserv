@@ -8,7 +8,7 @@ class File
 {
 	private:
 		std::string m_name;
-		std::string m_path;
+		std::string m_uri;
 		std::string m_fullPath;
 		size_t		m_size;
 		std::string m_lastModified;
@@ -29,11 +29,14 @@ class File
 		bool		m_isHidden;
 
 	public:
-		File(const std::string &name, const std::string &path, const std::string &root);
+		File(
+			const std::string &name,
+			const std::string &ressourcePath,
+			const std::string &location);
 		~File();
 
 		std::string getName() const;
-		std::string getPath() const;
+		std::string getUri() const;
 		std::string getFullPath() const;
 		size_t		getSize() const;
 		std::string getLastModified() const;

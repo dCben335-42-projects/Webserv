@@ -15,6 +15,7 @@ class IndexOf
 
 		std::string m_page;
 		std::string m_path;
+		std::string m_location;
 		Vec<File>	m_files;
 
 		std::string generateLine(
@@ -26,12 +27,11 @@ class IndexOf
 			const std::string &dateHuman);
 
 		IndexOf &generate();
-		IndexOf &scanDirectory(const std::string &path);
+		IndexOf &scanDirectory();
 
 	public:
-		IndexOf(const std::string &root, const std::string &path);
+		IndexOf(const std::string &targetPath, const std::string &location);
 		~IndexOf();
-
 
 
 		std::string		 getPage() const;

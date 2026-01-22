@@ -311,7 +311,7 @@ size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t 
 	const std::string headerName  = rawRequest.substr(pos, colon - pos);
 	const std::string headerValue = rawRequest.substr(colon + 1, nextLine - colon - 1);
 
-	setHeader(headerName, String::trim(headerValue));
+	setHeader(String::trim(headerName), String::trim(headerValue));
 	return nextLine + std::strlen(HEADER_LINE_ENDING);
 }
 

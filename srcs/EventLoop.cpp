@@ -23,12 +23,12 @@ void EventLoop::init()
 	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.html", false, NULL);
 	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", false, NULL);
 	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", false, NULL);
-	Config::Location *loc3			  = new Config::Location("/assets/test/", "", "", "", false, NULL);
+	Config::Location *loc3			  = new Config::Location("/assets/test/", "", "", "", true, NULL);
 	Config::Location *loc4			  = new Config::Location("/assets/test/dwad", "", "", "", false, NULL);
 	Config::Location *loc40			  = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
 
-	Config::Location			 *loc8 = new Config::Location("/usr/", "", "", "", false, NULL);
-	Config::Location			 *loc9 = new Config::Location("/usr/bin/", "", "files/", "", false, NULL);
+	Config::Location			 *loc8 = new Config::Location("/cgi-bin", "", "", "", false, NULL);
+	Config::Location			 *loc9 = new Config::Location("/usr/bin/", "", "files/www/website/", "", true, NULL);
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);
