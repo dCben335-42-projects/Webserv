@@ -23,7 +23,7 @@ class Parser
 
 		bool   parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		void   addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, ARule *rule);
-		void   addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef);
+		void   addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARule *ruleRef);
 		bool   verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 		bool   isFullyOptional(const ARule &rule);
 		bool   isFullyOptionalEndAdvance(const ARulePath &path);

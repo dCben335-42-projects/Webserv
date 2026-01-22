@@ -316,9 +316,8 @@ ARuleMap SemanticDescriptor::getPathsTerminalChars(ARulePaths prefixs, std::stri
 	return mapPathPrefixed;
 }
 
-ARuleMap SemanticDescriptor::getPathsTerminalChars2(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols) const
+void SemanticDescriptor::getNewMapPath(ARulePath prefix, Vec<TerminalSymbol> terminalSymbols, ARuleMap &mapPathNext) const
 {
-	ARuleMap mapPathPrefixed;
 	V_FOREACH(TerminalSymbol, terminalSymbol, terminalSymbols)
 	{
 		std::string		 value = terminalSymbol->getValue();
@@ -335,18 +334,17 @@ ARuleMap SemanticDescriptor::getPathsTerminalChars2(ARulePath prefix, Vec<Termin
 
 		for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
 		{
-			if (!mapPathPrefixed.has(it->first))
-				mapPathPrefixed.set(it->first, ARulePaths());
+			if (!mapPathNext.has(it->first))
+				mapPathNext.set(it->first, ARulePaths());
 
 			for (ARulePaths::iterator j = it->second.begin(); j != it->second.end(); ++j)
 			{
 				ARulePath vec2 = *j;
 				prefix.insert(prefix.end(), vec2.begin(), vec2.end());
-				mapPathPrefixed.get(it->first).insert(prefix);
+				mapPathNext.get(it->first).insert(prefix);
 			}
 		}
 	}
-	return mapPathPrefixed;
 }
 
 ARuleMap SemanticDescriptor::getStartPath() const

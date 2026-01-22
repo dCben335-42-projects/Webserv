@@ -10,16 +10,18 @@ Parser::~Parser()
 {
 }
 
-void Parser::addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPath, ARuleMap &mapPathNext, ARule *ruleRef)
+void Parser::addOptionalPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARule *ruleRef)
 {
 	ARule *currentRule;
-	for (ARuleMap::iterator it = mapPath.begin(); it != mapPath.end(); ++it)
+	for (ARuleMap::iterator it = mapPathNext.begin(); it != mapPathNext.end(); ++it)
 	{
-		ARulePaths val = (*it).second;
+		ARulePaths val = it->second;
 		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
 		{
 			ARulePath rules = *path;
 			int		  index = rules.indexOf(ruleRef);
+			if (index == -1)
+				continue;
 
 			for (int k = rules.size() - 1; k >= index + 1; --k)
 			{
@@ -45,23 +47,13 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	ARulePath nextRule = rule->getNextRules(path);
 	if (nextRule.empty())
 		return;
-	if (nextRule.back()->isOption())
-		addNextPaths(mapPathCurrent, mapPathNext, nextRule, nextRule.back());
 
-	ARuleMap mapPathCurrentTemp = m_semantic.getPathsTerminalChars2(nextRule, nextRule.back()->getItems());
+	ARule *lastRule = nextRule.back();
+	if (lastRule->isOption())
+		addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
 
-	addOptionalPaths(mapPathCurrent, mapPathCurrentTemp, mapPathNext, nextRule.back());
-	for (ARuleMap::iterator it = mapPathCurrentTemp.begin(); it != mapPathCurrentTemp.end(); ++it)
-	{
-		ARule	  *key = (*it).first;
-		ARulePaths val = (*it).second;
-		for (ARulePaths::iterator path = val.begin(); path != val.end(); ++path)
-		{
-			if (!mapPathNext.has(key))
-				mapPathNext.set(key, ARulePaths());
-			mapPathNext.get(key).insert(*path);
-		}
-	}
+	m_semantic.getNewMapPath(nextRule, lastRule->getItems(), mapPathNext);
+	addOptionalPaths(mapPathCurrent, mapPathNext, lastRule);
 }
 
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
