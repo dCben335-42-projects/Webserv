@@ -20,9 +20,7 @@
 #include "Location.hpp"
 
 HttpRequest::HttpRequest() :
-	AHttpMessage(),
-	m_rawStr(""),
-	m_target(""),
+	AHttpInboundMessage(),
 	m_queryString("")
 {
 }
@@ -30,29 +28,7 @@ HttpRequest::~HttpRequest()
 {
 }
 
-/**
- *
- * @brief Retrieves the raw HTTP request string.
- *
- * @return A string representing the raw HTTP request.
- *
- */
-std::string HttpRequest::getRawRequest() const
-{
-	return m_rawStr;
-}
 
-/**
- *
- * @brief Retrieves the request target from the HTTP request.
- *
- * @return A string representing the request target.
- *
- */
-std::string HttpRequest::getTarget() const
-{
-	return m_target;
-}
 
 /**
  *
@@ -102,18 +78,6 @@ const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
 
 
 
-/**
- *
- * @brief Sets the raw HTTP request string.
- *
- * @param rawRequest The raw HTTP request string to be set.
- *
- */
-void HttpRequest::setRawRequest(const std::string &rawRequest)
-{
-	m_rawStr = rawRequest;
-}
-
 
 // ANCHOR Socket Reading Public method
 /**
@@ -157,20 +121,10 @@ ssize_t HttpRequest::readOnce(int socketFd)
  */
 HttpRequest &HttpRequest::parse(const Config &serverConfig)
 {
-	const size_t headerEndSize = std::strlen(HEADER_ENDING);
-	const size_t lineEndSize   = std::strlen(HEADER_LINE_ENDING);
+	const size_t lineEndSize = std::strlen(HEADER_LINE_ENDING);
 
-	std::string rawRequest = m_rawStr;
-	size_t		pos		   = parseFirstLine(rawRequest) + lineEndSize;
-	size_t		headersEnd = rawRequest.find(HEADER_ENDING, pos);
-
-	if (headersEnd == std::string::npos)
-		throw std::invalid_argument("Invalid Headers");
-	while (pos < headersEnd)
-		pos = parseHeaderLine(rawRequest, pos);
-	size_t bodyStart = headersEnd + headerEndSize;
-	if (bodyStart < rawRequest.size())
-		setBody(rawRequest.substr(bodyStart));
+	size_t pos = parseFirstLine(m_rawStr) + lineEndSize;
+	AHttpInboundMessage::parse(m_rawStr, pos);
 
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
@@ -287,33 +241,7 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
 	return lineEnd;
 }
 
-/**
- *
- * @brief Parses a single header line from the raw HTTP request string,
- * extracting the header name and value.
- *
- * @param rawRequest The raw HTTP request string.
- * @param pos The position to start parsing from.
- *
- * @return The position of the end of the parsed header line.
- *
- * @throws std::invalid_argument if the header line is malformed.
- *
- */
-size_t HttpRequest::parseHeaderLine(const std::string &rawRequest, const size_t pos)
-{
-	const size_t colon	  = rawRequest.find(':', pos);
-	const size_t nextLine = rawRequest.find(HEADER_LINE_ENDING, pos);
 
-	if (colon == std::string::npos || nextLine == std::string::npos || colon > nextLine)
-		throw std::invalid_argument("Malformed Header Line");
-
-	const std::string headerName  = rawRequest.substr(pos, colon - pos);
-	const std::string headerValue = rawRequest.substr(colon + 1, nextLine - colon - 1);
-
-	setHeader(String::trim(headerName), String::trim(headerValue));
-	return nextLine + std::strlen(HEADER_LINE_ENDING);
-}
 
 
 /**
