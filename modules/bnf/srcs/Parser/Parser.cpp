@@ -10,7 +10,7 @@ Parser::~Parser()
 {
 }
 
-void Parser::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const
+void Parser::addPathPossibility(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const
 {
 	Concept			   *conceptPtr;
 	Vec<std::string>	conceptPathsCopy;
@@ -28,13 +28,27 @@ void Parser::ndw2(ARule *rule, Vec<std::string> &conceptPaths, ARulePath path, A
 			conceptPathsCopy.push_back(item);
 			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
 			{
-				ndw2((*conceptIt)->getARule(0), conceptPathsCopy, path, mapPath, conceptName, prefix);
+				size_t size = (*conceptIt)->size();
+				size_t k	= 0;
+				while (k < size)
+				{
+					ARule *subRule = (*conceptIt)->getARule(k);
+					addPathPossibility(subRule, conceptPathsCopy, path, mapPath, conceptName, prefix);
+					if (!subRule->isOption())
+						break;
+					++k;
+				}
+				// for (size_t k = 0; k < size; ++k)
+				// {
+				// 	while ((*conceptIt)->getARule(k)->isOption)
+				// 		addPathPossibility((*conceptIt)->getARule(k), conceptPathsCopy, path, mapPath, conceptName, prefix);
+				// }
 			}
 			continue;
 		}
 	}
 
-	Set<ARule *> terminalChars = m_semantic.getConcepts().get(conceptName)->getTerminalChars();
+	Set<ARule *> terminalChars = m_semantic.getConcept(conceptName)->getTerminalChars();
 	for (Set<ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
 	{
 		if (rule == *it)
@@ -54,7 +68,17 @@ void Parser::getPathsTerminalChars(ARulePath prefix, std::string conceptName, AR
 	conceptPaths.push_back(conceptName);
 	V_FOREACH(ConceptDef *, conceptIt, m_semantic.getConceptDefs(conceptName))
 	{
-		ndw2((*conceptIt)->getARule(0), conceptPaths, path, mapPath, conceptName, prefix);
+		size_t size = (*conceptIt)->size();
+		size_t k	= 0;
+		while (k < size)
+		{
+			ARule *subRule = (*conceptIt)->getARule(k);
+			addPathPossibility(subRule, conceptPaths, path, mapPath, conceptName, prefix);
+			if (!subRule->isOption())
+				break;
+			++k;
+		}
+		// addPathPossibility((*conceptIt)->getARule(0), conceptPaths, path, mapPath, conceptName, prefix);
 	}
 }
 
@@ -243,7 +267,7 @@ void Parser::parse(const std::string &stringToParsed)
 	char	 c;
 
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent);
-	prepareOptionalStartPath(mapPathCurrent, mapPathNext);
+	// prepareOptionalStartPath(mapPathCurrent, mapPathNext);
 
 	if (stringToParsed.empty())
 	{

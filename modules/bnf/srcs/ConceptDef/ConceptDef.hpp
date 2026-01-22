@@ -21,6 +21,7 @@ class ConceptDef
 		bool				getIsTerminal() const;
 		void				computeOptionalIndex();
 		size_t				getOptionalEndIndex() const;
+		size_t				size() const;
 
 		void finish();
 		void setRule(ARule *rule);

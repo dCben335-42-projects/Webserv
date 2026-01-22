@@ -9,6 +9,11 @@ ConceptDef::ConceptDef(const std::string conceptName) : m_conceptName(conceptNam
 {
 }
 
+size_t ConceptDef::size() const
+{
+	return values.size();
+}
+
 void ConceptDef::finish()
 {
 	Vec<std::string> items = getItemsWithOption();
