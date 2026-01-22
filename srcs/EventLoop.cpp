@@ -16,10 +16,10 @@
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
+size_t				 EventLoop::m_nfds = 0;
 
 void EventLoop::init()
 {
-	// http://localhost:8080/usr/bin/index.php/oe
 	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.html", false, NULL);
 	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", false, NULL);
 	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", false, NULL);
@@ -41,6 +41,19 @@ void EventLoop::init()
 	new VirtualServer(*(config1));
 }
 
+
+/**
+ *
+ * @brief Destroys the event loop and cleans up resources.
+ *
+ * This function iterates through all registered poll file descriptors,
+ * deletes their associated Pollable handlers, and clears the internal
+ * data structures used for managing the event loop.
+ *
+ * @note It is meant to be called at the end of the program to free resources.
+ * (when catching a termination signal for example)
+ *
+ */
 void EventLoop::destroy()
 {
 	for (size_t i = 0; i < m_pollFds.size(); ++i)
@@ -53,6 +66,20 @@ void EventLoop::destroy()
 }
 
 
+
+/**
+ *
+ * @brief Runs the event loop to handle I/O events.
+ *
+ * This function continuously monitors registered file descriptors for I/O events
+ * using the poll() system call. It updates the poll status, processes events,
+ * and invokes the appropriate handlers for each event.
+ *
+ * @note This function runs indefinitely until an error occurs in the poll() call.
+ * @note It is the main loop of the event-driven architecture.
+ * @note It can be stopped by external signals
+ *
+ */
 void EventLoop::run()
 {
 	const int POLL_TIMEOUT = 1000;
@@ -68,15 +95,8 @@ void EventLoop::run()
 			if (!m_pollFds[i].revents)
 				continue;
 			ready--;
-			const int fd = m_pollFds[i].fd;
-			// if (m_pollFds[i].revents & (POLLHUP | POLLERR | POLLNVAL))
-			// {
-			// 	std::cerr << "QUI A LE PROBLEME DE FOU LÀ ?" << std::endl;
-			// 	deletePollable(fd, i);
-			// 	continue;
-			// }
-
-			Pollable *handler = getHandler(fd);
+			const int		fd		= m_pollFds[i].fd;
+			Pollable *const handler = getHandler(fd);
 			if (handler)
 			{
 				handler->setRevents(m_pollFds[i].revents);
@@ -100,7 +120,17 @@ void EventLoop::run()
 
 
 
-void EventLoop::addHandler(Pollable *handler)
+/**
+ *
+ * @brief Adds a Pollable handler to the event loop.
+ *
+ * This function registers a new Pollable handler by adding it to the internal handler map
+ * and creating a corresponding pollfd entry in the poll file descriptor vector.
+ *
+ * @param handler A pointer to the Pollable handler to be added.
+ *
+ */
+void EventLoop::addHandler(Pollable *const handler)
 {
 	if (!handler)
 		return;
@@ -110,9 +140,25 @@ void EventLoop::addHandler(Pollable *handler)
 	m_handlers.set(handler->getFd(), handler);
 	pollfd pfd = {fd, events, 0};
 	m_pollFds.push(pfd);
+	m_nfds++;
 }
 
 
+
+/**
+ *
+ * @brief Deletes a Pollable handler and its associated pollfd entry.
+ *
+ * This function removes the Pollable handler associated with the given file descriptor (fd)
+ * from the internal handler map and deletes it. It also removes the corresponding pollfd
+ * entry from the poll file descriptor vector at the specified index.
+ *
+ * @param fd The file descriptor of the Pollable handler to be deleted.
+ * @param index The index of the pollfd entry in the poll file descriptor vector to be removed.
+ *
+ * @note It remains to each Pollable handler to close its own file descriptor in its destructor.
+ *
+ */
 void EventLoop::deletePollable(const int &fd, const size_t &index)
 {
 	Pollable *handler = getHandler(fd);
@@ -122,9 +168,21 @@ void EventLoop::deletePollable(const int &fd, const size_t &index)
 		m_handlers.remove(fd);
 	}
 	m_pollFds.remove(index);
-	// close(fd);
+	m_nfds--;
 }
 
+
+/**
+ *
+ * @brief Updates the poll events for all registered Pollable handlers.
+ *
+ * This function iterates through all the poll file descriptors
+ * and updates their event flags based on the current state
+ * of their associated Pollable handlers.
+ *
+ * @note This function is actually meant to be called before each poll() call
+ *
+ */
 void EventLoop::updatePollStatus()
 {
 	for (size_t i = 0; i < m_pollFds.size(); i++)
@@ -136,9 +194,31 @@ void EventLoop::updatePollStatus()
 }
 
 
+/**
+ *
+ * @brief Retrieves the Pollable handler associated with the given file descriptor.
+ *
+ * @param fd The file descriptor for which to retrieve the handler.
+ *
+ * @return Either a VirtualServer, Client, or CgiPipe pointer associated with the fd,
+ * or NULL if no handler is found.
+ *
+ */
 Pollable *EventLoop::getHandler(int fd)
 {
 	Pollable *handler = NULL;
 	m_handlers.try_get(fd, handler);
 	return handler;
+}
+
+/**
+ *
+ * @brief Retrieves the number of file descriptors currently managed by the event loop.
+ *
+ * @return The number of file descriptors (nfds).
+ *
+ */
+size_t EventLoop::getNfds()
+{
+	return m_nfds;
 }

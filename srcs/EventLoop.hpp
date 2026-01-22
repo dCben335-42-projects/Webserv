@@ -15,20 +15,16 @@ class EventLoop
 		static void run();
 		static void destroy();
 
-		static void addHandler(Pollable *handler);
-		static void removeHandler(size_t index);
-		static int	getNfds()
-		{
-			return nfds;
-		}
+		static void addHandler(Pollable *const handler);
 		static void updatePollStatus();
 
+		static size_t getNfds();
 
 	private:
 		static Vec<int>				m_hosts;
 		static Vec<pollfd>			m_pollFds;
 		static Map<int, Pollable *> m_handlers;
-		static int					nfds;
+		static size_t				m_nfds;
 
 		static void createPollServer(unsigned short port);
 		static void createPoll(const int socket);
