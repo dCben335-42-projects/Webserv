@@ -14,9 +14,8 @@
 #include "Config.hpp"
 #include "FileUpload.hpp"
 
-Client::Client(int fd, VirtualServer *server, const Config &config) :
+Client::Client(int fd, const Config &config) :
 	Pollable(fd),
-	m_server(server),
 	m_serverConfig(config)
 {
 	m_events = POLLIN;

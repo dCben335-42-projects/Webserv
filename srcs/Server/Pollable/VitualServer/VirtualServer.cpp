@@ -127,7 +127,7 @@ Client *VirtualServer::createClient(int clientFd)
 		close(clientFd);
 		return NULL;
 	}
-	Client *client = new Client(clientFd, this, m_config);
+	Client *client = new Client(clientFd, m_config);
 	EventLoop::addHandler(client);
 	return client;
 }
