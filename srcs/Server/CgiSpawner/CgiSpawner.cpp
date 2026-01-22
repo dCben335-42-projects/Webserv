@@ -129,6 +129,7 @@ void CgiSpawner::parentProcess()
 	close(m_stdinPipe[1]);
 }
 
+// TODO Need access() the binary but where ?
 bool CgiSpawner::isCgi()
 {
 	try
@@ -153,7 +154,7 @@ bool CgiSpawner::isCgi()
 		}
 		Logger::log("Active bin map " + LoggerJson::get(activeBinMap));
 		// TODO change to ref
-		Vec<std::string> urlSegments = m_req.getSegments();
+		const Vec<std::string> &urlSegments = m_req.getSegments();
 		for (size_t i = 0; i < urlSegments.size(); i++)
 		{
 			std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
@@ -164,6 +165,8 @@ bool CgiSpawner::isCgi()
 			m_binPath = activeBinMap.get(fileExtension);
 			Logger::log(m_binPath);
 			m_scriptPath = m_req.buildResourcePath(i);
+			if (!(FileHandler::fileExists(m_scriptPath) && FileHandler::hasReadPermission(m_scriptPath)))
+				throw Http403Exception();
 			return true;
 		}
 	}
