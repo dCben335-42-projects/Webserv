@@ -14,8 +14,12 @@ class CgiSpawner
 		const HttpRequest &m_req;
 		const Config	  &m_config;
 
-		std::string m_binPath;
-		std::string m_scriptPath;
+		std::string		 m_binPath;
+		std::string		 m_scriptPath;
+		std::string		 m_pathInfo;
+		std::string		 m_scriptName;
+		Map<std::string> m_activeBinMap;
+
 
 		int m_stdinPipe[2];
 		int m_stdoutPipe[2];
@@ -31,6 +35,10 @@ class CgiSpawner
 		void		generateEnvp();
 		void		setupEnv();
 		void		childprocess();
+		ssize_t		getScriptIndex(const Vec<std::string> &urlSegments);
+		void		buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
+		void		buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
+
 
 	public:
 		CgiSpawner(const HttpRequest &req, const Config &config);

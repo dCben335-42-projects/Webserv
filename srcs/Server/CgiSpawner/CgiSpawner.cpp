@@ -78,23 +78,19 @@ std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &va
 
 void CgiSpawner::setupEnv()
 {
-	const std::string scriptName = m_scriptPath.substr(m_scriptPath.rfind('/') + 1);
-
-	m_env.push(makeEnvVar("HTTP_ACCEPT", m_req.getHeader(HEADER_ACCEPT)));
-	m_env.push(makeEnvVar("HTTP_ACCEPT_ENCODING", m_req.getHeader(HEADER_ACCEPT_ENCODING)));
-	m_env.push(makeEnvVar("HTTP_ACCEPT_LANGUAGE", m_req.getHeader(HEADER_ACCEPT_LANGUAGE)));
-	m_env.push(makeEnvVar("HTTP_USER_AGENT", m_req.getHeader(HEADER_USER_AGENT)));
-	m_env.push(makeEnvVar("HTTP_COOKIE", m_req.getHeader(HEADER_COOKIE)));
-
+	m_env.push(makeEnvVar("AUTH_TYPE", "null"));
 	m_env.push(makeEnvVar("GATEWAY_INTERFACE", GATEWAY_INTERFACE));
+	m_env.push(makeEnvVar("PATH_INFO", m_pathInfo));
+	m_env.push(makeEnvVar("PATH_TRANSLATED", m_scriptPath));
+	m_env.push(makeEnvVar("QUERY_STRING", m_req.getQueryString()));
+	m_env.push(makeEnvVar("REMOTE_ADDR", m_req.getHeader("Remote Adress")));
+	m_env.push(makeEnvVar("REMOTE_HOST", m_req.getHeader("Remote Host")));
 	m_env.push(makeEnvVar("REQUEST_METHOD", m_req.getMethod()));
-	m_env.push(makeEnvVar("HTTP_HOST", m_req.getHeader(HEADER_HOST)));
+	m_env.push(makeEnvVar("SCRIPT_NAME", m_scriptName));
 	m_env.push(makeEnvVar("SERVER_NAME", PROJECT_NAME));
-	m_env.push(makeEnvVar("SCRIPT_NAME", scriptName));
+	m_env.push(makeEnvVar("SERVER_PORT", Number::toString(m_config.getPort())));
 	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
-	m_env.push(makeEnvVar("PATH_INFO", "\"\""));
-	// m_env.push(makeEnvVar())
-
+	m_env.push(makeEnvVar("SERVER_SOFTWARE", SERVER_NAME));
 	if (m_has_post_data)
 	{
 		m_env.push(makeEnvVar("CONTENT_TYPE", m_req.getHeader(HEADER_CONTENT_TYPE)));
@@ -121,7 +117,6 @@ void CgiSpawner::childprocess()
 	close(m_stdoutPipe[0]);
 	close(m_stdoutPipe[1]);
 	execve(argv[0], argv, m_envp);
-	perror("execve: ");
 	EventLoop::destroy();
 	(*this).~CgiSpawner();
 	exit(127);
@@ -133,6 +128,44 @@ void CgiSpawner::generateEnvp()
 	for (i = 0; i < m_env.size(); i++)
 		m_envp[i] = const_cast<char *>(m_env[i].c_str());
 	m_envp[i] = NULL;
+}
+
+ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments)
+{
+	for (size_t i = 0; i < urlSegments.size(); i++)
+	{
+		std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
+		if (fileExtension.empty())
+			continue;
+		if (!m_activeBinMap.has(fileExtension))
+			continue;
+		m_binPath = m_activeBinMap.get(fileExtension);
+		Logger::log(m_binPath);
+		m_scriptPath = m_req.buildResourcePath(i);
+		return i;
+	}
+	return -1;
+}
+
+void CgiSpawner::buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex)
+{
+	for (Vec<std::string>::const_iterator it = urlSegments.begin() + scriptIndex + 1; it != urlSegments.end(); it++)
+	{
+		m_pathInfo.append("/");
+		m_pathInfo.append(*it);
+	}
+	const std::string target = m_req.getTarget();
+	if (target.at(target.size() - 1) == '/')
+		m_pathInfo.append("/");
+}
+
+void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex)
+{
+	for (Vec<std::string>::const_iterator it = urlSegments.begin(); it != urlSegments.begin() + scriptIndex + 1; it++)
+	{
+		m_scriptName.append("/");
+		m_scriptName.append(*it);
+	}
 }
 
 // TODO Need access() the binary but where ?
@@ -148,41 +181,31 @@ bool CgiSpawner::isCgi()
 			if ((*it)->getCgiParams())
 				cgiParams.push((*it)->getCgiParams());
 		}
-		Map<std::string> activeBinMap;
 		for (Vec<const Config::CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
 		{
 			const Map<std::string> binMap = (*it)->getBinMap();
 			for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)
 			{
 				std::string first = mit->first;
-				activeBinMap.set(first, mit->second);
+				m_activeBinMap.set(first, mit->second);
 			}
 		}
-		Logger::log("Active bin map " + LoggerJson::get(activeBinMap));
+		Logger::log("Active bin map " + LoggerJson::get(m_activeBinMap));
 		const Vec<std::string> &urlSegments = m_req.getSegments();
-		for (size_t i = 0; i < urlSegments.size(); i++)
-		{
-			std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
-			if (fileExtension.empty())
-				continue;
-			if (!activeBinMap.has(fileExtension))
-				continue;
-			m_binPath = activeBinMap.get(fileExtension);
-			Logger::log(m_binPath);
-			m_scriptPath = m_req.buildResourcePath(i);
-			if (!FileHandler::fileExists(m_scriptPath))
-				throw Http404Exception();
-			if (!FileHandler::hasReadPermission(m_scriptPath))
-				throw Http403Exception();
-			return true;
-		}
+		ssize_t					scriptIndex = getScriptIndex(urlSegments);
+		if (scriptIndex == -1)
+			return false;
+		if (!FileHandler::hasReadPermission(m_scriptPath))
+			throw Http403Exception();
+		buildPathInfo(urlSegments, scriptIndex);
+		buildScriptName(urlSegments, scriptIndex);
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
 		std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
-	return false;
+	return true;
 }
 
 /**
