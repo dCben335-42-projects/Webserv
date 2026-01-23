@@ -57,6 +57,6 @@ class LoggerJson
 		static std::string get(const Set<V> &set, const bool getAddress = false);
 };
 
-#include "../srcs/LoggerJson.tpp"
+#include "../srcs/Formats/LoggerJson.tpp"
 
 #endif

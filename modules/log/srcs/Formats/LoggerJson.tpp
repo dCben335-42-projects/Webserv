@@ -6,9 +6,6 @@
 #include "IsType.hpp"
 #include <sstream>
 
-#define RED "\033[31m"
-#define RESET "\033[0m"
-
 
 /**
  *
@@ -47,7 +44,7 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 		}
 		else
 		{
-			if (!is_string<ValueType>::value)
+			if (!is_string<ValueType>::value && !is_char<ValueType>::value && !is_number<ValueType>::value)
 			{
 				result += "\n";
 				Logger::incrementIndent();
