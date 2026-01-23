@@ -127,9 +127,9 @@ bool Parser::word(
 {
 	if (*nextTerminalChar == c)
 	{
-		ARulePathInfo pathInfoObj(pathInfo.path);
 		if (++nextTerminalChar != item->getValue().end())
 		{
+			ARulePathInfo pathInfoObj(pathInfo.path);
 			if (!mapPathNext.has(rule))
 				mapPathNext.set(rule, ARulePaths());
 			pathInfoObj.terminalCharIt.push_back(nextTerminalChar);
@@ -272,6 +272,7 @@ void Parser::parse(const std::string &stringToParsed)
 			Logger::log("✅");
 		if (i == stringToParsed.size() - 1)
 			break;
+		// Logger::log(mapPathNext);
 		std::swap(mapPathCurrent, mapPathNext);
 		mapPathNext.clear();
 	}

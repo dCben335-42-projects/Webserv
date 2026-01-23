@@ -1,4 +1,4 @@
-<head>			::= MOT SPACE [ LL ] [ MOT ] SPACE
+<head>			::= LL [ LL ] [ MOT ] SPACE
 
 LL				::=	'l'
 DIGITP			::= 'as' 'q' DIGIT
@@ -11,5 +11,5 @@ UPCASE_LETTER	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 
 
 DIGIT			::= 'X' '5p999' UPCASE_LETTER ( '8' | '7' )
 
-MOT				::= ( 'lo' )
+MOT				::= 'lo'
 SPACE			::= '_'

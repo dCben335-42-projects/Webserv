@@ -19,6 +19,8 @@ class ARulePathInfo
 		bool operator<(const ARulePathInfo &other) const;
 };
 
+std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data);
+
 
 typedef Set<ARulePathInfo>					ARulePaths;
 typedef Map<const ARule *const, ARulePaths> ARuleMap;
