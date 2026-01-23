@@ -225,7 +225,7 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 			const ARulePath			  rules = path->path;
 			const Vec<TerminalSymbol> items = rules.back()->getItems();
 			for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
-				if (item->isTerminalChar() && *item == c && isFullyOptionalEndAdvance(rules))
+				if (item->isTerminalChar() && *(item->getValue().end() - 1) == c && isFullyOptionalEndAdvance(rules))
 					return true;
 		}
 	}

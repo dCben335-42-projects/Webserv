@@ -1,4 +1,4 @@
-<head>			::= LL [ LL ] [ MOT ] SPACE
+<head>			::= LL [ LL ] [ MOT ] SPACE [ 'posa' ] [ SPACE ]
 
 LL				::=	'l'
 DIGITP			::= 'as' 'q' DIGIT
