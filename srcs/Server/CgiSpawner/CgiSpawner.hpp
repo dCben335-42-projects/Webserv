@@ -36,8 +36,9 @@ class CgiSpawner
 		void		setupEnv();
 		void		childprocess();
 		ssize_t		getScriptIndex(const Vec<std::string> &urlSegments);
-		void		buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
-		void		buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
+
+		void buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
+		void buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
 
 
 	public:

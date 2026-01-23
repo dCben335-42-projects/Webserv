@@ -13,6 +13,7 @@
 #include "Location.hpp"
 #include "Logger.hpp"
 #include "CgiParams.hpp"
+#include "Signals.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
@@ -44,6 +45,7 @@ void EventLoop::init()
 	locations.set(loc9->getPath(), loc9);
 	Config *config1 = new Config("0.0.0.0", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
+	Signals::catchSigs();
 }
 
 

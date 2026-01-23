@@ -27,4 +27,5 @@ INCLUDES_FLAGS += -I ./srcs/Server/Pollable/VitualServer/Config/CgiParams
 INCLUDES_FLAGS += -I ./srcs/Server/Pollable/VitualServer/Config
 INCLUDES_FLAGS += -I ./srcs/Server/Pollable/VitualServer/Config/Location
 INCLUDES_FLAGS += -I ./srcs/Server/Pollable/VitualServer
+INCLUDES_FLAGS += -I ./srcs/.
 INCLUDES_FLAGS += -I ./srcs/Utils/Errors/AppErrors

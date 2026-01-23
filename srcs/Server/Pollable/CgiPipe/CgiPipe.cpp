@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include "config.hpp"
 #include <errno.h>
+#include "Signals.hpp"
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,
@@ -18,16 +19,14 @@ CgiPipe::CgiPipe(
 
 CgiPipe::~CgiPipe()
 {
-	if (m_pid > 0)
+	if (m_pid > 0 && !Signals::getIsChild())
 	{
 		kill(m_pid, SIGTERM);
 		int status;
 		waitpid(m_pid, &status, WNOHANG);
 	}
 	if (m_fd >= 0)
-	{
 		close(m_fd);
-	}
 }
 
 void CgiPipe::waitChild()

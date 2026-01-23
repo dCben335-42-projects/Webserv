@@ -19,4 +19,5 @@ SRC_FILES += Server/Pollable/VitualServer/Config/CgiParams/CgiParams.cpp
 SRC_FILES += Server/Pollable/VitualServer/Config/Config.cpp
 SRC_FILES += Server/Pollable/VitualServer/Config/Location/Location.cpp
 SRC_FILES += Server/Pollable/VitualServer/VirtualServer.cpp
+SRC_FILES += Signals.cpp
 SRC_FILES += Utils/Errors/AppErrors/AppErrors.cpp

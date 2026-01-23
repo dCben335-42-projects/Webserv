@@ -12,6 +12,7 @@
 #include "FileHandler.hpp"
 #include "CgiPipe.hpp"
 #include "EventLoop.hpp"
+#include "Signals.hpp"
 
 CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	m_req(req),
@@ -78,7 +79,7 @@ std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &va
 
 void CgiSpawner::setupEnv()
 {
-	m_env.push(makeEnvVar("AUTH_TYPE", "null"));
+	m_env.push(makeEnvVar("AUTH_TYPE", ""));
 	m_env.push(makeEnvVar("GATEWAY_INTERFACE", GATEWAY_INTERFACE));
 	m_env.push(makeEnvVar("PATH_INFO", m_pathInfo));
 	m_env.push(makeEnvVar("PATH_TRANSLATED", m_scriptPath));
@@ -99,10 +100,10 @@ void CgiSpawner::setupEnv()
 }
 
 #include <stdio.h>
+#include <ctime>
 void CgiSpawner::childprocess()
 {
-	(void) m_config;
-	// TODO m_config still useful ?
+	Signals::setIsChild(true);
 	char *const argv[3] = {
 		const_cast<char *>(m_binPath.c_str()),
 		const_cast<char *>(m_scriptPath.c_str()),
@@ -117,6 +118,7 @@ void CgiSpawner::childprocess()
 	close(m_stdoutPipe[0]);
 	close(m_stdoutPipe[1]);
 	execve(argv[0], argv, m_envp);
+	perror("execve");
 	EventLoop::destroy();
 	(*this).~CgiSpawner();
 	exit(127);

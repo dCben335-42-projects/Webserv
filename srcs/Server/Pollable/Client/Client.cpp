@@ -26,7 +26,6 @@ Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
-	std::cerr << "Bonjour à tous" << std::endl;
 }
 
 /**
