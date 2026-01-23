@@ -29,7 +29,6 @@ VirtualServer::VirtualServer(const Config &config) :
 
 VirtualServer::~VirtualServer()
 {
-	Logger::log("[VirtualServer] Destructor called");
 	if (m_fd != -1)
 		close(m_fd);
 	delete &m_config;
@@ -128,7 +127,6 @@ Client *VirtualServer::createClient(int clientFd)
 		return NULL;
 	}
 	Client *client = new Client(clientFd, m_config);
-	EventLoop::addHandler(client);
 	return client;
 }
 

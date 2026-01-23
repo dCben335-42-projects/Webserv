@@ -23,6 +23,10 @@ CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	std::cout << m_has_post_data << std::endl;
 }
 
+CgiSpawner::~CgiSpawner()
+{
+}
+
 void CgiSpawner::spawn()
 {
 	setupPipes();
@@ -43,6 +47,11 @@ void CgiSpawner::spawn()
 		childprocess();
 	close(m_stdoutPipe[1]);
 	close(m_stdinPipe[0]);
+	if (!m_has_post_data)
+	{
+		close(m_stdinPipe[1]);
+		m_stdinPipe[1] = -1;
+	}
 }
 
 void CgiSpawner::setupPipes()
@@ -113,6 +122,8 @@ void CgiSpawner::childprocess()
 	close(m_stdoutPipe[1]);
 	execve(argv[0], argv, m_envp);
 	perror("execve: ");
+	EventLoop::destroy();
+	(*this).~CgiSpawner();
 	exit(127);
 }
 
@@ -194,12 +205,6 @@ void CgiSpawner::spawnCgi(Client *const client)
 		CgiPipe *cgiPipeOut = new CgiPipe(m_pid, m_stdoutPipe[0], client);
 		EventLoop::addHandler(cgiPipeOut);
 		cgiPipeOut->setEvents(POLLIN);
-	}
-	if (!m_has_post_data)
-	{
-		if (m_stdinPipe[1] >= 0)
-			close(m_stdinPipe[1]);
-		return;
 	}
 	if (m_stdinPipe[1] >= 0)
 	{

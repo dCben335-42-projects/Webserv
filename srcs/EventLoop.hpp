@@ -14,7 +14,7 @@ class EventLoop
 		static Map<int, Pollable *> m_handlers;
 		static size_t				m_nfds;
 
-		static void		 deletePollable(const int &fd, const size_t &index);
+		static void		 deletePollable(const int fd, const size_t &index);
 		static Pollable *getHandler(const int fd);
 
 	public:

@@ -19,12 +19,14 @@ Client::Client(int fd, const Config &config) :
 	m_serverConfig(config)
 {
 	m_events = POLLIN;
+	EventLoop::addHandler(this);
 }
 
 Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
+	std::cerr << "Bonjour à tous" << std::endl;
 }
 
 /**
@@ -191,9 +193,8 @@ void Client::handleGetRequest(const std::string &ressourcePath)
 void Client::prepareResponse()
 {
 	CgiSpawner		  cgiHandler(m_req, m_serverConfig);
-	const std::string method		= m_req.getMethod();
-	const size_t	  segmentSize	= m_req.getSegmentSize();
-	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
+	const std::string method	  = m_req.getMethod();
+	const size_t	  segmentSize = m_req.getSegmentSize();
 	try
 	{
 		if (cgiHandler.isCgi())
@@ -202,6 +203,7 @@ void Client::prepareResponse()
 			m_events = 0;
 			return;
 		}
+		const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
 		if (method == "GET")
 			handleGetRequest(ressourcePath);
 		else if (method == "POST")

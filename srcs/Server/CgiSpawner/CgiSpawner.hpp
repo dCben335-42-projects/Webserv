@@ -34,6 +34,7 @@ class CgiSpawner
 
 	public:
 		CgiSpawner(const HttpRequest &req, const Config &config);
+		~CgiSpawner();
 
 		void spawn();
 		void spawnCgi(Client *const client);

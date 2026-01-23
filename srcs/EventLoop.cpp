@@ -42,7 +42,7 @@ void EventLoop::init()
 	locations.set(loc40->getPath(), loc40);
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
-	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
+	Config *config1 = new Config("0.0.0.0", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 }
 
@@ -64,7 +64,7 @@ void EventLoop::destroy()
 	for (size_t i = 0; i < m_pollFds.size(); ++i)
 	{
 		const int fd = m_pollFds[i].fd;
-		deletePollable(fd, i);
+		delete m_handlers.get(fd);
 	}
 	m_pollFds.clear();
 	m_handlers.clear();
@@ -89,7 +89,6 @@ void EventLoop::run()
 {
 	const int POLL_TIMEOUT = 1000;
 	int		  ready;
-
 	while (true)
 	{
 		updatePollStatus();
@@ -162,7 +161,7 @@ void EventLoop::addHandler(Pollable *const handler)
  * @note It remains to each Pollable handler to close its own file descriptor in its destructor.
  *
  */
-void EventLoop::deletePollable(const int &fd, const size_t &index)
+void EventLoop::deletePollable(const int fd, const size_t &index)
 {
 	Pollable *handler = getHandler(fd);
 	if (handler)
@@ -209,8 +208,7 @@ void EventLoop::updatePollStatus()
  */
 Pollable *EventLoop::getHandler(int fd)
 {
-	Pollable *handler = NULL;
-	m_handlers.try_get(fd, handler);
+	Pollable *handler = m_handlers.get(fd);
 	return handler;
 }
 
