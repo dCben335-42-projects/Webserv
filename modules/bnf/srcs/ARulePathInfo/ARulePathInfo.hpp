@@ -12,6 +12,7 @@ class ARulePathInfo
 	public:
 		ARulePath						 path;
 		Vec<std::string::const_iterator> terminalCharIt;
+		// char							*ptr;
 
 		ARulePathInfo(ARulePath path);
 		~ARulePathInfo();

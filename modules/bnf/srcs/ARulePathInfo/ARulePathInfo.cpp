@@ -43,12 +43,15 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 			os << ", ";
 	}
 	os << "], terminalCharIt=[";
+
+	
 	for (size_t i = 0; i < data.terminalCharIt.size(); ++i)
 	{
 		os << *(data.terminalCharIt[i]);
 		if (i < data.terminalCharIt.size() - 1)
 			os << ", ";
 	}
+
 	os << "])";
 	return os;
 }

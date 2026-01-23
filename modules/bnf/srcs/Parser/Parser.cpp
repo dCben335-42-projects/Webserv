@@ -20,18 +20,38 @@ void Parser::addPathPossibility(
 	ARulePath		   prefix) const
 {
 	Vec<TerminalSymbol> items = rule->getItems();
+	// Logger::log("OK9");
+	Logger::log(items);
 
 	path.push_back(rule);
 	for (Vec<TerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
 	{
+		// Logger::log("OK11");
 		std::string item = itemIt->getValue();
 		if (conceptPaths.contains(item))
 			continue;
 		if (!itemIt->isTerminalChar())
+		{
+			// Logger::log("OK12");
 			getPathsTerminalChars(prefix, item, mapPath, conceptPaths, path);
+		}
+		else
+		{
+			Logger::log("Checking terminal char: " + item + " for concept: " + conceptName);
+			Logger::log(item);
+			Logger::log(ARulePath::concat(prefix, path));
+			if (!mapPath.has(rule))
+				mapPath.set(rule, ARulePaths());
+			mapPath.get(rule).insert(ARulePathInfo(ARulePath::concat(prefix, path)));
+		}
 	}
 
+	// Logger::log("OK10");
+
+	Logger::log("Checking terminal chars for concept: " + conceptName);
 	Set<const ARule *> terminalChars = m_semantic.getConcept(conceptName)->getTerminalChars();
+	Logger::log("SOZA");
+	Logger::log(terminalChars);
 	for (Set<const ARule *>::iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
 	{
 		if (rule == *it)
@@ -80,14 +100,23 @@ void Parser::getPathsTerminalChars(ARulePath prefix, std::string conceptName, AR
 	{
 		size_t size = (*conceptIt)->size();
 		size_t k	= 0;
+		Logger::log("---------------------------" + LoggerJson::get(conceptPaths.size()));
 		while (k < size)
 		{
 			const ARule *subRule = (*conceptIt)->getARule(k);
+			Logger::log(subRule);
 			addPathPossibility(subRule, conceptPaths, path, mapPath, conceptName, prefix);
 			if (!isFullyOptional(*subRule))
+			{
+
+				// Logger::log("OK20");
 				break;
+			}
+			// Logger::log("OK28");
+
 			++k;
 		}
+		Logger::log("---------------------------" + LoggerJson::get(conceptPaths.size()));
 	}
 }
 
@@ -95,24 +124,37 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 {
 	addSequencePaths(path, mapPathNext);
 
+	// Logger::log("OK1");
+
+
 	ARulePath nextRule = rule->getNextRules(path);
 	if (nextRule.empty())
 		return;
 
+	// Logger::log("OK2");
+
 	const ARule *const lastRule = nextRule.back();
-	if (lastRule->isOption())
+	// if (lastRule->isOption())
+	// 	addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
+	if (isFullyOptional(*lastRule))
 		addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
+	// Logger::log("OK3");
+	// Logger::log(lastRule);
 
 	V_FOREACH(TerminalSymbol, terminalSymbol, lastRule->getItems())
 	{
 		if (terminalSymbol->isTerminalChar())
 		{
+			// Logger::log("OK5");
 			if (!mapPathNext.has(lastRule))
 				mapPathNext.set(lastRule, ARulePaths());
 			mapPathNext.get(lastRule).insert(ARulePathInfo(nextRule));
 		}
 		else
+		{
+			// Logger::log("OK4");
 			getPathsTerminalChars(nextRule, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
+		}
 	}
 }
 
@@ -125,8 +167,13 @@ bool Parser::word(
 	ARuleMap						   &mapPathNext,
 	Vec<TerminalSymbol>::const_iterator item)
 {
+	Logger::log("---- WORD CHECK ----");
+	Logger::log("Rule: " + LoggerJson::get(pathInfo));
+	Logger::log("Testing character: " + LoggerJson::get(c));
+	Logger::log("Next terminal char to match: " + LoggerJson::get(*nextTerminalChar));
 	if (*nextTerminalChar == c)
 	{
+		// Logger::log("Match found for character: " + LoggerJson::get(c) + " in rule: " + rule->getConceptName());
 		if (++nextTerminalChar != item->getValue().end())
 		{
 			ARulePathInfo pathInfoObj(pathInfo.path);
@@ -136,9 +183,24 @@ bool Parser::word(
 			mapPathNext.get(rule).insert(pathInfoObj);
 		}
 		else
+		{
+			// Logger::log("Full match for character: " + LoggerJson::get(c) + " in rule: " + rule->getConceptName());
+			// Logger::log(mapPathNext);
+
+			// ARulePath nextRule = rule->getNextRules(pathInfo.path);
+			// if (nextRule.back()->isOption())
+			// {
+
+			// std::string conceptName = rule->getConceptName();
+			// const char *ptr			= item->getValue().c_str();
+			// }
+
 			addNextPaths(mapPathCurrent, mapPathNext, pathInfo.path, rule);
+			// Logger::log(mapPathNext);
+		}
 		return true;
 	}
+	Logger::log("No match for character: " + LoggerJson::get(c) + " in rule: " + rule->getConceptName());
 	return false;
 }
 
@@ -146,6 +208,7 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 {
 	Logger::log("Char to test: " + LoggerJson::get(c));
 	bool isValidWithCurrentPath = false;
+	Logger::log("here01: " + LoggerJson::get(mapPathCurrent));
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
 		const ARule		   *rule  = it->first;
@@ -153,17 +216,36 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 		Vec<TerminalSymbol> items = rule->getItems();
 		Logger::log(rule->getConceptName());
 		size_t index = 0;
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here02: " + LoggerJson::get(paths));
+		Logger::log("here03: " + LoggerJson::get(mapPathCurrent));
 		for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 		{
+			Logger::log("here04: " + LoggerJson::get(mapPathCurrent));
 			if (item->isTerminalChar())
 			{
+				// Logger::log("here: " + LoggerJson::get(mapPathCurrent));
 				for (ARulePaths::iterator pathInfo = paths.begin(); pathInfo != paths.end(); ++pathInfo)
 				{
+					Logger::log("here000002: " + LoggerJson::get(paths));
+
 					std::string::const_iterator nextTerminalChar;
 					if (!pathInfo->terminalCharIt.has(index))
+					{
+						Logger::log("ok5");
 						nextTerminalChar = item->getValue().begin();
+					}
 					else
+					{
+						Logger::log("ok6");
 						nextTerminalChar = pathInfo->terminalCharIt[index];
+						Logger::log("sas: " + LoggerJson::get(*nextTerminalChar));
+					}
 					if (word(nextTerminalChar, c, rule, (*pathInfo), mapPathCurrent, mapPathNext, item))
 						isValidWithCurrentPath = true;
 				}
@@ -263,8 +345,13 @@ void Parser::parse(const std::string &stringToParsed)
 
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
+	Logger::log("Initial possible paths:");
+
+
+	Logger::log(mapPathCurrent);
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
+		Logger::log("new: " + LoggerJson::get(mapPathCurrent));
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
@@ -272,8 +359,12 @@ void Parser::parse(const std::string &stringToParsed)
 			Logger::log("✅");
 		if (i == stringToParsed.size() - 1)
 			break;
-		// Logger::log(mapPathNext);
-		std::swap(mapPathCurrent, mapPathNext);
+
+		Logger::log("after parse: " + LoggerJson::get(c));
+		Logger::log("next: " + LoggerJson::get(mapPathNext));
+		// std::swap(mapPathCurrent, mapPathNext);
+		mapPathCurrent = mapPathNext;
+
 		mapPathNext.clear();
 	}
 	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
