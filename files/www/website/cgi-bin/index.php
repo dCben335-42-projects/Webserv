@@ -8,9 +8,6 @@
 <body>
 	<?php 
 		echo "fdp de merde";
-		echo $_ENV["HTTP_REQUEST_METHOD"];
-
-		var_dump($_ENV);
 
 	?>
 </body>

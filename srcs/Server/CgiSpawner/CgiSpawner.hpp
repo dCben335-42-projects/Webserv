@@ -31,8 +31,6 @@ class CgiSpawner
 		void		generateEnvp();
 		void		setupEnv();
 		void		childprocess();
-		void		parentProcess();
-
 
 	public:
 		CgiSpawner(const HttpRequest &req, const Config &config);

@@ -14,7 +14,6 @@ CgiPipe::CgiPipe(
 	m_client(client),
 	m_pid(pid)
 {
-	m_events = POLLIN;
 }
 
 CgiPipe::~CgiPipe()
@@ -102,9 +101,13 @@ void CgiPipe::onError()
 }
 
 
+#include "Logger.hpp"
 void CgiPipe::onPollOut()
 {
-	// Not used for CGI pipe
+	const std::string &body = m_client->getRequest().getBody();
+	write(m_fd, body.data(), body.size());
+	m_events		   = 0;
+	m_connectionClosed = true;
 }
 
 
@@ -117,7 +120,7 @@ void CgiPipe::onPollErr()
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
-	//TODO Read loop in case there is still data
+	// TODO Read loop in case there is still data
 	std::cerr << "Read ended" << std::endl;
 	waitChild();
 	m_events = 0;
