@@ -9,8 +9,6 @@ Pollable::Pollable(int f) :
 }
 
 
-
-
 int Pollable::getFd() const
 {
 	return m_fd;

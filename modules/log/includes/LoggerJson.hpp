@@ -1,20 +1,23 @@
-#ifndef LOG_JSON_HPP
-#define LOG_JSON_HPP
+#ifndef LOG_LOGGER_JSON_HPP
+#define LOG_LOGGER_JSON_HPP
 
 #include <string>
-#include <sstream>
 #include "Map.hpp"
 #include "Vec.hpp"
-#include <set>
+#include "Set.hpp"
 
 
 /**
  *
  * @brief Utility class to convert values to JSON-like strings for logging
  *
- * @tparam V The type of the value to be converted
+ * @note This class provides static methods to convert various data types,
+ * including primitive types, pointers, vectors, maps, and sets, into JSON-like
+ * string representations. It supports an option to log either the content of
+ * the values or their memory addresses.
  *
- * @return A string representing the JSON format of the value
+ * @usage LoggerJson::get(value, getAddress);
+ *
  *
  */
 class LoggerJson

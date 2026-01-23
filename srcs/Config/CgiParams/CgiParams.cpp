@@ -11,8 +11,8 @@ Config::CgiParams::CgiParams(Map<std::string> binMap) :
 	m_allowedMethods(),
 	m_binMap(binMap)
 {
-	m_allowedMethods.push(HttpMethod("GET"));
-	m_allowedMethods.push(HttpMethod("POST"));
+	m_allowedMethods.push(HttpMethod(M_GET));
+	m_allowedMethods.push(HttpMethod(M_POST));
 }
 
 Config::CgiParams::CgiParams(Map<std::string> binMap, Set<HttpMethod> allowedMethods) :

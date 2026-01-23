@@ -1,10 +1,6 @@
 #include "CgiPipe.hpp"
-#include <unistd.h>
 #include <sys/wait.h>
-#include <cstring>
-#include <fcntl.h>
-#include "config.hpp"
-#include <errno.h>
+#include "webserv.hpp"
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,
@@ -74,15 +70,7 @@ void CgiPipe::onPollIn()
 		res.appendToFulFullResponse(buffer, bytes_read);
 		return;
 	}
-	// if (bytes_read == 0)
-	// {
-	// 	std::cerr << "Read ended" << std::endl;
-	// 	waitChild();
-	// 	m_events = 0;
-	// 	m_client->setEvents(POLLOUT);
-	// 	m_connectionClosed = true;
-	// 	return;
-	// }
+
 	if (bytes_read < 0)
 		std::cerr << "Read error" << std::endl;
 	onError();
@@ -92,7 +80,6 @@ void CgiPipe::onError()
 {
 	m_events		  = 0;
 	HttpResponse &res = m_client->getResponse();
-	// Send 500 error to client
 	res.reset();
 	res.setStatusCode(500);
 	res.setHeader("Content-Type", "text/html");
@@ -104,7 +91,6 @@ void CgiPipe::onError()
 
 void CgiPipe::onPollOut()
 {
-	// Not used for CGI pipe
 }
 
 

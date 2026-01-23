@@ -1,5 +1,5 @@
-#ifndef VECTOR_TPP
-#define VECTOR_TPP
+#ifndef KIT_VECTOR_TPP
+#define KIT_VECTOR_TPP
 
 #include <vector>
 #include <cstddef>

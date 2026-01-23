@@ -1,17 +1,11 @@
-// VirtualServer.cpp
 #include "VirtualServer.hpp"
 #include "EventLoop.hpp"
-#include <sys/socket.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <iostream>
-#include <stdexcept>
-#include <cstring>
-#include <arpa/inet.h>
 #include <errno.h>
-#include "config.hpp"
-#include "Logger.hpp"
-
+#include "webserv.hpp"
+#include <cstring>
+#include <fcntl.h>
+#include <arpa/inet.h>
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
@@ -20,16 +14,13 @@ VirtualServer::VirtualServer(const Config &config) :
 	m_bindPort(config.getPort())
 {
 	if (!setupSocket(m_bindIp, m_bindPort))
-	{
 		throw std::runtime_error("VirtualServer socket setup failed: " + m_bindIp);
-	}
 	m_events = POLLIN;
 	EventLoop::addHandler(this);
 }
 
 VirtualServer::~VirtualServer()
 {
-	Logger::log("[VirtualServer] Destructor called");
 	if (m_fd != -1)
 		close(m_fd);
 	delete &m_config;
@@ -59,6 +50,13 @@ unsigned short VirtualServer::getBindPort() const
 	return m_bindPort;
 }
 
+/**
+ *
+ * @brief Gets the configuration of the virtual server.
+ *
+ * @return A constant reference to the Config object.
+ *
+ */
 const Config &VirtualServer::getConfig() const
 {
 	return m_config;
@@ -95,7 +93,6 @@ bool VirtualServer::setupSocket(const std::string &ip, unsigned short port)
 		close(sockFd);
 		return false;
 	}
-	std::memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family	   = SOCKET_IPV4;
 	serverAddr.sin_addr.s_addr = SOCKET_INTERFACE;
 	serverAddr.sin_port		   = htons(port);

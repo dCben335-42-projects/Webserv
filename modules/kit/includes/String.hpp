@@ -1,5 +1,5 @@
-#ifndef STRING_HPP
-#define STRING_HPP
+#ifndef KIT_STRING_HPP
+#define KIT_STRING_HPP
 
 #include <cstring>
 #include <string>
@@ -33,8 +33,5 @@ class String
 
 		static Vec<std::string> split(const std::string &str, const char *delimiters);
 };
-
-
-
 
 #endif

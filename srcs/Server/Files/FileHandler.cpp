@@ -3,9 +3,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <limits.h>
 #include "Date.hpp"
-#include "config.hpp"
+
+#include <limits.h>
+#include "webserv.hpp"
+#include "httpHeaders.hpp"
+#include "httpMimes.hpp"
 
 const Map<std::string> FileHandler::m_iconMap =
 	FileHandler::initIconMap();
@@ -17,42 +20,44 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 {
 	Map<std::string> extensionTypeMap;
 
-	extensionTypeMap[".txt"]  = HEADER_TYPE_PLAIN;
-	extensionTypeMap[".csv"]  = HEADER_TYPE_CSV;
-	extensionTypeMap[".html"] = HEADER_TYPE_HTML;
-	extensionTypeMap[".css"]  = HEADER_TYPE_CSS;
+	extensionTypeMap[HTTP_EXT_PLAIN] = HEADER_TYPE_PLAIN;
+	extensionTypeMap[HTTP_EXT_CSV]	 = HEADER_TYPE_CSV;
+	extensionTypeMap[HTTP_EXT_HTML]	 = HEADER_TYPE_HTML;
+	extensionTypeMap[HTTP_EXT_HTM]	 = HEADER_TYPE_HTML;
+	extensionTypeMap[HTTP_EXT_CSS]	 = HEADER_TYPE_CSS;
 
-	extensionTypeMap[".js"]	  = HEADER_TYPE_JS;
-	extensionTypeMap[".json"] = HEADER_TYPE_JSON;
-	extensionTypeMap[".eot"]  = HEADER_TYPE_EOT;
-	extensionTypeMap[".pdf"]  = HEADER_TYPE_PDF;
-	extensionTypeMap[".xml"]  = HEADER_TYPE_XML;
-	extensionTypeMap[".zip"]  = HEADER_TYPE_ZIP;
-	extensionTypeMap[".yaml"] = HEADER_TYPE_YAML;
-	extensionTypeMap[".yml"]  = HEADER_TYPE_YAML;
-	extensionTypeMap[".toml"] = HEADER_TYPE_TOML;
-	extensionTypeMap[".rtf"]  = HEADER_TYPE_RTF;
+	extensionTypeMap[HTTP_EXT_JS]	= HEADER_TYPE_JS;
+	extensionTypeMap[HTTP_EXT_JSON] = HEADER_TYPE_JSON;
+	extensionTypeMap[HTTP_EXT_EOT]	= HEADER_TYPE_EOT;
+	extensionTypeMap[HTTP_EXT_PDF]	= HEADER_TYPE_PDF;
+	extensionTypeMap[HTTP_EXT_XML]	= HEADER_TYPE_XML;
 
-	extensionTypeMap[".png"]  = HEADER_TYPE_PNG;
-	extensionTypeMap[".jpg"]  = HEADER_TYPE_JPEG;
-	extensionTypeMap[".webp"] = HEADER_TYPE_WEBP;
-	extensionTypeMap[".jpeg"] = HEADER_TYPE_JPEG;
-	extensionTypeMap[".gif"]  = HEADER_TYPE_GIF;
-	extensionTypeMap[".svg"]  = HEADER_TYPE_SVG;
-	extensionTypeMap[".avif"] = HEADER_TYPE_AVIF;
-	extensionTypeMap[".heic"] = HEADER_TYPE_HEIC;
-	extensionTypeMap[".ico"]  = HEADER_TYPE_ICO;
+	extensionTypeMap[HTTP_EXT_ZIP]	= HEADER_TYPE_ZIP;
+	extensionTypeMap[HTTP_EXT_YAML] = HEADER_TYPE_YAML;
+	extensionTypeMap[HTTP_EXT_YML]	= HEADER_TYPE_YAML;
+	extensionTypeMap[HTTP_EXT_TOML] = HEADER_TYPE_TOML;
+	extensionTypeMap[HTTP_EXT_RTF]	= HEADER_TYPE_RTF;
 
-	extensionTypeMap[".mp4"]  = HEADER_TYPE_MP4;
-	extensionTypeMap[".webm"] = HEADER_TYPE_WEBM;
+	extensionTypeMap[HTTP_EXT_PNG]	= HEADER_TYPE_PNG;
+	extensionTypeMap[HTTP_EXT_JPG]	= HEADER_TYPE_JPEG;
+	extensionTypeMap[HTTP_EXT_WEBP] = HEADER_TYPE_WEBP;
+	extensionTypeMap[HTTP_EXT_JPEG] = HEADER_TYPE_JPEG;
+	extensionTypeMap[HTTP_EXT_GIF]	= HEADER_TYPE_GIF;
+	extensionTypeMap[HTTP_EXT_SVG]	= HEADER_TYPE_SVG;
+	extensionTypeMap[HTTP_EXT_AVIF] = HEADER_TYPE_AVIF;
+	extensionTypeMap[HTTP_EXT_HEIC] = HEADER_TYPE_HEIC;
+	extensionTypeMap[HTTP_EXT_ICO]	= HEADER_TYPE_ICO;
 
-	extensionTypeMap[".ttf"]   = HEADER_TYPE_TTF;
-	extensionTypeMap[".woff"]  = HEADER_TYPE_WOFF;
-	extensionTypeMap[".woff2"] = HEADER_TYPE_WOFF2;
+	extensionTypeMap[HTTP_EXT_MP4]	= HEADER_TYPE_MP4;
+	extensionTypeMap[HTTP_EXT_WEBM] = HEADER_TYPE_WEBM;
 
-	extensionTypeMap[".mp3"]  = HEADER_TYPE_MP3;
-	extensionTypeMap[".flac"] = HEADER_TYPE_FLAC;
-	extensionTypeMap[".wav"]  = HEADER_TYPE_WAV;
+	extensionTypeMap[HTTP_EXT_TTF]	 = HEADER_TYPE_TTF;
+	extensionTypeMap[HTTP_EXT_WOFF]	 = HEADER_TYPE_WOFF;
+	extensionTypeMap[HTTP_EXT_WOFF2] = HEADER_TYPE_WOFF2;
+
+	extensionTypeMap[HTTP_EXT_MP3]	= HEADER_TYPE_MP3;
+	extensionTypeMap[HTTP_EXT_FLAC] = HEADER_TYPE_FLAC;
+	extensionTypeMap[HTTP_EXT_WAV]	= HEADER_TYPE_WAV;
 
 	return extensionTypeMap;
 }
@@ -61,41 +66,44 @@ Map<std::string> FileHandler::initIconMap()
 {
 	Map<std::string> iconMap;
 
-	iconMap[".txt"]	 = ICON_PLAIN;
-	iconMap[".csv"]	 = ICON_PLAIN;
-	iconMap[".html"] = ICON_PLAIN;
-	iconMap[".css"]	 = ICON_PLAIN;
-	iconMap[".js"]	 = ICON_PLAIN;
-	iconMap[".json"] = ICON_PLAIN;
-	iconMap[".eot"]	 = ICON_FONT;
-	iconMap[".pdf"]	 = ICON_PDF;
-	iconMap[".xml"]	 = ICON_PLAIN;
-	iconMap[".zip"]	 = ICON_ARCHIVE;
-	iconMap[".yaml"] = ICON_PLAIN;
-	iconMap[".yml"]	 = ICON_PLAIN;
-	iconMap[".toml"] = ICON_PLAIN;
-	iconMap[".rtf"]	 = ICON_PLAIN;
+	iconMap[HTTP_EXT_PLAIN] = ICON_PLAIN;
+	iconMap[HTTP_EXT_CSV]	= ICON_PLAIN;
+	iconMap[HTTP_EXT_HTML]	= ICON_PLAIN;
+	iconMap[HTTP_EXT_HTM]	= ICON_PLAIN;
+	iconMap[HTTP_EXT_CSS]	= ICON_PLAIN;
+	iconMap[HTTP_EXT_JS]	= ICON_PLAIN;
+	iconMap[HTTP_EXT_JSON]	= ICON_PLAIN;
 
-	iconMap[".png"]	 = ICON_IMAGE;
-	iconMap[".jpg"]	 = ICON_IMAGE;
-	iconMap[".webp"] = ICON_IMAGE;
-	iconMap[".jpeg"] = ICON_IMAGE;
-	iconMap[".gif"]	 = ICON_IMAGE;
-	iconMap[".svg"]	 = ICON_IMAGE;
-	iconMap[".avif"] = ICON_IMAGE;
-	iconMap[".heic"] = ICON_IMAGE;
-	iconMap[".ico"]	 = ICON_IMAGE;
+	iconMap[HTTP_EXT_PDF]  = ICON_PDF;
+	iconMap[HTTP_EXT_XML]  = ICON_PLAIN;
+	iconMap[HTTP_EXT_ZIP]  = ICON_ARCHIVE;
+	iconMap[HTTP_EXT_YAML] = ICON_PLAIN;
+	iconMap[HTTP_EXT_YML]  = ICON_PLAIN;
+	iconMap[HTTP_EXT_TOML] = ICON_PLAIN;
+	iconMap[HTTP_EXT_RTF]  = ICON_PLAIN;
 
-	iconMap[".mp4"]	 = ICON_VIDEO;
-	iconMap[".webm"] = ICON_VIDEO;
+	iconMap[HTTP_EXT_PNG]  = ICON_IMAGE;
+	iconMap[HTTP_EXT_JPG]  = ICON_IMAGE;
+	iconMap[HTTP_EXT_WEBP] = ICON_IMAGE;
+	iconMap[HTTP_EXT_JPEG] = ICON_IMAGE;
+	iconMap[HTTP_EXT_GIF]  = ICON_IMAGE;
+	iconMap[HTTP_EXT_SVG]  = ICON_IMAGE;
+	iconMap[HTTP_EXT_AVIF] = ICON_IMAGE;
+	iconMap[HTTP_EXT_HEIC] = ICON_IMAGE;
+	iconMap[HTTP_EXT_ICO]  = ICON_IMAGE;
 
-	iconMap[".ttf"]	  = ICON_FONT;
-	iconMap[".woff"]  = ICON_FONT;
-	iconMap[".woff2"] = ICON_FONT;
+	iconMap[HTTP_EXT_MP4]  = ICON_VIDEO;
+	iconMap[HTTP_EXT_WEBM] = ICON_VIDEO;
 
-	iconMap[".mp3"]	 = ICON_AUDIO;
-	iconMap[".flac"] = ICON_AUDIO;
-	iconMap[".wav"]	 = ICON_AUDIO;
+	iconMap[HTTP_EXT_TTF]	= ICON_FONT;
+	iconMap[HTTP_EXT_WOFF]	= ICON_FONT;
+	iconMap[HTTP_EXT_WOFF2] = ICON_FONT;
+	iconMap[HTTP_EXT_EOT]	= ICON_FONT;
+
+
+	iconMap[HTTP_EXT_MP3]  = ICON_AUDIO;
+	iconMap[HTTP_EXT_FLAC] = ICON_AUDIO;
+	iconMap[HTTP_EXT_WAV]  = ICON_AUDIO;
 
 	iconMap["/"] = ICON_DIRECTORY;
 	iconMap[""]	 = ICON_DEFAULT;

@@ -1,13 +1,12 @@
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#ifndef LOG_LOGGER_HPP
+#define LOG_LOGGER_HPP
 
 #include <fstream>
 #include <string>
+
 #include <Map.hpp>
 #include "Vec.hpp"
 #include <Set.hpp>
-
-
 
 class Logger
 {
@@ -22,7 +21,7 @@ class Logger
 		enum FileMode
 		{
 			Append,
-			Truncate,
+			Truncate
 		};
 
 	private:

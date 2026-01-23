@@ -3,10 +3,7 @@
 
 #include "Pollable.hpp"
 #include "Client.hpp"
-#include <string>
-#include <netinet/in.h>
 #include "Config.hpp"
-
 
 class VirtualServer : public Pollable
 {

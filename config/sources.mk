@@ -1,3 +1,6 @@
+SRC_FILES += Config/CgiParams/CgiParams.cpp
+SRC_FILES += Config/Config.cpp
+SRC_FILES += Config/Location/Location.cpp
 SRC_FILES += EventLoop.cpp
 SRC_FILES += main.cpp
 SRC_FILES += ParsingConfig/Lexer/Lexer.cpp
@@ -15,8 +18,4 @@ SRC_FILES += Server/Http/HttpMethod/HttpMethod.cpp
 SRC_FILES += Server/Pollable/CgiPipe/CgiPipe.cpp
 SRC_FILES += Server/Pollable/Client/Client.cpp
 SRC_FILES += Server/Pollable/Pollable.cpp
-SRC_FILES += Server/Pollable/VitualServer/Config/CgiParams/CgiParams.cpp
-SRC_FILES += Server/Pollable/VitualServer/Config/Config.cpp
-SRC_FILES += Server/Pollable/VitualServer/Config/Location/Location.cpp
 SRC_FILES += Server/Pollable/VitualServer/VirtualServer.cpp
-SRC_FILES += Utils/Errors/AppErrors/AppErrors.cpp

@@ -33,6 +33,7 @@ class HttpRequest : public AHttpInboundMessage
 		size_t	readContentLength(std::string request, const size_t headersEnd);
 
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
+		bool		getActiveAutoIndex() const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

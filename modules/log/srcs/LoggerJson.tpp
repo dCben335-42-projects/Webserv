@@ -1,12 +1,10 @@
-#ifndef LOGGER_JSON_TPP
-#define LOGGER_JSON_TPP
+#ifndef LOG_LOGGER_JSON_TPP
+#define LOG_LOGGER_JSON_TPP
 
 #include "../includes/LoggerJson.hpp"
 #include "../includes/Logger.hpp"
-#include "Map.hpp"
-#include "Vec.hpp"
-#include "Set.hpp"
 #include "IsType.hpp"
+#include <sstream>
 
 #define RED "\033[31m"
 #define RESET "\033[0m"
@@ -16,6 +14,7 @@
  *
  * @brief Generates a JSON representation of a map.
  *
+ * @tparam MapType The type of the map.
  * @param m The map to be converted to JSON.
  * @param getAddress If true, returns the memory address of the values instead of their content.
  *
@@ -28,9 +27,9 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 	std::string result = "{\n";
 	Logger::incrementIndent();
 
-	typename MapType::const_iterator	 it	 = m.begin();
-	typename MapType::const_iterator	 end = m.end();
-	typedef typename MapType::value_type ValueType;
+	typename MapType::const_iterator				  it  = m.begin();
+	typename MapType::const_iterator				  end = m.end();
+	typedef typename MapType::value_type::second_type ValueType;
 
 	while (it != end)
 	{

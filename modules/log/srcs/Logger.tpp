@@ -1,9 +1,8 @@
-#ifndef LOGGER_TPP
-#define LOGGER_TPP
+#ifndef LOG_LOGGER_TPP
+#define LOG_LOGGER_TPP
 
 #include "Logger.hpp"
 #include "LoggerJson.hpp"
-
 
 /**
  *

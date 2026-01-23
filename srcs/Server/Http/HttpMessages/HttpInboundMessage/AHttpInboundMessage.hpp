@@ -2,7 +2,6 @@
 #define HTTP_INBOUND_MESSAGE_HPP
 
 #include "AHttpMessage.hpp"
-#include "String.hpp"
 
 class AHttpInboundMessage : public AHttpMessage
 {

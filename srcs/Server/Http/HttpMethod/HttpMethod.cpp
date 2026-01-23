@@ -1,6 +1,4 @@
 #include "HttpMethod.hpp"
-#include <stdexcept>
-#include "config.hpp"
 #include "httpExceptions.hpp"
 
 const Map<HttpMethod::Type, std::string> HttpMethod::m_methodMap = HttpMethod::initMethodMap();
@@ -48,7 +46,7 @@ HttpMethod::HttpMethod(const Type &method)
 		m_strType = it->second;
 		return;
 	}
-	throw Http501Exception("adawdaw");
+	throw Http501Exception("");
 }
 
 HttpMethod &HttpMethod::operator=(const HttpMethod &other)

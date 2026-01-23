@@ -1,9 +1,8 @@
 #include "File.hpp"
+
 #include "Date.hpp"
 #include "Number.hpp"
 #include "FileHandler.hpp"
-
-#include "Logger.hpp"
 
 File::File(
 	const std::string &name,
@@ -15,10 +14,10 @@ File::File(
 		throw FileHandler::FileDoesNotExistException(ressourcePath);
 
 	m_name				= name;
-	m_uri				= String::removeDuplicateSlashes(location + "/" + name);
+	m_isDirectory		= S_ISDIR(fileStat.st_mode);
+	m_uri				= String::removeDuplicateSlashes(location + "/" + name + (m_isDirectory ? "/" : ""));
 	m_fullPath			= ressourcePath;
 	m_size				= static_cast<size_t>(fileStat.st_size);
-	m_isDirectory		= S_ISDIR(fileStat.st_mode);
 	m_lastModified		= Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
 	m_createdAtHuman	= Date::toHumanFormat(gmtime(&fileStat.st_ctime));
 	m_lastModifiedHuman = Date::toHumanFormat(localtime(&fileStat.st_mtime));

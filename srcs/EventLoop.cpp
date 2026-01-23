@@ -1,17 +1,6 @@
-// EventLoop.cpp
 #include "EventLoop.hpp"
 #include "VirtualServer.hpp"
-#include <unistd.h>
-#include <cstring>
-#include <stdexcept>
-#include <fcntl.h>
-#include <iostream>
-#include <cerrno>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include "Config.hpp"
 #include "Location.hpp"
-#include "Logger.hpp"
 #include "CgiParams.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
@@ -25,10 +14,10 @@ void EventLoop::init()
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
-	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.html", false, param2);
-	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", false, NULL);
-	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", false, NULL);
-	Config::Location *loc3			  = new Config::Location("/assets/test/", "", "", "", true, NULL);
+	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.htm", false, param2);
+	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
+	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", true, NULL);
+	Config::Location *loc3			  = new Config::Location("/assets/test/", "", "", "", NULL);
 	Config::Location *loc4			  = new Config::Location("/assets/test/dwad", "", "", "", false, NULL);
 	Config::Location *loc40			  = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
 

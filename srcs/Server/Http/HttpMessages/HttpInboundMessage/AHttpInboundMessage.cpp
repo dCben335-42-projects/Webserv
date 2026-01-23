@@ -1,8 +1,8 @@
 #include "AHttpInboundMessage.hpp"
 #include <cstring>
 #include <stdexcept>
-#include <iostream>
-#include "config.hpp"
+#include "String.hpp"
+
 
 AHttpInboundMessage::AHttpInboundMessage() :
 	m_rawStr(""),
@@ -69,14 +69,14 @@ void AHttpInboundMessage::setRawRequest(const std::string &rawRequest)
  */
 size_t AHttpInboundMessage::parseHeaderLine(const std::string &rawRequest, const size_t pos)
 {
-	const size_t colon	  = rawRequest.find(':', pos);
+	const size_t colon	  = rawRequest.find(HEADER_SEPARATOR, pos);
 	const size_t nextLine = rawRequest.find(HEADER_LINE_ENDING, pos);
 
 	if (colon == std::string::npos || nextLine == std::string::npos || colon > nextLine)
 		throw std::invalid_argument("Malformed Header Line");
 
 	const std::string headerName  = rawRequest.substr(pos, colon - pos);
-	const std::string headerValue = rawRequest.substr(colon + 1, nextLine - colon - 1);
+	const std::string headerValue = rawRequest.substr(colon + HEADER_SEPARATOR_SIZE, nextLine - colon - HEADER_SEPARATOR_SIZE);
 
 	setHeader(String::trim(headerName), String::trim(headerValue));
 	return nextLine + std::strlen(HEADER_LINE_ENDING);

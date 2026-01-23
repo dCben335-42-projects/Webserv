@@ -2,7 +2,7 @@
 #include <dirent.h>
 #include <sstream>
 #include "Number.hpp"
-#include "config.hpp"
+#include "webserv.hpp"
 #include "String.hpp"
 
 const std::string IndexOf::HEAD_TEMPLATE =

@@ -1,10 +1,8 @@
 #include "HttpResponse.hpp"
+#include "webserv.hpp"
+#include "Number.hpp"
 #include <sstream>
 #include <sys/socket.h>
-#include "config.hpp"
-#include <iostream>
-#include "Number.hpp"
-#include <cerrno>
 
 Map<unsigned short, std::string> HttpResponse::initStatusReasonMap()
 {
@@ -39,7 +37,6 @@ HttpResponse::~HttpResponse()
 }
 
 
-// ANCHOR Reset
 
 /**
  *
@@ -56,12 +53,11 @@ void HttpResponse::reset()
 	m_body.clear();
 	m_method = HttpMethod();
 
-	m_headers[HEADER_SERVER] = SERVER_NAME;
+	m_headers[HEADER_SERVER] = SERVER_FULL_NAME;
 }
 
 
 
-// ANCHOR Setters
 /**
  *
  * @brief Sets the HTTP status code of the response.
@@ -84,7 +80,6 @@ void HttpResponse::appendToFulFullResponse(const char *buf, size_t size)
 
 
 
-// ANCHOR Getters
 /**
  *
  * @brief Gets the HTTP status code of the response.
@@ -121,7 +116,14 @@ size_t HttpResponse::getSentBytes() const
 	return m_sentBytes;
 }
 
-// ANCHOR Build head
+
+/**
+ *
+ * @brief Builds the status line of the HTTP response.
+ *
+ * @return A string representing the HTTP status line.
+ *
+ */
 std::string HttpResponse::buildHead() const
 {
 	const Map<unsigned short, std::string>::const_iterator it =
@@ -134,7 +136,6 @@ std::string HttpResponse::buildHead() const
 }
 
 
-// ANCHOR Send response
 /**
  *
  * @brief Builds the full HTTP response string,
@@ -153,7 +154,7 @@ void HttpResponse::build()
 	responseStream << buildHead();
 	Map<std::string>::const_iterator it = m_headers.begin();
 	for (; it != m_headers.end(); ++it)
-		responseStream << it->first << ": " << it->second << HEADER_LINE_ENDING;
+		responseStream << it->first << HEADER_SEPARATOR << it->second << HEADER_LINE_ENDING;
 	responseStream << HEADER_LINE_ENDING;
 	responseStream << m_body;
 	m_fullResponse = responseStream.str();
@@ -184,18 +185,13 @@ bool HttpResponse::sendOnce(int socket)
 	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, 0);
 
 	if (n < 0)
-	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			return false;
 		throw std::runtime_error("send() failed");
-	}
 	m_sentBytes += n;
 	return (m_sentBytes >= m_fullResponse.size());
 }
 
 
 
-// ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, HttpResponse const &response)
 {
 	o << response.buildHead() << static_cast<AHttpMessage const &>(response);

@@ -1,5 +1,5 @@
-#ifndef NUMBER_HPP
-#define NUMBER_HPP
+#ifndef KIT_NUMBER_HPP
+#define KIT_NUMBER_HPP
 
 #include <string>
 

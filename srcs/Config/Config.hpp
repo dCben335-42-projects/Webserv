@@ -1,7 +1,6 @@
 #ifndef VIRTUALSERVER_CONFIG_HPP
 #define VIRTUALSERVER_CONFIG_HPP
 
-#include <string>
 #include "Vec.hpp"
 #include "Map.hpp"
 #include "HttpMethod.hpp"
@@ -21,7 +20,6 @@ class Config
 		Map<const Location *> m_locations;
 
 	public:
-		// Config();
 		Config(const std::string		   &ip,
 			   unsigned short				port,
 			   const std::string		   &domain,

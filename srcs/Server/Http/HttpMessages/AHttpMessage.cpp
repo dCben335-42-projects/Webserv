@@ -1,7 +1,5 @@
 #include "AHttpMessage.hpp"
 #include "Number.hpp"
-#include "config.hpp"
-#include <exception>
 #include "Logger.hpp"
 
 AHttpMessage::AHttpMessage() :
@@ -16,7 +14,6 @@ AHttpMessage::~AHttpMessage()
 
 
 
-// ANCHOR Getters
 /**
  *
  * @brief Gets all HTTP headers of the message.
@@ -73,7 +70,6 @@ std::string AHttpMessage::getBody() const
 
 
 
-// ANCHOR Setters
 /**
  *
  * @brief Sets a specific HTTP header.
@@ -143,8 +139,6 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 
 
 
-
-// ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
 	Logger::log(message.getHeaders());

@@ -2,7 +2,6 @@
 #define CONFIG_LOCATION_HPP
 
 #include "Config.hpp"
-#include <string>
 
 class Config::Location
 {
@@ -33,14 +32,7 @@ class Config::Location
 			const Config::CgiParams *cgi);
 		~Location();
 
-		bool		operator==(const Location &other) const;
-		bool		operator!=(const Location &other) const;
-		bool		operator<(const Location &other) const;
-		bool		operator<=(const Location &other) const;
-		bool		operator>(const Location &other) const;
-		bool		operator>=(const Location &other) const;
 		static bool compare(const Location *a, const Location *b);
-
 
 		const std::string		&getPath() const;
 		const std::string		&getRoot() const;

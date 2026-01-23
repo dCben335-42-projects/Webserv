@@ -1,6 +1,5 @@
 #include "FileUpload.hpp"
-#include "config.hpp"
-// TODO
+#include "httpMimes.hpp"
 #include "Logger.hpp"
 
 FileUpload::FileUpload(HttpRequest &req) : m_req(req)

@@ -4,7 +4,6 @@
 #include "Pollable.hpp"
 #include "Vec.hpp"
 #include "Map.hpp"
-#include <poll.h>
 
 class EventLoop
 {

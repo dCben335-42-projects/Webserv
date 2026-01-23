@@ -4,7 +4,6 @@
 #include "Pollable.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
-#include <string>
 #include "Config.hpp"
 
 class VirtualServer;
@@ -16,7 +15,7 @@ class Client : public Pollable
 		HttpRequest	  m_req;
 		HttpResponse  m_res;
 
-		void handleGetRequest(const std::string &ressourcePath);
+		void handleGetRequest(std::string ressourcePath);
 		void handlePostRequest();
 		void handleDeleteRequest();
 

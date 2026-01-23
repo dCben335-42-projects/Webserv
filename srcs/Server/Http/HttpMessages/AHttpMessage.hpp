@@ -2,6 +2,7 @@
 #define A_HTTP_MESSAGE_HPP
 
 #include "HttpMethod.hpp"
+#include "httpHeaders.hpp"
 #include "Map.hpp"
 
 class AHttpMessage

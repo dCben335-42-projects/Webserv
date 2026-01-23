@@ -1,7 +1,7 @@
-#ifndef MAP_HPP
-#define MAP_HPP
+#ifndef KIT_MAP_HPP
+#define KIT_MAP_HPP
 
-# include "../srcs/containers/map.tpp"
-# include "../srcs/containers/container.tpp"
+#include "../srcs/containers/Map.tpp"
+#include "../srcs/containers/Container.tpp"
 
-#endif 
+#endif

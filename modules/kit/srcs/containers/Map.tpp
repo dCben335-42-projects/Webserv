@@ -1,5 +1,5 @@
-#ifndef MAP_TPP
-#define MAP_TPP
+#ifndef KIT_MAP_TPP
+#define KIT_MAP_TPP
 
 #include <map>
 #include <string>
@@ -228,4 +228,4 @@ struct Map
 
 // clang-format on
 
-#endif // MAP_HPP
+#endif

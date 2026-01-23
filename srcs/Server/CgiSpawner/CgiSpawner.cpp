@@ -1,17 +1,14 @@
 #include "CgiSpawner.hpp"
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <cstdlib>
-#include "config.hpp"
-#include <unistd.h>
-#include "File.hpp"
-#include "Config.hpp"
+
+#include "webserv.hpp"
+#include "FileHandler.hpp"
+#include "EventLoop.hpp"
+#include "CgiPipe.hpp"
+
 #include "Location.hpp"
 #include "CgiParams.hpp"
+
 #include "Logger.hpp"
-#include "FileHandler.hpp"
-#include "CgiPipe.hpp"
-#include "EventLoop.hpp"
 
 CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	m_req(req),
@@ -77,7 +74,7 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar("GATEWAY_INTERFACE", GATEWAY_INTERFACE));
 	m_env.push(makeEnvVar("REQUEST_METHOD", m_req.getMethod()));
 	m_env.push(makeEnvVar("HTTP_HOST", m_req.getHeader(HEADER_HOST)));
-	m_env.push(makeEnvVar("SERVER_NAME", PROJECT_NAME));
+	m_env.push(makeEnvVar("SERVER_NAME", SERVER_NAME));
 	m_env.push(makeEnvVar("SCRIPT_NAME", m_req.getTarget()));
 	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
 	m_env.push(makeEnvVar("PATH_INFO", "\"\""));

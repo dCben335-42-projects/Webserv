@@ -1,6 +1,20 @@
 #include "Location.hpp"
 
 
+/**
+ *
+ * @brief Constructs a Location object with auto-index setting.
+ *
+ * @param path The path of the location.
+ * @param root The root directory of the location.
+ * @param alias The alias of the location.
+ * @param indexFile The index file of the location.
+ * @param autoIndex A boolean indicating whether auto-indexing is enabled.
+ * @param cgi A pointer to the CgiParams object for CGI settings.
+ *
+ * @note m_isAutoIndex is set to true in this constructor.
+ *
+ */
 Config::Location::Location(
 	const std::string		 path,
 	const std::string		 root,
@@ -18,6 +32,20 @@ Config::Location::Location(
 {
 }
 
+
+/**
+ *
+ * @brief Constructs a Location object without auto-index setting.
+ *
+ * @param path The path of the location.
+ * @param root The root directory of the location.
+ * @param alias The alias of the location.
+ * @param indexFile The index file of the location.
+ * @param cgi A pointer to the CgiParams object for CGI settings.
+ *
+ * @note m_isAutoIndex is set to false in this constructor.
+ *
+ */
 Config::Location::Location(
 	const std::string		 path,
 	const std::string		 root,
@@ -40,30 +68,18 @@ Config::Location::~Location()
 
 
 
-bool Config::Location::operator==(const Location &other) const
-{
-	return m_path == other.m_path;
-}
-bool Config::Location::operator!=(const Location &other) const
-{
-	return m_path != other.m_path;
-}
-bool Config::Location::operator<(const Location &other) const
-{
-	return m_path < other.m_path;
-}
-bool Config::Location::operator<=(const Location &other) const
-{
-	return m_path <= other.m_path;
-}
-bool Config::Location::operator>(const Location &other) const
-{
-	return m_path > other.m_path;
-}
-bool Config::Location::operator>=(const Location &other) const
-{
-	return m_path >= other.m_path;
-}
+/**
+ *
+ * @brief Compares two Location objects based on their paths.
+ *
+ * @param a Pointer to the first Location object.
+ * @param b Pointer to the second Location object.
+ *
+ * @note It is meant to be used for sorting Location objects. (std::sort)
+ *
+ * @return true if the path of the first Location is less than that of the second, false otherwise.
+ *
+ */
 bool Config::Location::compare(const Location *a, const Location *b)
 {
 	return a->m_path < b->m_path;

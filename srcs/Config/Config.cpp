@@ -1,6 +1,5 @@
 #include "Config.hpp"
 #include "Location.hpp"
-#include "Logger.hpp"
 #include "CgiParams.hpp"
 
 Config::Config(
@@ -19,7 +18,6 @@ Config::Config(
 
 Config::~Config()
 {
-	Logger::log("[Config] Destructor called");
 	for (Map<const Location *>::iterator it = m_locations.begin(); it != m_locations.end(); ++it)
 		delete it->second;
 	delete m_defaultLocation;
@@ -191,7 +189,7 @@ const Map<const Config::Location *> &Config::getLocations() const
 
 
 
-
+#include "LoggerJson.hpp"
 
 std::ostream &operator<<(std::ostream &os, const Config &config)
 {

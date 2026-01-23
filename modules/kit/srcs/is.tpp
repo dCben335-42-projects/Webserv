@@ -1,5 +1,5 @@
-#ifndef IS_TPP
-#define IS_TPP
+#ifndef KIT_IS_TPP
+#define KIT_IS_TPP
 
 #include <string>
 #include <vector>
@@ -60,10 +60,6 @@ struct is_long {
     static const bool value = is_same<V, long>::value;
 };
 
-template<typename V>
-struct is_long_long {
-    static const bool value = is_same<V, long long>::value;
-};
 
 template<typename V>
 struct is_short {
@@ -81,11 +77,6 @@ struct is_unsigned_long {
 };
 
 template<typename V>
-struct is_unsigned_long_long {
-    static const bool value = is_same<V, unsigned long long>::value;
-};  
-
-template<typename V>
 struct is_unsigned_short {
     static const bool value = is_same<V, unsigned short>::value;
 };
@@ -97,11 +88,9 @@ struct is_number {
         is_float<V>::value ||
         is_double<V>::value ||
         is_long<V>::value ||
-        is_long_long<V>::value ||
         is_short<V>::value ||
         is_unsigned_int<V>::value ||
         is_unsigned_long<V>::value ||
-        is_unsigned_long_long<V>::value ||
         is_unsigned_short<V>::value;
 };
 

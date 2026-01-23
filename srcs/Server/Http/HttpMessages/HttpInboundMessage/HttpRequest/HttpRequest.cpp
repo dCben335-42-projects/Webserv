@@ -1,8 +1,8 @@
 #include "HttpRequest.hpp"
-#include "config.hpp"
 #include "String.hpp"
 #include "Number.hpp"
 #include "Logger.hpp"
+#include "webserv.hpp"
 
 #include <cctype>
 #include <cstring>
@@ -79,7 +79,6 @@ const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
 
 
 
-// ANCHOR Socket Reading Public method
 /**
  *
  * @brief Reads data from the given socket file descriptor
@@ -107,7 +106,6 @@ ssize_t HttpRequest::readOnce(int socketFd)
 }
 
 
-// ANCHOR Parsing Public method
 
 /**
  *
@@ -197,7 +195,6 @@ void HttpRequest::parseActiveLocations(const Config &config)
 }
 
 
-// ANCHOR Parsing Private methods
 
 /**
  *
@@ -327,8 +324,22 @@ std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
 	return resourcePath;
 }
 
+bool HttpRequest::getActiveAutoIndex() const
+{
+	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
+	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
 
-// ANCHOR Overloaded Operators
+	while (it != begin)
+	{
+		--it;
+		if ((*it)->hasAutoIndexSet())
+			return (*it)->getAutoIndex();
+	}
+	return false;
+}
+
+
+
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 {
 	Logger::log("----- HTTP Request -----\n");

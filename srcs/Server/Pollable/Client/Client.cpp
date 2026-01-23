@@ -1,18 +1,17 @@
 #include "Client.hpp"
-#include "config.hpp"
-#include "FileHandler.hpp"
 #include "httpExceptions.hpp"
-#include "Date.hpp"
-#include "IndexOf.hpp"
+
 #include "CgiSpawner.hpp"
-#include "CgiPipe.hpp"
-#include "EventLoop.hpp"
-#include "Location.hpp"
-#include "Logger.hpp"
-#include "Vec.hpp"
-#include "CgiParams.hpp"
-#include "Config.hpp"
+#include "httpMimes.hpp"
+
+
+#include "FileHandler.hpp"
 #include "FileUpload.hpp"
+#include "Date.hpp"
+
+#include "IndexOf.hpp"
+
+
 
 Client::Client(int fd, const Config &config) :
 	Pollable(fd),
@@ -105,8 +104,6 @@ void Client::handleDeleteRequest()
 
 
 
-#include "Logger.hpp"
-
 /**
  *
  * @brief Handles HTTP GET requests.
@@ -119,50 +116,29 @@ void Client::handleDeleteRequest()
  * or if there are permission issues.
  *
  */
-void Client::handleGetRequest(const std::string &ressourcePath)
+void Client::handleGetRequest(std::string ressourcePath)
 {
-	Logger::log("Resource Path: " + ressourcePath);
-	Logger::log("Req target: " + m_req.getTarget());
+	const std::string target = m_req.getTarget();
 
 	try
 	{
 		if (FileHandler::folderExists(ressourcePath))
 		{
-			IndexOf index(ressourcePath, m_req.getTarget());
-			m_res.setBody(index.getPage());
-			m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-			const std::string date = Date::getCurrentDate();
-			if (!date.empty())
-				m_res.setHeader(HEADER_DATE, date);
-			m_res.setStatusCode(200);
-			return;
-			// if (m_serverConfig.getAutoIndex(m_req.getTarget()))
-			// {
-			// }
-			// {
-			// 	if (!FileHandler::fileExists(ressourcePath))
-			// 	{
-			// 		IndexOf index(root, target);
-			// 		m_res.setBody(index.getPage());
-			// 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-			// 		std::string date = Date::getCurrentDate();
-			// 		if (!date.empty())
-			// 			m_res.setHeader(HEADER_DATE, date);
-			// 		m_res.setStatusCode(200);
-			// 		return;
-			// 	}
-			// 	resource = root + "/" + m_serverConfig.getIndexFile(target);
-			// 	m_res.setBody(FileHandler::readFile(ressourcePath));
-			// 	m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
-			// 	std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
-			// 	if (!fileDate.empty())
-			// 		m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-			// 	std::string date = Date::getCurrentDate();
-			// 	if (!date.empty())
-			// 		m_res.setHeader(HEADER_DATE, date);
-			// 	m_res.setStatusCode(200);
-			// 	return;
-			throw Http403Exception();
+			if (m_req.getActiveAutoIndex())
+			{
+				IndexOf index(ressourcePath, target);
+				m_res.setBody(index.getPage());
+				m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+				const std::string date = Date::getCurrentDate();
+				if (!date.empty())
+					m_res.setHeader(HEADER_DATE, date);
+				m_res.setStatusCode(200);
+				return;
+			}
+			const std::string indexFile = m_serverConfig.getIndexFile(target);
+			if (indexFile.empty())
+				throw Http403Exception();
+			ressourcePath = ressourcePath + "/" + indexFile;
 		}
 		m_res.setBody(FileHandler::readFile(ressourcePath));
 		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));

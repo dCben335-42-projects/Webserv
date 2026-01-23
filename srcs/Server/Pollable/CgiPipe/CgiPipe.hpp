@@ -3,7 +3,6 @@
 
 #include "Pollable.hpp"
 #include "Client.hpp"
-#include <string>
 #include <sys/types.h>
 
 class CgiPipe : public Pollable

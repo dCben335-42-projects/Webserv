@@ -1,10 +1,11 @@
-#ifndef DATE_HPP
-#define DATE_HPP
+#ifndef KIT_DATE_HPP
+#define KIT_DATE_HPP
 
 #include <string>
 #include <ctime>
 
-#define HTTP_DATE_FORMAT "%a, %d %b %Y %H:%M:%S GMT"
+#define KIT_HTTP_DATE_FORMAT "%a, %d %b %Y %H:%M:%S GMT"
+#define KIT_HUMAN_DATE_FORMAT "%Y-%m-%d %H:%M"
 
 class Date
 {

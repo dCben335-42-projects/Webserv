@@ -1,11 +1,10 @@
 #ifndef CONFIG_CGI_PARAMS_HPP
 #define CONFIG_CGI_PARAMS_HPP
 
-#include <string>
 #include "Set.hpp"
 #include "Map.hpp"
-#include "Config.hpp"
 #include "HttpMethod.hpp"
+#include "Config.hpp"
 
 class Config::CgiParams
 {
@@ -30,6 +29,5 @@ class Config::CgiParams
 
 		bool isAllowedMethod(HttpMethod method) const;
 };
-
 
 #endif
