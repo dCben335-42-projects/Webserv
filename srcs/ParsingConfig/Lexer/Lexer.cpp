@@ -23,6 +23,7 @@ Lexer::Lexer(std::string const &filepath)
 	std::cout << val;
 	Parser parser(val);
 
+	Logger::log("========Parsing========\n");
 	try
 	{
 		// parser.parse("AmD88l2");
@@ -57,13 +58,14 @@ Lexer::Lexer(std::string const &filepath)
 
 		// parser.parse("&");
 		// parser.parse("-Kn5p");
-		parser.parse("9@====--))---Ab9l-7");
-		parser.parse("====--))---Ab9l-");
-		parser.parse("9@====--))---Ab-5");
-		parser.parse("9!====--))-))))--Abl2");
+		// parser.parse("9@====--))---Ab9l-7");
+		// parser.parse("====--))---Ab9l-");
+		// parser.parse("9@====-Ab-5");
+		// parser.parse("9!====Abl-2");
 		// parser.parse("9====------Abl-");
 		// parser.parse("====-Al-");
 		// parser.parse("====-A9l");
+		parser.parse("X5L85");
 	}
 	catch (const SemanticException &e)
 	{

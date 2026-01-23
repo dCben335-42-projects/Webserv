@@ -61,7 +61,6 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 			}
 		}
 
-		// Regarder si tous les noeud suivants sont optionnels
 		const ARule *adjacentRule = path[i]->tryGetAdjacentRules();
 		while (adjacentRule)
 		{
@@ -104,7 +103,16 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 		addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
 
 	V_FOREACH(TerminalSymbol, terminalSymbol, lastRule->getItems())
-	getPathsTerminalChars(nextRule, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
+	{
+		if (terminalSymbol->isTerminalChar())
+		{
+			if (!mapPathNext.has(lastRule))
+				mapPathNext.set(lastRule, ARulePaths());
+			mapPathNext.get(lastRule).insert(nextRule);
+		}
+		else
+			getPathsTerminalChars(nextRule, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
+	}
 }
 
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
@@ -113,14 +121,15 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 	bool isValidWithCurrentPath = false;
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
-		const ARule *rule  = (*it).first;
-		ARulePaths	 paths = (*it).second;
-		Logger::log(rule->getConceptName());
+		const ARule		   *rule  = it->first;
+		ARulePaths			paths = it->second;
 		Vec<TerminalSymbol> items = rule->getItems();
+		Logger::log(rule->getConceptName());
 		for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 		{
 			if (item->isTerminalChar() && *item == c)
 			{
+				// Logger::log(c);
 				for (ARulePaths::iterator path = paths.begin(); path != paths.end(); ++path)
 					addNextPaths(mapPathCurrent, mapPathNext, *path, rule);
 				isValidWithCurrentPath = true;
@@ -204,13 +213,6 @@ bool Parser::isValidEmptyFile()
 
 void Parser::parse(const std::string &stringToParsed)
 {
-	Logger::log("========Parsing========\n");
-	ARuleMap mapPathCurrent;
-	ARuleMap mapPathNext;
-	char	 c;
-
-	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
-
 	if (stringToParsed.empty())
 	{
 		if (isValidEmptyFile())
@@ -219,6 +221,12 @@ void Parser::parse(const std::string &stringToParsed)
 			throw FileNotFinishedException("The file must not be empty.");
 		return;
 	}
+
+	ARuleMap mapPathCurrent;
+	ARuleMap mapPathNext;
+	char	 c;
+
+	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
