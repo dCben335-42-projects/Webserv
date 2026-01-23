@@ -1,6 +1,7 @@
 #include <sstream>
 #include <iostream>
 #include "./Parser.hpp"
+#include "../ARulePathInfo/ARulePathInfo.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -37,7 +38,7 @@ void Parser::addPathPossibility(
 		{
 			if (!mapPath.has(rule))
 				mapPath.set(rule, ARulePaths());
-			mapPath.get(rule).insert(ARulePath::concat(prefix, path));
+			mapPath.get(rule).insert(ARulePathInfo(ARulePath::concat(prefix, path)));
 		}
 	}
 }
@@ -54,7 +55,7 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 				{
 					if (!mapPathNext.has(path[i]))
 						mapPathNext.set(path[i], ARulePaths());
-					mapPathNext.get(path[i]).insert(path.slice(i + 1));
+					mapPathNext.get(path[i]).insert(ARulePathInfo(path.slice(i + 1)));
 				}
 				else
 					getPathsTerminalChars(path.slice(i + 1), terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
@@ -108,11 +109,37 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 		{
 			if (!mapPathNext.has(lastRule))
 				mapPathNext.set(lastRule, ARulePaths());
-			mapPathNext.get(lastRule).insert(nextRule);
+			mapPathNext.get(lastRule).insert(ARulePathInfo(nextRule));
 		}
 		else
 			getPathsTerminalChars(nextRule, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
 	}
+}
+
+bool Parser::word(
+	std::string::const_iterator			nextTerminalChar,
+	const char							c,
+	const ARule *const					rule,
+	ARulePathInfo						pathInfo,
+	const ARuleMap					   &mapPathCurrent,
+	ARuleMap						   &mapPathNext,
+	Vec<TerminalSymbol>::const_iterator item)
+{
+	if (*nextTerminalChar == c)
+	{
+		ARulePathInfo pathInfoObj(pathInfo.path);
+		if (++nextTerminalChar != item->getValue().end())
+		{
+			if (!mapPathNext.has(rule))
+				mapPathNext.set(rule, ARulePaths());
+			pathInfoObj.terminalCharIt.push_back(nextTerminalChar);
+			mapPathNext.get(rule).insert(pathInfoObj);
+		}
+		else
+			addNextPaths(mapPathCurrent, mapPathNext, pathInfo.path, rule);
+		return true;
+	}
+	return false;
 }
 
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
@@ -125,14 +152,22 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 		ARulePaths			paths = it->second;
 		Vec<TerminalSymbol> items = rule->getItems();
 		Logger::log(rule->getConceptName());
+		size_t index = 0;
 		for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 		{
-			if (item->isTerminalChar() && *item == c)
+			if (item->isTerminalChar())
 			{
-				// Logger::log(c);
-				for (ARulePaths::iterator path = paths.begin(); path != paths.end(); ++path)
-					addNextPaths(mapPathCurrent, mapPathNext, *path, rule);
-				isValidWithCurrentPath = true;
+				for (ARulePaths::iterator pathInfo = paths.begin(); pathInfo != paths.end(); ++pathInfo)
+				{
+					std::string::const_iterator nextTerminalChar;
+					if (!pathInfo->terminalCharIt.has(index))
+						nextTerminalChar = item->getValue().begin();
+					else
+						nextTerminalChar = pathInfo->terminalCharIt[index];
+					if (word(nextTerminalChar, c, rule, (*pathInfo), mapPathCurrent, mapPathNext, item))
+						isValidWithCurrentPath = true;
+				}
+				index++;
 			}
 		}
 	}
@@ -187,7 +222,7 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 		const ARulePaths val = it->second;
 		for (ARulePaths::const_iterator path = val.begin(); path != val.end(); ++path)
 		{
-			const ARulePath			  rules = *path;
+			const ARulePath			  rules = path->path;
 			const Vec<TerminalSymbol> items = rules.back()->getItems();
 			for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 				if (item->isTerminalChar() && *item == c && isFullyOptionalEndAdvance(rules))

@@ -13,6 +13,7 @@ class TerminalSymbol
 		bool				  operator==(const char &rhs) const;
 		bool				  operator==(const TerminalSymbol &rhs) const;
 		const std::string	 &getValue() const;
+		const char			 *getCharOfValue(size_t index) const;
 		static TerminalSymbol specify(const std::string &val);
 
 	protected:

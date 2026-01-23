@@ -1,7 +1,7 @@
-<head>			::= DIGITP '5'
+<head>			::= MOT SPACE [ LL ] [ MOT ] SPACE
 
-
-DIGITP			::= DIGIT
+LL				::=	'l'
+DIGITP			::= 'as' 'q' DIGIT
 
 
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
@@ -9,4 +9,7 @@ LOCASE_LETTER	::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 
 					'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
 UPCASE_LETTER	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
 
-DIGIT			::= 'X' '5' UPCASE_LETTER ( '8' | '7' )
+DIGIT			::= 'X' '5p999' UPCASE_LETTER ( '8' | '7' )
+
+MOT				::= ( 'lo' )
+SPACE			::= '_'

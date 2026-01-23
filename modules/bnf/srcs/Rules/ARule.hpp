@@ -3,24 +3,25 @@
 
 #include "bnf_defs.hpp"
 #include "../TerminalSymbol/TerminalSymbol.hpp"
+#include "../ARulePathInfo/ARulePathInfo.hpp"
 
 using bnf::ERuleType;
 
 class Concept;
 class ConceptDef;
-class ARule;
 
 struct BnfMap
 {
 		std::string opener;
 		std::string closer;
-		ARule *(*constructor)(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
+		ARule *(*constructor)(
+			const std::string &conceptName,
+			size_t			   conceptDefIndex,
+			size_t			   ruleIndex,
+			Concept			  *conceptPtr,
+			ConceptDef		  *conceptDefPtr);
 		bool hasClosure;
 };
-
-typedef Vec<const ARule *>					ARulePath;
-typedef Set<ARulePath>						ARulePaths;
-typedef Map<const ARule *const, ARulePaths> ARuleMap;
 
 class ARule
 {
@@ -60,10 +61,15 @@ class ARule
 
 		bool isOption() const;
 		bool isSequence() const;
+		bool is(const ERuleType type) const;
 
 		void	 setNextRules(const ARule *nextRule);
 		Concept *getConceptPtr() const;
 };
+
+
+
+
 
 std::ostream &operator<<(std::ostream &os, const ARule &data);
 

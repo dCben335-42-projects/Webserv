@@ -1,7 +1,7 @@
 #include "ConceptDef.hpp"
 #include <iostream>
 #include <algorithm>
-#include "../utils/utils.hpp"
+#include "../../utils/utils.hpp"
 
 using namespace bnf;
 

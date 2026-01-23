@@ -3,7 +3,7 @@
 
 #include <string>
 #include "bnf_defs.hpp"
-#include "../Rules/ARule.hpp"
+#include "../../Rules/ARule.hpp"
 
 class ConceptDef
 {

@@ -3,7 +3,7 @@
 
 #include <string>
 #include "bnf_defs.hpp"
-#include "../ConceptDef/ConceptDef.hpp"
+#include "ConceptDef/ConceptDef.hpp"
 
 class Concept
 {

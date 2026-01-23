@@ -2,14 +2,13 @@
 #define SEMANTIC_DESCRIPTOR_HPP
 
 #include "bnf_defs.hpp"
-
 #include "../Rules/Group/Group.hpp"
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
-#include "../ConceptDef/ConceptDef.hpp"
+#include "../Concept/ConceptDef/ConceptDef.hpp"
+#include "../Concept/ConceptNode/ConceptNode.hpp"
 #include "../utils/utils.hpp"
-#include "../ConceptNode/ConceptNode.hpp"
 #include "../Concept/Concept.hpp"
 
 #include "../Exception/ConceptAlreadyDefinedException.hpp"

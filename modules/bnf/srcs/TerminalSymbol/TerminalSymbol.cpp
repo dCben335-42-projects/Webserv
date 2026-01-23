@@ -1,4 +1,5 @@
 #include "TerminalSymbol.hpp"
+#include "bnf_defs.hpp"
 
 TerminalSymbol::TerminalSymbol(const std::string &val, bool isTerminalChar) : m_str(val), m_isTerminalChar(isTerminalChar)
 {
@@ -28,6 +29,11 @@ bool TerminalSymbol::operator==(const TerminalSymbol &rhs) const
 const std::string &TerminalSymbol::getValue() const
 {
 	return m_str;
+}
+
+const char *TerminalSymbol::getCharOfValue(size_t index) const
+{
+	return &m_str[index];
 }
 
 TerminalSymbol TerminalSymbol::specify(const std::string &val)

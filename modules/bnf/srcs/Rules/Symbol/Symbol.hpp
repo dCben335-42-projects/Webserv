@@ -5,6 +5,7 @@
 #include "../ARule.hpp"
 
 using bnf::SYMBOL;
+
 class Symbol : public ARule
 {
 	public:

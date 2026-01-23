@@ -4,12 +4,13 @@
 #include "Map.hpp"
 #include "bnf_defs.hpp"
 
+#include "../Rules/ARule.hpp"
 #include "../Rules/Group/Group.hpp"
 #include "../Rules/Option/Option.hpp"
 #include "../Rules/Sequence/Sequence.hpp"
 #include "../Rules/Symbol/Symbol.hpp"
-#include "../ConceptDef/ConceptDef.hpp"
-#include "../ConceptNode/ConceptNode.hpp"
+#include "../Concept/ConceptDef/ConceptDef.hpp"
+#include "../Concept/ConceptNode/ConceptNode.hpp"
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
@@ -36,6 +37,14 @@ class Parser
 		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path) const;
 
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
+		bool word(
+			std::string::const_iterator			nextTerminalChar,
+			const char							c,
+			const ARule *const					rule,
+			ARulePathInfo						pathInfo,
+			const ARuleMap					   &mapPathCurrent,
+			ARuleMap						   &mapPathNext,
+			Vec<TerminalSymbol>::const_iterator item);
 
 	public:
 		~Parser();
