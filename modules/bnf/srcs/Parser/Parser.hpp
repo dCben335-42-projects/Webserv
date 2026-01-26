@@ -38,13 +38,12 @@ class Parser
 
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 		bool word(
-			std::string::const_iterator			nextTerminalChar,
-			const char							c,
-			const ARule *const					rule,
-			ARulePathInfo						pathInfo,
-			const ARuleMap					   &mapPathCurrent,
-			ARuleMap						   &mapPathNext,
-			Vec<TerminalSymbol>::const_iterator item);
+			const char		  *nextTerminalChar,
+			const char		   c,
+			const ARule *const rule,
+			ARulePathInfo	   pathInfo,
+			const ARuleMap	  &mapPathCurrent,
+			ARuleMap		  &mapPathNext);
 
 	public:
 		~Parser();

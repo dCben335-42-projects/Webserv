@@ -77,6 +77,8 @@ class VecBase
 			return static_cast<const Derived &>(*this)[index];
 		}
 
+
+
 		/**
 		 *
 		 * @brief Sets the value at the given index in the vector.
@@ -142,6 +144,17 @@ class VecBase
 		void push(const V &value)
 		{
 			static_cast<Derived &>(*this).push_back(value);
+		}
+
+		void push_once(const V &value)
+		{
+			Derived &derived = static_cast<Derived &>(*this);
+			for (size_t i = 0; i < derived.size(); ++i)
+			{
+				if (derived[i] == value)
+					return;
+			}
+			derived.push_back(value);
 		}
 
 		/**
