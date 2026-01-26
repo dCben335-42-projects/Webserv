@@ -50,11 +50,13 @@ class HttpMethod
 
 		bool operator==(const HttpMethod &other) const
 		{
+			std::cerr << "Comparing " << m_strType << " and " << other.m_strType << std::endl;
 			return m_type == other.m_type;
 		}
 
 		bool operator!=(const HttpMethod &other) const
 		{
+			std::cerr << "Comparing " << m_strType << " and " << other.m_strType << std::endl;
 			return !(*this == other);
 		}
 };

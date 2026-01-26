@@ -128,7 +128,7 @@ void Client::handleGetRequest(std::string ressourcePath)
 			{
 				IndexOf index(ressourcePath, target);
 				m_res.setBody(index.getPage());
-				m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+				m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 				const std::string date = Date::getCurrentDate();
 				if (!date.empty())
 					m_res.setHeader(HEADER_DATE, date);
@@ -178,6 +178,8 @@ void Client::prepareResponse()
 	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
 	try
 	{
+		if (!m_req.isAllowedMethod())
+			throw Http403Exception();
 		if (cgiHandler.isCgi())
 		{
 			cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
@@ -197,7 +199,7 @@ void Client::prepareResponse()
 	{
 		m_res.reset();
 		m_res.setStatusCode(e.getStatusCode());
-		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
+		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 		m_res.setBody(e.getPage());
 	}
 	m_res.build();

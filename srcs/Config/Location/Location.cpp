@@ -26,9 +26,11 @@ Config::Location::Location(
 	m_root(root),
 	m_alias(alias),
 	m_indexFile(indexFile),
-	m_isAutoIndex(true),
-	m_autoIndex(autoIndex),
-	m_cgi(cgi)
+	m_cgi(cgi),
+	m_hasMethods(false),
+	m_methods(),
+	m_hasAutoIndex(true),
+	m_autoIndex(autoIndex)
 {
 }
 
@@ -56,16 +58,17 @@ Config::Location::Location(
 	m_root(root),
 	m_alias(alias),
 	m_indexFile(indexFile),
-	m_isAutoIndex(false),
-	m_autoIndex(false),
-	m_cgi(cgi)
+	m_cgi(cgi),
+	m_hasMethods(false),
+	m_methods(),
+	m_hasAutoIndex(false),
+	m_autoIndex(false)
 {
 }
 
 Config::Location::~Location()
 {
 }
-
 
 
 /**
@@ -156,6 +159,20 @@ const Config::CgiParams *Config::Location::getCgiParams() const
 	return m_cgi;
 }
 
+/**
+ *
+ * @brief Gets the allowed HTTP methods for the location.
+ *
+ * @return A constant reference to the set of allowed HTTP methods.
+ *
+ */
+const Set<HttpMethod> &Config::Location::getAllowedMethods() const
+{
+	return m_methods;
+}
+
+
+
 
 
 /**
@@ -211,7 +228,31 @@ bool Config::Location::hasRoot() const
  */
 bool Config::Location::hasAutoIndexSet() const
 {
-	return m_isAutoIndex;
+	return m_hasAutoIndex;
+}
+
+/**
+ *
+ * @brief Checks if the location has allowed HTTP methods set.
+ *
+ * @return true if allowed methods are set, false otherwise.
+ *
+ */
+bool Config::Location::hasMethods() const
+{
+	return m_hasMethods;
+}
+
+/**
+ *
+ * @brief Checks if the location has CGI settings.
+ *
+ * @return true if CGI settings are present, false otherwise.
+ *
+ */
+bool Config::Location::hasCgi() const
+{
+	return m_cgi != NULL;
 }
 
 
@@ -275,7 +316,18 @@ void Config::Location::setCgiParams(const Config::CgiParams *cgi)
 	m_cgi = cgi;
 }
 
-
+/**
+ *
+ * @brief Sets the allowed HTTP methods for the location.
+ *
+ * @param methods A set of HttpMethod objects representing the allowed methods.
+ *
+ */
+void Config::Location::setMethods(const Set<HttpMethod> &methods)
+{
+	m_methods	 = methods;
+	m_hasMethods = true;
+}
 
 
 

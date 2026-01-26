@@ -338,6 +338,20 @@ bool HttpRequest::getActiveAutoIndex() const
 	return false;
 }
 
+bool HttpRequest::isAllowedMethod() const
+{
+	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
+	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+
+	while (it != begin)
+	{
+		--it;
+		if ((*it)->hasMethods())
+			return (*it)->getAllowedMethods().contains(m_method);
+	}
+	return true;
+}
+
 
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)

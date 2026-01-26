@@ -2,6 +2,8 @@
 #define CONFIG_LOCATION_HPP
 
 #include "Config.hpp"
+#include "Set.hpp"
+#include "HttpMethod.hpp"
 
 class Config::Location
 {
@@ -11,10 +13,13 @@ class Config::Location
 		std::string m_alias;
 		std::string m_indexFile;
 
-		bool m_isAutoIndex;
-		bool m_autoIndex;
-
 		const Config::CgiParams *m_cgi;
+
+		bool			m_hasMethods;
+		Set<HttpMethod> m_methods;
+
+		bool m_hasAutoIndex;
+		bool m_autoIndex;
 
 	public:
 		Location(
@@ -40,6 +45,7 @@ class Config::Location
 		const std::string		&getAlias() const;
 		bool					 getAutoIndex() const;
 		const Config::CgiParams *getCgiParams() const;
+		const Set<HttpMethod>	&getAllowedMethods() const;
 
 		bool hasAlias() const;
 		bool hasCgi() const;
@@ -47,6 +53,7 @@ class Config::Location
 		bool hasRoot() const;
 		bool hasAutoIndexSet() const;
 		bool hasCgiParams() const;
+		bool hasMethods() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
@@ -54,6 +61,7 @@ class Config::Location
 		void setIndexFile(const std::string &indexFile);
 		void setAutoIndex(const bool autoIndex);
 		void setCgiParams(const Config::CgiParams *cgi);
+		void setMethods(const Set<HttpMethod> &methods);
 };
 
 std::ostream &operator<<(std::ostream &os, const Config::Location &location);

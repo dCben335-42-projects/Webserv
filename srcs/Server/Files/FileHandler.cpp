@@ -9,6 +9,7 @@
 #include "webserv.hpp"
 #include "httpHeaders.hpp"
 #include "httpMimes.hpp"
+#include "fileExtension.hpp"
 
 const Map<std::string> FileHandler::m_iconMap =
 	FileHandler::initIconMap();
@@ -20,44 +21,44 @@ Map<std::string> FileHandler::initExtensionTypeMap()
 {
 	Map<std::string> extensionTypeMap;
 
-	extensionTypeMap[HTTP_EXT_PLAIN] = HEADER_TYPE_PLAIN;
-	extensionTypeMap[HTTP_EXT_CSV]	 = HEADER_TYPE_CSV;
-	extensionTypeMap[HTTP_EXT_HTML]	 = HEADER_TYPE_HTML;
-	extensionTypeMap[HTTP_EXT_HTM]	 = HEADER_TYPE_HTML;
-	extensionTypeMap[HTTP_EXT_CSS]	 = HEADER_TYPE_CSS;
+	extensionTypeMap[FILE_EXT_PLAIN] = MIME_PLAIN;
+	extensionTypeMap[FILE_EXT_CSV]	 = MIME_CSV;
+	extensionTypeMap[FILE_EXT_HTML]	 = MIME_HTML;
+	extensionTypeMap[FILE_EXT_HTM]	 = MIME_HTML;
+	extensionTypeMap[FILE_EXT_CSS]	 = MIME_CSS;
 
-	extensionTypeMap[HTTP_EXT_JS]	= HEADER_TYPE_JS;
-	extensionTypeMap[HTTP_EXT_JSON] = HEADER_TYPE_JSON;
-	extensionTypeMap[HTTP_EXT_EOT]	= HEADER_TYPE_EOT;
-	extensionTypeMap[HTTP_EXT_PDF]	= HEADER_TYPE_PDF;
-	extensionTypeMap[HTTP_EXT_XML]	= HEADER_TYPE_XML;
+	extensionTypeMap[FILE_EXT_JS]	= MIME_JS;
+	extensionTypeMap[FILE_EXT_JSON] = MIME_JSON;
+	extensionTypeMap[FILE_EXT_EOT]	= MIME_EOT;
+	extensionTypeMap[FILE_EXT_PDF]	= MIME_PDF;
+	extensionTypeMap[FILE_EXT_XML]	= MIME_XML;
 
-	extensionTypeMap[HTTP_EXT_ZIP]	= HEADER_TYPE_ZIP;
-	extensionTypeMap[HTTP_EXT_YAML] = HEADER_TYPE_YAML;
-	extensionTypeMap[HTTP_EXT_YML]	= HEADER_TYPE_YAML;
-	extensionTypeMap[HTTP_EXT_TOML] = HEADER_TYPE_TOML;
-	extensionTypeMap[HTTP_EXT_RTF]	= HEADER_TYPE_RTF;
+	extensionTypeMap[FILE_EXT_ZIP]	= MIME_ZIP;
+	extensionTypeMap[FILE_EXT_YAML] = MIME_YAML;
+	extensionTypeMap[FILE_EXT_YML]	= MIME_YAML;
+	extensionTypeMap[FILE_EXT_TOML] = MIME_TOML;
+	extensionTypeMap[FILE_EXT_RTF]	= MIME_RTF;
 
-	extensionTypeMap[HTTP_EXT_PNG]	= HEADER_TYPE_PNG;
-	extensionTypeMap[HTTP_EXT_JPG]	= HEADER_TYPE_JPEG;
-	extensionTypeMap[HTTP_EXT_WEBP] = HEADER_TYPE_WEBP;
-	extensionTypeMap[HTTP_EXT_JPEG] = HEADER_TYPE_JPEG;
-	extensionTypeMap[HTTP_EXT_GIF]	= HEADER_TYPE_GIF;
-	extensionTypeMap[HTTP_EXT_SVG]	= HEADER_TYPE_SVG;
-	extensionTypeMap[HTTP_EXT_AVIF] = HEADER_TYPE_AVIF;
-	extensionTypeMap[HTTP_EXT_HEIC] = HEADER_TYPE_HEIC;
-	extensionTypeMap[HTTP_EXT_ICO]	= HEADER_TYPE_ICO;
+	extensionTypeMap[FILE_EXT_PNG]	= MIME_PNG;
+	extensionTypeMap[FILE_EXT_JPG]	= MIME_JPEG;
+	extensionTypeMap[FILE_EXT_WEBP] = MIME_WEBP;
+	extensionTypeMap[FILE_EXT_JPEG] = MIME_JPEG;
+	extensionTypeMap[FILE_EXT_GIF]	= MIME_GIF;
+	extensionTypeMap[FILE_EXT_SVG]	= MIME_SVG;
+	extensionTypeMap[FILE_EXT_AVIF] = MIME_AVIF;
+	extensionTypeMap[FILE_EXT_HEIC] = MIME_HEIC;
+	extensionTypeMap[FILE_EXT_ICO]	= MIME_ICO;
 
-	extensionTypeMap[HTTP_EXT_MP4]	= HEADER_TYPE_MP4;
-	extensionTypeMap[HTTP_EXT_WEBM] = HEADER_TYPE_WEBM;
+	extensionTypeMap[FILE_EXT_MP4]	= MIME_MP4;
+	extensionTypeMap[FILE_EXT_WEBM] = MIME_WEBM;
 
-	extensionTypeMap[HTTP_EXT_TTF]	 = HEADER_TYPE_TTF;
-	extensionTypeMap[HTTP_EXT_WOFF]	 = HEADER_TYPE_WOFF;
-	extensionTypeMap[HTTP_EXT_WOFF2] = HEADER_TYPE_WOFF2;
+	extensionTypeMap[FILE_EXT_TTF]	 = MIME_TTF;
+	extensionTypeMap[FILE_EXT_WOFF]	 = MIME_WOFF;
+	extensionTypeMap[FILE_EXT_WOFF2] = MIME_WOFF2;
 
-	extensionTypeMap[HTTP_EXT_MP3]	= HEADER_TYPE_MP3;
-	extensionTypeMap[HTTP_EXT_FLAC] = HEADER_TYPE_FLAC;
-	extensionTypeMap[HTTP_EXT_WAV]	= HEADER_TYPE_WAV;
+	extensionTypeMap[FILE_EXT_MP3]	= MIME_MP3;
+	extensionTypeMap[FILE_EXT_FLAC] = MIME_FLAC;
+	extensionTypeMap[FILE_EXT_WAV]	= MIME_WAV;
 
 	return extensionTypeMap;
 }
@@ -66,44 +67,44 @@ Map<std::string> FileHandler::initIconMap()
 {
 	Map<std::string> iconMap;
 
-	iconMap[HTTP_EXT_PLAIN] = ICON_PLAIN;
-	iconMap[HTTP_EXT_CSV]	= ICON_PLAIN;
-	iconMap[HTTP_EXT_HTML]	= ICON_PLAIN;
-	iconMap[HTTP_EXT_HTM]	= ICON_PLAIN;
-	iconMap[HTTP_EXT_CSS]	= ICON_PLAIN;
-	iconMap[HTTP_EXT_JS]	= ICON_PLAIN;
-	iconMap[HTTP_EXT_JSON]	= ICON_PLAIN;
+	iconMap[FILE_EXT_PLAIN] = ICON_PLAIN;
+	iconMap[FILE_EXT_CSV]	= ICON_PLAIN;
+	iconMap[FILE_EXT_HTML]	= ICON_PLAIN;
+	iconMap[FILE_EXT_HTM]	= ICON_PLAIN;
+	iconMap[FILE_EXT_CSS]	= ICON_PLAIN;
+	iconMap[FILE_EXT_JS]	= ICON_PLAIN;
+	iconMap[FILE_EXT_JSON]	= ICON_PLAIN;
 
-	iconMap[HTTP_EXT_PDF]  = ICON_PDF;
-	iconMap[HTTP_EXT_XML]  = ICON_PLAIN;
-	iconMap[HTTP_EXT_ZIP]  = ICON_ARCHIVE;
-	iconMap[HTTP_EXT_YAML] = ICON_PLAIN;
-	iconMap[HTTP_EXT_YML]  = ICON_PLAIN;
-	iconMap[HTTP_EXT_TOML] = ICON_PLAIN;
-	iconMap[HTTP_EXT_RTF]  = ICON_PLAIN;
+	iconMap[FILE_EXT_PDF]  = ICON_PDF;
+	iconMap[FILE_EXT_XML]  = ICON_PLAIN;
+	iconMap[FILE_EXT_ZIP]  = ICON_ARCHIVE;
+	iconMap[FILE_EXT_YAML] = ICON_PLAIN;
+	iconMap[FILE_EXT_YML]  = ICON_PLAIN;
+	iconMap[FILE_EXT_TOML] = ICON_PLAIN;
+	iconMap[FILE_EXT_RTF]  = ICON_PLAIN;
 
-	iconMap[HTTP_EXT_PNG]  = ICON_IMAGE;
-	iconMap[HTTP_EXT_JPG]  = ICON_IMAGE;
-	iconMap[HTTP_EXT_WEBP] = ICON_IMAGE;
-	iconMap[HTTP_EXT_JPEG] = ICON_IMAGE;
-	iconMap[HTTP_EXT_GIF]  = ICON_IMAGE;
-	iconMap[HTTP_EXT_SVG]  = ICON_IMAGE;
-	iconMap[HTTP_EXT_AVIF] = ICON_IMAGE;
-	iconMap[HTTP_EXT_HEIC] = ICON_IMAGE;
-	iconMap[HTTP_EXT_ICO]  = ICON_IMAGE;
+	iconMap[FILE_EXT_PNG]  = ICON_IMAGE;
+	iconMap[FILE_EXT_JPG]  = ICON_IMAGE;
+	iconMap[FILE_EXT_WEBP] = ICON_IMAGE;
+	iconMap[FILE_EXT_JPEG] = ICON_IMAGE;
+	iconMap[FILE_EXT_GIF]  = ICON_IMAGE;
+	iconMap[FILE_EXT_SVG]  = ICON_IMAGE;
+	iconMap[FILE_EXT_AVIF] = ICON_IMAGE;
+	iconMap[FILE_EXT_HEIC] = ICON_IMAGE;
+	iconMap[FILE_EXT_ICO]  = ICON_IMAGE;
 
-	iconMap[HTTP_EXT_MP4]  = ICON_VIDEO;
-	iconMap[HTTP_EXT_WEBM] = ICON_VIDEO;
+	iconMap[FILE_EXT_MP4]  = ICON_VIDEO;
+	iconMap[FILE_EXT_WEBM] = ICON_VIDEO;
 
-	iconMap[HTTP_EXT_TTF]	= ICON_FONT;
-	iconMap[HTTP_EXT_WOFF]	= ICON_FONT;
-	iconMap[HTTP_EXT_WOFF2] = ICON_FONT;
-	iconMap[HTTP_EXT_EOT]	= ICON_FONT;
+	iconMap[FILE_EXT_TTF]	= ICON_FONT;
+	iconMap[FILE_EXT_WOFF]	= ICON_FONT;
+	iconMap[FILE_EXT_WOFF2] = ICON_FONT;
+	iconMap[FILE_EXT_EOT]	= ICON_FONT;
 
 
-	iconMap[HTTP_EXT_MP3]  = ICON_AUDIO;
-	iconMap[HTTP_EXT_FLAC] = ICON_AUDIO;
-	iconMap[HTTP_EXT_WAV]  = ICON_AUDIO;
+	iconMap[FILE_EXT_MP3]  = ICON_AUDIO;
+	iconMap[FILE_EXT_FLAC] = ICON_AUDIO;
+	iconMap[FILE_EXT_WAV]  = ICON_AUDIO;
 
 	iconMap["/"] = ICON_DIRECTORY;
 	iconMap[""]	 = ICON_DEFAULT;
@@ -194,7 +195,7 @@ std::string FileHandler::getContentType(const std::string &filePath)
 	Map<std::string>::const_iterator it = m_extensionTypeMap.find(ext);
 	if (it != m_extensionTypeMap.end())
 		return it->second;
-	return HEADER_TYPE_OCTET;
+	return MIME_OCTET;
 }
 
 std::string FileHandler::getContentType(const File &file)
@@ -204,7 +205,7 @@ std::string FileHandler::getContentType(const File &file)
 	Map<std::string>::const_iterator it = m_extensionTypeMap.find(ext);
 	if (it != m_extensionTypeMap.end())
 		return it->second;
-	return HEADER_TYPE_OCTET;
+	return MIME_OCTET;
 }
 
 std::string FileHandler::getIcon(const File &file)

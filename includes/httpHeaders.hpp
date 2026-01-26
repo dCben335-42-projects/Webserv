@@ -1,7 +1,6 @@
 #ifndef HTTP_HEADERS_HPP
 #define HTTP_HEADERS_HPP
 
-
 #define HEADER_ENDING "\r\n\r\n"
 #define HEADER_ENDING_SIZE 4
 

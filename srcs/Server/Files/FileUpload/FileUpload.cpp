@@ -23,7 +23,7 @@ void FileUpload::fetchBoundaries(size_t boundaryPos, std::string contentType)
 bool FileUpload::isUploadValid()
 {
 	std::string contentType	   = m_req.getHeader(HEADER_CONTENT_TYPE);
-	size_t		contentTypePos = contentType.find(HEADER_TYPE_MULTIPART);
+	size_t		contentTypePos = contentType.find(MIME_MULTIPART);
 	size_t		boundaryPos	   = contentType.find("boundary=");
 	if (contentTypePos == std::string::npos || boundaryPos == std::string::npos)
 		return false;

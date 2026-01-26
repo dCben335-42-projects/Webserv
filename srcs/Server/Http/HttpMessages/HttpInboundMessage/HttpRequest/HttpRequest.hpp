@@ -34,6 +34,7 @@ class HttpRequest : public AHttpInboundMessage
 
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		getActiveAutoIndex() const;
+		bool		isAllowedMethod() const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);
