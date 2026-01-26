@@ -22,8 +22,8 @@ size_t				 EventLoop::m_nfds = 0;
 void EventLoop::init()
 {
 	Map<std::string> binmap1;
+	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
-	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
 	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.html", false, param2);
@@ -34,7 +34,7 @@ void EventLoop::init()
 	Config::Location *loc40			  = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
 
 	Config::Location			 *loc8 = new Config::Location("/cgi-bin", "", "", "", false, NULL);
-	Config::Location			 *loc9 = new Config::Location("/usr/bin/", "", "files/www/website/", "", true, NULL);
+	Config::Location			 *loc9 = new Config::Location("/directory/", "files/www/website/YoupiBanane", "", "youpi.bad_extension", false, NULL);
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);

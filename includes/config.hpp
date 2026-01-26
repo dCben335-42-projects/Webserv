@@ -19,6 +19,8 @@
 #define HEADER_SEPARATOR ": "
 #define READ_BUFFER_SIZE 8192
 #define WRITE_BUFFER_SIZE 8192
+#define READ_CGI_BUFFER_SIZE 1
+#define WRITE_CGI_BUFFER_SIZE 8192
 #define HEADER_SERVER "Server"
 #define HEADER_CONTENT_LENGTH "Content-Length"
 #define HEADER_CONTENT_TYPE "Content-Type"

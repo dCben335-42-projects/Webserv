@@ -63,27 +63,18 @@ void CgiPipe::waitChild()
 
 void CgiPipe::onPollIn()
 {
-	char buffer[READ_BUFFER_SIZE] = {'\0'};
-	int	 bytes_read				  = read(m_fd, buffer, READ_BUFFER_SIZE);
+	// char buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
+	// int	 bytesRead					  = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
 
-	if (bytes_read > 0)
-	{
-		HttpResponse &res = m_client->getResponse();
-		res.appendToFulFullResponse(buffer, bytes_read);
-		return;
-	}
-	// if (bytes_read == 0)
+	// if (bytesRead > 0)
 	// {
-	// 	std::cerr << "Read ended" << std::endl;
-	// 	waitChild();
-	// 	m_events = 0;
-	// 	m_client->setEvents(POLLOUT);
-	// 	m_connectionClosed = true;
+	// 	HttpResponse &res = m_client->getResponse();
+	// 	res.appendToFulFullResponse(buffer, bytesRead);
 	// 	return;
 	// }
-	if (bytes_read < 0)
-		std::cerr << "Read error" << std::endl;
-	onError();
+	// if (bytesRead < 0)
+	// 	std::cerr << "Read error" << std::endl;
+	// onError();
 }
 
 void CgiPipe::onError()
@@ -119,9 +110,22 @@ void CgiPipe::onPollErr()
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
-	// TODO Read loop in case there is still data
-	std::cerr << "Read ended" << std::endl;
+	char   buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
+	size_t bytesRead					= read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
+
+	if (bytesRead < 0)
+	{
+		std::cerr << "Read error" << std::endl;
+		return;
+	}
+	if (bytesRead > 0)
+	{
+		HttpResponse &res = m_client->getResponse();
+		res.appendToFulFullResponse(buffer, bytesRead);
+		return;
+	}
 	waitChild();
+	std::cerr << "Read ended" << std::endl;
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
