@@ -32,9 +32,8 @@ class String
 		static std::string removeDuplicateSlashes(const std::string &path);
 
 		static Vec<std::string> split(const std::string &str, const char *delimiters);
+		static Vec<std::string> splitPattern(const std::string &str, const std::string &pattern);
 };
-
-
 
 
 #endif

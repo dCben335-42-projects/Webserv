@@ -7,16 +7,19 @@
 class FileUpload
 {
 	private:
-		std::string	 m_boundaryStr;
-		std::string	 m_lastBoundaryStr;
-		HttpRequest &m_req;
+		std::string				 m_boundaryStr;
+		std::string				 m_lastBoundaryStr;
+		HttpRequest				&m_req;
+		Vec<AHttpInboundMessage> m_subRequests;
 
 	public:
 		FileUpload(HttpRequest &req);
 		~FileUpload();
 		bool isUploadValid();
-		bool isSubTypeValid();
 		void fetchBoundaries(size_t boundaryPos, std::string contentType);
+		void parseSubTypes();
+		void fillSubRequests(Vec<std::string> subTypes);
+		void parseSubRequests();
 };
 
 #endif
