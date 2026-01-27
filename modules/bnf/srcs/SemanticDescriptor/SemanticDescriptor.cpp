@@ -11,8 +11,6 @@ SemanticDescriptor::SemanticDescriptor() : tree(NULL)
 
 SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
 {
-	Logger::setTarget(Logger::Stderr);
-
 	std::istringstream iss(m_content);
 	splitBlocks(iss);
 	parseBlocks();
@@ -21,14 +19,11 @@ SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
 SemanticDescriptor::~SemanticDescriptor()
 {
 	delete tree;
-
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
 		Vec<ConceptDef *> defs = (*it).second->getDefinitions();
 		for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
-		{
 			delete *conceptIt;
-		}
 		delete (*it).second;
 	}
 }
@@ -122,6 +117,108 @@ void SemanticDescriptor::parseBlocks()
 	}
 }
 
+
+// Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
+// {
+// 	// Split '(', ')', '{', '}', '[', ']' and '|' if they are not inside simple or double quotes
+// 	// split words that are not inside simple or double quotes, if they are inside quotes, keep them together, the whitespace make part of the word
+
+// }
+
+#include <string>
+#include <vector>
+#include <cctype>
+
+Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
+{
+	Vec<std::string> result;
+	std::string		 current;
+
+	bool in_single_quote = false;
+	bool in_double_quote = false;
+
+	for (size_t i = 0; i < rule.size(); ++i)
+	{
+		char c = rule[i];
+
+		/* Gestion du backslash */
+		if (c == '\\' && i + 1 < rule.size())
+		{
+			char next = rule[i + 1];
+
+			/* Séquences échappées */
+			if (next == 'n')
+				current += '\n';
+			else if (next == 't')
+				current += '\t';
+			else if (next == ' ')
+				current += ' ';
+			else if (next == '\\')
+				current += '\\';
+			else if (next == '"' || next == '\'')
+				current += next;
+			else
+			{
+				/* backslash inutile → littéral */
+				current += '\\';
+				current += next;
+			}
+
+			++i; /* on consomme le caractère suivant */
+			continue;
+		}
+
+		/* Quotes */
+		if (c == '\'' && !in_double_quote)
+		{
+			in_single_quote = !in_single_quote;
+			current += c;
+			continue;
+		}
+		if (c == '"' && !in_single_quote)
+		{
+			in_double_quote = !in_double_quote;
+			current += c;
+			continue;
+		}
+
+		/* Hors quotes */
+		if (!in_single_quote && !in_double_quote)
+		{
+			if (std::isspace((unsigned char) c))
+			{
+				if (!current.empty())
+				{
+					result.push_back(current);
+					current.clear();
+				}
+				continue;
+			}
+
+			if (c == '(' || c == ')' ||
+				c == '{' || c == '}' ||
+				c == '[' || c == ']' ||
+				c == '|')
+			{
+				if (!current.empty())
+				{
+					result.push_back(current);
+					current.clear();
+				}
+				result.push_back(std::string(1, c));
+				continue;
+			}
+		}
+
+		current += c;
+	}
+
+	if (!current.empty())
+		result.push_back(current);
+
+	return result;
+}
+
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
 	Concept *concept;
@@ -136,21 +233,32 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	size_t conceptDefIndex = concept->getDefinitions().size();
 	concept->pushDef(conceptDef);
 
-	std::istringstream iss(m_content.substr(cursor));
-	std::string		   word;
-	ARule			  *arule	  = NULL;
-	size_t			   aruleIndex = 0;
+	Vec<std::string> words = splitwords(m_content.substr(cursor));
+	Logger::log(words);
 
-	while (iss >> word)
+	std::string word;
+	ARule	   *arule	   = NULL;
+	size_t		aruleIndex = 0;
+
+	for (size_t i = 0; i < words.size(); ++i)
 	{
+		word = words[i];
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
 		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept, conceptDef);
-		if (map.hasClosure && !(iss >> word))
-			throw std::runtime_error("Unexpected end of rule after " + map.opener);
+
+
+		if (map.hasClosure)
+		{
+			if (i + 1 == words.size())
+				throw std::runtime_error("Unexpected end of rule after " + map.opener);
+			i++;
+			word = words[i];
+		}
 		while (word != map.closer)
 		{
+			Logger::log("Current word: " + word);
 			if (ARule::isKeyWord(word, false))
 				throw std::runtime_error("Bad closing keyword: " + word);
 			if (word != DIVIDER)
@@ -161,12 +269,17 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 				if (!map.hasClosure)
 					break;
 			}
-			if (!(iss >> word))
+			i++;
+			if (i == words.size())
 				break;
+			else
+				word = words[i];
 		}
 		conceptDef->setRule(arule);
 		aruleIndex++;
 	}
+
+
 	conceptDef->finish();
 	conceptDef->computeOptionalIndex();
 }

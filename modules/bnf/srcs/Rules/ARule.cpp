@@ -74,6 +74,13 @@ static const BnfMap rules[] = {
 	 .hasClosure  = false},
 };
 
+/**
+ * @brief Check if a word is a keyword (opener or closer)
+ *
+ * @param word The word to check
+ * @param onlyClose If true, only check for closers
+ * @return true if the word is a keyword, false otherwise
+ */
 bool ARule::isKeyWord(const std::string &word, bool onlyClose)
 {
 	size_t i = 0;
@@ -89,6 +96,12 @@ bool ARule::isKeyWord(const std::string &word, bool onlyClose)
 	return false;
 }
 
+/**
+ * @brief Get the BnfMap for a given opener
+ *
+ * @param opener The opener to get the BnfMap for
+ * @return BnfMap The BnfMap for the given opener
+ */
 BnfMap ARule::getMap(const std::string &opener)
 {
 	size_t i = 0;

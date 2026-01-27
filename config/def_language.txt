@@ -1,12 +1,14 @@
-<head>			::=  WESH [ REST ]
+<head>			::=
+'location\\' LINE_JUMP 'ok'
 
-REST			::= ( 'nico' | 'nt' ) 'A'
+TEST			::= { 'ni' }
+REST			::= ( 'nico' | 'nip' ) 'A'
 DZGZTP			::= 'as' 'q' DZGZT
 WESH			::= [ 'l' ]
 TO				::= ( 'l' )
 
 LETTER      	::= ( UPCASE_LETTER | LOCASE_LETTER )
-LOCASE_LETTER	::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
+LOCASE_LETTER	::= ( '\'' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
 					'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
 UPCASE_LETTER	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
 
@@ -14,3 +16,5 @@ DZGZT			::= 'X' '5p999' UPCASE_LETTER ( '8' | '7' )
 
 MOT				::= 'location'
 SPACE			::= '_'
+
+LINE_JUMP		::= '\n'

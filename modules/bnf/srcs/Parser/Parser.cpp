@@ -144,7 +144,6 @@ bool Parser::word(
 				mapPathNext.set(rule, ARulePaths());
 
 			ARulePaths &mapPath = mapPathNext.get(rule);
-			Logger::log("mapPath: " + LoggerJson::get(mapPath));
 
 			for (size_t i = 0; i < mapPath.size(); ++i)
 			{
@@ -169,8 +168,7 @@ bool Parser::word(
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
-	Logger::log("----------------------------------------------------\nParsing char: " + std::string(1, c));
-	Logger::log("mapPathCurrent: " + LoggerJson::get(mapPathCurrent));
+	Logger::log("Parsing char: " + std::string(1, c));
 
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
@@ -292,8 +290,6 @@ void Parser::parse(const std::string &stringToParsed)
 
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
-	Logger::log("Initial possible paths:");
-
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		c = stringToParsed[i];
@@ -305,7 +301,6 @@ void Parser::parse(const std::string &stringToParsed)
 			break;
 
 		mapPathCurrent = mapPathNext;
-
 		mapPathNext.clear();
 	}
 	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide

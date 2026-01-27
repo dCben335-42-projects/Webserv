@@ -54,6 +54,7 @@ class SemanticDescriptor
 		ConceptNode				*getTree() const;
 		void					 ndw(const ARule *rule, Vec<std::string> &conceptPaths);
 		void					 findAllNext();
+		Vec<std::string>		 splitwords(std::string rule);
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);
