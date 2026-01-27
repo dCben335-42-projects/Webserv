@@ -125,22 +125,28 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 }
 
 bool Parser::word(
-	const char		  *nextTerminalChar,
+	TerminalCharInfo  *data,
 	const char		   c,
 	const ARule *const rule,
-	ARulePathInfo	   pathInfo,
+	ARulePathInfo	  *pathInfo,
 	const ARuleMap	  &mapPathCurrent,
 	ARuleMap		  &mapPathNext)
 {
-	// Logger::log(nextTerminalChar);
-	if (!(*nextTerminalChar))
+
+	if (data->position >= data->length)
 		return false;
 
-	if ((*nextTerminalChar) == c)
-	{
-		if (*(++nextTerminalChar))
-		{
 
+	if (data->terminal->getValue()[data->position] == c)
+	{
+
+		if (data->position == data->length - 1)
+		{
+			addNextPaths(mapPathCurrent, mapPathNext, pathInfo->path, rule);
+		}
+		else
+		{
+			data->position += 1;
 			if (!mapPathNext.has(rule))
 				mapPathNext.set(rule, ARulePaths());
 
@@ -149,59 +155,85 @@ bool Parser::word(
 			for (size_t i = 0; i < mapPath.size(); ++i)
 			{
 				ARulePathInfo &it = mapPath[i];
-				if (it.path == pathInfo.path)
+				if (it.path == pathInfo->path)
 				{
-					it.terminalCharIt.push(nextTerminalChar);
+					it.terminalCharsInfo.push(*data);
 					return true;
 				}
 			}
-			ARulePathInfo pathInfoObj(pathInfo.path);
-			pathInfoObj.terminalCharIt.push(nextTerminalChar);
+			ARulePathInfo pathInfoObj(pathInfo->path);
+			pathInfoObj.terminalCharsInfo.push(*data);
 			mapPathNext.get(rule).push_once(pathInfoObj);
 		}
-		else
-			addNextPaths(mapPathCurrent, mapPathNext, pathInfo.path, rule);
 		return true;
 	}
+
 	return false;
 }
 
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
+	Logger::log("--------------------------------");
 	Logger::log("Parsing char: " + std::string(1, c));
-
+	// Logger::log("Current paths:" + LoggerJson::get(mapPathCurrent));
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
-		const ARule		   *rule  = it->first;
-		ARulePaths			paths = it->second;
-		Vec<TerminalSymbol> items = rule->getItems();
-		Logger::log(rule->getConceptName());
-		Logger::log(mapPathCurrent.get(rule));
+		const ARule				  *rule	 = it->first;
+		ARulePaths				   paths = it->second;
+		const Vec<TerminalSymbol> &items = rule->getItems();
+		// Logger::log(mapPathCurrent.get(rule));
 
-		for (ARulePaths::iterator pathInfo = paths.begin(); pathInfo != paths.end(); ++pathInfo)
+		// for (ARulePaths::iterator pathInfo = paths.begin(); pathInfo != paths.end(); ++pathInfo)
+		// {
+		// 	size_t indexElementTerminalChar = 0;
+		// 	for (size_t itemIndex = 0; itemIndex < items.size(); ++itemIndex)
+		// 	{
+		// 		if (!items[itemIndex].isTerminalChar())
+		// 			continue;
+
+		// 		TerminalCharInfo data;
+		// 		if (!(pathInfo->terminalCharsInfo.has(indexElementTerminalChar)))
+		// 		{
+		// 			data = TerminalCharInfo(&items[itemIndex], 0);
+		// 		}
+		// 		else
+		// 		{
+		// 			data = pathInfo->terminalCharsInfo.at(indexElementTerminalChar);
+		// 		}
+
+		// 		// Logger::log(nextTerminalChar);
+		// 		if (word(&data, c, rule, (*pathInfo), mapPathCurrent, mapPathNext))
+		// 			isValidWithCurrentPath = true;
+		// 		indexElementTerminalChar++;
+		// 	}
+		// }
+		for (size_t pathIndex = 0; pathIndex < paths.size(); ++pathIndex)
 		{
 			size_t indexElementTerminalChar = 0;
-			for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
+			for (size_t itemIndex = 0; itemIndex < items.size(); ++itemIndex)
 			{
-				if (!item->isTerminalChar())
+				if (!items[itemIndex].isTerminalChar())
 					continue;
-				const char *nextTerminalChar;
-				if (!(pathInfo->terminalCharIt.has(indexElementTerminalChar)))
+
+				TerminalCharInfo data;
+				if (!(paths[pathIndex].terminalCharsInfo.has(indexElementTerminalChar)))
 				{
-					const std::string &value = item->getValue();
-					nextTerminalChar		 = value.c_str();
+					data = TerminalCharInfo(&items[itemIndex], 0);
 				}
 				else
-					nextTerminalChar = pathInfo->terminalCharIt.at(indexElementTerminalChar);
+				{
+					data = paths[pathIndex].terminalCharsInfo.at(indexElementTerminalChar);
+				}
 
 				// Logger::log(nextTerminalChar);
-				if (word(nextTerminalChar, c, rule, (*pathInfo), mapPathCurrent, mapPathNext))
+				if (word(&data, c, rule, &paths[pathIndex], mapPathCurrent, mapPathNext))
 					isValidWithCurrentPath = true;
 				indexElementTerminalChar++;
 			}
 		}
 	}
+
 	return isValidWithCurrentPath;
 }
 
@@ -293,11 +325,13 @@ void Parser::parse(const std::string &stringToParsed)
 	ARuleMap mapPathNext;
 	char	 c;
 
+	Logger::log(m_semantic);
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		c = stringToParsed[i];
+		Logger::log("index: " + LoggerJson::get(i) + ", char: '" + c + "'");
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
 		else

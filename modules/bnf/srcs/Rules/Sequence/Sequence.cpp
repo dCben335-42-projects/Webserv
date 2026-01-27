@@ -20,7 +20,7 @@ void Sequence::addItem(const TerminalSymbol &val)
 	m_items.push_back(val);
 }
 
-Vec<TerminalSymbol> Sequence::getItems() const
+const Vec<TerminalSymbol> &Sequence::getItems() const
 {
 	return m_items;
 }

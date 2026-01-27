@@ -40,13 +40,13 @@ class ARule
 	public:
 		virtual ~ARule();
 
-		ERuleType					getType() const;
-		virtual const std::string	getTypeName() const				   = 0;
-		virtual void				addItem(const TerminalSymbol &val) = 0;
-		virtual Vec<TerminalSymbol> getItems() const				   = 0;
-		virtual std::string			getPrintableValue() const		   = 0;
-		static BnfMap				getMap(const std::string &opener);
-		static bool					isKeyWord(const std::string &word, bool onlyClose);
+		ERuleType						   getType() const;
+		virtual const std::string		   getTypeName() const				  = 0;
+		virtual void					   addItem(const TerminalSymbol &val) = 0;
+		virtual const Vec<TerminalSymbol> &getItems() const					  = 0;
+		virtual std::string				   getPrintableValue() const		  = 0;
+		static BnfMap					   getMap(const std::string &opener);
+		static bool						   isKeyWord(const std::string &word, bool onlyClose);
 
 		const std::string getConceptName() const;
 		size_t			  getConceptDefIndex() const;

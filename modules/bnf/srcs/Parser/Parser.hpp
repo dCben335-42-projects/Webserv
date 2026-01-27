@@ -38,10 +38,10 @@ class Parser
 
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 		bool word(
-			const char		  *nextTerminalChar,
+			TerminalCharInfo  *data,
 			const char		   c,
 			const ARule *const rule,
-			ARulePathInfo	   pathInfo,
+			ARulePathInfo	  *pathInfo,
 			const ARuleMap	  &mapPathCurrent,
 			ARuleMap		  &mapPathNext);
 

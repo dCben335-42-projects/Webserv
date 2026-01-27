@@ -19,7 +19,7 @@ void Option::addItem(const TerminalSymbol &val)
 	m_items.push_back(val);
 }
 
-Vec<TerminalSymbol> Option::getItems() const
+const Vec<TerminalSymbol> &Option::getItems() const
 {
 	return m_items;
 }

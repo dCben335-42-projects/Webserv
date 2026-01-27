@@ -1,62 +1,73 @@
 <head>			::= { STATEMENT }
 
-STATEMENT 		::= ( USER_STMT | WORKER_STMT | PID_STMT | EVENTS_BLOCK | HTTP_BLOCK ) LINE_JUMP
+STATEMENT 		::= ( USER_STMT | WORKER_STMT | PID_STMT | EVENTS_BLOCK | HTTP_BLOCK ) { LINE_JUMP }
 
 USER_STMT		::= 'user' SPACE USER_NAME ';'
 WORKER_STMT		::= 'worker_processes' SPACE IDENT ';'
 PID_STMT		::= 'pid' SPACE PATH ';'
 
-EVENTS_BLOCK	::= 'events' SPACE '{' LINE_JUMP
-                 { EVENT_STMT LINE_JUMP }
-                 '}'
+EVENTS_BLOCK	::= 'events' [ SPACE ] '{' LINE_JUMP { EVENT_STMT } '}'
 
-EVENT_STMT		::= ( 'worker_connections' SPACE NUMBER ';'
-				| 'multi_accept' SPACE BOOL ';' )
+EVENT_STMT		::= [ TAB_SPACE ] EVENT_RULE ';' [ LINE_JUMP ]
 
-HTTP_BLOCK		::= 'http' SPACE '{' LINE_JUMP
-				{ HTTP_STMT LINE_JUMP }
-				'}'
+EVENT_RULE		::= 'worker_connections' SPACE NUMBER
+				|= 'multi_accept' SPACE BOOL
 
-HTTP_STMT		::= ( BASIC_HTTP_STMT
-				| GZIP_STMT
-				| INCLUDE_STMT )
+HTTP_BLOCK		::= 'http' [ SPACE ] '{' LINE_JUMP { HTTP_STMT LINE_JUMP } '}'
 
-BASIC_HTTP_STMT	::= ( 'sendfile' SPACE BOOL ';'
-				| 'tcp_nopush' SPACE BOOL ';'
-				| 'tcp_nodelay' SPACE BOOL ';'
-				| 'keepalive_timeout' SPACE NUMBER ';'
-				| 'types_hash_max_size' SPACE NUMBER ';'
-				| 'default_type' SPACE MIME ';'
-				| 'access_log' SPACE PATH ';'
-				| 'error_log' SPACE PATH SPACE LOG_LEVEL ';'
-				| 'server_tokens' SPACE BOOL ';' )
+HTTP_STMT		::= [ TAB_SPACE ] ( BASIC_HTTP_STMT | GZIP_STMT | INCLUDE_STMT ) ';' [ LINE_JUMP ]
 
-GZIP_STMT		::= ( 'gzip' SPACE BOOL ';'
-				| 'gzip_disable' SPACE STRING ';'
-				| 'gzip_vary' SPACE BOOL ';'
-				| 'gzip_proxied' SPACE IDENT ';'
-				| 'gzip_comp_level' SPACE NUMBER ';'
-				| 'gzip_buffers' SPACE NUMBER SPACE SIZE ';'
-				| 'gzip_http_version' SPACE VERSION ';'
-				| GZIP_TYPES )
+BASIC_HTTP_STMT	::= 'sendfile' TAB_SPACE BOOL
+				|= 'tcp_nopush' TAB_SPACE BOOL
+				|= 'tcp_nodelay' TAB_SPACE BOOL
+				|= 'keepalive_timeout' TAB_SPACE NUMBER
+				|= 'types_hash_max_size' TAB_SPACE NUMBER
+				|= 'default_type' TAB_SPACE MIME
+				|= 'access_log' TAB_SPACE PATH
+				|= 'error_log' TAB_SPACE PATH SPACE LOG_LEVEL
+				|= 'server_tokens' TAB_SPACE BOOL
 
-GZIP_TYPES		::= 'gzip_types' LINE_JUMP
-               	{ MIME LINE_JUMP }
+GZIP_STMT		::= 'gzip' TAB_SPACE BOOL
+				|= 'gzip_disable' TAB_SPACE STRING
+				|= 'gzip_vary' TAB_SPACE BOOL
+				|= 'gzip_proxied' TAB_SPACE IDENT
+				|= 'gzip_comp_level' TAB_SPACE NUMBER
+				|= 'gzip_buffers' TAB_SPACE NUMBER SPACE SIZE
+				|= 'gzip_http_version' TAB_SPACE VERSION
+				|= GZIP_TYPES
 
-INCLUDE_STMT	::= 'include' SPACE PATH ';'
+GZIP_TYPES		::= 'gzip_types' LINE_JUMP { GZIP_MIMES }
+
+GZIP_MIMES		::= [ TAB_SPACE ] MIME [ LINE_JUMP ]
+
+INCLUDE_STMT	::= 'include' TAB_SPACE PATH
 
 USER_NAME ::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' }
 
 IDENT ::= LETTER { LETTER }
 
-NUMBER ::= DIGIT { DIGIT }
+NUMBER ::= { DIGIT }
 
 BOOL ::= ( 'on' | 'off' )
 
 PATH ::= '/' { PATH_CHAR }
-PATH_CHAR ::= LETTER | DIGIT | '/' | '.' | '_'
+PATH_CHAR ::= ( LETTER | DIGIT | '/' | '.' | '_' | '*' | '-' )
 
-MIME ::= IDENT '/' IDENT
+MIME ::= ( TEXT_MIME | APPLICATION_MIME | FONT_MIME | MULTIPART_MIME | AUDIO_MIME | VIDEO_MIME | IMAGE_MIME )
+
+TEXT_MIME ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'text/xml' )
+
+APPLICATION_MIME ::= ( 'application/json' | 'application/javascript' | 'application/vnd.ms-fontobject' | 'application/pdf' | 'application/xml' | 'application/zip' | 'application/x-www-form-urlencoded' | 'application/x-yaml' | 'application/toml' | 'application/rtf' | 'application/octet-stream' )
+
+FONT_MIME ::= ( 'font/woff' | 'font/woff2' | 'font/ttf' | 'font/otf' )
+
+MULTIPART_MIME ::= ( 'multipart/form-data' )
+
+AUDIO_MIME ::= ( 'audio/mpeg' | 'audio/wav' | 'audio/flac' )
+
+VIDEO_MIME ::= ( 'video/mp4' | 'video/webm' )
+
+IMAGE_MIME ::= ( 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif' | 'image/svg+xml' | 'image/avif' | 'image/heic' | 'image/icns' | 'image/bmp' | 'image/tiff' | 'image/x-icon' )
 
 VERSION ::= NUMBER '.' NUMBER
 
@@ -65,20 +76,19 @@ SIZE ::= NUMBER ( 'k' | 'm' )
 LOG_LEVEL ::= ( 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'crit' )
 
 STRING ::= '"' { STRING_CHAR } '"'
-STRING_CHAR ::= LETTER | DIGIT | SPACE | '_' | '.'
+STRING_CHAR ::= ( LETTER | DIGIT | SPACE | '_' | '.' )
 
 LETTER ::= ( UPCASE_LETTER | LOCASE_LETTER )
 
 LOCASE_LETTER ::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
                   | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
 
-UPCASE_LETTER ::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
-                  | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
-
-DIGIT ::= ( '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )
-
-SPACE ::= ' '
-LINE_JUMP ::= '\n'
+UPCASE_LETTER 	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
+DIGIT			::= ( '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )
+TAB_SPACE		::= { SPACE | TAB }
+TAB				::= '\t'
+SPACE			::= ' '
+LINE_JUMP		::= '\n'
 
 
 

@@ -19,7 +19,7 @@ void Group::addItem(const TerminalSymbol &val)
 	m_items.push_back(val);
 }
 
-Vec<TerminalSymbol> Group::getItems() const
+const Vec<TerminalSymbol> &Group::getItems() const
 {
 	return m_items;
 }

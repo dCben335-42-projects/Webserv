@@ -45,6 +45,9 @@ TerminalSymbol TerminalSymbol::specify(const std::string &val)
 
 std::ostream &operator<<(std::ostream &os, const TerminalSymbol &data)
 {
-	os << data.getValue();
+	os << "{";
+	os << "my_address: " << &data << ", ";
+	os << "value: " << data.getValue();
+	os << "}";
 	return os;
 }

@@ -27,7 +27,7 @@ Symbol::~Symbol()
 {
 }
 
-Vec<TerminalSymbol> Symbol::getItems() const
+const Vec<TerminalSymbol> &Symbol::getItems() const
 {
 	return m_items;
 }

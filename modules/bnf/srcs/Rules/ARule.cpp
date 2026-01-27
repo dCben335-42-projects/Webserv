@@ -195,6 +195,7 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
 	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
 	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";
+	os << Logger::indent() << "items\": " << LoggerJson::get(data.getItems()) << "\n";
 	Logger::decrementIndent();
 	os << Logger::indent() << "}";
 	return os;

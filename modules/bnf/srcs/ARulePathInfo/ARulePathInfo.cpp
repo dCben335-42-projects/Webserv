@@ -1,6 +1,6 @@
 #include "ARulePathInfo.hpp"
 
-ARulePathInfo::ARulePathInfo(ARulePath path) : path(path), terminalCharIt(Vec<const char *>())
+ARulePathInfo::ARulePathInfo(ARulePath path) : path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
 {
 }
 
@@ -19,15 +19,21 @@ bool ARulePathInfo::operator==(const ARulePathInfo &other) const
 			return false;
 	}
 
-	if (terminalCharIt.size() != other.terminalCharIt.size())
+	if (terminalCharsInfo.size() != other.terminalCharsInfo.size())
 		return false;
 
-	for (size_t i = 0; i < terminalCharIt.size(); ++i)
+	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
 	{
-		if (*terminalCharIt[i] != *other.terminalCharIt[i])
-			return false;
-	}
+		const TerminalCharInfo &info1 = terminalCharsInfo[i];
+		const TerminalCharInfo &info2 = other.terminalCharsInfo[i];
 
+		if (&info1.terminal != &info2.terminal ||
+			info1.position != info2.position ||
+			info1.length != info2.length)
+		{
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -47,14 +53,22 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 	os << "], charPtr=[";
 
 
-	for (size_t i = 0; i < data.terminalCharIt.size(); ++i)
+	for (size_t i = 0; i < data.terminalCharsInfo.size(); ++i)
 	{
-		os << *(data.terminalCharIt[i]);
-		if (i < data.terminalCharIt.size() - 1)
+		const TerminalCharInfo &info = data.terminalCharsInfo[i];
+		os << "{terminal: \"" << info.terminal << "\", position: " << info.position << ", length: " << info.length << "}";
+		if (i < data.terminalCharsInfo.size() - 1)
 			os << ", ";
 	}
 
 
 	os << "])";
+	return os;
+}
+
+
+std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data)
+{
+	os << "{terminal: \"" << data.terminal << "\", position: " << data.position << ", length: " << data.length << "}";
 	return os;
 }
