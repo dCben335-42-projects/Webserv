@@ -10,7 +10,7 @@ size_t				 EventLoop::m_nfds = 0;
 void EventLoop::init()
 {
 	Map<std::string> binmap1;
-	Set<HttpMethod>	 allowedMethods1;
+	// Set<HttpMethod>	 allowedMethods1;
 	// allowedMethods1.insert(HttpMethod::GET);
 	// allowedMethods1.insert(HttpMethod::POST);
 	// allowedMethods1.insert(HttpMethod::DELETE);
@@ -18,10 +18,10 @@ void EventLoop::init()
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
-	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.htm", false, param2);
+	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.htm", true, param2);
 
 	Config::Location *loc2 = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
-	loc2->setMethods(allowedMethods1);
+	// loc2->setMethods(allowedMethods1);
 	Config::Location *loc1	= new Config::Location("/assets", "", "", "", true, NULL);
 	Config::Location *loc3	= new Config::Location("/assets/test/", "", "", "", NULL);
 	Config::Location *loc4	= new Config::Location("/assets/test/dwad", "", "", "", false, NULL);

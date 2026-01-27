@@ -29,6 +29,20 @@ HttpRequest::~HttpRequest()
 }
 
 
+HttpRequest &HttpRequest::reset()
+{
+	m_queryString.clear();
+	m_segments.clear();
+	m_activeLocations.clear();
+	m_rawStr.clear();
+	m_target.clear();
+	m_headers.clear();
+	m_body.clear();
+	m_method = HttpMethod();
+	return *this;
+}
+
+
 
 /**
  *
@@ -357,7 +371,7 @@ bool HttpRequest::isAllowedMethod() const
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 {
 	Logger::log("----- HTTP Request -----\n");
-	Logger::log(BLUE "Method: " + message.getMethod() + RESET);
+	Logger::log(BLUE "Method: " + message.getMethod().getStrType() + RESET);
 	Logger::log(GREEN "Target: " + message.getTarget() + RESET);
 	Logger::log(CYAN "Query String: " + message.getQueryString() + RESET);
 	Logger::log(CYAN "Segments: " + LoggerJson::get(message.getSegments()) + RESET);

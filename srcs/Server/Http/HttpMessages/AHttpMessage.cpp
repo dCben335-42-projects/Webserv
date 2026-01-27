@@ -21,7 +21,7 @@ AHttpMessage::~AHttpMessage()
  * @return A map containing all HTTP headers.
  *
  */
-Map<std::string> AHttpMessage::getHeaders() const
+const Map<std::string> &AHttpMessage::getHeaders() const
 {
 	return m_headers;
 }
@@ -51,9 +51,9 @@ std::string AHttpMessage::getHeader(const std::string &key) const
  * @return The HTTP method as a string.
  *
  */
-std::string AHttpMessage::getMethod() const
+const HttpMethod &AHttpMessage::getMethod() const
 {
-	return m_method.getStrType();
+	return m_method;
 }
 /**
  *

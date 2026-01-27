@@ -98,7 +98,7 @@ void Client::handlePostRequest()
 
 void Client::handleDeleteRequest()
 {
-	(void) 0;
+	m_res.setStatusCode(204);
 }
 
 
@@ -145,9 +145,6 @@ void Client::handleGetRequest(std::string ressourcePath)
 		const std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
 		if (!fileDate.empty())
 			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-		const std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
 		m_res.setStatusCode(200);
 	}
 	catch (const FileHandler::FileHandlerException &e)
@@ -173,37 +170,26 @@ void Client::handleGetRequest(std::string ressourcePath)
 void Client::prepareResponse()
 {
 	CgiSpawner		  cgiHandler(m_req, m_serverConfig);
-	const std::string method		= m_req.getMethod();
 	const size_t	  segmentSize	= m_req.getSegmentSize();
 	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
-	try
+
+	if (!m_req.isAllowedMethod())
+		throw Http403Exception();
+	if (cgiHandler.isCgi())
 	{
-		if (!m_req.isAllowedMethod())
-			throw Http403Exception();
-		if (cgiHandler.isCgi())
-		{
-			cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
-			m_events = 0;
-			return;
-		}
-		if (method == "GET")
-			handleGetRequest(ressourcePath);
-		else if (method == "POST")
-			handlePostRequest();
-		else if (method == "DELETE")
-			handleDeleteRequest();
-		else
-			throw Http501Exception(method);
+		cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
+		m_events = 0;
+		return;
 	}
-	catch (const AHttpException &e)
-	{
-		m_res.reset();
-		m_res.setStatusCode(e.getStatusCode());
-		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-		m_res.setBody(e.getPage());
-	}
-	m_res.build();
-	m_events = POLLOUT;
+	const HttpMethod::Type method = m_req.getMethod().getType();
+	if (method == HttpMethod::GET)
+		handleGetRequest(ressourcePath);
+	else if (method == HttpMethod::POST)
+		handlePostRequest();
+	else if (method == HttpMethod::DELETE)
+		handleDeleteRequest();
+	else
+		throw Http405Exception(m_req.getMethod().getStrType());
 }
 
 /**
@@ -259,11 +245,46 @@ void Client::onPollIn()
 		m_events = POLLIN;
 		return;
 	}
-	m_req.parse(m_serverConfig);
-	prepareResponse();
+	try
+	{
+		m_req.parse(m_serverConfig);
+		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
+		if (connectionHeader == "keep-alive")
+			m_res.setHeader(HEADER_CONNECTION, connectionHeader == "keep-alive" ? "keep-alive" : "close");
+		prepareResponse();
+		const std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+	}
+	catch (const AHttpException &e)
+	{
+		m_res.reset();
+		m_res.setHeader(HEADER_CONNECTION, "close");
+		const std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+		m_res.setStatusCode(e.getStatusCode());
+		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+		m_res.setBody(e.getPage());
+	}
+	m_res.build();
+	m_events = POLLOUT;
 }
 
 
+bool Client::shouldCloseConnection() const
+{
+	const Map<std::string>			&headers = m_req.getHeaders();
+	Map<std::string>::const_iterator it		 = headers.find(HEADER_CONNECTION);
+	if (it != headers.end())
+	{
+		if (it->second == "close")
+			return true;
+		else if (it->second == "keep-alive")
+			return false;
+	}
+	return false;
+}
 
 
 /**
@@ -281,8 +302,15 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		m_events		   = 0;
-		m_connectionClosed = true;
+		m_events = 0;
+		if (shouldCloseConnection())
+		{
+			m_connectionClosed = true;
+			return;
+		}
+		m_req.reset();
+		m_res.reset();
+		m_events = POLLIN;
 		return;
 	}
 	m_events = POLLOUT;
@@ -297,4 +325,6 @@ void Client::onPollErr()
 
 void Client::onPollHangUp()
 {
+	m_connectionClosed = true;
+	m_events		   = 0;
 }

@@ -8,7 +8,8 @@
 class Http405Exception : public AHttpException
 {
 	public:
-		Http405Exception() : AHttpException(HTTP_405_ERROR_MSG, 405)
+		Http405Exception(const std::string &method) :
+			AHttpException((!method.empty() ? (method + " ") : "") + HTTP_405_ERROR_MSG, 405)
 		{
 		}
 };

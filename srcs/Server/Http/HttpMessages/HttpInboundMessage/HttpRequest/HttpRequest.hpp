@@ -28,6 +28,7 @@ class HttpRequest : public AHttpInboundMessage
 
 
 		HttpRequest &parse(const Config &serverConfig);
+		HttpRequest &reset();
 
 		ssize_t readOnce(int socketFd);
 		size_t	readContentLength(std::string request, const size_t headersEnd);

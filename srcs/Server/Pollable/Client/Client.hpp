@@ -20,6 +20,7 @@ class Client : public Pollable
 		void handleDeleteRequest();
 
 		void prepareResponse();
+		bool shouldCloseConnection() const;
 
 		bool isRequestComplete();
 

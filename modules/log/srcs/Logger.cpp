@@ -20,9 +20,11 @@ const std::string Logger::LOG_DEBUG_PREFIX = LOG_DEFAULT_DEBUG_PREFIX;
  * @param colorCode The color code to set (e.g., ANSI escape codes).
  *
  */
-void Logger::setCustomPrefix(const std::string &prefix)
+Logger &Logger::setCustomPrefix(const std::string &prefix)
 {
 	m_customPrefix = prefix;
+	static Logger instance;
+	return instance;
 }
 /**
  *
@@ -31,9 +33,11 @@ void Logger::setCustomPrefix(const std::string &prefix)
  * @param colorCode The color code to set (e.g., ANSI escape codes).
  *
  */
-void Logger::setCustomColor(const std::string &colorCode)
+Logger &Logger::setCustomColor(const std::string &colorCode)
 {
 	m_customColor = colorCode;
+	static Logger instance;
+	return instance;
 }
 /**
  *
@@ -42,9 +46,11 @@ void Logger::setCustomColor(const std::string &colorCode)
  * @param format The format to set (PlainText or Json).
  *
  */
-void Logger::setFormat(const Format format)
+Logger &Logger::setFormat(const Format format)
 {
 	m_format = format;
+	static Logger instance;
+	return instance;
 }
 /**
  *
@@ -53,9 +59,11 @@ void Logger::setFormat(const Format format)
  * @param t The target to set (Stdout, Stderr, or File).
  *
  */
-void Logger::setTarget(Target t)
+Logger &Logger::setTarget(Target t)
 {
 	m_target = t;
+	static Logger instance;
+	return instance;
 }
 /**
  *
@@ -67,7 +75,7 @@ void Logger::setTarget(Target t)
  * @note If a file is already open, it will be closed before opening the new file.
  *
  */
-void Logger::setFile(const std::string &path, const FileMode mode)
+Logger &Logger::setFile(const std::string &path, const FileMode mode)
 {
 	if (m_target == File)
 		closeFile();
@@ -76,6 +84,8 @@ void Logger::setFile(const std::string &path, const FileMode mode)
 	else if (mode == Append)
 		m_file.open(path.c_str(), std::ofstream::out | std::ofstream::app);
 	m_target = File;
+	static Logger instance;
+	return instance;
 }
 
 
@@ -137,10 +147,12 @@ std::string Logger::getCustomColor()
  * @note It should also be called before the program exits to ensure all data is flushed.
  *
  */
-void Logger::closeFile()
+Logger &Logger::closeFile()
 {
 	if (m_file.is_open())
 		m_file.close();
+	static Logger instance;
+	return instance;
 }
 
 /**

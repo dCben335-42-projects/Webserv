@@ -16,10 +16,10 @@ class AHttpMessage
 		AHttpMessage();
 		~AHttpMessage();
 
-		Map<std::string> getHeaders() const;
-		std::string		 getHeader(const std::string &key) const;
-		std::string		 getMethod() const;
-		std::string		 getBody() const;
+		const Map<std::string> &getHeaders() const;
+		std::string				getHeader(const std::string &key) const;
+		const HttpMethod	   &getMethod() const;
+		std::string				getBody() const;
 
 		void setHeader(const std::string &key, const std::string &value);
 		void setMethod(const HttpMethod &method);

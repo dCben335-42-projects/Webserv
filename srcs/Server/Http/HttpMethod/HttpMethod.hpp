@@ -8,6 +8,11 @@
 #define M_DELETE "DELETE"
 #define M_PUT "PUT"
 #define M_PATCH "PATCH"
+#define M_HEAD "HEAD"
+#define M_OPTIONS "OPTIONS"
+#define M_TRACE "TRACE"
+#define M_CONNECT "CONNECT"
+
 
 class HttpMethod
 {
@@ -19,6 +24,10 @@ class HttpMethod
 			DELETE,
 			PUT,
 			PATCH,
+			HEAD,
+			OPTIONS,
+			TRACE,
+			CONNECT,
 			NONE
 		};
 
@@ -36,29 +45,11 @@ class HttpMethod
 		HttpMethod(const Type &method);
 		~HttpMethod();
 
-
+		bool operator<(const HttpMethod &other) const;
 		HttpMethod &operator=(const HttpMethod &other);
 
 		Type		getType() const;
 		std::string getStrType() const;
-
-
-		bool operator<(const HttpMethod &other) const
-		{
-			return m_type < other.m_type;
-		}
-
-		bool operator==(const HttpMethod &other) const
-		{
-			std::cerr << "Comparing " << m_strType << " and " << other.m_strType << std::endl;
-			return m_type == other.m_type;
-		}
-
-		bool operator!=(const HttpMethod &other) const
-		{
-			std::cerr << "Comparing " << m_strType << " and " << other.m_strType << std::endl;
-			return !(*this == other);
-		}
 };
 
 #endif

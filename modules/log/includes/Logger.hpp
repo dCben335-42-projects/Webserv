@@ -74,12 +74,12 @@ class Logger
 		static std::ostream &stream();
 
 	public:
-		static void setTarget(Target t);
-		static void setFile(const std::string &path, const FileMode mode = Append);
-		static void setFormat(const Format format);
-		static void setCustomPrefix(const std::string &prefix);
-		static void setCustomColor(const std::string &colorCode);
-		static void closeFile();
+		static Logger &setTarget(Target t);
+		static Logger &setFile(const std::string &path, const FileMode mode = Append);
+		static Logger &setFormat(const Format format);
+		static Logger &setCustomPrefix(const std::string &prefix);
+		static Logger &setCustomColor(const std::string &colorCode);
+		static Logger &closeFile();
 
 		static Format	   getFormat();
 		static Target	   getTarget();

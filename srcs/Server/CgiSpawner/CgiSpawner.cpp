@@ -72,7 +72,7 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar("HTTP_COOKIE", m_req.getHeader(HEADER_COOKIE)));
 
 	m_env.push(makeEnvVar("GATEWAY_INTERFACE", GATEWAY_INTERFACE));
-	m_env.push(makeEnvVar("REQUEST_METHOD", m_req.getMethod()));
+	m_env.push(makeEnvVar("REQUEST_METHOD", m_req.getMethod().getStrType()));
 	m_env.push(makeEnvVar("HTTP_HOST", m_req.getHeader(HEADER_HOST)));
 	m_env.push(makeEnvVar("SERVER_NAME", SERVER_NAME));
 	m_env.push(makeEnvVar("SCRIPT_NAME", m_req.getTarget()));
