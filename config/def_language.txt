@@ -1,6 +1,5 @@
-<head>			::=
-'location\\' LINE_JUMP 'ok'
-
+<head>			::= [COMA] TAB
+				
 TEST			::= { 'ni' }
 REST			::= ( 'nico' | 'nip' ) 'A'
 DZGZTP			::= 'as' 'q' DZGZT
@@ -15,6 +14,8 @@ UPCASE_LETTER	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'J' | 'K' | 
 DZGZT			::= 'X' '5p999' UPCASE_LETTER ( '8' | '7' )
 
 MOT				::= 'location'
-SPACE			::= '_'
+SPACE			::= ' '
 
 LINE_JUMP		::= '\n'
+TAB				::= '\r\\\\nt'
+COMA			::= ';'

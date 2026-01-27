@@ -1,0 +1,85 @@
+<head>			::= { STATEMENT }
+
+STATEMENT 		::= ( USER_STMT | WORKER_STMT | PID_STMT | EVENTS_BLOCK | HTTP_BLOCK ) LINE_JUMP
+
+USER_STMT		::= 'user' SPACE USER_NAME ';'
+WORKER_STMT		::= 'worker_processes' SPACE IDENT ';'
+PID_STMT		::= 'pid' SPACE PATH ';'
+
+EVENTS_BLOCK	::= 'events' SPACE '{' LINE_JUMP
+                 { EVENT_STMT LINE_JUMP }
+                 '}'
+
+EVENT_STMT		::= ( 'worker_connections' SPACE NUMBER ';'
+				| 'multi_accept' SPACE BOOL ';' )
+
+HTTP_BLOCK		::= 'http' SPACE '{' LINE_JUMP
+				{ HTTP_STMT LINE_JUMP }
+				'}'
+
+HTTP_STMT		::= ( BASIC_HTTP_STMT
+				| GZIP_STMT
+				| INCLUDE_STMT )
+
+BASIC_HTTP_STMT	::= ( 'sendfile' SPACE BOOL ';'
+				| 'tcp_nopush' SPACE BOOL ';'
+				| 'tcp_nodelay' SPACE BOOL ';'
+				| 'keepalive_timeout' SPACE NUMBER ';'
+				| 'types_hash_max_size' SPACE NUMBER ';'
+				| 'default_type' SPACE MIME ';'
+				| 'access_log' SPACE PATH ';'
+				| 'error_log' SPACE PATH SPACE LOG_LEVEL ';'
+				| 'server_tokens' SPACE BOOL ';' )
+
+GZIP_STMT		::= ( 'gzip' SPACE BOOL ';'
+				| 'gzip_disable' SPACE STRING ';'
+				| 'gzip_vary' SPACE BOOL ';'
+				| 'gzip_proxied' SPACE IDENT ';'
+				| 'gzip_comp_level' SPACE NUMBER ';'
+				| 'gzip_buffers' SPACE NUMBER SPACE SIZE ';'
+				| 'gzip_http_version' SPACE VERSION ';'
+				| GZIP_TYPES )
+
+GZIP_TYPES		::= 'gzip_types' LINE_JUMP
+               	{ MIME LINE_JUMP }
+
+INCLUDE_STMT	::= 'include' SPACE PATH ';'
+
+USER_NAME ::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' }
+
+IDENT ::= LETTER { LETTER }
+
+NUMBER ::= DIGIT { DIGIT }
+
+BOOL ::= ( 'on' | 'off' )
+
+PATH ::= '/' { PATH_CHAR }
+PATH_CHAR ::= LETTER | DIGIT | '/' | '.' | '_'
+
+MIME ::= IDENT '/' IDENT
+
+VERSION ::= NUMBER '.' NUMBER
+
+SIZE ::= NUMBER ( 'k' | 'm' )
+
+LOG_LEVEL ::= ( 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'crit' )
+
+STRING ::= '"' { STRING_CHAR } '"'
+STRING_CHAR ::= LETTER | DIGIT | SPACE | '_' | '.'
+
+LETTER ::= ( UPCASE_LETTER | LOCASE_LETTER )
+
+LOCASE_LETTER ::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
+                  | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
+
+UPCASE_LETTER ::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
+                  | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
+
+DIGIT ::= ( '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )
+
+SPACE ::= ' '
+LINE_JUMP ::= '\n'
+
+
+
+

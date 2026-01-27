@@ -12,9 +12,6 @@ class ARulePathInfo
 	public:
 		ARulePath		  path;
 		Vec<const char *> terminalCharIt;
-		// char							*ptr;
-
-		Vec<size_t> invalidedIndexes;
 
 		ARulePathInfo(ARulePath path);
 		~ARulePathInfo();

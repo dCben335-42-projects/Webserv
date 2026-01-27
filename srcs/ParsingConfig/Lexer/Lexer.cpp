@@ -16,25 +16,36 @@ Lexer::Lexer(std::string const &filepath)
 	std::ostringstream ss;
 	ss << ifs.rdbuf();
 	m_content = ss.str();
+	ifs.close();
 
-	SemanticDescriptor val(m_content);
+	m_semanticDescriptor = new SemanticDescriptor(m_content);
+	Logger::log(m_semanticDescriptor);
 
 
-	std::cout << val;
-	Parser parser(val);
+	m_parser = new Parser(*m_semanticDescriptor);
+}
 
-	Logger::log("========Parsing========\n");
+
+void Lexer::parseConfigFile(std::string const &filepath)
+{
+	std::ifstream ifs(filepath.c_str(), std::ios::in);
+	if (!ifs.is_open())
+		throw std::runtime_error("Lexer: cannot open file: " + filepath);
+	std::ostringstream ss;
+	ss << ifs.rdbuf();
+	m_content = ss.str();
+	ifs.close();
+
 	try
 	{
-		parser.parse("location\\\nok");
+		m_parser->parse(m_content);
 	}
 	catch (const SemanticException &e)
 	{
 		std::cout << e;
 	}
-
-	ifs.close();
 }
+
 
 Lexer::~Lexer()
 {

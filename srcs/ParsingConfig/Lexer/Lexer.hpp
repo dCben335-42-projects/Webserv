@@ -8,12 +8,14 @@
 class Lexer
 {
 	private:
-		std::string		   m_content;
-		SemanticDescriptor m_semanticDescriptor;
+		std::string			m_content;
+		SemanticDescriptor *m_semanticDescriptor;
+		Parser			   *m_parser;
 
 	public:
 		Lexer(std::string const &filepath);
 		~Lexer();
+		void parseConfigFile(std::string const &filepath);
 
 		const std::string &getContent() const;
 };

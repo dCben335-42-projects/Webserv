@@ -132,6 +132,7 @@ bool Parser::word(
 	const ARuleMap	  &mapPathCurrent,
 	ARuleMap		  &mapPathNext)
 {
+	// Logger::log(nextTerminalChar);
 	if (!(*nextTerminalChar))
 		return false;
 
@@ -175,6 +176,8 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 		const ARule		   *rule  = it->first;
 		ARulePaths			paths = it->second;
 		Vec<TerminalSymbol> items = rule->getItems();
+		Logger::log(rule->getConceptName());
+		Logger::log(mapPathCurrent.get(rule));
 
 		for (ARulePaths::iterator pathInfo = paths.begin(); pathInfo != paths.end(); ++pathInfo)
 		{
@@ -191,6 +194,8 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 				}
 				else
 					nextTerminalChar = pathInfo->terminalCharIt.at(indexElementTerminalChar);
+
+				// Logger::log(nextTerminalChar);
 				if (word(nextTerminalChar, c, rule, (*pathInfo), mapPathCurrent, mapPathNext))
 					isValidWithCurrentPath = true;
 				indexElementTerminalChar++;

@@ -44,14 +44,6 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 		if (i < data.path.size() - 1)
 			os << ", ";
 	}
-	os << "], inv=[";
-
-	for (size_t i = 0; i < data.invalidedIndexes.size(); ++i)
-	{
-		os << data.invalidedIndexes[i];
-		if (i < data.invalidedIndexes.size() - 1)
-			os << ", ";
-	}
 	os << "], charPtr=[";
 
 

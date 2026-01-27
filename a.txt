@@ -1,0 +1,2130 @@
+[0;33m[WEBSERV] Generating bnf module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating log module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating kit module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;32m[WEBSERV] Running webserv...[0m
+--------------------------
+
+[
+  {,
+  STATEMENT,
+  }
+]
+[
+  (,
+  USER_STMT,
+  |,
+  WORKER_STMT,
+  |,
+  PID_STMT,
+  |,
+  EVENTS_BLOCK,
+  |,
+  HTTP_BLOCK,
+  ),
+  LINE_JUMP
+]
+[
+  'user',
+  SPACE,
+  USER_NAME,
+  ';'
+]
+[
+  'worker_processes',
+  SPACE,
+  IDENT,
+  ';'
+]
+[
+  'pid',
+  SPACE,
+  PATH,
+  ';'
+]
+[
+  'events',
+  SPACE,
+  '{',
+  LINE_JUMP,
+  {,
+  EVENT_STMT,
+  LINE_JUMP,
+  },
+  '}'
+]
+[
+  (,
+  'worker_connections',
+  SPACE,
+  NUMBER,
+  ';',
+  |,
+  'multi_accept',
+  SPACE,
+  BOOL,
+  ';',
+  )
+]
+[
+  'http',
+  SPACE,
+  '{',
+  LINE_JUMP,
+  {,
+  HTTP_STMT,
+  LINE_JUMP,
+  },
+  '}'
+]
+[
+  (,
+  BASIC_HTTP_STMT,
+  |,
+  GZIP_STMT,
+  |,
+  INCLUDE_STMT,
+  )
+]
+[
+  (,
+  'sendfile',
+  SPACE,
+  BOOL,
+  ';',
+  |,
+  'tcp_nopush',
+  SPACE,
+  BOOL,
+  ';',
+  |,
+  'tcp_nodelay',
+  SPACE,
+  BOOL,
+  ';',
+  |,
+  'keepalive_timeout',
+  SPACE,
+  NUMBER,
+  ';',
+  |,
+  'types_hash_max_size',
+  SPACE,
+  NUMBER,
+  ';',
+  |,
+  'default_type',
+  SPACE,
+  MIME,
+  ';',
+  |,
+  'access_log',
+  SPACE,
+  PATH,
+  ';',
+  |,
+  'error_log',
+  SPACE,
+  PATH,
+  SPACE,
+  LOG_LEVEL,
+  ';',
+  |,
+  'server_tokens',
+  SPACE,
+  BOOL,
+  ';',
+  )
+]
+[
+  (,
+  'gzip',
+  SPACE,
+  BOOL,
+  ';',
+  |,
+  'gzip_disable',
+  SPACE,
+  STRING,
+  ';',
+  |,
+  'gzip_vary',
+  SPACE,
+  BOOL,
+  ';',
+  |,
+  'gzip_proxied',
+  SPACE,
+  IDENT,
+  ';',
+  |,
+  'gzip_comp_level',
+  SPACE,
+  NUMBER,
+  ';',
+  |,
+  'gzip_buffers',
+  SPACE,
+  NUMBER,
+  SPACE,
+  SIZE,
+  ';',
+  |,
+  'gzip_http_version',
+  SPACE,
+  VERSION,
+  ';',
+  |,
+  GZIP_TYPES,
+  )
+]
+[
+  'gzip_types',
+  LINE_JUMP,
+  {,
+  MIME,
+  LINE_JUMP,
+  }
+]
+[
+  'include',
+  SPACE,
+  PATH,
+  ';'
+]
+[
+  LOCASE_LETTER,
+  {,
+  LOCASE_LETTER,
+  |,
+  DIGIT,
+  |,
+  '_',
+  |,
+  '-',
+  }
+]
+[
+  LETTER,
+  {,
+  LETTER,
+  }
+]
+[
+  DIGIT,
+  {,
+  DIGIT,
+  }
+]
+[
+  (,
+  'on',
+  |,
+  'off',
+  )
+]
+[
+  '/',
+  {,
+  PATH_CHAR,
+  }
+]
+[
+  LETTER,
+  |,
+  DIGIT,
+  |,
+  '/',
+  |,
+  '.',
+  |,
+  '_'
+]
+[
+  IDENT,
+  '/',
+  IDENT
+]
+[
+  NUMBER,
+  '.',
+  NUMBER
+]
+[
+  NUMBER,
+  (,
+  'k',
+  |,
+  'm',
+  )
+]
+[
+  (,
+  'debug',
+  |,
+  'info',
+  |,
+  'notice',
+  |,
+  'warn',
+  |,
+  'error',
+  |,
+  'crit',
+  )
+]
+[
+  '"',
+  {,
+  STRING_CHAR,
+  },
+  '"'
+]
+[
+  LETTER,
+  |,
+  DIGIT,
+  |,
+  SPACE,
+  |,
+  '_',
+  |,
+  '.'
+]
+[
+  (,
+  UPCASE_LETTER,
+  |,
+  LOCASE_LETTER,
+  )
+]
+[
+  (,
+  'a',
+  |,
+  'b',
+  |,
+  'c',
+  |,
+  'd',
+  |,
+  'e',
+  |,
+  'f',
+  |,
+  'g',
+  |,
+  'h',
+  |,
+  'i',
+  |,
+  'j',
+  |,
+  'k',
+  |,
+  'l',
+  |,
+  'm',
+  |,
+  'n',
+  |,
+  'o',
+  |,
+  'p',
+  |,
+  'q',
+  |,
+  'r',
+  |,
+  's',
+  |,
+  't',
+  |,
+  'u',
+  |,
+  'v',
+  |,
+  'w',
+  |,
+  'x',
+  |,
+  'y',
+  |,
+  'z',
+  )
+]
+[
+  (,
+  'A',
+  |,
+  'B',
+  |,
+  'C',
+  |,
+  'D',
+  |,
+  'E',
+  |,
+  'F',
+  |,
+  'G',
+  |,
+  'H',
+  |,
+  'I',
+  |,
+  'J',
+  |,
+  'K',
+  |,
+  'L',
+  |,
+  'M',
+  |,
+  'N',
+  |,
+  'O',
+  |,
+  'P',
+  |,
+  'Q',
+  |,
+  'R',
+  |,
+  'S',
+  |,
+  'T',
+  |,
+  'U',
+  |,
+  'V',
+  |,
+  'W',
+  |,
+  'X',
+  |,
+  'Y',
+  |,
+  'Z',
+  )
+]
+[
+  (,
+  '0',
+  |,
+  '1',
+  |,
+  '2',
+  |,
+  '3',
+  |,
+  '4',
+  |,
+  '5',
+  |,
+  '6',
+  |,
+  '7',
+  |,
+  '8',
+  |,
+  '9',
+  )
+]
+[
+  ' '
+]
+[
+  '
+'
+]
+{
+  "<head>": 
+    {
+      "Concept Name": "<head>"
+      "Definitions":[
+        [
+          {
+            "position": "<head>_0",
+            "type": "SEQUENCE",
+            "index": 0,
+            "ptr": "0x18497210",
+            "content": [
+              STATEMENT
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+
+        ]
+      "Terminal Chars":[
+          0x1849ab50,
+          0x1849b1b0,
+          0x1849b730,
+          0x1849bc40,
+          0x1849cb90
+        ]
+    },
+  "BASIC_HTTP_STMT": 
+    {
+      "Concept Name": "BASIC_HTTP_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "BASIC_HTTP_STMT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x1849e5d0",
+            "content": [
+              sendfile,
+              SPACE,
+              BOOL,
+              ;,
+              tcp_nopush,
+              SPACE,
+              BOOL,
+              ;,
+              tcp_nodelay,
+              SPACE,
+              BOOL,
+              ;,
+              keepalive_timeout,
+              SPACE,
+              NUMBER,
+              ;,
+              types_hash_max_size,
+              SPACE,
+              NUMBER,
+              ;,
+              default_type,
+              SPACE,
+              MIME,
+              ;,
+              access_log,
+              SPACE,
+              PATH,
+              ;,
+              error_log,
+              SPACE,
+              PATH,
+              SPACE,
+              LOG_LEVEL,
+              ;,
+              server_tokens,
+              SPACE,
+              BOOL,
+              ;
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849d320
+        ]
+      "Terminal Chars":[
+          0x1849e5d0,
+          0x184a0a70,
+          0x184a0d10,
+          0x184a2370,
+          0x184a3290,
+          0x184a34b0,
+          0x184a4320,
+          0x184a4660
+        ]
+    },
+  "BOOL": 
+    {
+      "Concept Name": "BOOL"
+      "Definitions":[
+        [
+          {
+            "position": "BOOL_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x184a0a70",
+            "content": [
+              on,
+              off
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849c620,
+          0x1849e5d0,
+          0x1849ece0
+        ]
+      "Terminal Chars":[
+          0x184a0a70
+        ]
+    },
+  "DIGIT": 
+    {
+      "Concept Name": "DIGIT"
+      "Definitions":[
+        [
+          {
+            "position": "DIGIT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x184a4320",
+            "content": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x184a00c0,
+          0x184a0720,
+          0x184a07c0,
+          0x184a1100,
+          0x184a2a80
+        ]
+      "Terminal Chars":[
+          0x184a4320
+        ]
+    },
+  "EVENTS_BLOCK": 
+    {
+      "Concept Name": "EVENTS_BLOCK"
+      "Definitions":[
+        [
+          {
+            "position": "EVENTS_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849bc40",
+            "content": events
+            "next": [
+              0x1849bce0
+            ]
+          },
+          {
+            "position": "EVENTS_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849bce0",
+            "content": SPACE
+            "next": [
+              0x1849bdd0
+            ]
+          },
+          {
+            "position": "EVENTS_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x1849bdd0",
+            "content": {
+            "next": [
+              0x1849bf00
+            ]
+          },
+          {
+            "position": "EVENTS_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x1849bf00",
+            "content": LINE_JUMP
+            "next": [
+              0x1849c000
+            ]
+          },
+          {
+            "position": "EVENTS_BLOCK_0",
+            "type": "SEQUENCE",
+            "index": 4,
+            "ptr": "0x1849c000",
+            "content": [
+              EVENT_STMT,
+              LINE_JUMP
+            ]
+            "next": [
+              0x1849c0d0
+            ]
+          },
+          {
+            "position": "EVENTS_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 5,
+            "ptr": "0x1849c0d0",
+            "content": }
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849a630
+        ]
+      "Terminal Chars":[
+          0x1849bc40
+        ]
+    },
+  "EVENT_STMT": 
+    {
+      "Concept Name": "EVENT_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "EVENT_STMT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x1849c620",
+            "content": [
+              worker_connections,
+              SPACE,
+              NUMBER,
+              ;,
+              multi_accept,
+              SPACE,
+              BOOL,
+              ;
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849c000
+        ]
+      "Terminal Chars":[
+          0x1849c620,
+          0x184a0a70,
+          0x184a4320,
+          0x184a4660
+        ]
+    },
+  "GZIP_STMT": 
+    {
+      "Concept Name": "GZIP_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "GZIP_STMT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x1849ece0",
+            "content": [
+              gzip,
+              SPACE,
+              BOOL,
+              ;,
+              gzip_disable,
+              SPACE,
+              STRING,
+              ;,
+              gzip_vary,
+              SPACE,
+              BOOL,
+              ;,
+              gzip_proxied,
+              SPACE,
+              IDENT,
+              ;,
+              gzip_comp_level,
+              SPACE,
+              NUMBER,
+              ;,
+              gzip_buffers,
+              SPACE,
+              NUMBER,
+              SPACE,
+              SIZE,
+              ;,
+              gzip_http_version,
+              SPACE,
+              VERSION,
+              ;,
+              GZIP_TYPES
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849d320
+        ]
+      "Terminal Chars":[
+          0x1849dae0,
+          0x1849ece0,
+          0x184a0a70,
+          0x184a2560,
+          0x184a3290,
+          0x184a34b0,
+          0x184a4320,
+          0x184a4660
+        ]
+    },
+  "GZIP_TYPES": 
+    {
+      "Concept Name": "GZIP_TYPES"
+      "Definitions":[
+        [
+          {
+            "position": "GZIP_TYPES_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849dae0",
+            "content": gzip_types
+            "next": [
+              0x1849db80
+            ]
+          },
+          {
+            "position": "GZIP_TYPES_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849db80",
+            "content": LINE_JUMP
+            "next": [
+              0x1849dc50
+            ]
+          },
+          {
+            "position": "GZIP_TYPES_0",
+            "type": "SEQUENCE",
+            "index": 2,
+            "ptr": "0x1849dc50",
+            "content": [
+              MIME,
+              LINE_JUMP
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849ece0
+        ]
+      "Terminal Chars":[
+          0x1849dae0
+        ]
+    },
+  "HTTP_BLOCK": 
+    {
+      "Concept Name": "HTTP_BLOCK"
+      "Definitions":[
+        [
+          {
+            "position": "HTTP_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849cb90",
+            "content": http
+            "next": [
+              0x1849cc30
+            ]
+          },
+          {
+            "position": "HTTP_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849cc30",
+            "content": SPACE
+            "next": [
+              0x1849cd00
+            ]
+          },
+          {
+            "position": "HTTP_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x1849cd00",
+            "content": {
+            "next": [
+              0x1849ce30
+            ]
+          },
+          {
+            "position": "HTTP_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x1849ce30",
+            "content": LINE_JUMP
+            "next": [
+              0x1849cf30
+            ]
+          },
+          {
+            "position": "HTTP_BLOCK_0",
+            "type": "SEQUENCE",
+            "index": 4,
+            "ptr": "0x1849cf30",
+            "content": [
+              HTTP_STMT,
+              LINE_JUMP
+            ]
+            "next": [
+              0x1849d000
+            ]
+          },
+          {
+            "position": "HTTP_BLOCK_0",
+            "type": "SYMBOL",
+            "index": 5,
+            "ptr": "0x1849d000",
+            "content": }
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849a630
+        ]
+      "Terminal Chars":[
+          0x1849cb90
+        ]
+    },
+  "HTTP_STMT": 
+    {
+      "Concept Name": "HTTP_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "HTTP_STMT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x1849d320",
+            "content": [
+              BASIC_HTTP_STMT,
+              GZIP_STMT,
+              INCLUDE_STMT
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849cf30
+        ]
+      "Terminal Chars":[
+          0x1849dae0,
+          0x1849df00,
+          0x1849e5d0,
+          0x1849ece0,
+          0x184a0a70,
+          0x184a0d10,
+          0x184a2370,
+          0x184a2560,
+          0x184a3290,
+          0x184a34b0,
+          0x184a4320,
+          0x184a4660
+        ]
+    },
+  "IDENT": 
+    {
+      "Concept Name": "IDENT"
+      "Definitions":[
+        [
+          {
+            "position": "IDENT_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a03d0",
+            "content": LETTER
+            "next": [
+              0x184a0470
+            ]
+          },
+          {
+            "position": "IDENT_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x184a0470",
+            "content": [
+              LETTER
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849b360,
+          0x1849ece0,
+          0x184a16e0,
+          0x184a1870
+        ]
+      "Terminal Chars":[
+          0x184a3290,
+          0x184a34b0
+        ]
+    },
+  "INCLUDE_STMT": 
+    {
+      "Concept Name": "INCLUDE_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "INCLUDE_STMT_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849df00",
+            "content": include
+            "next": [
+              0x1849dfa0
+            ]
+          },
+          {
+            "position": "INCLUDE_STMT_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849dfa0",
+            "content": SPACE
+            "next": [
+              0x1849e070
+            ]
+          },
+          {
+            "position": "INCLUDE_STMT_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x1849e070",
+            "content": PATH
+            "next": [
+              0x1849e1a0
+            ]
+          },
+          {
+            "position": "INCLUDE_STMT_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x1849e1a0",
+            "content": ;
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849d320
+        ]
+      "Terminal Chars":[
+          0x1849df00
+        ]
+    },
+  "LETTER": 
+    {
+      "Concept Name": "LETTER"
+      "Definitions":[
+        [
+          {
+            "position": "LETTER_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x184a3060",
+            "content": [
+              UPCASE_LETTER,
+              LOCASE_LETTER
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x184a03d0,
+          0x184a0470,
+          0x184a1040,
+          0x184a29e0
+        ]
+      "Terminal Chars":[
+          0x184a3290,
+          0x184a34b0
+        ]
+    },
+  "LINE_JUMP": 
+    {
+      "Concept Name": "LINE_JUMP"
+      "Definitions":[
+        [
+          {
+            "position": "LINE_JUMP_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a48e0",
+            "content": 
+
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849a8f0,
+          0x1849bf00,
+          0x1849c000,
+          0x1849ce30,
+          0x1849cf30,
+          0x1849db80,
+          0x1849dc50
+        ]
+      "Terminal Chars":[
+          0x184a48e0
+        ]
+    },
+  "LOCASE_LETTER": 
+    {
+      "Concept Name": "LOCASE_LETTER"
+      "Definitions":[
+        [
+          {
+            "position": "LOCASE_LETTER_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x184a3290",
+            "content": [
+              a,
+              b,
+              c,
+              d,
+              e,
+              f,
+              g,
+              h,
+              i,
+              j,
+              k,
+              l,
+              m,
+              n,
+              o,
+              p,
+              q,
+              r,
+              s,
+              t,
+              u,
+              v,
+              w,
+              x,
+              y,
+              z
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x184a0020,
+          0x184a00c0,
+          0x184a3060
+        ]
+      "Terminal Chars":[
+          0x184a3290
+        ]
+    },
+  "LOG_LEVEL": 
+    {
+      "Concept Name": "LOG_LEVEL"
+      "Definitions":[
+        [
+          {
+            "position": "LOG_LEVEL_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x184a2370",
+            "content": [
+              debug,
+              info,
+              notice,
+              warn,
+              error,
+              crit
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849e5d0
+        ]
+      "Terminal Chars":[
+          0x184a2370
+        ]
+    },
+  "MIME": 
+    {
+      "Concept Name": "MIME"
+      "Definitions":[
+        [
+          {
+            "position": "MIME_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a16e0",
+            "content": IDENT
+            "next": [
+              0x184a1780
+            ]
+          },
+          {
+            "position": "MIME_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x184a1780",
+            "content": /
+            "next": [
+              0x184a1870
+            ]
+          },
+          {
+            "position": "MIME_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x184a1870",
+            "content": IDENT
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849dc50,
+          0x1849e5d0
+        ]
+      "Terminal Chars":[
+          0x184a3290,
+          0x184a34b0
+        ]
+    },
+  "NUMBER": 
+    {
+      "Concept Name": "NUMBER"
+      "Definitions":[
+        [
+          {
+            "position": "NUMBER_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a0720",
+            "content": DIGIT
+            "next": [
+              0x184a07c0
+            ]
+          },
+          {
+            "position": "NUMBER_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x184a07c0",
+            "content": [
+              DIGIT
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849c620,
+          0x1849e5d0,
+          0x1849ece0,
+          0x184a1b40,
+          0x184a1cd0,
+          0x184a1fa0
+        ]
+      "Terminal Chars":[
+          0x184a4320
+        ]
+    },
+  "PATH": 
+    {
+      "Concept Name": "PATH"
+      "Definitions":[
+        [
+          {
+            "position": "PATH_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a0d10",
+            "content": /
+            "next": [
+              0x184a0db0
+            ]
+          },
+          {
+            "position": "PATH_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x184a0db0",
+            "content": [
+              PATH_CHAR
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849b870,
+          0x1849e070,
+          0x1849e5d0
+        ]
+      "Terminal Chars":[
+          0x184a0d10
+        ]
+    },
+  "PATH_CHAR": 
+    {
+      "Concept Name": "PATH_CHAR"
+      "Definitions":[
+        [
+          {
+            "position": "PATH_CHAR_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a1040",
+            "content": LETTER
+            "next": [
+              0x184a1100
+            ]
+          },
+          {
+            "position": "PATH_CHAR_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x184a1100",
+            "content": DIGIT
+            "next": [
+              0x184a11f0
+            ]
+          },
+          {
+            "position": "PATH_CHAR_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x184a11f0",
+            "content": /
+            "next": [
+              0x184a1320
+            ]
+          },
+          {
+            "position": "PATH_CHAR_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x184a1320",
+            "content": .
+            "next": [
+              0x184a1420
+            ]
+          },
+          {
+            "position": "PATH_CHAR_0",
+            "type": "SYMBOL",
+            "index": 4,
+            "ptr": "0x184a1420",
+            "content": _
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x184a0db0
+        ]
+      "Terminal Chars":[
+          0x184a3290,
+          0x184a34b0
+        ]
+    },
+  "PID_STMT": 
+    {
+      "Concept Name": "PID_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "PID_STMT_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849b730",
+            "content": pid
+            "next": [
+              0x1849b7d0
+            ]
+          },
+          {
+            "position": "PID_STMT_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849b7d0",
+            "content": SPACE
+            "next": [
+              0x1849b870
+            ]
+          },
+          {
+            "position": "PID_STMT_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x1849b870",
+            "content": PATH
+            "next": [
+              0x1849b9a0
+            ]
+          },
+          {
+            "position": "PID_STMT_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x1849b9a0",
+            "content": ;
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849a630
+        ]
+      "Terminal Chars":[
+          0x1849b730
+        ]
+    },
+  "SIZE": 
+    {
+      "Concept Name": "SIZE"
+      "Definitions":[
+        [
+          {
+            "position": "SIZE_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a1fa0",
+            "content": NUMBER
+            "next": [
+              0x184a2040
+            ]
+          },
+          {
+            "position": "SIZE_0",
+            "type": "GROUP",
+            "index": 1,
+            "ptr": "0x184a2040",
+            "content": [
+              k,
+              m
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849ece0
+        ]
+      "Terminal Chars":[
+          0x184a4320
+        ]
+    },
+  "SPACE": 
+    {
+      "Concept Name": "SPACE"
+      "Definitions":[
+        [
+          {
+            "position": "SPACE_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a4660",
+            "content":  
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849ac10,
+          0x1849b270,
+          0x1849b7d0,
+          0x1849bce0,
+          0x1849c620,
+          0x1849cc30,
+          0x1849dfa0,
+          0x1849e5d0,
+          0x1849ece0,
+          0x184a2b70
+        ]
+      "Terminal Chars":[
+          0x184a4660
+        ]
+    },
+  "STATEMENT": 
+    {
+      "Concept Name": "STATEMENT"
+      "Definitions":[
+        [
+          {
+            "position": "STATEMENT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x1849a630",
+            "content": [
+              USER_STMT,
+              WORKER_STMT,
+              PID_STMT,
+              EVENTS_BLOCK,
+              HTTP_BLOCK
+            ]
+            "next": [
+              0x1849a8f0
+            ]
+          },
+          {
+            "position": "STATEMENT_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849a8f0",
+            "content": LINE_JUMP
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x18497210
+        ]
+      "Terminal Chars":[
+          0x1849ab50,
+          0x1849b1b0,
+          0x1849b730,
+          0x1849bc40,
+          0x1849cb90
+        ]
+    },
+  "STRING": 
+    {
+      "Concept Name": "STRING"
+      "Definitions":[
+        [
+          {
+            "position": "STRING_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a2560",
+            "content": "
+            "next": [
+              0x184a2620
+            ]
+          },
+          {
+            "position": "STRING_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x184a2620",
+            "content": [
+              STRING_CHAR
+            ]
+            "next": [
+              0x184a2710
+            ]
+          },
+          {
+            "position": "STRING_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x184a2710",
+            "content": "
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849ece0
+        ]
+      "Terminal Chars":[
+          0x184a2560
+        ]
+    },
+  "STRING_CHAR": 
+    {
+      "Concept Name": "STRING_CHAR"
+      "Definitions":[
+        [
+          {
+            "position": "STRING_CHAR_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a29e0",
+            "content": LETTER
+            "next": [
+              0x184a2a80
+            ]
+          },
+          {
+            "position": "STRING_CHAR_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x184a2a80",
+            "content": DIGIT
+            "next": [
+              0x184a2b70
+            ]
+          },
+          {
+            "position": "STRING_CHAR_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x184a2b70",
+            "content": SPACE
+            "next": [
+              0x184a2ca0
+            ]
+          },
+          {
+            "position": "STRING_CHAR_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x184a2ca0",
+            "content": _
+            "next": [
+              0x184a2da0
+            ]
+          },
+          {
+            "position": "STRING_CHAR_0",
+            "type": "SYMBOL",
+            "index": 4,
+            "ptr": "0x184a2da0",
+            "content": .
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x184a2620
+        ]
+      "Terminal Chars":[
+          0x184a3290,
+          0x184a34b0
+        ]
+    },
+  "UPCASE_LETTER": 
+    {
+      "Concept Name": "UPCASE_LETTER"
+      "Definitions":[
+        [
+          {
+            "position": "UPCASE_LETTER_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x184a34b0",
+            "content": [
+              A,
+              B,
+              C,
+              D,
+              E,
+              F,
+              G,
+              H,
+              I,
+              J,
+              K,
+              L,
+              M,
+              N,
+              O,
+              P,
+              Q,
+              R,
+              S,
+              T,
+              U,
+              V,
+              W,
+              X,
+              Y,
+              Z
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x184a3060
+        ]
+      "Terminal Chars":[
+          0x184a34b0
+        ]
+    },
+  "USER_NAME": 
+    {
+      "Concept Name": "USER_NAME"
+      "Definitions":[
+        [
+          {
+            "position": "USER_NAME_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a0020",
+            "content": LOCASE_LETTER
+            "next": [
+              0x184a00c0
+            ]
+          },
+          {
+            "position": "USER_NAME_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x184a00c0",
+            "content": [
+              LOCASE_LETTER,
+              DIGIT,
+              _,
+              -
+            ]
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849ad00
+        ]
+      "Terminal Chars":[
+          0x184a3290
+        ]
+    },
+  "USER_STMT": 
+    {
+      "Concept Name": "USER_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "USER_STMT_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849ab50",
+            "content": user
+            "next": [
+              0x1849ac10
+            ]
+          },
+          {
+            "position": "USER_STMT_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849ac10",
+            "content": SPACE
+            "next": [
+              0x1849ad00
+            ]
+          },
+          {
+            "position": "USER_STMT_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x1849ad00",
+            "content": USER_NAME
+            "next": [
+              0x1849ae30
+            ]
+          },
+          {
+            "position": "USER_STMT_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x1849ae30",
+            "content": ;
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849a630
+        ]
+      "Terminal Chars":[
+          0x1849ab50
+        ]
+    },
+  "VERSION": 
+    {
+      "Concept Name": "VERSION"
+      "Definitions":[
+        [
+          {
+            "position": "VERSION_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x184a1b40",
+            "content": NUMBER
+            "next": [
+              0x184a1be0
+            ]
+          },
+          {
+            "position": "VERSION_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x184a1be0",
+            "content": .
+            "next": [
+              0x184a1cd0
+            ]
+          },
+          {
+            "position": "VERSION_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x184a1cd0",
+            "content": NUMBER
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849ece0
+        ]
+      "Terminal Chars":[
+          0x184a4320
+        ]
+    },
+  "WORKER_STMT": 
+    {
+      "Concept Name": "WORKER_STMT"
+      "Definitions":[
+        [
+          {
+            "position": "WORKER_STMT_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x1849b1b0",
+            "content": worker_processes
+            "next": [
+              0x1849b270
+            ]
+          },
+          {
+            "position": "WORKER_STMT_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x1849b270",
+            "content": SPACE
+            "next": [
+              0x1849b360
+            ]
+          },
+          {
+            "position": "WORKER_STMT_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x1849b360",
+            "content": IDENT
+            "next": [
+              0x1849b490
+            ]
+          },
+          {
+            "position": "WORKER_STMT_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x1849b490",
+            "content": ;
+            "next": [
+
+            ]
+          }
+        ]
+      ]
+      "Parents":[
+          0x1849a630
+        ]
+      "Terminal Chars":[
+          0x1849b1b0
+        ]
+    }
+}
+
+Parsing char: u
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ab50], charPtr=[])
+]
+WORKER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849b1b0], charPtr=[])
+]
+PID_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849b730], charPtr=[])
+]
+EVENTS_BLOCK
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849bc40], charPtr=[])
+]
+HTTP_BLOCK
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849cb90], charPtr=[])
+]
+✅
+Parsing char: s
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ab50], charPtr=[s])
+]
+✅
+Parsing char: e
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ab50], charPtr=[e])
+]
+✅
+Parsing char: r
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ab50], charPtr=[r])
+]
+✅
+Parsing char:  
+SPACE
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ac10, 0x184a4660], charPtr=[])
+]
+✅
+Parsing char: w
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a0020, 0x184a3290], charPtr=[])
+]
+✅
+Parsing char: w
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: w
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: -
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: d
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: a
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: t
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: a
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: ;
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ae30], charPtr=[])
+]
+USER_NAME
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0], charPtr=[])
+]
+LOCASE_LETTER
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a3290], charPtr=[])
+]
+DIGIT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ad00, 0x184a00c0, 0x184a4320], charPtr=[])
+]
+✅
+Parsing char: 
+
+LINE_JUMP
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a8f0, 0x184a48e0], charPtr=[])
+]
+✅
+Parsing char: w
+USER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849ab50], charPtr=[])
+]
+WORKER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849b1b0], charPtr=[])
+]
+PID_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849b730], charPtr=[])
+]
+EVENTS_BLOCK
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849bc40], charPtr=[])
+]
+HTTP_BLOCK
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849cb90], charPtr=[])
+]
+✅
+Parsing char: o
+WORKER_STMT
+[
+  ARulePathInfo(path=[0x18497210, 0x1849a630, 0x1849b1b0], charPtr=[�])
+]
+[BNF Parsing - InvalidEntryException]: [33mInvalid character 'o[0m

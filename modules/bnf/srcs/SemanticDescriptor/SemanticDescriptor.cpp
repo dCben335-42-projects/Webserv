@@ -151,6 +151,8 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 				current += '\n';
 			else if (next == 't')
 				current += '\t';
+			else if (next == 'r')
+				current += '\r';
 			else if (next == ' ')
 				current += ' ';
 			else if (next == '\\')
@@ -173,12 +175,22 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 		{
 			in_single_quote = !in_single_quote;
 			current += c;
+			if (!in_single_quote)
+			{
+				result.push_back(current);
+				current.clear();
+			}
 			continue;
 		}
 		if (c == '"' && !in_single_quote)
 		{
 			in_double_quote = !in_double_quote;
 			current += c;
+			if (!in_double_quote)
+			{
+				result.push_back(current);
+				current.clear();
+			}
 			continue;
 		}
 
@@ -230,10 +242,10 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		m_concepts.set(m_lastKey, concept);
 	}
 
-	size_t conceptDefIndex = concept->getDefinitions().size();
+	const size_t conceptDefIndex = concept->getDefinitions().size();
 	concept->pushDef(conceptDef);
 
-	Vec<std::string> words = splitwords(m_content.substr(cursor));
+	const Vec<std::string> words = splitwords(m_content.substr(cursor));
 	Logger::log(words);
 
 	std::string word;
@@ -258,7 +270,6 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		}
 		while (word != map.closer)
 		{
-			Logger::log("Current word: " + word);
 			if (ARule::isKeyWord(word, false))
 				throw std::runtime_error("Bad closing keyword: " + word);
 			if (word != DIVIDER)
