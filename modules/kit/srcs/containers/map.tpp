@@ -158,17 +158,17 @@ class MapBase
 			return true;
 		}
 
-		/**
-		 *
-		 * @brief Returns the number of key-value pairs in the map.
-		 *
-		 * @return The size of the map.
-		 *
-		 */
-		size_t size() const
-		{
-			return getMapSize(static_cast<const Derived &>(*this));
-		}
+		// /**
+		//  *
+		//  * @brief Returns the number of key-value pairs in the map.
+		//  *
+		//  * @return The size of the map.
+		//  *
+		//  */
+		// size_t size() const
+		// {
+		// 	return getMapSize(static_cast<const Derived &>(*this));
+		// }
 };
 
 

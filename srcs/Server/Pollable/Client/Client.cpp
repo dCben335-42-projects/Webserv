@@ -309,6 +309,5 @@ void Client::onPollErr()
 
 void Client::onPollHangUp()
 {
-	std::cerr << "SUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
 	m_connectionClosed = true;
 }

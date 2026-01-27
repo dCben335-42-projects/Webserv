@@ -5,6 +5,7 @@ SRC_FILES += Server/CgiSpawner/CgiSpawner.cpp
 SRC_FILES += Server/Files/File/File.cpp
 SRC_FILES += Server/Files/FileHandler.cpp
 SRC_FILES += Server/Files/FileUpload/FileUpload.cpp
+SRC_FILES += Server/Files/FileUpload/HttpSubRequest.cpp
 SRC_FILES += Server/Files/IndexOf/IndexOf.cpp
 SRC_FILES += Server/Http/HttpExceptions/AHttpException.cpp
 SRC_FILES += Server/Http/HttpMessages/AHttpMessage.cpp

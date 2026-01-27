@@ -24,6 +24,7 @@ void EventLoop::init()
 	Map<std::string> binmap1;
 	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
+	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
 	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.html", false, param2);

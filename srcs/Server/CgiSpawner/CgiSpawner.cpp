@@ -141,8 +141,7 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments)
 			continue;
 		if (!m_activeBinMap.has(fileExtension))
 			continue;
-		m_binPath = m_activeBinMap.get(fileExtension);
-		Logger::log(m_binPath);
+		m_binPath	 = m_activeBinMap.get(fileExtension);
 		m_scriptPath = m_req.buildResourcePath(i);
 		return i;
 	}
@@ -192,7 +191,6 @@ bool CgiSpawner::isCgi()
 				m_activeBinMap.set(first, mit->second);
 			}
 		}
-		Logger::log("Active bin map " + LoggerJson::get(m_activeBinMap));
 		const Vec<std::string> &urlSegments = m_req.getSegments();
 		ssize_t					scriptIndex = getScriptIndex(urlSegments);
 		if (scriptIndex == -1)

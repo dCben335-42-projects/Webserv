@@ -17,6 +17,8 @@ class String
 		static std::string toLower(const std::string &str);
 
 		static std::string trim(const std::string &str);
+		static std::string trimBegin(const std::string &str);
+
 		static std::string htmlEscape(const std::string &input);
 
 		static void replaceAll(
