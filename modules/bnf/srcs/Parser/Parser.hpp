@@ -17,6 +17,8 @@
 #include "../Exception/Parser/InvalidEntryException.hpp"
 #include "../Exception/Parser/FileNotFinishedException.hpp"
 
+typedef Vec<ARulePath> ARulePathsOk;
+
 class Parser
 {
 	private:
@@ -32,11 +34,13 @@ class Parser
 		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 
 		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, const ARule *const rule);
-		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix) const;
-
-		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path) const;
-
+		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
+
+		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path);
+
+		void resolvePath();
+		void completePath();
 		bool word(
 			TerminalCharInfo  *data,
 			const char		   c,
@@ -50,6 +54,14 @@ class Parser
 		Parser(const SemanticDescriptor &semantic);
 
 		void parse(const std::string &stringToParsed);
+		// clang-format off
+		Vec< Map<const ARule *, Vec<ARulePath> > > m_indexedPaths;
+
+
+		// clang-format off
+		Map<const ARule *, Vec<ARulePath> > m_originelRules;
+		const ARule						  *currentRule;
+		// Vec<const ARule const *> validatedRules;
 };
 
 #endif

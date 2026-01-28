@@ -1,9 +1,12 @@
 <head>			::= { statement }
 
-statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
+statement 		::= ( user_stmt | worker_stmto | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
 user_stmt		::= 'user' SPACE user_name ';'
+worker_stmto	::= 'worker' ok SPACE IDENT ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
+
+ok				::= '_proc' 'esses'
 pid_stmt		::= 'pid' SPACE PATH ';'
 
 events_block	::= 'events' [ SPACE ] '{' LINE_JUMP { event_stmt } '}'

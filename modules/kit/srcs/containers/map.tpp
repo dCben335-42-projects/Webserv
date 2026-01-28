@@ -67,19 +67,7 @@ class MapBase
 			return isInMap(static_cast<const Derived &>(*this), key);
 		}
 
-		/**
-		 *
-		 * @brief Gets the value associated with the given key in the map.
-		 *
-		 * @param key The key of the pair to be retrieved.
-		 *
-		 * @return The value associated with the given key.
-		 *
-		 */
-		V &get(const K &key)
-		{
-			return getMapValue(static_cast<Derived &>(*this), key);
-		}
+
 		/**
 		 *
 		 * @brief Gets the value associated with the given key in the map.
@@ -92,6 +80,28 @@ class MapBase
 		const V &get(const K &key) const
 		{
 			return getMapValue(static_cast<const Derived &>(*this), key);
+		}
+
+		V *getPtr(const K &key)
+		{
+			typename Derived::iterator it = static_cast<Derived &>(*this).find(key);
+			if (it == static_cast<Derived &>(*this).end())
+				return NULL;
+			return &it->second;
+		}
+
+		/**
+		 *
+		 * @brief Gets the value associated with the given key in the map.
+		 *
+		 * @param key The key of the pair to be retrieved.
+		 *
+		 * @return The value associated with the given key.
+		 *
+		 */
+		V &get(const K &key)
+		{
+			return getMapValue(static_cast<Derived &>(*this), key);
 		}
 
 		/**
