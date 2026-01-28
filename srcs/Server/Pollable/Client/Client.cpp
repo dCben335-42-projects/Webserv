@@ -12,6 +12,7 @@
 #include "IndexOf.hpp"
 
 #include "Logger.hpp"
+#include "EventLoop.hpp"
 
 
 Client::Client(int fd, const Config &config) :
@@ -19,6 +20,7 @@ Client::Client(int fd, const Config &config) :
 	m_serverConfig(config)
 {
 	m_events = POLLIN;
+	EventLoop::addHandler(this);
 }
 
 Client::~Client()
@@ -26,7 +28,6 @@ Client::~Client()
 	if (m_fd != -1)
 		close(m_fd);
 }
-
 
 /**
  *
@@ -58,7 +59,6 @@ HttpResponse &Client::getResponse()
 	return m_res;
 }
 
-
 /**
  *
  * @brief Sets the events for the client.
@@ -77,7 +77,6 @@ void Client::setEvents(const short events)
 	m_events = events;
 }
 
-
 /**
  *
  * @brief Handles HTTP POST requests.
@@ -92,7 +91,6 @@ void Client::setEvents(const short events)
 void Client::handlePostRequest()
 {
 	FileUpload file(m_req);
-
 	if (!file.isUploadValid())
 		throw Http400Exception();
 }
@@ -130,9 +128,6 @@ void Client::handleGetRequest(std::string ressourcePath)
 				IndexOf index(ressourcePath, target);
 				m_res.setBody(index.getPage());
 				m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-				const std::string date = Date::getCurrentDate();
-				if (!date.empty())
-					m_res.setHeader(HEADER_DATE, date);
 				m_res.setStatusCode(200);
 				return;
 			}
@@ -178,7 +173,7 @@ void Client::prepareResponse()
 		throw Http403Exception();
 	if (cgiHandler.isCgi())
 	{
-		cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
+		cgiHandler.spawnCgi(this);
 		m_events = 0;
 		return;
 	}
@@ -209,17 +204,16 @@ bool Client::isRequestComplete()
 	size_t			  headersEnd = rawRequest.find(HEADER_ENDING);
 	if (headersEnd == std::string::npos)
 		return false;
-
-	const size_t contentLength = m_req.readContentLength(rawRequest, headersEnd);
-	const size_t totalLength   = headersEnd + std::strlen(HEADER_ENDING) + contentLength;
+	m_req.parseFirstLine(rawRequest);
+	const ssize_t contentLength = m_req.readContentLength(rawRequest, headersEnd);
+	if (contentLength == -1)
+		return true;
+	const size_t totalLength = headersEnd + std::strlen(HEADER_ENDING) + contentLength;
 
 	if (rawRequest.size() < totalLength)
 		return false;
 	return true;
 }
-
-
-
 
 
 /**
@@ -247,30 +241,26 @@ void Client::onPollIn()
 		m_events = POLLIN;
 		return;
 	}
+
 	try
 	{
 		m_req.parse(m_serverConfig);
-		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
+		Logger::error("Received complete request:\n" + m_req.getRawRequest());
 		prepareResponse();
-		const std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
 	}
 	catch (const AHttpException &e)
 	{
 		m_res.reset();
-		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
-		const std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
 		m_res.setStatusCode(e.getStatusCode());
 		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 		m_res.setBody(e.getPage());
 	}
+	const std::string date = Date::getCurrentHttpDate();
+	if (!date.empty())
+		m_res.setHeader(HEADER_DATE, date);
+	const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
+	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+		m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 	m_res.build();
 	m_events = POLLOUT;
 }

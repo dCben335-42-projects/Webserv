@@ -25,9 +25,9 @@ HttpRequest::HttpRequest() :
 	m_queryString("")
 {
 }
-HttpRequest::~HttpRequest()
-{
-}
+// HttpRequest::~HttpRequest()
+// {
+// }
 
 
 HttpRequest &HttpRequest::reset()
@@ -138,6 +138,8 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
+	throw Http400Exception();
+
 	parseActiveLocations(serverConfig);
 	return *this;
 }
@@ -177,10 +179,9 @@ void HttpRequest::parseTargetQuery(const std::string &path)
  */
 void HttpRequest::parseActiveLocations(const Config &config)
 {
-	Vec<const Config::Location *>		 empty;
 	const Map<const Config::Location *> &locs = config.getLocations();
 
-	empty.push(config.getDefaultLocation());
+	m_activeLocations.push(config.getDefaultLocation());
 	for (Vec<std::string>::size_type i = 0; i < m_segments.size(); ++i)
 	{
 		std::string currentPath = "/";
@@ -191,7 +192,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 			currentPath += m_segments[j];
 		}
 		if (locs.has(currentPath))
-			empty.push(locs.get(currentPath));
+			m_activeLocations.push(locs.get(currentPath));
 		if (i == m_segments.size() - 1)
 		{
 			if (m_target[m_target.size() - 1] != '/')
@@ -199,10 +200,9 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		}
 		currentPath += "/";
 		if (locs.has(currentPath))
-			empty.push(locs.get(currentPath));
+			m_activeLocations.push(locs.get(currentPath));
 	}
-	std::sort(empty.begin(), empty.end(), Config::Location::compare);
-	m_activeLocations = empty;
+	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Config::Location::compare);
 }
 
 
@@ -283,8 +283,6 @@ ssize_t HttpRequest::readContentLength(std::string request, const size_t headers
 
 	return request.substr(clPos, endPos - clPos).size();
 }
-
-
 
 
 

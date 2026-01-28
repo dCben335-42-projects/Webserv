@@ -2,6 +2,7 @@
 #include "VirtualServer.hpp"
 #include "Location.hpp"
 #include "CgiParams.hpp"
+#include "Signals.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
@@ -14,6 +15,7 @@ void EventLoop::init()
 	// allowedMethods1.insert(HttpMethod::GET);
 	// allowedMethods1.insert(HttpMethod::POST);
 	// allowedMethods1.insert(HttpMethod::DELETE);
+	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
@@ -28,7 +30,7 @@ void EventLoop::init()
 	Config::Location *loc40 = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
 
 	Config::Location			 *loc8 = new Config::Location("/cgi-bin", "", "", "", false, NULL);
-	Config::Location			 *loc9 = new Config::Location("/usr/bin/", "", "files/www/website/", "", true, NULL);
+	Config::Location			 *loc9 = new Config::Location("/directory/", "files/www/website/YoupiBanane", "", "youpi.bad_extension", false, NULL);
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);
@@ -37,8 +39,9 @@ void EventLoop::init()
 	locations.set(loc40->getPath(), loc40);
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
-	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
+	Config *config1 = new Config("0.0.0.0", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
+	Signals::catchSigs();
 }
 
 
@@ -59,7 +62,7 @@ void EventLoop::destroy()
 	for (size_t i = 0; i < m_pollFds.size(); ++i)
 	{
 		const int fd = m_pollFds[i].fd;
-		deletePollable(fd, i);
+		delete m_handlers.get(fd);
 	}
 	m_pollFds.clear();
 	m_handlers.clear();
@@ -84,7 +87,6 @@ void EventLoop::run()
 {
 	const int POLL_TIMEOUT = 1000;
 	int		  ready;
-
 	while (true)
 	{
 		updatePollStatus();
@@ -157,7 +159,7 @@ void EventLoop::addHandler(Pollable *const handler)
  * @note It remains to each Pollable handler to close its own file descriptor in its destructor.
  *
  */
-void EventLoop::deletePollable(const int &fd, const size_t &index)
+void EventLoop::deletePollable(const int fd, const size_t &index)
 {
 	Pollable *handler = getHandler(fd);
 	if (handler)
@@ -204,8 +206,7 @@ void EventLoop::updatePollStatus()
  */
 Pollable *EventLoop::getHandler(int fd)
 {
-	Pollable *handler = NULL;
-	m_handlers.try_get(fd, handler);
+	Pollable *handler = m_handlers.get(fd);
 	return handler;
 }
 

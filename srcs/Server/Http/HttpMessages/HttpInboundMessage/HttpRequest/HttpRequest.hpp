@@ -18,7 +18,7 @@ class HttpRequest : public AHttpInboundMessage
 
 	public:
 		HttpRequest();
-		~HttpRequest();
+		// ~HttpRequest();
 
 
 		std::string							 getQueryString() const;

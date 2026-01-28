@@ -1,5 +1,5 @@
 #include "Location.hpp"
-
+#include "CgiParams.hpp"
 
 /**
  *
@@ -68,6 +68,8 @@ Config::Location::Location(
 
 Config::Location::~Location()
 {
+	if (m_cgi)
+		delete m_cgi;
 }
 
 

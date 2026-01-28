@@ -1,6 +1,8 @@
 #include "CgiPipe.hpp"
 #include <sys/wait.h>
 #include "webserv.hpp"
+#include <cstring>
+#include "Signals.hpp"
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,
@@ -10,21 +12,18 @@ CgiPipe::CgiPipe(
 	m_client(client),
 	m_pid(pid)
 {
-	m_events = POLLIN;
 }
 
 CgiPipe::~CgiPipe()
 {
-	if (m_pid > 0)
+	if (m_pid > 0 && !Signals::getIsChild())
 	{
 		kill(m_pid, SIGTERM);
 		int status;
 		waitpid(m_pid, &status, WNOHANG);
 	}
 	if (m_fd >= 0)
-	{
 		close(m_fd);
-	}
 }
 
 void CgiPipe::waitChild()
@@ -61,19 +60,18 @@ void CgiPipe::waitChild()
 
 void CgiPipe::onPollIn()
 {
-	char buffer[READ_BUFFER_SIZE] = {'\0'};
-	int	 bytes_read				  = read(m_fd, buffer, READ_BUFFER_SIZE);
+	// char buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
+	// int	 bytesRead					  = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
 
-	if (bytes_read > 0)
-	{
-		HttpResponse &res = m_client->getResponse();
-		res.appendToFulFullResponse(buffer, bytes_read);
-		return;
-	}
-
-	if (bytes_read < 0)
-		std::cerr << "Read error" << std::endl;
-	onError();
+	// if (bytesRead > 0)
+	// {
+	// 	HttpResponse &res = m_client->getResponse();
+	// 	res.appendToFulFullResponse(buffer, bytesRead);
+	// 	return;
+	// }
+	// if (bytesRead < 0)
+	// 	std::cerr << "Read error" << std::endl;
+	// onError();
 }
 
 void CgiPipe::onError()
@@ -89,8 +87,13 @@ void CgiPipe::onError()
 }
 
 
+#include "Logger.hpp"
 void CgiPipe::onPollOut()
 {
+	const std::string &body = m_client->getRequest().getBody();
+	write(m_fd, body.data(), body.size());
+	m_events		   = 0;
+	m_connectionClosed = true;
 }
 
 
@@ -103,8 +106,22 @@ void CgiPipe::onPollErr()
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
-	std::cerr << "Read ended" << std::endl;
+	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
+	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
+
+	if (bytesRead < 0)
+	{
+		std::cerr << "Read error" << std::endl;
+		return;
+	}
+	if (bytesRead > 0)
+	{
+		HttpResponse &res = m_client->getResponse();
+		res.appendToFulFullResponse(buffer, bytesRead);
+		return;
+	}
 	waitChild();
+	std::cerr << "Read ended" << std::endl;
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;

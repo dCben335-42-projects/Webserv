@@ -66,6 +66,14 @@ std::string String::trim(const std::string &str)
 	return str.substr(start, end - start);
 }
 
+std::string String::trimBegin(const std::string &str)
+{
+	size_t start = 0;
+	while (start < str.size() && std::isspace(static_cast<unsigned char>(str[start])))
+		++start;
+	return str.substr(start);
+}
+
 
 /**
  *
@@ -232,6 +240,25 @@ Vec<std::string> String::split(const std::string &str, const char *delimiters)
 		if (!token.empty())
 			result.push_back(token);
 		start = (end == std::string::npos) ? end : end + 1;
+	}
+	return result;
+}
+
+Vec<std::string> String::splitPattern(const std::string &str, const std::string &pattern)
+{
+	Vec<std::string> result;
+	size_t			 start = 0;
+	size_t			 end   = 0;
+	std::string		 token;
+	const size_t	 boundaryLen = pattern.size();
+
+	while (end != std::string::npos)
+	{
+		end	  = str.find(pattern, start);
+		token = str.substr(start, end - start);
+		if (!token.empty())
+			result.push_back(token);
+		start = end + boundaryLen;
 	}
 	return result;
 }
