@@ -1,9 +1,8 @@
 <head>			::= { statement }
 
-statement 		::= ( user_stmt | worker_stmto | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
+statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
 user_stmt		::= 'user' SPACE user_name ';'
-worker_stmto	::= 'worker' ok SPACE IDENT ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
 
 ok				::= '_proc' 'esses'
@@ -16,9 +15,10 @@ event_stmt		::= [ TAB_SPACE ] event_rule ';' [ LINE_JUMP ]
 event_rule		::= 'worker_connections' SPACE NUMBER
 				|= 'multi_accept' SPACE BOOL
 
-http_block		::= 'http' [ SPACE ] '{' LINE_JUMP { http_stmt LINE_JUMP } '}'
+http_block		::= 'http' [ SPACE ] '{' LINE_JUMP { http_stmt } '}'
 
-http_stmt		::= [ TAB_SPACE ] ( basic_http_stmt | gzip_stmt | include_stmt ) ';' [ LINE_JUMP ]
+http_stmt		::= [ TAB_SPACE ] ( basic_http_stmt | gzip_stmt | include_stmt ) ';' LINE_JUMP
+				|= LINE_JUMP
 
 basic_http_stmt	::= 'sendfile' TAB_SPACE BOOL
 				|= 'tcp_nopush' TAB_SPACE BOOL

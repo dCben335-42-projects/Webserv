@@ -189,8 +189,6 @@ bool Parser::word(
 bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
-	Logger::log("--------------------------------");
-	Logger::log("Parsing char: " + std::string(1, c));
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
 		const ARule				  *rule	 = it->first;
@@ -302,130 +300,110 @@ void Parser::completePath()
 	m_originelRules.clear();
 }
 
+
+
+
+
 class BNFPath
 {
 	public:
-		BNFPath(const ARulePath *p) : rulePath(p), prev(NULL)
+		BNFPath(const ARulePath &p) : rulePath(p), prev(NULL)
+		{
+		}
+		BNFPath(const ARulePath &p, BNFPath *pr) : rulePath(p), prev(pr)
 		{
 		}
 		~BNFPath()
 		{
 		}
-		const ARulePath *rulePath;
+		const ARulePath &rulePath;
 		BNFPath			*prev;
-		Vec<BNFPath *>	 next;
+		Vec<BNFPath>	 next;
 
-		void setNext(BNFPath *n)
+		void setNext(const ARulePath &p)
 		{
-			next.push_back(n);
-			n->prev = this;
+			next.push(BNFPath(p, this));
 		}
 };
 
-std::ostream &operator<<(std::ostream &os, const BNFPath &data)
+void generateJson()
 {
-	Logger::log(LoggerJson::get(*(data.rulePath)));
-
-	return (os);
 }
 
 
 void Parser::resolvePath()
 {
+	Vec<BNFPath *> basePaths;
 	Vec<BNFPath *> pathsTop;
-	Vec<BNFPath *> tempPathsTop;
-
 	// clang-format off
 	Map<ARulePath, Vec<ARulePath> > &mapPrev = m_indexedPaths[0];
-	// clang-format off
-	for (Map<ARulePath, Vec<ARulePath> >::const_iterator mapPrevIt = mapPrev.begin(); mapPrevIt != mapPrev.end(); ++mapPrevIt)
+	for (Map<ARulePath, Vec<ARulePath> >::const_iterator it = mapPrev.begin(); it != mapPrev.end(); ++it)
 	{
-		pathsTop.push_once(new BNFPath(&mapPrevIt->first));
+		basePaths.push_once(new BNFPath(it->first));
 	}
-
-	tempPathsTop = pathsTop;
-
+	pathsTop	 = basePaths;
 	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
 	{
-		// clang-format off
+		Logger::log("======== Resolving index: " + LoggerJson::get(k) + " ========");
 		Map<ARulePath, Vec<ARulePath> > &mapCurrent = m_indexedPaths[k];
-		Vec<const ARulePath *> vecKey;
-		Map< const ARulePath *, Vec< const ARulePath * > > mapValueToKey;
 
-		for (Map<ARulePath, Vec<ARulePath> >::iterator mapPrevIt = mapPrev.begin(); mapPrevIt != mapPrev.end(); ++mapPrevIt)
+		Vec<const ARulePath *>						   vecKey;
+		Map<const ARulePath *, Vec<const ARulePath *> > mapValueToKey;
+		for (Map<ARulePath, Vec<ARulePath> >::iterator it = mapCurrent.begin(); it != mapCurrent.end(); ++it)
 		{
-			mapValueToKey.set(&mapPrevIt->first, Vec<const ARulePath *>());
-			for (size_t i = 0; i < mapPrevIt->second.size(); ++i)
-			{
-				mapValueToKey[&mapPrevIt->first].push_once(&mapPrevIt->second[i]);
-			}
+			vecKey.push_once(&it->first);
 		}
 
-		for (Map<ARulePath, Vec<ARulePath> >::iterator mapCurrentIt = mapCurrent.begin(); mapCurrentIt != mapCurrent.end(); ++mapCurrentIt)
+		for (Map<ARulePath, Vec<ARulePath> >::iterator it = mapPrev.begin(); it != mapPrev.end(); ++it)
 		{
-			vecKey.push_once(&mapCurrentIt->first);
-		}
-
-		for (Map< const ARulePath *, Vec< const ARulePath * > >::iterator mapValueIt = mapValueToKey.begin(); mapValueIt != mapValueToKey.end(); ++mapValueIt)
-		{
-			const ARulePath *ident = mapValueIt->first;
-
-			for (size_t i = 0; i < mapValueIt->second.size(); ++i)
+			const ARulePath &ident = it->first;
+			for (size_t i = 0; i < it->second.size(); ++i)
 			{
-				const ARulePath *vecValue = mapValueIt->second[i];
-
+				const ARulePath &vecValue = it->second[i];
 				for (size_t j = 0; j < vecKey.size(); ++j)
 				{
-					if (vecValue->back() == vecKey[j]->back())
+					bool found		 = false;
+					if (vecValue.back() != vecKey[j]->back())
+						continue;
+					for (size_t l = 0; l < pathsTop.size(); ++l)
 					{
-						for (size_t l = 0; l < pathsTop.size(); ++l)
+						if (pathsTop[l]->rulePath == ident)
 						{
-							if (pathsTop[l]->rulePath == ident)
-							{
-								pathsTop[l]->setNext(new BNFPath(vecKey[j]));
-							}
+							if (found)
+								throw std::runtime_error("Ambiguous path resolution.");
+							pathsTop[l]->setNext(*vecKey[j]);
+							found = true;
 						}
 					}
 				}
 			}
 		}
-		
-		for (size_t i = 0; i < pathsTop.size(); ++i)
+
+		Vec<BNFPath *> bufferTemp;
+		Logger::log("original pathsTop size: " + LoggerJson::get(pathsTop.size()));
+		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
 		{
-			BNFPath *current = pathsTop[i];
-			if (current->next.empty())
-				continue;
-
-			pathsTop[i] = current->next[0];
-			size_t size = current->next.size();
-
-			if (size > 1)
+			BNFPath &current = *pathsTop[i];
+			if (current.next.empty())
 			{
-				for (size_t j = 1; j < size; ++j)
-				{
-					BNFPath *newTop = current->next[j];
-					while (newTop->prev)
-					{
-						newTop = newTop->prev;
-					}
-					pathsTop.push_once(newTop);
-				}
+				pathsTop.remove(i);
+				i--;
+				continue;
 			}
-		}
 
+			const size_t size = current.next.size();
+			pathsTop[i]		  = &(current.next[0]);
+			for (size_t j = 1; j < size; ++j)
+				bufferTemp.push_once(&(current.next[j]));
+		}
+		pathsTop.concat(bufferTemp);
 		mapPrev = mapCurrent;
 	}
-
-	for (size_t i = 0; i < tempPathsTop.size(); ++i)
-	{
-		BNFPath *current = tempPathsTop[i];
-		while (current)
-		{
-			std::cout << *current;
-			current = current->next.empty() ? NULL : current->next[0];
-		}
-	}
 }
+
+
+
+
 
 void Parser::parse(const std::string &stringToParsed)
 {
@@ -459,11 +437,11 @@ void Parser::parse(const std::string &stringToParsed)
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		c = stringToParsed[i];
-		Logger::log("index: " + LoggerJson::get(i) + ", char: '" + c + "'");
+		// Logger::log("index: " + LoggerJson::get(i) + ", char: '" + c + "'");
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
-		else
-			Logger::log("✅");
+		// else
+		// Logger::log("✅");
 		if (i == stringToParsed.size() - 1)
 			break;
 		completePath();
@@ -477,14 +455,14 @@ void Parser::parse(const std::string &stringToParsed)
 		Logger::log("Index: " + LoggerJson::get(k));
 		for (Map<ARulePath, Vec<ARulePath> >::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
 		{
-			Logger::log("\tKey: " + LoggerJson::get(mapIt->first.back(), true));
+			Logger::log("----");
+			Logger::log("\tKey: " + LoggerJson::get(mapIt->first, true));
 			for (Vec<ARulePath>::iterator pathIt = mapIt->second.begin(); pathIt != mapIt->second.end(); ++pathIt)
 			{
 				Logger::log("\t\tValue: " + LoggerJson::get(pathIt->back(), true));
 			}
 		}
 	}
-
 	resolvePath();
 
 
@@ -492,4 +470,11 @@ void Parser::parse(const std::string &stringToParsed)
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
+}
+
+std::ostream &operator<<(std::ostream &os, const BNFPath &data)
+{
+	// Logger::log(LoggerJson::get(*(data.rulePath)));
+	os << LoggerJson::get((data.rulePath));
+	return (os);
 }

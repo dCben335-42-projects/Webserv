@@ -289,6 +289,17 @@ class Vec
 			base::operator=(other);
 			return *this;
 		}
+		bool operator==(const Vec &other) const
+		{
+			if (this->size() != other.size())
+				return false;
+			for (size_t i = 0; i < this->size(); ++i)
+			{
+				if ((*this)[i] != other[i])
+					return false;
+			}
+			return true;
+		}
 		~Vec()
 		{
 		}
