@@ -21,9 +21,9 @@
 #include "Location.hpp"
 
 HttpRequest::HttpRequest() :
-	AHttpInboundMessage(),
-	m_queryString("")
+	AHttpInboundMessage()
 {
+	(void) m_totalReqLength;
 }
 // HttpRequest::~HttpRequest()
 // {
@@ -138,8 +138,6 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
-	throw Http400Exception();
-
 	parseActiveLocations(serverConfig);
 	return *this;
 }
@@ -264,24 +262,47 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
  * @return The value of the Content-Length header, or 0 if not present or invalid.
  *
  */
-ssize_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
+ssize_t HttpRequest::readContentLength(const std::string &request)
 {
-	size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd);
+	const size_t len   = request.size();
+	size_t		 clPos = request.find(HEADER_CONTENT_LENGTH);
 	if (clPos == std::string::npos)
-		return -1;
+		throw Http400Exception();
+
 
 	clPos += std::strlen(HEADER_CONTENT_LENGTH);
-	while (clPos < headersEnd && std::isspace(static_cast<unsigned char>(request[clPos])))
+	while (clPos < len && std::isspace(static_cast<unsigned char>(request[clPos])))
 		++clPos;
+	if (request[clPos] != ':')
+		throw Http400Exception();
 
+
+	++clPos;
+	while (clPos < len && std::isspace(static_cast<unsigned char>(request[clPos])))
+		++clPos;
 	size_t endPos = clPos;
-	while (endPos < headersEnd && std::isdigit(static_cast<unsigned char>(request[endPos])))
+	while (endPos < len && std::isdigit(static_cast<unsigned char>(request[endPos])))
 		++endPos;
+
 
 	if (endPos <= clPos)
 		throw Http400Exception();
+	return Number::toSizeT(request.substr(clPos, endPos - clPos));
+}
 
-	return request.substr(clPos, endPos - clPos).size();
+
+
+std::string HttpRequest::readMethodString(const std::string &currentRawStr) const
+{
+	const size_t lineEnd = currentRawStr.find(HEADER_LINE_ENDING);
+	if (lineEnd == std::string::npos)
+		return "";
+
+	const std::string requestLine = currentRawStr.substr(0, lineEnd);
+	const size_t	  methodEnd	  = requestLine.find(' ');
+	if (methodEnd != std::string::npos)
+		return requestLine.substr(0, methodEnd);
+	return "";
 }
 
 

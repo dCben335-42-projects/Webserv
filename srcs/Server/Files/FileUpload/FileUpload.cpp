@@ -74,7 +74,7 @@ void FileUpload::parseSubRequests()
 
 void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
 {
-	const std::string fullPath = "/home/tlutz/Documents/School/M5/Webserv/files/www/website/uploads/" + subRequest.getFileName();
+	const std::string fullPath = "files/www/website/uploads/" + subRequest.getFileName();
 	const std::string body	   = subRequest.getBody();
 
 	if (body == HEADER_LINE_ENDING)

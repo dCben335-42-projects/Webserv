@@ -204,15 +204,13 @@ bool Client::isRequestComplete()
 	size_t			  headersEnd = rawRequest.find(HEADER_ENDING);
 	if (headersEnd == std::string::npos)
 		return false;
-	m_req.parseFirstLine(rawRequest);
-	const ssize_t contentLength = m_req.readContentLength(rawRequest, headersEnd);
-	if (contentLength == -1)
+	const std::string methodStr = m_req.readMethodString(rawRequest);
+	if (methodStr != "POST" && methodStr != "PUT")
 		return true;
-	const size_t totalLength = headersEnd + std::strlen(HEADER_ENDING) + contentLength;
-
-	if (rawRequest.size() < totalLength)
-		return false;
-	return true;
+	const std::string headers		= rawRequest.substr(0, headersEnd);
+	const ssize_t	  contentLength = m_req.readContentLength(headers);
+	const size_t	  totalLength	= headersEnd + std::strlen(HEADER_ENDING) + contentLength;
+	return rawRequest.size() >= totalLength;
 }
 
 
@@ -245,7 +243,6 @@ void Client::onPollIn()
 	try
 	{
 		m_req.parse(m_serverConfig);
-		Logger::error("Received complete request:\n" + m_req.getRawRequest());
 		prepareResponse();
 	}
 	catch (const AHttpException &e)
@@ -300,7 +297,6 @@ void Client::onPollOut()
 			m_events		   = 0;
 			return;
 		}
-		Logger::info("Response sent to client. Waiting for new request.");
 		m_req.reset();
 		m_res.reset();
 		m_events = POLLIN;

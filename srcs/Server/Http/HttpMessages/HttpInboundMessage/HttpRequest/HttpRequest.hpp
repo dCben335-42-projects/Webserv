@@ -11,6 +11,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::string					  m_queryString;
 		Vec<std::string>			  m_segments;
 		Vec<const Config::Location *> m_activeLocations;
+		size_t						  m_totalReqLength;
 
 		size_t parseFirstLine(const std::string &rawRequest);
 		void   parseTargetQuery(const std::string &path);
@@ -29,8 +30,10 @@ class HttpRequest : public AHttpInboundMessage
 		HttpRequest &parse(const Config &serverConfig);
 		HttpRequest &reset();
 
-		ssize_t readOnce(int socketFd);
-		ssize_t	readContentLength(std::string request, const size_t headersEnd);
+
+		ssize_t		readOnce(int socketFd);
+		ssize_t		readContentLength(const std::string &request);
+		std::string readMethodString(const std::string &currentRawStr) const;
 
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		getActiveAutoIndex() const;
