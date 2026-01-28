@@ -1,0 +1,91 @@
+[
+    [
+        {
+            "type": "STATEMENT",
+            "var": [
+                [
+                    {
+                        "type": "USER_STMT",
+                        "var": [
+                            "www-data"
+                        ]
+                    },
+                    {
+                        "type": "WORKER_STMT",
+                        "var": [
+                            "auto"
+                        ]
+                    },
+                    {
+                        "type": "PID_STMT",
+                        "var": [
+                            "/run/nginx.pid"
+                        ]
+                    },
+                    {
+                        "type": "EVENTS_BLOCK",
+                        "var": [
+                            [
+                                {
+                                    "type": "EVENT_STMT",
+                                    "var": [
+                                        {
+                                            "type": "EVENT_RULE",
+                                            "var": [
+                                                "worker_connections",
+                                                "1024"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "EVENT_STMT",
+                                    "var": [
+                                        {
+                                            "type": "EVENT_RULE",
+                                            "var": [
+                                                "multi_accept",
+                                                "on"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "HTTP_BLOCK",
+                        "var": [
+                            [
+                                {
+                                    "type": "HTTP_STMT",
+                                    "var": [
+                                        {
+                                            "type": "EVENT_RULE",
+                                            "var": [
+                                                "worker_connections",
+                                                "1024"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "HTTP_STMT",
+                                    "var": [
+                                        {
+                                            "type": "EVENT_RULE",
+                                            "var": [
+                                                "worker_connections",
+                                                "1024"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    }
+                ]
+            ]
+        }
+    ]
+]

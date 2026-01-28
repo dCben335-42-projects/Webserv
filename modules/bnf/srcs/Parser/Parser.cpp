@@ -176,38 +176,11 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 	bool isValidWithCurrentPath = false;
 	Logger::log("--------------------------------");
 	Logger::log("Parsing char: " + std::string(1, c));
-	// Logger::log("Current paths:" + LoggerJson::get(mapPathCurrent));
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
 		const ARule				  *rule	 = it->first;
 		ARulePaths				   paths = it->second;
 		const Vec<TerminalSymbol> &items = rule->getItems();
-		// Logger::log(mapPathCurrent.get(rule));
-
-		// for (ARulePaths::iterator pathInfo = paths.begin(); pathInfo != paths.end(); ++pathInfo)
-		// {
-		// 	size_t indexElementTerminalChar = 0;
-		// 	for (size_t itemIndex = 0; itemIndex < items.size(); ++itemIndex)
-		// 	{
-		// 		if (!items[itemIndex].isTerminalChar())
-		// 			continue;
-
-		// 		TerminalCharInfo data;
-		// 		if (!(pathInfo->terminalCharsInfo.has(indexElementTerminalChar)))
-		// 		{
-		// 			data = TerminalCharInfo(&items[itemIndex], 0);
-		// 		}
-		// 		else
-		// 		{
-		// 			data = pathInfo->terminalCharsInfo.at(indexElementTerminalChar);
-		// 		}
-
-		// 		// Logger::log(nextTerminalChar);
-		// 		if (word(&data, c, rule, (*pathInfo), mapPathCurrent, mapPathNext))
-		// 			isValidWithCurrentPath = true;
-		// 		indexElementTerminalChar++;
-		// 	}
-		// }
 		for (size_t pathIndex = 0; pathIndex < paths.size(); ++pathIndex)
 		{
 			size_t indexElementTerminalChar = 0;
@@ -226,14 +199,12 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 					data = paths[pathIndex].terminalCharsInfo.at(indexElementTerminalChar);
 				}
 
-				// Logger::log(nextTerminalChar);
 				if (word(&data, c, rule, &paths[pathIndex], mapPathCurrent, mapPathNext))
 					isValidWithCurrentPath = true;
 				indexElementTerminalChar++;
 			}
 		}
 	}
-
 	return isValidWithCurrentPath;
 }
 

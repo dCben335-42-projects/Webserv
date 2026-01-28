@@ -1,23 +1,23 @@
-<head>			::= { STATEMENT }
+<head>			::= { statement }
 
-STATEMENT 		::= ( USER_STMT | WORKER_STMT | PID_STMT | EVENTS_BLOCK | HTTP_BLOCK ) { LINE_JUMP }
+statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
-USER_STMT		::= 'user' SPACE USER_NAME ';'
-WORKER_STMT		::= 'worker_processes' SPACE IDENT ';'
-PID_STMT		::= 'pid' SPACE PATH ';'
+user_stmt		::= 'user' SPACE user_name ';'
+worker_stmt		::= 'worker_processes' SPACE IDENT ';'
+pid_stmt		::= 'pid' SPACE PATH ';'
 
-EVENTS_BLOCK	::= 'events' [ SPACE ] '{' LINE_JUMP { EVENT_STMT } '}'
+events_block	::= 'events' [ SPACE ] '{' LINE_JUMP { event_stmt } '}'
 
-EVENT_STMT		::= [ TAB_SPACE ] EVENT_RULE ';' [ LINE_JUMP ]
+event_stmt		::= [ TAB_SPACE ] event_rule ';' [ LINE_JUMP ]
 
-EVENT_RULE		::= 'worker_connections' SPACE NUMBER
+event_rule		::= 'worker_connections' SPACE NUMBER
 				|= 'multi_accept' SPACE BOOL
 
-HTTP_BLOCK		::= 'http' [ SPACE ] '{' LINE_JUMP { HTTP_STMT LINE_JUMP } '}'
+http_block		::= 'http' [ SPACE ] '{' LINE_JUMP { http_stmt LINE_JUMP } '}'
 
-HTTP_STMT		::= [ TAB_SPACE ] ( BASIC_HTTP_STMT | GZIP_STMT | INCLUDE_STMT ) ';' [ LINE_JUMP ]
+http_stmt		::= [ TAB_SPACE ] ( basic_http_stmt | gzip_stmt | include_stmt ) ';' [ LINE_JUMP ]
 
-BASIC_HTTP_STMT	::= 'sendfile' TAB_SPACE BOOL
+basic_http_stmt	::= 'sendfile' TAB_SPACE BOOL
 				|= 'tcp_nopush' TAB_SPACE BOOL
 				|= 'tcp_nodelay' TAB_SPACE BOOL
 				|= 'keepalive_timeout' TAB_SPACE NUMBER
@@ -27,35 +27,35 @@ BASIC_HTTP_STMT	::= 'sendfile' TAB_SPACE BOOL
 				|= 'error_log' TAB_SPACE PATH SPACE LOG_LEVEL
 				|= 'server_tokens' TAB_SPACE BOOL
 
-GZIP_STMT		::= 'gzip' TAB_SPACE BOOL
+gzip_stmt		::= 'gzip' TAB_SPACE BOOL
 				|= 'gzip_disable' TAB_SPACE STRING
 				|= 'gzip_vary' TAB_SPACE BOOL
 				|= 'gzip_proxied' TAB_SPACE IDENT
 				|= 'gzip_comp_level' TAB_SPACE NUMBER
 				|= 'gzip_buffers' TAB_SPACE NUMBER SPACE SIZE
 				|= 'gzip_http_version' TAB_SPACE VERSION
-				|= GZIP_TYPES
+				|= gzip_types
 
-GZIP_TYPES		::= 'gzip_types' LINE_JUMP { GZIP_MIMES }
+gzip_types		::= 'gzip_types' LINE_JUMP { gzip_mines }
 
-GZIP_MIMES		::= [ TAB_SPACE ] MIME [ LINE_JUMP ]
+gzip_mines		::= [ TAB_SPACE ] MIME [ LINE_JUMP ]
 
-INCLUDE_STMT	::= 'include' TAB_SPACE PATH
+include_stmt	::= 'include' TAB_SPACE PATH
 
-USER_NAME ::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' }
+user_name 		::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' }
 
-IDENT ::= LETTER { LETTER }
+IDENT 			::= LETTER { LETTER }
 
-NUMBER ::= { DIGIT }
+NUMBER 			::= { DIGIT }
 
-BOOL ::= ( 'on' | 'off' )
+BOOL 			::= ( 'on' | 'off' )
 
-PATH ::= '/' { PATH_CHAR }
-PATH_CHAR ::= ( LETTER | DIGIT | '/' | '.' | '_' | '*' | '-' )
+PATH 			::= '/' { PATH_CHAR }
+PATH_CHAR 		::= ( LETTER | DIGIT | '/' | '.' | '_' | '*' | '-' )
 
-MIME ::= ( TEXT_MIME | APPLICATION_MIME | FONT_MIME | MULTIPART_MIME | AUDIO_MIME | VIDEO_MIME | IMAGE_MIME )
+MIME 			::= ( TEXT_MIME | APPLICATION_MIME | FONT_MIME | MULTIPART_MIME | AUDIO_MIME | VIDEO_MIME | IMAGE_MIME )
 
-TEXT_MIME ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'text/xml' )
+TEXT_MIME 		::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'text/xml' )
 
 APPLICATION_MIME ::= ( 'application/json' | 'application/javascript' | 'application/vnd.ms-fontobject' | 'application/pdf' | 'application/xml' | 'application/zip' | 'application/x-www-form-urlencoded' | 'application/x-yaml' | 'application/toml' | 'application/rtf' | 'application/octet-stream' )
 
@@ -89,7 +89,6 @@ TAB_SPACE		::= { SPACE | TAB }
 TAB				::= '\t'
 SPACE			::= ' '
 LINE_JUMP		::= '\n'
-
 
 
 

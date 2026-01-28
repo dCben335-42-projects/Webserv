@@ -324,10 +324,12 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 	Vec<TerminalSymbol> items = rule->getItems();
 	for (size_t i = 0; i < items.size(); ++i)
 	{
-		if (conceptPaths.contains(items[i].getValue()))
+		if (!items[i].isTerminalChar() && conceptPaths.contains(items[i].getValue()))
 			continue;
-		if (m_concepts.try_get(items[i].getValue(), conceptPtr))
+		if (!items[i].isTerminalChar())
 		{
+			if (!m_concepts.try_get(items[i].getValue(), conceptPtr))
+				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + items[i].getValue());
 			conceptPathsCopy = conceptPaths;
 			conceptPathsCopy.push_back(items[i].getValue());
 			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
