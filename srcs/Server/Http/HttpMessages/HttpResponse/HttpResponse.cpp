@@ -181,7 +181,7 @@ bool HttpResponse::sendOnce(int socket)
 	const char	 *buf		= m_fullResponse.c_str();
 	const size_t  remaining = m_fullResponse.size() - m_sentBytes;
 	const size_t  to_send	= remaining < WRITE_BUFFER_SIZE ? remaining : WRITE_BUFFER_SIZE;
-	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, 0);
+	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, MSG_NOSIGNAL);
 
 	if (n < 0)
 		throw std::runtime_error("send() failed");

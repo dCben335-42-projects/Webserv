@@ -11,6 +11,7 @@
 
 #include "IndexOf.hpp"
 
+#include "Logger.hpp"
 
 
 Client::Client(int fd, const Config &config) :
@@ -235,7 +236,7 @@ bool Client::isRequestComplete()
  */
 void Client::onPollIn()
 {
-	if (!m_req.readOnce(m_fd))
+	if (m_req.readOnce(m_fd) == -1)
 	{
 		m_events = 0;
 		return;
@@ -249,8 +250,8 @@ void Client::onPollIn()
 	{
 		m_req.parse(m_serverConfig);
 		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-		if (connectionHeader == "keep-alive")
-			m_res.setHeader(HEADER_CONNECTION, connectionHeader == "keep-alive" ? "keep-alive" : "close");
+		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 		prepareResponse();
 		const std::string date = Date::getCurrentDate();
 		if (!date.empty())
@@ -259,7 +260,9 @@ void Client::onPollIn()
 	catch (const AHttpException &e)
 	{
 		m_res.reset();
-		m_res.setHeader(HEADER_CONNECTION, "close");
+		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
+		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 		const std::string date = Date::getCurrentDate();
 		if (!date.empty())
 			m_res.setHeader(HEADER_DATE, date);
@@ -270,7 +273,6 @@ void Client::onPollIn()
 	m_res.build();
 	m_events = POLLOUT;
 }
-
 
 bool Client::shouldCloseConnection() const
 {
@@ -283,9 +285,8 @@ bool Client::shouldCloseConnection() const
 		else if (it->second == "keep-alive")
 			return false;
 	}
-	return false;
+	return true;
 }
-
 
 /**
  *
@@ -302,12 +303,13 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		m_events = 0;
 		if (shouldCloseConnection())
 		{
 			m_connectionClosed = true;
+			m_events		   = 0;
 			return;
 		}
+		Logger::info("Response sent to client. Waiting for new request.");
 		m_req.reset();
 		m_res.reset();
 		m_events = POLLIN;
@@ -316,15 +318,15 @@ void Client::onPollOut()
 	m_events = POLLOUT;
 }
 
-
 void Client::onPollErr()
 {
-	std::cerr << "Client error on fd " << m_fd << std::endl;
+	Logger::error("Poll error on client socket.");
 	m_events = 0;
 }
 
 void Client::onPollHangUp()
 {
+	Logger::info("Client disconnected.");
 	m_connectionClosed = true;
 	m_events		   = 0;
 }

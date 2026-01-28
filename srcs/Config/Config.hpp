@@ -49,8 +49,3 @@ class Config
 std::ostream &operator<<(std::ostream &os, const Config &config);
 
 #endif
-
-
-{
-	"TEST": "OE"
-}

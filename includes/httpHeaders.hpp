@@ -33,5 +33,7 @@
 #define HEADER_ACCEPT_ENCODING "Accept-Encoding"
 #define HEADER_COOKIE "Cookie"
 
+#define HEADER_CONNECTION_KEEP_ALIVE "keep-alive"
+#define HEADER_CONNECTION_CLOSE "close"
 
 #endif

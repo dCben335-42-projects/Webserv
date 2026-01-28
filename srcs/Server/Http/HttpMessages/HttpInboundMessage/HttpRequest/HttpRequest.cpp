@@ -100,20 +100,16 @@ const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
  *
  * @param socketFd The socket file descriptor to read from.
  *
- * @return The number of bytes read, or 0 if the connection is closed.
- *
- * @throws std::runtime_error if recv() fails.
+ * @return -1 on error, or the number of bytes read.
  *
  */
 ssize_t HttpRequest::readOnce(int socketFd)
 {
 	char		  buffer[READ_BUFFER_SIZE];
-	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, 0);
+	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, MSG_DONTWAIT);
 
 	if (bytesRead < 0)
-		throw std::runtime_error("recv() failed");
-	if (bytesRead == 0)
-		return 0;
+		return -1;
 
 	m_rawStr.append(buffer, bytesRead);
 	return bytesRead;

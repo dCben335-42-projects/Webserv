@@ -26,7 +26,6 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<std::string>				&getSegments() const;
 		const Vec<const Config::Location *> &getActiveLocations() const;
 
-
 		HttpRequest &parse(const Config &serverConfig);
 		HttpRequest &reset();
 
