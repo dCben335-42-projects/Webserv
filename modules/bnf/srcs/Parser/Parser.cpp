@@ -2,6 +2,7 @@
 #include <iostream>
 #include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
+#include "Json.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -36,8 +37,8 @@ void Parser::addPathPossibility(
 				mapPath.set(rule, ARulePaths());
 			ARulePath newPath = ARulePath::concat(prefix, path);
 			mapPath.get(rule).push_once(ARulePathInfo(newPath));
-			if (m_originelRules.has(currentRule))
-				m_originelRules.get(currentRule).push_once(newPath);
+			if (m_originelRules.has(*currentRule))
+				m_originelRules.get(*currentRule).push_once(newPath);
 		}
 	}
 
@@ -50,8 +51,8 @@ void Parser::addPathPossibility(
 				mapPath.set(rule, ARulePaths());
 			ARulePath newPath = ARulePath::concat(prefix, path);
 			mapPath.get(rule).push_once(ARulePathInfo(newPath));
-			if (m_originelRules.has(currentRule))
-				m_originelRules.get(currentRule).push_once(newPath);
+			if (m_originelRules.has(*currentRule))
+				m_originelRules.get(*currentRule).push_once(newPath);
 		}
 	}
 }
@@ -69,8 +70,8 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 					if (!mapPathNext.has(path[i]))
 						mapPathNext.set(path[i], ARulePaths());
 					mapPathNext.get(path[i]).push_once(ARulePathInfo(path.slice(i + 1)));
-					if (m_originelRules.has(currentRule))
-						m_originelRules.get(currentRule).push_once(path.slice(i + 1));
+					if (m_originelRules.has(*currentRule))
+						m_originelRules.get(*currentRule).push_once(path.slice(i + 1));
 				}
 				else
 					getPathsTerminalChars(path.slice(i + 1), terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
@@ -124,8 +125,8 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 			if (!mapPathNext.has(lastRule))
 				mapPathNext.set(lastRule, ARulePaths());
 			mapPathNext.get(lastRule).push_once(ARulePathInfo(nextRule));
-			if (m_originelRules.has(currentRule))
-				m_originelRules.get(currentRule).push_once(nextRule);
+			if (m_originelRules.has(*currentRule))
+				m_originelRules.get(*currentRule).push_once(nextRule);
 		}
 		else
 		{
@@ -150,16 +151,16 @@ bool Parser::word(
 	{
 		if (data->position == data->length - 1)
 		{
-			if (!m_originelRules.has(rule))
-				m_originelRules.set(rule, ARulePathsOk());
-			currentRule = rule;
+			if (!m_originelRules.has(pathInfo->path))
+				m_originelRules.set(pathInfo->path, Vec<ARulePath>());
+			currentRule = &pathInfo->path;
 			addNextPaths(mapPathCurrent, mapPathNext, pathInfo->path, rule);
 		}
 		else
 		{
-			if (!m_originelRules.has(rule))
-				m_originelRules.set(rule, ARulePathsOk());
-			m_originelRules.get(rule).push_once(pathInfo->path);
+			if (!m_originelRules.has(pathInfo->path))
+				m_originelRules.set(pathInfo->path, Vec<ARulePath>());
+			m_originelRules.get(pathInfo->path).push_once(pathInfo->path);
 
 			data->position += 1;
 			if (!mapPathNext.has(rule))
@@ -182,7 +183,6 @@ bool Parser::word(
 		}
 		return true;
 	}
-
 	return false;
 }
 
@@ -302,31 +302,130 @@ void Parser::completePath()
 	m_originelRules.clear();
 }
 
-void Parser::resolvePath()
+class BNFPath
 {
-	// clang-format off
-	Vec<Vec<ARulePath *> > paths;
+	public:
+		BNFPath(const ARulePath *p) : rulePath(p), prev(NULL)
+		{
+		}
+		~BNFPath()
+		{
+		}
+		const ARulePath *rulePath;
+		BNFPath			*prev;
+		Vec<BNFPath *>	 next;
 
-	for (size_t k = 0; k < m_indexedPaths.size(); ++k)
-	{
-		Map<const ARule *, ARulePathsOk> map = m_indexedPaths[k];
+		void setNext(BNFPath *n)
+		{
+			next.push_back(n);
+			n->prev = this;
+		}
+};
 
-		
+std::ostream &operator<<(std::ostream &os, const BNFPath &data)
+{
+	Logger::log(LoggerJson::get(*(data.rulePath)));
 
-
-
-		// Logger::log("Index: " + LoggerJson::get(k));
-		// for (Map<const ARule *, Vec<ARulePath>>::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
-		// {
-		// 	Logger::log("\tKey: " + LoggerJson::get(mapIt->first, true));
-		// 	for (Vec<ARulePath>::iterator pathIt = mapIt->second.begin(); pathIt != mapIt->second.end(); ++pathIt)
-		// 	{
-		// 		Logger::log("\t\tValue: " + LoggerJson::get(pathIt->back(), true));
-		// 	}
-		// }
-	}
+	return (os);
 }
 
+
+void Parser::resolvePath()
+{
+	Vec<BNFPath *> pathsTop;
+	Vec<BNFPath *> tempPathsTop;
+
+	// clang-format off
+	Map<ARulePath, Vec<ARulePath> > &mapPrev = m_indexedPaths[0];
+	// clang-format off
+	for (Map<ARulePath, Vec<ARulePath> >::const_iterator mapPrevIt = mapPrev.begin(); mapPrevIt != mapPrev.end(); ++mapPrevIt)
+	{
+		pathsTop.push_once(new BNFPath(&mapPrevIt->first));
+	}
+
+	tempPathsTop = pathsTop;
+
+	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
+	{
+		// clang-format off
+		Map<ARulePath, Vec<ARulePath> > &mapCurrent = m_indexedPaths[k];
+		Vec<const ARulePath *> vecKey;
+		Map< const ARulePath *, Vec< const ARulePath * > > mapValueToKey;
+
+		for (Map<ARulePath, Vec<ARulePath> >::iterator mapPrevIt = mapPrev.begin(); mapPrevIt != mapPrev.end(); ++mapPrevIt)
+		{
+			mapValueToKey.set(&mapPrevIt->first, Vec<const ARulePath *>());
+			for (size_t i = 0; i < mapPrevIt->second.size(); ++i)
+			{
+				mapValueToKey[&mapPrevIt->first].push_once(&mapPrevIt->second[i]);
+			}
+		}
+
+		for (Map<ARulePath, Vec<ARulePath> >::iterator mapCurrentIt = mapCurrent.begin(); mapCurrentIt != mapCurrent.end(); ++mapCurrentIt)
+		{
+			vecKey.push_once(&mapCurrentIt->first);
+		}
+
+		for (Map< const ARulePath *, Vec< const ARulePath * > >::iterator mapValueIt = mapValueToKey.begin(); mapValueIt != mapValueToKey.end(); ++mapValueIt)
+		{
+			const ARulePath *ident = mapValueIt->first;
+
+			for (size_t i = 0; i < mapValueIt->second.size(); ++i)
+			{
+				const ARulePath *vecValue = mapValueIt->second[i];
+
+				for (size_t j = 0; j < vecKey.size(); ++j)
+				{
+					if (vecValue->back() == vecKey[j]->back())
+					{
+						for (size_t l = 0; l < pathsTop.size(); ++l)
+						{
+							if (pathsTop[l]->rulePath == ident)
+							{
+								pathsTop[l]->setNext(new BNFPath(vecKey[j]));
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		for (size_t i = 0; i < pathsTop.size(); ++i)
+		{
+			BNFPath *current = pathsTop[i];
+			if (current->next.empty())
+				continue;
+
+			pathsTop[i] = current->next[0];
+			size_t size = current->next.size();
+
+			if (size > 1)
+			{
+				for (size_t j = 1; j < size; ++j)
+				{
+					BNFPath *newTop = current->next[j];
+					while (newTop->prev)
+					{
+						newTop = newTop->prev;
+					}
+					pathsTop.push_once(newTop);
+				}
+			}
+		}
+
+		mapPrev = mapCurrent;
+	}
+
+	for (size_t i = 0; i < tempPathsTop.size(); ++i)
+	{
+		BNFPath *current = tempPathsTop[i];
+		while (current)
+		{
+			std::cout << *current;
+			current = current->next.empty() ? NULL : current->next[0];
+		}
+	}
+}
 
 void Parser::parse(const std::string &stringToParsed)
 {
@@ -347,6 +446,15 @@ void Parser::parse(const std::string &stringToParsed)
 
 	Logger::log(m_semantic);
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
+	// for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
+	// {
+	// 	for (size_t i = 0; i < it->second.size(); ++i)
+	// 	{
+	// 		m_startingPaths.push_once(it->second[i].path);
+	// 	}
+	// }
+
+
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
@@ -367,15 +475,17 @@ void Parser::parse(const std::string &stringToParsed)
 	for (size_t k = 0; k < m_indexedPaths.size(); ++k)
 	{
 		Logger::log("Index: " + LoggerJson::get(k));
-		for (Map<const ARule *, Vec<ARulePath> >::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
+		for (Map<ARulePath, Vec<ARulePath> >::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
 		{
-			Logger::log("\tKey: " + LoggerJson::get(mapIt->first, true));
+			Logger::log("\tKey: " + LoggerJson::get(mapIt->first.back(), true));
 			for (Vec<ARulePath>::iterator pathIt = mapIt->second.begin(); pathIt != mapIt->second.end(); ++pathIt)
 			{
 				Logger::log("\t\tValue: " + LoggerJson::get(pathIt->back(), true));
 			}
 		}
 	}
+
+	resolvePath();
 
 
 	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide

@@ -17,7 +17,7 @@
 #include "../Exception/Parser/InvalidEntryException.hpp"
 #include "../Exception/Parser/FileNotFinishedException.hpp"
 
-typedef Vec<ARulePath> ARulePathsOk;
+// typedef Vec<ARulePath> ARulePathsOk;
 
 class Parser
 {
@@ -54,13 +54,17 @@ class Parser
 		Parser(const SemanticDescriptor &semantic);
 
 		void parse(const std::string &stringToParsed);
+
+		
 		// clang-format off
-		Vec< Map<const ARule *, Vec<ARulePath> > > m_indexedPaths;
+		Vec< Map<ARulePath, Vec<ARulePath> > > m_indexedPaths;
 
 
 		// clang-format off
-		Map<const ARule *, Vec<ARulePath> > m_originelRules;
-		const ARule						  *currentRule;
+		Map<ARulePath, Vec<ARulePath> > m_originelRules;
+		ARulePath						  *currentRule;
+		// clang-format off
+		Vec<ARulePath >		  m_startingPaths;
 		// Vec<const ARule const *> validatedRules;
 };
 
