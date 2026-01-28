@@ -5,10 +5,10 @@ NAME        					= webserv
 # Compiler flags
 CXX         					= c++
 WWW_FLAGS    					= -Wall -Wextra -Werror -g3
-EVERYTHING_FLAGS 				= -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-documentation-unknown-command -Wno-global-constructors -Wno-exit-time-destructors -Wno-missing-prototypes -Wno-shadow-field-in-constructor -Wno-weak-vtables
+EVERYTHING_FLAGS 				= 
 DEPS_FLAGS   					= -MMD -MP
 CPP98_FLAGS  					= -std=c++98
-CXX_FLAGS     					= $(WWW_FLAGS) $(CPP98_FLAGS) $(DEPS_FLAGS)
+CXX_FLAGS     					= $(WWW_FLAGS) $(CPP98_FLAGS) $(DEPS_FLAGS) $(EVERYTHING_FLAGS)
 
 # Tools
 RM 								= rm -rf

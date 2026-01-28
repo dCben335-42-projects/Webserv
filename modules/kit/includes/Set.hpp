@@ -1,6 +1,6 @@
-#ifndef SET_HPP
-#define SET_HPP
+#ifndef KIT_SET_HPP
+#define KIT_SET_HPP
 
-#include "../srcs/containers/set.tpp"
+#include "../srcs/containers/Set.tpp"
 
 #endif

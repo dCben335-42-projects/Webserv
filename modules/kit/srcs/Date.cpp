@@ -15,7 +15,7 @@ std::string Date::toHttpDateFormat(const tm *timeInfo)
 		return "";
 	char buf[100];
 
-	strftime(buf, sizeof(buf), HTTP_DATE_FORMAT, timeInfo);
+	strftime(buf, sizeof(buf), KIT_HTTP_DATE_FORMAT, timeInfo);
 	return std::string(buf);
 }
 
@@ -24,8 +24,8 @@ bool Date::compareHttpDates(const std::string &date1, const std::string &date2)
 	struct tm tstruct1;
 	struct tm tstruct2;
 
-	strptime(date1.c_str(), HTTP_DATE_FORMAT, &tstruct1);
-	strptime(date2.c_str(), HTTP_DATE_FORMAT, &tstruct2);
+	strptime(date1.c_str(), KIT_HTTP_DATE_FORMAT, &tstruct1);
+	strptime(date2.c_str(), KIT_HTTP_DATE_FORMAT, &tstruct2);
 
 	time_t time1 = mktime(&tstruct1);
 	time_t time2 = mktime(&tstruct2);
@@ -38,6 +38,6 @@ std::string Date::toHumanFormat(const tm *timeInfo)
 	if (!timeInfo)
 		return "";
 	char buf[32];
-	strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M", timeInfo);
+	strftime(buf, sizeof(buf), KIT_HUMAN_DATE_FORMAT, timeInfo);
 	return std::string(buf);
 }

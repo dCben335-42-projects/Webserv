@@ -1,27 +1,24 @@
 #include "HttpResponse.hpp"
+#include "webserv.hpp"
+#include "Number.hpp"
 #include <sstream>
 #include <sys/socket.h>
-#include "config.hpp"
-#include <iostream>
-#include "Number.hpp"
-#include <cerrno>
+#include "httpExceptions.hpp"
 
 Map<unsigned short, std::string> HttpResponse::initStatusReasonMap()
 {
 	Map<unsigned short, std::string> map;
 
-	map[200] = "OK";
-	map[201] = "Created";
-	map[204] = "No Content";
-	map[400] = "Bad Request";
-	map[401] = "Unauthorized";
-	map[403] = "Forbidden";
-	map[404] = "Not Found";
-	map[405] = "Method Not Allowed";
-	map[413] = "Payload Too Large";
-	map[414] = "URI Too Long";
-	map[500] = "Internal Server Error";
-	map[501] = "Not Implemented";
+	map[200] = HTTP_200_MSG;
+	map[201] = HTTP_201_MSG;
+	map[204] = HTTP_204_MSG;
+	map[400] = HTTP_400_MSG;
+	map[401] = HTTP_401_MSG;
+	map[403] = HTTP_403_MSG;
+	map[404] = HTTP_404_MSG;
+	map[405] = HTTP_405_MSG;
+	map[500] = HTTP_500_MSG;
+	map[501] = HTTP_501_MSG;
 	return (map);
 }
 
@@ -39,7 +36,6 @@ HttpResponse::~HttpResponse()
 }
 
 
-// ANCHOR Reset
 
 /**
  *
@@ -56,12 +52,11 @@ void HttpResponse::reset()
 	m_body.clear();
 	m_method = HttpMethod();
 
-	m_headers[HEADER_SERVER] = SERVER_NAME;
+	m_headers[HEADER_SERVER] = SERVER_FULL_NAME;
 }
 
 
 
-// ANCHOR Setters
 /**
  *
  * @brief Sets the HTTP status code of the response.
@@ -84,7 +79,6 @@ void HttpResponse::appendToFulFullResponse(const char *buf, size_t size)
 
 
 
-// ANCHOR Getters
 /**
  *
  * @brief Gets the HTTP status code of the response.
@@ -121,7 +115,14 @@ size_t HttpResponse::getSentBytes() const
 	return m_sentBytes;
 }
 
-// ANCHOR Build head
+
+/**
+ *
+ * @brief Builds the status line of the HTTP response.
+ *
+ * @return A string representing the HTTP status line.
+ *
+ */
 std::string HttpResponse::buildHead() const
 {
 	const Map<unsigned short, std::string>::const_iterator it =
@@ -134,7 +135,6 @@ std::string HttpResponse::buildHead() const
 }
 
 
-// ANCHOR Send response
 /**
  *
  * @brief Builds the full HTTP response string,
@@ -153,7 +153,7 @@ void HttpResponse::build()
 	responseStream << buildHead();
 	Map<std::string>::const_iterator it = m_headers.begin();
 	for (; it != m_headers.end(); ++it)
-		responseStream << it->first << ": " << it->second << HEADER_LINE_ENDING;
+		responseStream << it->first << HEADER_SEPARATOR << it->second << HEADER_LINE_ENDING;
 	responseStream << HEADER_LINE_ENDING;
 	responseStream << m_body;
 	m_fullResponse = responseStream.str();
@@ -181,21 +181,16 @@ bool HttpResponse::sendOnce(int socket)
 	const char	 *buf		= m_fullResponse.c_str();
 	const size_t  remaining = m_fullResponse.size() - m_sentBytes;
 	const size_t  to_send	= remaining < WRITE_BUFFER_SIZE ? remaining : WRITE_BUFFER_SIZE;
-	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, 0);
+	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, MSG_NOSIGNAL);
 
 	if (n < 0)
-	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			return false;
 		throw std::runtime_error("send() failed");
-	}
 	m_sentBytes += n;
 	return (m_sentBytes >= m_fullResponse.size());
 }
 
 
 
-// ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, HttpResponse const &response)
 {
 	o << response.buildHead() << static_cast<AHttpMessage const &>(response);

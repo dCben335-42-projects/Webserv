@@ -1,7 +1,5 @@
 #include "AHttpMessage.hpp"
 #include "Number.hpp"
-#include "config.hpp"
-#include <exception>
 #include "Logger.hpp"
 
 AHttpMessage::AHttpMessage() :
@@ -16,7 +14,6 @@ AHttpMessage::~AHttpMessage()
 
 
 
-// ANCHOR Getters
 /**
  *
  * @brief Gets all HTTP headers of the message.
@@ -24,7 +21,7 @@ AHttpMessage::~AHttpMessage()
  * @return A map containing all HTTP headers.
  *
  */
-Map<std::string> AHttpMessage::getHeaders() const
+const Map<std::string> &AHttpMessage::getHeaders() const
 {
 	return m_headers;
 }
@@ -41,7 +38,8 @@ Map<std::string> AHttpMessage::getHeaders() const
  */
 std::string AHttpMessage::getHeader(const std::string &key) const
 {
-	return m_headers.get(key);
+	std::string value;
+	return m_headers.try_get(key, value) ? value : "";
 }
 
 
@@ -53,9 +51,9 @@ std::string AHttpMessage::getHeader(const std::string &key) const
  * @return The HTTP method as a string.
  *
  */
-std::string AHttpMessage::getMethod() const
+const HttpMethod &AHttpMessage::getMethod() const
 {
-	return m_method.getStrType();
+	return m_method;
 }
 /**
  *
@@ -72,7 +70,6 @@ std::string AHttpMessage::getBody() const
 
 
 
-// ANCHOR Setters
 /**
  *
  * @brief Sets a specific HTTP header.
@@ -83,7 +80,7 @@ std::string AHttpMessage::getBody() const
  */
 void AHttpMessage::setHeader(const std::string &key, const std::string &value)
 {
-	m_headers[key] = value;
+	m_headers.set(key, value);
 }
 /**
  *
@@ -142,8 +139,6 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 
 
 
-
-// ANCHOR Overload operator <<
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
 	Logger::log(message.getHeaders());

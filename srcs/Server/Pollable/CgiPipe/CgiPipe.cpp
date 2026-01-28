@@ -1,20 +1,14 @@
 #include "CgiPipe.hpp"
-#include <unistd.h>
 #include <sys/wait.h>
-#include <cstring>
-#include <fcntl.h>
-#include "config.hpp"
-#include <errno.h>
+#include "webserv.hpp"
 
 CgiPipe::CgiPipe(
-	pid_t			   pid,
-	int				   stdout_pipe_fd,
-	Client			  *client,
-	const std::string &script_path) :
+	pid_t		  pid,
+	int			  stdout_pipe_fd,
+	Client *const client) :
 	Pollable(stdout_pipe_fd),
 	m_client(client),
-	m_pid(pid),
-	m_scriptPath(script_path)
+	m_pid(pid)
 {
 	m_events = POLLIN;
 }
@@ -76,15 +70,7 @@ void CgiPipe::onPollIn()
 		res.appendToFulFullResponse(buffer, bytes_read);
 		return;
 	}
-	// if (bytes_read == 0)
-	// {
-	// 	std::cerr << "Read ended" << std::endl;
-	// 	waitChild();
-	// 	m_events = 0;
-	// 	m_client->setEvents(POLLOUT);
-	// 	m_connectionClosed = true;
-	// 	return;
-	// }
+
 	if (bytes_read < 0)
 		std::cerr << "Read error" << std::endl;
 	onError();
@@ -94,7 +80,6 @@ void CgiPipe::onError()
 {
 	m_events		  = 0;
 	HttpResponse &res = m_client->getResponse();
-	// Send 500 error to client
 	res.reset();
 	res.setStatusCode(500);
 	res.setHeader("Content-Type", "text/html");
@@ -106,13 +91,12 @@ void CgiPipe::onError()
 
 void CgiPipe::onPollOut()
 {
-	// Not used for CGI pipe
 }
 
 
 void CgiPipe::onPollErr()
 {
-	std::cerr << "CgiPipe error on fd " << m_fd << " for script " << m_scriptPath << std::endl;
+	std::cerr << "CgiPipe error on fd " << m_fd << std::endl;
 	onError();
 }
 

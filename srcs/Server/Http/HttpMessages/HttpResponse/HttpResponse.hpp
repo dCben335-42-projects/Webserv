@@ -2,8 +2,6 @@
 #define HTPP_RESPONSE_CPP
 
 #include "AHttpMessage.hpp"
-#include <ostream>
-#include <Map.hpp>
 
 class HttpResponse : public AHttpMessage
 {

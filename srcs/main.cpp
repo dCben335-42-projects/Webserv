@@ -1,7 +1,5 @@
 #include "Lexer.hpp"
-#include "config.hpp"
 #include "EventLoop.hpp"
-
 
 int main()
 {

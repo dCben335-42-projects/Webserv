@@ -1,18 +1,21 @@
 #include "Client.hpp"
-#include "config.hpp"
-#include "FileHandler.hpp"
 #include "httpExceptions.hpp"
-#include "Date.hpp"
-#include "IndexOf.hpp"
+
 #include "CgiSpawner.hpp"
-#include "CgiPipe.hpp"
-#include "EventLoop.hpp"
-#include "Location.hpp"
+#include "httpMimes.hpp"
+
+
+#include "FileHandler.hpp"
+#include "FileUpload.hpp"
+#include "Date.hpp"
+
+#include "IndexOf.hpp"
+
 #include "Logger.hpp"
 
-Client::Client(int fd, VirtualServer *server, const Config &config) :
+
+Client::Client(int fd, const Config &config) :
 	Pollable(fd),
-	m_server(server),
 	m_serverConfig(config)
 {
 	m_events = POLLIN;
@@ -88,48 +91,19 @@ void Client::setEvents(const short events)
  */
 void Client::handlePostRequest()
 {
-	(void) 0;
-}
+	FileUpload file(m_req);
 
+	if (!file.isUploadValid())
+		throw Http400Exception();
+}
 
 void Client::handleDeleteRequest()
 {
-	(void) 0;
+	m_res.setStatusCode(204);
 }
 
 
 
-void Client::test(const std::string &ROOT)
-{
-	(void) m_server;
-	const std::string target	 = String::removeDuplicateSlashes(m_req.getTarget());
-	const std::string targetPath = String::removeDuplicateSlashes(ROOT + target);
-	if (FileHandler::fileExists(targetPath))
-	{
-		m_res.setBody(FileHandler::readFile(targetPath));
-		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(targetPath));
-		std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
-		m_res.setStatusCode(200);
-		return;
-	}
-	if (FileHandler::folderExists(targetPath))
-	{
-		IndexOf index(ROOT, target);
-		m_res.setBody(index.getPage());
-		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-		std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
-		m_res.setStatusCode(200);
-		return;
-	}
-	else
-		throw Http404Exception();
-}
-
-#include "Logger.hpp"
 
 /**
  *
@@ -143,59 +117,35 @@ void Client::test(const std::string &ROOT)
  * or if there are permission issues.
  *
  */
-void Client::handleGetRequest()
+void Client::handleGetRequest(std::string ressourcePath)
 {
-	const std::string target   = m_req.getTarget();
-	const std::string root	   = m_serverConfig.getRoot(target);
-	std::string		  resource = root;
-
-	const Vec<const Config::Location *> &locations = m_req.getActiveLocations();
-	Logger::log("Matched Locations:" + LoggerJson::get(locations));
+	const std::string target = m_req.getTarget();
 
 	try
 	{
-
-
-		if (FileHandler::folderExists(root + target))
+		if (FileHandler::folderExists(ressourcePath))
 		{
-			if (m_serverConfig.getAutoIndex(target))
+			if (m_req.getActiveAutoIndex())
 			{
-				if (!FileHandler::fileExists(resource))
-				{
-					IndexOf index(root, target);
-					m_res.setBody(index.getPage());
-					m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-					std::string date = Date::getCurrentDate();
-					if (!date.empty())
-						m_res.setHeader(HEADER_DATE, date);
-					m_res.setStatusCode(200);
-					return;
-				}
-				resource = root + "/" + m_serverConfig.getIndexFile(target);
-				m_res.setBody(FileHandler::readFile(resource));
-				m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
-				std::string fileDate = FileHandler::findLastModifiedDate(resource);
-				if (!fileDate.empty())
-					m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-				std::string date = Date::getCurrentDate();
+				IndexOf index(ressourcePath, target);
+				m_res.setBody(index.getPage());
+				m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+				const std::string date = Date::getCurrentDate();
 				if (!date.empty())
 					m_res.setHeader(HEADER_DATE, date);
 				m_res.setStatusCode(200);
 				return;
 			}
-			throw Http403Exception();
+			const std::string indexFile = m_serverConfig.getIndexFile(target);
+			if (indexFile.empty())
+				throw Http403Exception();
+			ressourcePath = ressourcePath + "/" + indexFile;
 		}
-		resource = target.at(0) == '/' ? target.substr(1) : target;
-		resource = FileHandler::getSafePath(root, resource);
-		m_res.setBody(FileHandler::readFile(resource));
-		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(resource));
-		std::string fileDate = FileHandler::findLastModifiedDate(resource);
+		m_res.setBody(FileHandler::readFile(ressourcePath));
+		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
+		const std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
 		if (!fileDate.empty())
 			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-		std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
-
 		m_res.setStatusCode(200);
 	}
 	catch (const FileHandler::FileHandlerException &e)
@@ -204,26 +154,6 @@ void Client::handleGetRequest()
 		throw e.getHttpException();
 	}
 }
-
-
-bool Client::isCgi()
-{
-	try
-	{
-		File			  file(m_req.getTarget(), m_req.getTarget(), "files/www/website");
-		const std::string ext = file.getExtension();
-
-		return ext == ".php" || ext == ".py";
-	}
-	catch (const FileHandler::FileHandlerException &e)
-	{
-		std::cerr << e.what() << '\n';
-		throw e.getHttpException();
-	}
-	return false;
-}
-
-
 
 /**
  *
@@ -240,35 +170,28 @@ bool Client::isCgi()
  */
 void Client::prepareResponse()
 {
-	const std::string method = m_req.getMethod();
-	try
+	CgiSpawner		  cgiHandler(m_req, m_serverConfig);
+	const size_t	  segmentSize	= m_req.getSegmentSize();
+	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
+
+	if (!m_req.isAllowedMethod())
+		throw Http403Exception();
+	if (cgiHandler.isCgi())
 	{
-		if (isCgi())
-		{
-			spawnCgi("files/www/website/" + m_req.getTarget());
-			return;
-		}
-		if (method == "GET")
-			handleGetRequest();
-		else if (method == "POST")
-			handlePostRequest();
-		else if (method == "DELETE")
-			handleDeleteRequest();
-		else
-			throw Http501Exception(method);
+		cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
+		m_events = 0;
+		return;
 	}
-	catch (const AHttpException &e)
-	{
-		m_res.reset();
-		m_res.setStatusCode(e.getStatusCode());
-		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-		m_res.setBody(e.getPage());
-	}
-	m_res.build();
-	m_events = POLLOUT;
+	const HttpMethod::Type method = m_req.getMethod().getType();
+	if (method == HttpMethod::GET)
+		handleGetRequest(ressourcePath);
+	else if (method == HttpMethod::POST)
+		handlePostRequest();
+	else if (method == HttpMethod::DELETE)
+		handleDeleteRequest();
+	else
+		throw Http405Exception(m_req.getMethod().getStrType());
 }
-
-
 
 /**
  *
@@ -313,7 +236,7 @@ bool Client::isRequestComplete()
  */
 void Client::onPollIn()
 {
-	if (!m_req.readOnce(m_fd))
+	if (m_req.readOnce(m_fd) == -1)
 	{
 		m_events = 0;
 		return;
@@ -323,12 +246,47 @@ void Client::onPollIn()
 		m_events = POLLIN;
 		return;
 	}
-	m_req.parse(m_serverConfig);
-	prepareResponse();
+	try
+	{
+		m_req.parse(m_serverConfig);
+		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
+		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
+		prepareResponse();
+		const std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+	}
+	catch (const AHttpException &e)
+	{
+		m_res.reset();
+		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
+		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
+		const std::string date = Date::getCurrentDate();
+		if (!date.empty())
+			m_res.setHeader(HEADER_DATE, date);
+		m_res.setStatusCode(e.getStatusCode());
+		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+		m_res.setBody(e.getPage());
+	}
+	m_res.build();
+	m_events = POLLOUT;
 }
 
-
-
+bool Client::shouldCloseConnection() const
+{
+	const Map<std::string>			&headers = m_req.getHeaders();
+	Map<std::string>::const_iterator it		 = headers.find(HEADER_CONNECTION);
+	if (it != headers.end())
+	{
+		if (it->second == "close")
+			return true;
+		else if (it->second == "keep-alive")
+			return false;
+	}
+	return true;
+}
 
 /**
  *
@@ -345,57 +303,30 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		m_events		   = 0;
-		m_connectionClosed = true;
+		if (shouldCloseConnection())
+		{
+			m_connectionClosed = true;
+			m_events		   = 0;
+			return;
+		}
+		Logger::info("Response sent to client. Waiting for new request.");
+		m_req.reset();
+		m_res.reset();
+		m_events = POLLIN;
 		return;
 	}
 	m_events = POLLOUT;
 }
 
-
 void Client::onPollErr()
 {
-	std::cerr << "Client error on fd " << m_fd << std::endl;
+	Logger::error("Poll error on client socket.");
 	m_events = 0;
 }
 
 void Client::onPollHangUp()
 {
-}
-
-
-
-
-/**
- *
- * @brief Spawns a CGI script for the client request.
- *
- * This function creates a CgiSpawner instance to handle the CGI script execution.
- * It sets up the necessary pipes and spawns the CGI process.
- * If successful, it creates a CgiPipe to read the CGI output.
- * If spawning fails, it prepares a 500 Internal Server Error response.
- *
- * @param script_path The path to the CGI script to be executed.
- *
- */
-void Client::spawnCgi(const std::string &script_path)
-{
-	CgiSpawner spawner(getRequest(), m_server->getConfig());
-	int		   stdout_fd = spawner.spawn(script_path);
-
-	if (stdout_fd >= 0)
-	{
-		CgiPipe *cgi_pipe = new CgiPipe(spawner.getPid(),
-										stdout_fd, this, script_path);
-		EventLoop::addHandler(cgi_pipe);
-		m_events = 0;
-	}
-	else
-	{
-		m_res.reset();
-		m_res.setStatusCode(500);
-		m_res.setBody("CGI spawn failed");
-		m_res.build();
-		m_events = POLLOUT;
-	}
+	Logger::info("Client disconnected.");
+	m_connectionClosed = true;
+	m_events		   = 0;
 }

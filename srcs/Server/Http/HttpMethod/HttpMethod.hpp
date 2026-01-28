@@ -1,8 +1,17 @@
 #ifndef HTTP_METHOD_HPP
 #define HTTP_METHOD_HPP
 
-#include <string>
 #include "Map.hpp"
+
+#define M_GET "GET"
+#define M_POST "POST"
+#define M_DELETE "DELETE"
+#define M_PUT "PUT"
+#define M_PATCH "PATCH"
+#define M_HEAD "HEAD"
+#define M_OPTIONS "OPTIONS"
+#define M_TRACE "TRACE"
+#define M_CONNECT "CONNECT"
 
 
 class HttpMethod
@@ -15,16 +24,20 @@ class HttpMethod
 			DELETE,
 			PUT,
 			PATCH,
+			HEAD,
+			OPTIONS,
+			TRACE,
+			CONNECT,
 			NONE
 		};
 
 
 	private:
-		HttpMethod::Type m_type;
-		std::string		 m_strType;
-
 		const static Map<Type, std::string> m_methodMap;
-		static Map<Type, std::string>		initMethodMap();
+		std::string							m_strType;
+		HttpMethod::Type					m_type;
+
+		static Map<Type, std::string> initMethodMap();
 
 	public:
 		HttpMethod();
@@ -32,28 +45,11 @@ class HttpMethod
 		HttpMethod(const Type &method);
 		~HttpMethod();
 
-
+		bool operator<(const HttpMethod &other) const;
 		HttpMethod &operator=(const HttpMethod &other);
 
 		Type		getType() const;
 		std::string getStrType() const;
-
-
-
-		bool operator<(const HttpMethod &other) const
-		{
-			return m_type < other.m_type;
-		}
-
-		bool operator==(const HttpMethod &other) const
-		{
-			return m_type == other.m_type;
-		}
-
-		bool operator!=(const HttpMethod &other) const
-		{
-			return !(*this == other);
-		}
 };
 
 #endif

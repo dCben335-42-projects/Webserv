@@ -3,12 +3,12 @@
 
 #include "AHttpException.hpp"
 
-#define HTTP_500_ERROR_MSG "Internal Server Error"
+#define HTTP_500_MSG "Internal Server Error"
 
 class Http500Exception : public AHttpException
 {
 	public:
-		Http500Exception() : AHttpException(HTTP_500_ERROR_MSG, 500)
+		Http500Exception() : AHttpException(HTTP_500_MSG, 500)
 		{
 		}
 };
