@@ -1,6 +1,8 @@
 #include "HttpSubRequest.hpp"
 #include "Logger.hpp"
 #include "config.hpp"
+#include "httpExceptions.hpp"
+#include "Date.hpp"
 
 HttpSubRequest::HttpSubRequest(const std::string &rawStr)
 {
@@ -12,4 +14,60 @@ HttpSubRequest::HttpSubRequest(const std::string &rawStr)
 
 HttpSubRequest::~HttpSubRequest()
 {
+}
+
+const std::string &HttpSubRequest::getFileName() const
+{
+	return m_fileName;
+}
+
+const std::string &HttpSubRequest::getName() const
+{
+	return m_name;
+}
+
+std::string HttpSubRequest::extractValue(const std::string &token, const std::string &pattern) const
+{
+	if (token.size() <= pattern.size())
+		throw Http400Exception();
+	size_t			   firstQuote = token.find_first_of("\"");
+	size_t			   lastQuote  = token.find_last_of("\"");
+	const std::string &result	  = token.substr(firstQuote + 1, lastQuote - (firstQuote + 1));
+	Logger::log("Name :");
+	Logger::log(result);
+	return (result);
+}
+
+void HttpSubRequest::parseNameAndFileName(Map<std::string> &headersMap)
+{
+	if (headersMap.get("Content-Disposition").find("name=") == std::string::npos)
+		throw Http400Exception();
+	if (headersMap.get("Content-Disposition").find("form-data;") == std::string::npos)
+		throw Http400Exception();
+	if (headersMap.get("Content-disposition").find("filename=") == std::string::npos)
+		m_fileName = Date::getCurrentDateStr();
+
+	Vec<std::string> contentDispositionValues = String::split(headersMap.get("Content-Disposition"), ";");
+	for (Vec<std::string>::const_iterator it = contentDispositionValues.begin(); it != contentDispositionValues.end(); it++)
+	{
+		std::string token = String::trim((*it));
+		if (token == "form-data")
+			continue;
+		if (token.find("name=") == 0)
+			m_name = extractValue(token, "name=");
+		if (token.find("filename=") == 0)
+			m_fileName = extractValue(token, "filename=");
+	}
+}
+
+void HttpSubRequest::parseSubRequest()
+{
+	Map<std::string> headersMap = this->getHeaders();
+	if (headersMap.size() > 2)
+		throw Http400Exception();
+	if (headersMap.has("Content-Disposition") == false)
+		throw Http400Exception();
+	if (headersMap.has(HEADER_CONTENT_TYPE) == false)
+		headersMap.set(HEADER_CONTENT_TYPE, HEADER_TYPE_PLAIN);
+	parseNameAndFileName(headersMap);
 }

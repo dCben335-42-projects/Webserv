@@ -1,12 +1,22 @@
 #include "../includes/Date.hpp"
 #include <ctime>
 #include <stdexcept>
+#include <sstream>
 
-std::string Date::getCurrentDate()
+std::string Date::getCurrentHttpDate()
 {
 	time_t now = time(0);
 
 	return Date::toHttpDateFormat(gmtime(&now));
+}
+
+std::string Date::getCurrentDateStr()
+{
+	time_t now = time(0);
+
+	std::ostringstream os;
+	os << now << std::endl;
+	return os.str();
 }
 
 std::string Date::toHttpDateFormat(const tm *timeInfo)

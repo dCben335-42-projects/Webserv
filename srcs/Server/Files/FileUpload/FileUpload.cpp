@@ -3,6 +3,8 @@
 #include "httpExceptions.hpp"
 #include "AHttpInboundMessage.hpp"
 #include "HttpSubRequest.hpp"
+#include "fcntl.h"
+#include "unistd.h"
 // TODO
 #include "Logger.hpp"
 
@@ -63,42 +65,24 @@ void FileUpload::fillSubRequests(const Vec<std::string> &subTypes)
 
 void FileUpload::parseSubRequests()
 {
-	for (Vec<HttpSubRequest>::const_iterator it = m_subRequests.begin(); it != m_subRequests.end(); it++)
+	for (Vec<HttpSubRequest>::iterator it = m_subRequests.begin(); it != m_subRequests.end(); it++)
 	{
-		Map<std::string> headersMap = (*it).getHeaders();
-		if (headersMap.size() > 2)
-			throw Http400Exception();
-		if (headersMap.has("Content-Disposition") == false)
-			throw Http400Exception();
-		if (headersMap.has(HEADER_CONTENT_TYPE) == false)
-			headersMap.set(HEADER_CONTENT_TYPE, HEADER_TYPE_PLAIN);
-		parseNameAndFileName(headersMap);
+		(*it).parseSubRequest();
+		createDiskFile((*it));
 	}
 }
 
-void FileUpload::parseNameAndFileName(Map<std::string> &headersMap)
+void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
 {
-	if (headersMap.get("Content-Disposition").find("name=") == std::string::npos)
-		throw Http400Exception();
-	if (headersMap.get("Content-Disposition").find("form-data;") == std::string::npos)
-		throw Http400Exception();
-	// if (headersMap.get("Content-disposition").find("filename=") == std::string::npos)
-	// TODO Generate filename with timestamp
-	Vec<std::string> contentDispositionValues = String::split(headersMap.get("Content-Disposition"), "; ");
-	for (Vec<std::string>::const_iterator it = contentDispositionValues.begin(); it != contentDispositionValues.end(); it++)
-	{
-		if ((*it) == "form-data")
-			continue;
-		if (size_t equalIndex = (*it).find("name="))
-		{
-			if ((*it).size() <= 5)
-				throw Http400Exception();
-			if ((*it).at(equalIndex + 1) != '\"')
-				throw Http400Exception();
-		}
-	}
-}
+	const std::string fullPath = "/home/tlutz/Documents/School/M5/Webserv/files/www/website/uploads/" + subRequest.getFileName();
+	const std::string body	   = subRequest.getBody();
 
-// // void FileUpload::createDiskFile()
-// // {
-// // }
+	int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY, 0644);
+	perror("open");
+	if (fd == -1)
+		throw Http500Exception();
+	int bytesWritten = write(fd, body.c_str(), body.size());
+	if (bytesWritten == -1)
+		throw Http500Exception();
+	close(fd);
+}

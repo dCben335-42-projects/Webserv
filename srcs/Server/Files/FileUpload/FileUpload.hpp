@@ -21,8 +21,7 @@ class FileUpload
 		void parseSubTypes();
 		void fillSubRequests(const Vec<std::string> &subTypes);
 		void parseSubRequests();
-		void createDiskFile();
-		void parseNameAndFileName(Map<std::string> &headersMap);
+		void createDiskFile(const HttpSubRequest &subRequest);
 };
 
 #endif

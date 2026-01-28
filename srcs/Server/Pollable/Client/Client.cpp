@@ -126,7 +126,7 @@ void Client::handleGetRequest(const std::string &ressourcePath)
 			IndexOf index(ressourcePath, m_req.getTarget());
 			m_res.setBody(index.getPage());
 			m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-			const std::string date = Date::getCurrentDate();
+			const std::string date = Date::getCurrentHttpDate();
 			if (!date.empty())
 				m_res.setHeader(HEADER_DATE, date);
 			m_res.setStatusCode(200);
@@ -140,7 +140,7 @@ void Client::handleGetRequest(const std::string &ressourcePath)
 			// 		IndexOf index(root, target);
 			// 		m_res.setBody(index.getPage());
 			// 		m_res.setHeader(HEADER_CONTENT_TYPE, HEADER_TYPE_HTML);
-			// 		std::string date = Date::getCurrentDate();
+			// 		std::string date = Date::getCurrentHttpDate();
 			// 		if (!date.empty())
 			// 			m_res.setHeader(HEADER_DATE, date);
 			// 		m_res.setStatusCode(200);
@@ -152,7 +152,7 @@ void Client::handleGetRequest(const std::string &ressourcePath)
 			// 	std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
 			// 	if (!fileDate.empty())
 			// 		m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-			// 	std::string date = Date::getCurrentDate();
+			// 	std::string date = Date::getCurrentHttpDate();
 			// 	if (!date.empty())
 			// 		m_res.setHeader(HEADER_DATE, date);
 			// 	m_res.setStatusCode(200);
@@ -164,7 +164,7 @@ void Client::handleGetRequest(const std::string &ressourcePath)
 		const std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
 		if (!fileDate.empty())
 			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
-		const std::string date = Date::getCurrentDate();
+		const std::string date = Date::getCurrentHttpDate();
 		if (!date.empty())
 			m_res.setHeader(HEADER_DATE, date);
 		m_res.setStatusCode(200);
