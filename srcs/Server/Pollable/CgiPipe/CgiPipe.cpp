@@ -110,8 +110,8 @@ void CgiPipe::onPollErr()
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
-	char   buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
-	size_t bytesRead					= read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
+	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
+	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
 
 	if (bytesRead < 0)
 	{

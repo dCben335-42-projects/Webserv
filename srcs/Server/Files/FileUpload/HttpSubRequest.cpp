@@ -40,12 +40,10 @@ std::string HttpSubRequest::extractValue(const std::string &token, const std::st
 
 void HttpSubRequest::parseNameAndFileName(Map<std::string> &headersMap)
 {
-	if (headersMap.get("Content-Disposition").find("name=") == std::string::npos)
-		throw Http400Exception();
 	if (headersMap.get("Content-Disposition").find("form-data;") == std::string::npos)
 		throw Http400Exception();
-	if (headersMap.get("Content-disposition").find("filename=") == std::string::npos)
-		m_fileName = Date::getCurrentDateStr();
+	if (headersMap.get("Content-Disposition").find("name=") == std::string::npos)
+		throw Http400Exception();
 
 	Vec<std::string> contentDispositionValues = String::split(headersMap.get("Content-Disposition"), ";");
 	for (Vec<std::string>::const_iterator it = contentDispositionValues.begin(); it != contentDispositionValues.end(); it++)
@@ -57,6 +55,8 @@ void HttpSubRequest::parseNameAndFileName(Map<std::string> &headersMap)
 			m_name = extractValue(token, "name=");
 		if (token.find("filename=") == 0)
 			m_fileName = extractValue(token, "filename=");
+		if (m_fileName.empty())
+			m_fileName = Date::getCurrentDateStr();
 	}
 }
 

@@ -77,6 +77,11 @@ void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
 	const std::string fullPath = "/home/tlutz/Documents/School/M5/Webserv/files/www/website/uploads/" + subRequest.getFileName();
 	const std::string body	   = subRequest.getBody();
 
+	if (body == HEADER_LINE_ENDING)
+		return;
+	if (access(fullPath.c_str(), F_OK) == 0)
+		throw Http409Exception();
+	Logger::log(fullPath);
 	int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY, 0644);
 	perror("open");
 	if (fd == -1)
