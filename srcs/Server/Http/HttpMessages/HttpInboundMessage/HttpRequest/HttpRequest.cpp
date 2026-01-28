@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <iostream>
 #include "File.hpp"
+#include "httpExceptions.hpp"
 
 #include "Config.hpp"
 #include "Location.hpp"
@@ -258,14 +259,16 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
  * @param request The raw HTTP request string.
  * @param headersEnd The position of the end of the headers in the request string.
  *
+ * @throws Http400Exception if the Content-Length header is malformed.
+ *
  * @return The value of the Content-Length header, or 0 if not present or invalid.
  *
  */
-size_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
+ssize_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
 {
 	size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd);
 	if (clPos == std::string::npos)
-		return 0;
+		return -1;
 
 	clPos += std::strlen(HEADER_CONTENT_LENGTH);
 	while (clPos < headersEnd && std::isspace(static_cast<unsigned char>(request[clPos])))
@@ -276,10 +279,12 @@ size_t HttpRequest::readContentLength(std::string request, const size_t headersE
 		++endPos;
 
 	if (endPos <= clPos)
-		return 0;
+		throw Http400Exception();
 
-	return Number::toSizeT(request.substr(clPos, endPos - clPos));
+	return request.substr(clPos, endPos - clPos).size();
 }
+
+
 
 
 

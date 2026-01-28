@@ -209,6 +209,7 @@ bool Client::isRequestComplete()
 	size_t			  headersEnd = rawRequest.find(HEADER_ENDING);
 	if (headersEnd == std::string::npos)
 		return false;
+
 	const size_t contentLength = m_req.readContentLength(rawRequest, headersEnd);
 	const size_t totalLength   = headersEnd + std::strlen(HEADER_ENDING) + contentLength;
 

@@ -30,7 +30,7 @@ class HttpRequest : public AHttpInboundMessage
 		HttpRequest &reset();
 
 		ssize_t readOnce(int socketFd);
-		size_t	readContentLength(std::string request, const size_t headersEnd);
+		ssize_t	readContentLength(std::string request, const size_t headersEnd);
 
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		getActiveAutoIndex() const;
