@@ -124,7 +124,7 @@ Logger &Logger::info(V *ptr)
 template <typename V>
 Logger &Logger::error(const V &v)
 {
-	Logger::log(LOG_ERROR_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(LOG_ERROR_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
 }
 /**
  *
