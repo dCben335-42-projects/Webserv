@@ -300,3 +300,56 @@ Vec<std::string> String::splitPattern(const std::string &str, const std::string 
 	}
 	return result;
 }
+
+
+
+/**
+ *
+ * @brief Matches a string against a pattern with wildcards.
+ *
+ * @param pattern The pattern string, which may contain '*' and '?' wildcards.
+ * @param str The input string to be matched against the pattern.
+ *
+ * @return true if the input string matches the pattern, false otherwise.
+ *
+ * @note The '*' wildcard matches zero or more characters.
+ *       The '?' wildcard matches exactly one character.
+ *
+ */
+bool String::match(
+	const std::string &pattern,
+	const std::string &str)
+{
+	const size_t pLen	  = pattern.size();
+	const size_t sLen	  = str.size();
+	size_t		 pIdx	  = 0;
+	size_t		 sIdx	  = 0;
+	size_t		 starIdx  = std::string::npos;
+	size_t		 matchIdx = 0;
+
+	while (sIdx < sLen)
+	{
+		if (pIdx < pLen && (pattern[pIdx] == '?' || pattern[pIdx] == str[sIdx]))
+		{
+			++pIdx;
+			++sIdx;
+		}
+		else if (pIdx < pLen && pattern[pIdx] == '*')
+		{
+			starIdx	 = pIdx;
+			matchIdx = sIdx;
+			++pIdx;
+		}
+		else if (starIdx != std::string::npos)
+		{
+			pIdx	 = starIdx + 1;
+			sIdx	 = matchIdx + 1;
+			matchIdx = sIdx;
+		}
+		else
+			return false;
+	}
+	while (pIdx < pLen && pattern[pIdx] == '*')
+		++pIdx;
+	return pIdx == pLen;
+}

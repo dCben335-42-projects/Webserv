@@ -4,6 +4,8 @@
 #include "Vec.hpp"
 #include "Config.hpp"
 #include "AHttpInboundMessage.hpp"
+#include "String.hpp"
+#include "Accept.hpp"
 
 class HttpRequest : public AHttpInboundMessage
 {
@@ -11,6 +13,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::string					  m_queryString;
 		Vec<std::string>			  m_segments;
 		Vec<const Config::Location *> m_activeLocations;
+		Vec<Accept>					  m_accepts;
 
 		size_t m_firstLineEndPos;
 		size_t m_headersEndPos;
@@ -20,6 +23,7 @@ class HttpRequest : public AHttpInboundMessage
 		size_t parseFirstLine();
 		void   parseTargetQuery(const std::string &path);
 		void   parseActiveLocations(const Config &config);
+		void   parseAccepts(const std::string &headerValue);
 
 	public:
 		HttpRequest();
@@ -28,10 +32,10 @@ class HttpRequest : public AHttpInboundMessage
 		size_t								 getSegmentSize() const;
 		const Vec<std::string>				&getSegments() const;
 		const Vec<const Config::Location *> &getActiveLocations() const;
+		const Vec<Accept>					&getAccepts() const;
 
 		HttpRequest &parse(const Config &serverConfig);
 		HttpRequest &reset();
-
 
 		ssize_t		readOnce(int socketFd);
 		ssize_t		readContentLength(const std::string &request);

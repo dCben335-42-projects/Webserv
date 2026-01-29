@@ -1,10 +1,12 @@
 #include "Lexer.hpp"
 #include "EventLoop.hpp"
+#include "String.hpp"
 
 int main()
 {
 	try
 	{
+		Logger::setFormat(Logger::Json);
 		EventLoop::init();
 		EventLoop::run();
 		EventLoop::destroy();

@@ -3,7 +3,6 @@
 
 #include "Vec.hpp"
 #include "Map.hpp"
-#include "HttpMethod.hpp"
 
 class Config
 {
@@ -40,8 +39,7 @@ class Config
 		const Location				*getDefaultLocation() const;
 		const Map<const Location *> &getLocations() const;
 
-		bool			  hasIndexFile(const std::string &locationPath) const;
-
+		bool hasIndexFile(const std::string &locationPath) const;
 
 		const std::string getIndexFile(const std::string &locationPath) const;
 };

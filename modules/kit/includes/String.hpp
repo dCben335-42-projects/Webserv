@@ -36,6 +36,8 @@ class String
 
 		static Vec<std::string> split(const std::string &str, const char *delimiters);
 		static Vec<std::string> splitPattern(const std::string &str, const std::string &pattern);
+
+		static bool match(const std::string &pattern, const std::string &str);
 };
 
 #endif

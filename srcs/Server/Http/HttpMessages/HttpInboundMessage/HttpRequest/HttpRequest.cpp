@@ -16,7 +16,6 @@
 #include <iostream>
 #include "File.hpp"
 #include "httpExceptions.hpp"
-
 #include "Config.hpp"
 #include "Location.hpp"
 
@@ -36,6 +35,7 @@ HttpRequest &HttpRequest::reset()
 	m_target.clear();
 	m_headers.clear();
 	m_body.clear();
+	m_accepts.clear();
 	m_method			= HttpMethod();
 	m_firstLineEndPos	= 0;
 	m_headersEndPos		= 0;
@@ -91,6 +91,18 @@ const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
 	return m_activeLocations;
 }
 
+/**
+ *
+ * @brief Retrieves the accepted content types from the request.
+ *
+ * @return A constant reference to a vector of Accept objects representing the accepted content types.
+ *
+ */
+const Vec<Accept> &HttpRequest::getAccepts() const
+{
+	return m_accepts;
+}
+
 
 
 
@@ -136,10 +148,12 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	size_t pos = m_firstLineEndPos + lineEndSize;
 	AHttpInboundMessage::parse(m_rawStr, pos);
 
-	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
 	parseActiveLocations(serverConfig);
+	parseAccepts(getHeader(HEADER_ACCEPT));
+	std::cout << *this << std::endl;
+
 	return *this;
 }
 
@@ -167,6 +181,17 @@ void HttpRequest::parseTargetQuery(const std::string &path)
 	m_target   = String::urlDecode(path);
 	m_segments = String::split(m_target, "/");
 }
+
+
+void HttpRequest::parseAccepts(const std::string &headerValue)
+{
+	Logger::info("Parsing Accept header: " + headerValue);
+	Vec<std::string> parts = String::split(headerValue, ",");
+	for (Vec<std::string>::size_type i = 0; i < parts.size(); ++i)
+		m_accepts.push(Accept(parts[i]));
+	std::sort(m_accepts.begin(), m_accepts.end(), Accept::compare);
+}
+
 
 /**
  *
@@ -507,6 +532,8 @@ std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 	Logger::log(CYAN "Segments: " + LoggerJson::get(message.getSegments()) + RESET);
 	Logger::log(YELLOW "Headers:");
 	Logger::log(message.getHeaders());
+	Logger::log(YELLOW "Active Locations:").log(LoggerJson::get(message.getActiveLocations()));
+	Logger::log(YELLOW "Accepts:").log(LoggerJson::get(message.getAccepts()));
 	Logger::log(MAGENTA "Body:" RESET "\n");
 	Logger::log(message.getBody());
 	Logger::log(RESET "------------------------");
