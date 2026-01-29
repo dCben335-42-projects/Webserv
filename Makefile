@@ -116,7 +116,7 @@ fclean: clean
 	@$(RM) $(NAME)
 
 val: all
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -q -s ./$(NAME) 
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes --track-fds=yes -q -s ./$(NAME) 
 
 run: all
 	@echo "$(GREEN)$(ALIAS) Running $(NAME)...$(NC)"

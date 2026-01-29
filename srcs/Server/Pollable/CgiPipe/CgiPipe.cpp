@@ -60,18 +60,18 @@ void CgiPipe::waitChild()
 
 void CgiPipe::onPollIn()
 {
-	// char buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
-	// int	 bytesRead					  = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
+	char buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
+	int	 bytesRead					  = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
-	// if (bytesRead > 0)
-	// {
-	// 	HttpResponse &res = m_client->getResponse();
-	// 	res.appendToFulFullResponse(buffer, bytesRead);
-	// 	return;
-	// }
-	// if (bytesRead < 0)
-	// 	std::cerr << "Read error" << std::endl;
-	// onError();
+	if (bytesRead > 0)
+	{
+		HttpResponse &res = m_client->getResponse();
+		res.appendToFulFullResponse(buffer, bytesRead);
+		return;
+	}
+	if (bytesRead < 0)
+		std::cerr << "Read error" << std::endl;
+	onError();
 }
 
 void CgiPipe::onError()
@@ -107,7 +107,7 @@ void CgiPipe::onPollErr()
 void CgiPipe::onPollHangUp()
 {
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
-	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
+	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
 	if (bytesRead < 0)
 	{
