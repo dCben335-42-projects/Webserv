@@ -191,7 +191,7 @@ bool CgiSpawner::isCgi()
 		ssize_t					scriptIndex = getScriptIndex(urlSegments);
 		if (scriptIndex == -1)
 			return false;
-		if (!FileHandler::hasReadPermission(m_scriptPath))
+		if (FileHandler::fileExists(m_scriptPath) && !FileHandler::hasReadPermission(m_scriptPath))
 			throw Http403Exception();
 		buildPathInfo(urlSegments, scriptIndex);
 		buildScriptName(urlSegments, scriptIndex);

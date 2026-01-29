@@ -18,25 +18,19 @@ void EventLoop::init()
 	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
+	binmap1.set(".cub", "/home/bcabocel/Documents/projects/m5/webserv/cub3D_bonus");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
 	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.htm", true, param2);
-
-	Config::Location *loc2 = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
+	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", true, NULL);
+	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
 	// loc2->setMethods(allowedMethods1);
-	Config::Location *loc1	= new Config::Location("/assets", "", "", "", true, NULL);
-	Config::Location *loc3	= new Config::Location("/assets/test/", "", "", "", NULL);
-	Config::Location *loc4	= new Config::Location("/assets/test/dwad", "", "", "", false, NULL);
-	Config::Location *loc40 = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
-
-	Config::Location			 *loc8 = new Config::Location("/cgi-bin", "", "", "", false, NULL);
-	Config::Location			 *loc9 = new Config::Location("/directory/", "files/www/website/YoupiBanane", "", "youpi.bad_extension", false, NULL);
+	Config::Location *loc8 = new Config::Location("/cgi-bin", "", "files/www/usr/bin", "", true, NULL);
+	Config::Location *loc9 = new Config::Location("/uploads", "", "files/www/uploads", "", true, NULL);
+	loc9->setUpload("files/www/uploads/");
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);
-	locations.set(loc3->getPath(), loc3);
-	locations.set(loc4->getPath(), loc4);
-	locations.set(loc40->getPath(), loc40);
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
 	Config *config1 = new Config("0.0.0.0", 8080, "localhost", defaultLocation, locations);
@@ -112,7 +106,10 @@ void EventLoop::run()
 				if (m_pollFds[i].revents & POLLHUP)
 					handler->onPollHangUp();
 				if (handler->getConnectionClosed())
+				{
 					deletePollable(fd, i);
+					i--;
+				}
 			}
 		}
 	}

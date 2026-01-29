@@ -15,6 +15,45 @@ const std::string Logger::LOG_DEBUG_PREFIX = LOG_DEFAULT_DEBUG_PREFIX;
 
 /**
  *
+ * @brief Returns the singleton instance of the Logger class.
+ *
+ * @note It is used internally to ensure a single instance of Logger.
+ *
+ * @return A reference to the Logger instance.
+ *
+ */
+Logger &Logger::instance()
+{
+	static Logger instance;
+	return instance;
+}
+
+/**
+ *
+ * @brief Returns the appropriate output stream based on the current target.
+ *
+ * @return A reference to the selected output stream (std::cout, std::cerr, or file stream).
+ *
+ */
+std::ostream &Logger::stream()
+{
+	switch (m_target)
+	{
+		case Stderr:
+			return std::cerr;
+		case File:
+			return m_file;
+		default:
+			return std::cout;
+	}
+}
+
+
+
+
+
+/**
+ *
  * @brief Sets the custom color code for log messages.
  *
  * @param colorCode The color code to set (e.g., ANSI escape codes).
@@ -23,8 +62,7 @@ const std::string Logger::LOG_DEBUG_PREFIX = LOG_DEFAULT_DEBUG_PREFIX;
 Logger &Logger::setCustomPrefix(const std::string &prefix)
 {
 	m_customPrefix = prefix;
-	static Logger instance;
-	return instance;
+	return instance();
 }
 /**
  *
@@ -36,8 +74,7 @@ Logger &Logger::setCustomPrefix(const std::string &prefix)
 Logger &Logger::setCustomColor(const std::string &colorCode)
 {
 	m_customColor = colorCode;
-	static Logger instance;
-	return instance;
+	return instance();
 }
 /**
  *
@@ -49,8 +86,7 @@ Logger &Logger::setCustomColor(const std::string &colorCode)
 Logger &Logger::setFormat(const Format format)
 {
 	m_format = format;
-	static Logger instance;
-	return instance;
+	return instance();
 }
 /**
  *
@@ -62,8 +98,7 @@ Logger &Logger::setFormat(const Format format)
 Logger &Logger::setTarget(Target t)
 {
 	m_target = t;
-	static Logger instance;
-	return instance;
+	return instance();
 }
 /**
  *
@@ -84,8 +119,7 @@ Logger &Logger::setFile(const std::string &path, const FileMode mode)
 	else if (mode == Append)
 		m_file.open(path.c_str(), std::ofstream::out | std::ofstream::app);
 	m_target = File;
-	static Logger instance;
-	return instance;
+	return instance();
 }
 
 
@@ -151,29 +185,10 @@ Logger &Logger::closeFile()
 {
 	if (m_file.is_open())
 		m_file.close();
-	static Logger instance;
-	return instance;
+	return instance();
 }
 
-/**
- *
- * @brief Returns the appropriate output stream based on the current target.
- *
- * @return A reference to the selected output stream (std::cout, std::cerr, or file stream).
- *
- */
-std::ostream &Logger::stream()
-{
-	switch (m_target)
-	{
-		case Stderr:
-			return std::cerr;
-		case File:
-			return m_file;
-		default:
-			return std::cout;
-	}
-}
+
 
 
 /**
@@ -183,9 +198,10 @@ std::ostream &Logger::stream()
  * @return The new indentation level after incrementing.
  *
  */
-size_t Logger::incrementIndent()
+Logger &Logger::incrementIndent()
 {
-	return ++m_indent;
+	++m_indent;
+	return instance();
 }
 /**
  *
@@ -194,11 +210,11 @@ size_t Logger::incrementIndent()
  * @return The new indentation level after decrementing.
  *
  */
-size_t Logger::decrementIndent()
+Logger &Logger::decrementIndent()
 {
 	if (m_indent > 0)
 		--m_indent;
-	return m_indent;
+	return instance();
 }
 /**
  *
@@ -234,9 +250,10 @@ std::string Logger::indent()
  * @param str The string message to log.
  *
  */
-void Logger::log(const std::string &str)
+Logger &Logger::log(const std::string &str)
 {
 	stream() << indent() << str << std::endl;
+	return instance();
 }
 /**
  *
@@ -245,9 +262,10 @@ void Logger::log(const std::string &str)
  * @param cstr The C-style string message to log.
  *
  */
-void Logger::log(const char *cstr)
+Logger &Logger::log(const char *cstr)
 {
 	stream() << indent() << cstr << std::endl;
+	return instance();
 }
 /**
  *
@@ -256,9 +274,10 @@ void Logger::log(const char *cstr)
  * @param c The character to log.
  *
  */
-void Logger::log(char c)
+Logger &Logger::log(char c)
 {
 	stream() << indent() << c << std::endl;
+	return instance();
 }
 
 
@@ -272,9 +291,9 @@ void Logger::log(char c)
  * @param v The value to log.
  *
  */
-void Logger::info(const std::string &str)
+Logger &Logger::info(const std::string &str)
 {
-	Logger::log(LOG_INFO_COLOR + LOG_INFO_PREFIX + str + LOG_RESET_COLOR);
+	return Logger::log(LOG_INFO_COLOR + LOG_INFO_PREFIX + str + LOG_RESET_COLOR);
 }
 /**
  *
@@ -283,9 +302,9 @@ void Logger::info(const std::string &str)
  * @param cstr The C-style string message to log.
  *
  */
-void Logger::info(const char *cstr)
+Logger &Logger::info(const char *cstr)
 {
-	Logger::log(LOG_INFO_COLOR + LOG_INFO_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
+	return Logger::log(LOG_INFO_COLOR + LOG_INFO_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -294,9 +313,9 @@ void Logger::info(const char *cstr)
  * @param c The character to log.
  *
  */
-void Logger::info(char c)
+Logger &Logger::info(char c)
 {
-	Logger::log(LOG_INFO_COLOR + LOG_INFO_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
+	return Logger::log(LOG_INFO_COLOR + LOG_INFO_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
 }
 
 
@@ -310,9 +329,9 @@ void Logger::info(char c)
  * @param v The value to log.
  *
  */
-void Logger::error(const std::string &str)
+Logger &Logger::error(const std::string &str)
 {
-	Logger::log(LOG_ERROR_COLOR + LOG_ERROR_PREFIX + str + LOG_RESET_COLOR);
+	return Logger::log(LOG_ERROR_COLOR + LOG_ERROR_PREFIX + str + LOG_RESET_COLOR);
 }
 /**
  *
@@ -321,9 +340,9 @@ void Logger::error(const std::string &str)
  * @param cstr The C-style string message to log.
  *
  */
-void Logger::error(const char *cstr)
+Logger &Logger::error(const char *cstr)
 {
-	Logger::log(LOG_ERROR_COLOR + LOG_ERROR_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
+	return Logger::log(LOG_ERROR_COLOR + LOG_ERROR_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -332,9 +351,9 @@ void Logger::error(const char *cstr)
  * @param c The character to log.
  *
  */
-void Logger::error(char c)
+Logger &Logger::error(char c)
 {
-	Logger::log(LOG_ERROR_COLOR + LOG_ERROR_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
+	return Logger::log(LOG_ERROR_COLOR + LOG_ERROR_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
 }
 
 
@@ -348,9 +367,9 @@ void Logger::error(char c)
  * @param v The value to log.
  *
  */
-void Logger::warn(const std::string &str)
+Logger &Logger::warn(const std::string &str)
 {
-	Logger::log(LOG_WARN_COLOR + LOG_WARN_PREFIX + str + LOG_RESET_COLOR);
+	return Logger::log(LOG_WARN_COLOR + LOG_WARN_PREFIX + str + LOG_RESET_COLOR);
 }
 /**
  *
@@ -359,9 +378,9 @@ void Logger::warn(const std::string &str)
  * @param cstr The C-style string message to log.
  *
  */
-void Logger::warn(const char *cstr)
+Logger &Logger::warn(const char *cstr)
 {
-	Logger::log(LOG_WARN_COLOR + LOG_WARN_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
+	return Logger::log(LOG_WARN_COLOR + LOG_WARN_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -370,9 +389,9 @@ void Logger::warn(const char *cstr)
  * @param c The character to log.
  *
  */
-void Logger::warn(char c)
+Logger &Logger::warn(char c)
 {
-	Logger::log(LOG_WARN_COLOR + LOG_WARN_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
+	return Logger::log(LOG_WARN_COLOR + LOG_WARN_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
 }
 
 
@@ -386,9 +405,9 @@ void Logger::warn(char c)
  * @param v The value to log.
  *
  */
-void Logger::debug(const std::string &str)
+Logger &Logger::debug(const std::string &str)
 {
-	Logger::log(LOG_DEBUG_COLOR + LOG_DEBUG_PREFIX + str + LOG_RESET_COLOR);
+	return Logger::log(LOG_DEBUG_COLOR + LOG_DEBUG_PREFIX + str + LOG_RESET_COLOR);
 }
 /**
  *
@@ -397,9 +416,9 @@ void Logger::debug(const std::string &str)
  * @param cstr The C-style string message to log.
  *
  */
-void Logger::debug(const char *cstr)
+Logger &Logger::debug(const char *cstr)
 {
-	Logger::log(LOG_DEBUG_COLOR + LOG_DEBUG_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
+	return Logger::log(LOG_DEBUG_COLOR + LOG_DEBUG_PREFIX + std::string(cstr) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -408,9 +427,9 @@ void Logger::debug(const char *cstr)
  * @param c The character to log.
  *
  */
-void Logger::debug(char c)
+Logger &Logger::debug(char c)
 {
-	Logger::log(LOG_DEBUG_COLOR + LOG_DEBUG_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
+	return Logger::log(LOG_DEBUG_COLOR + LOG_DEBUG_PREFIX + std::string(1, c) + LOG_RESET_COLOR);
 }
 
 
@@ -422,9 +441,9 @@ void Logger::debug(char c)
  * @param v The value to log.
  *
  */
-void Logger::custom(const std::string &str)
+Logger &Logger::custom(const std::string &str)
 {
-	Logger::log(m_customColor + m_customPrefix + str + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + str + LOG_RESET_COLOR);
 }
 
 /**
@@ -434,16 +453,16 @@ void Logger::custom(const std::string &str)
  * @param cstr The C-style string message to log.
  *
  */
-void Logger::custom(const char *cstr)
+Logger &Logger::custom(const char *cstr)
 {
-	Logger::log(m_customColor + m_customPrefix + std::string(cstr) + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + std::string(cstr) + LOG_RESET_COLOR);
 }
 /**
  *
  * @brief Logs a single character as a custom message with the current indentation.
  * @param c The character to log.
  */
-void Logger::custom(char c)
+Logger &Logger::custom(char c)
 {
-	Logger::log(m_customColor + m_customPrefix + std::string(1, c) + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + std::string(1, c) + LOG_RESET_COLOR);
 }

@@ -71,6 +71,7 @@ class Logger
 		static std::ofstream m_file;
 		static Format		 m_format;
 
+		static Logger		&instance();
 		static std::ostream &stream();
 
 	public:
@@ -86,8 +87,8 @@ class Logger
 		static std::string getCustomPrefix();
 		static std::string getCustomColor();
 
-		static size_t	   incrementIndent();
-		static size_t	   decrementIndent();
+		static Logger	  &incrementIndent();
+		static Logger	  &decrementIndent();
 		static size_t	   getIndent();
 		static std::string indent();
 
@@ -96,57 +97,57 @@ class Logger
 		template <typename T>
 		static std::string get(T *ptr);
 
-		static void log(const std::string &str);
-		static void log(const char *cstr);
-		static void log(char c);
+		static Logger &log(const std::string &str);
+		static Logger &log(const char *cstr);
+		static Logger &log(char c);
 		template <typename V>
-		static void log(const V &v);
+		static Logger &log(const V &v);
 		template <typename V>
-		static void log(V *ptr);
+		static Logger &log(V *ptr);
 
 
-		static void info(const std::string &str);
-		static void info(const char *cstr);
-		static void info(char c);
+		static Logger &info(const std::string &str);
+		static Logger &info(const char *cstr);
+		static Logger &info(char c);
 		template <typename V>
-		static void info(const V &v);
+		static Logger &info(const V &v);
 		template <typename V>
-		static void info(V *ptr);
+		static Logger &info(V *ptr);
 
 
-		static void error(const std::string &str);
-		static void error(const char *cstr);
-		static void error(char c);
+		static Logger &error(const std::string &str);
+		static Logger &error(const char *cstr);
+		static Logger &error(char c);
 		template <typename V>
-		static void error(const V &v);
+		static Logger &error(const V &v);
 		template <typename V>
-		static void error(V *ptr);
+		static Logger &error(V *ptr);
 
 
-		static void warn(const std::string &str);
-		static void warn(const char *cstr);
-		static void warn(char c);
+		static Logger &warn(const std::string &str);
+		static Logger &warn(const char *cstr);
+		static Logger &warn(char c);
 		template <typename V>
-		static void warn(const V &v);
+		static Logger &warn(const V &v);
 		template <typename V>
-		static void warn(V *ptr);
+		static Logger &warn(V *ptr);
 
 
-		static void debug(const std::string &str);
-		static void debug(const char *cstr);
-		static void debug(char c);
+		static Logger &debug(const std::string &str);
+		static Logger &debug(const char *cstr);
+		static Logger &debug(char c);
 		template <typename V>
-		static void debug(const V &v);
+		static Logger &debug(const V &v);
 		template <typename V>
-		static void debug(V *ptr);
+		static Logger &debug(V *ptr);
 
-		static void custom(const std::string &str);
-		static void custom(const char *cstr);
-		static void custom(char c);
+		static Logger &custom(const std::string &str);
+		static Logger &custom(const char *cstr);
+		static Logger &custom(char c);
 		template <typename V>
-		static void custom(const V &v);
+		static Logger &custom(const V &v);
 		template <typename V>
-		static void custom(V *ptr);
+		static Logger &custom(V *ptr);
 };
 
 

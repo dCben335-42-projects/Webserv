@@ -215,7 +215,45 @@ std::string String::removeDuplicateSlashes(const std::string &path)
 	}
 	return result;
 }
-#include <iostream>
+
+/**
+ *
+ * @brief Decodes a URL-encoded string.
+ *
+ * @param str The input URL-encoded string.
+ *
+ * @return A new string with URL-encoded characters decoded.
+ *
+ */
+std::string String::urlDecode(const std::string &str)
+{
+	std::string result;
+	result.reserve(str.size());
+	for (size_t i = 0; i < str.size(); ++i)
+	{
+		if (str[i] == '%')
+		{
+			if (i + 2 < str.size())
+			{
+				std::string hexStr	 = str.substr(i + 1, 2);
+				char		charCode = static_cast<char>(std::strtol(hexStr.c_str(), NULL, 16));
+				result += charCode;
+				i += 2;
+			}
+		}
+		else if (str[i] == '+')
+		{
+			result += ' ';
+		}
+		else
+		{
+			result += str[i];
+		}
+	}
+	return result;
+}
+
+
 /**
  *
  * @brief Splits a string into tokens based on specified delimiters.

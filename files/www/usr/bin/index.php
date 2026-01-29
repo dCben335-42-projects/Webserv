@@ -8,7 +8,6 @@
 <body>
 	<?php 
 		echo "fdp de merde";
-
 	?>
 </body>
 </html>

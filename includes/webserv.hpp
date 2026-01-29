@@ -22,6 +22,8 @@
 #define READ_CGI_BUFFER_SIZE 1
 #define WRITE_CGI_BUFFER_SIZE 8192
 
+#define FALLBACK_INDEX "index.html"
+
 // ANCHOR   Std Colors
 #define RED "\033[31m"
 #define GREEN "\033[32m"

@@ -15,7 +15,10 @@
 #define ICON_AUDIO "🎵"
 #define ICON_FONT "📝"
 #define ICON_DIRECTORY "📂"
+#define ICON_BINARY "⚙️"
+#define ICON_CODE "💻"
 #define ICON_DEFAULT "📄"
+
 
 class FileHandler
 {

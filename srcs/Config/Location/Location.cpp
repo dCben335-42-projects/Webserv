@@ -26,6 +26,7 @@ Config::Location::Location(
 	m_root(root),
 	m_alias(alias),
 	m_indexFile(indexFile),
+	m_upload(""),
 	m_cgi(cgi),
 	m_hasMethods(false),
 	m_methods(),
@@ -58,6 +59,7 @@ Config::Location::Location(
 	m_root(root),
 	m_alias(alias),
 	m_indexFile(indexFile),
+	m_upload(""),
 	m_cgi(cgi),
 	m_hasMethods(false),
 	m_methods(),
@@ -173,6 +175,18 @@ const Set<HttpMethod> &Config::Location::getAllowedMethods() const
 	return m_methods;
 }
 
+/**
+ *
+ * @brief Gets whether file uploads are allowed for the location.
+ *
+ * @return true if file uploads are allowed, false otherwise.
+ *
+ */
+const std::string &Config::Location::getUpload() const
+{
+	return m_upload;
+}
+
 
 
 
@@ -257,6 +271,17 @@ bool Config::Location::hasCgi() const
 	return m_cgi != NULL;
 }
 
+/**
+ *
+ * @brief Checks if file uploads are allowed for the location.
+ *
+ * @return true if file uploads are allowed, false otherwise.
+ *
+ */
+bool Config::Location::hasUpload() const
+{
+	return !m_upload.empty();
+}
 
 
 
@@ -329,6 +354,19 @@ void Config::Location::setMethods(const Set<HttpMethod> &methods)
 {
 	m_methods	 = methods;
 	m_hasMethods = true;
+}
+
+
+/**
+ *
+ * @brief Sets whether file uploads are allowed for the location.
+ *
+ * @param upload A boolean indicating whether to allow file uploads.
+ *
+ */
+void Config::Location::setUpload(const std::string &upload)
+{
+	m_upload = upload;
 }
 
 
