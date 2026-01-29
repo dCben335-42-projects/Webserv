@@ -29,7 +29,7 @@ void EventLoop::init()
 	Config::Location *loc4	= new Config::Location("/assets/test/dwad", "", "", "", false, NULL);
 	Config::Location *loc40 = new Config::Location("/assets/test/dwad/", "", "", "", false, NULL);
 
-	Config::Location			 *loc8 = new Config::Location("/cgi-bin", "", "", "", false, NULL);
+	Config::Location			 *loc8 = new Config::Location("/cgi-bin", "", "", "", true, NULL);
 	Config::Location			 *loc9 = new Config::Location("/directory/", "files/www/website/YoupiBanane", "", "youpi.bad_extension", false, NULL);
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
