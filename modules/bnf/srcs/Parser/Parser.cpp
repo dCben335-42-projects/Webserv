@@ -142,8 +142,8 @@ bool Parser::isFullyOptional(ARule *rule)
 	{
 		if (item->isTerminalChar())
 			continue;
-		Concept *concept	  = m_semantic.getConcepts().get(item->getValue());
-		Vec<ConceptDef *> def = concept->getDefinitions();
+		Concept *cpt	  = m_semantic.getConcepts().get(item->getValue());
+		Vec<ConceptDef *> def = cpt->getDefinitions();
 
 		for (Vec<ConceptDef *>::iterator cdef = def.begin(); cdef != def.end(); ++cdef)
 		{

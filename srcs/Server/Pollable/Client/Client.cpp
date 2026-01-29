@@ -168,16 +168,19 @@ void Client::handleGetRequest(std::string ressourcePath)
  *
  * @brief Prepares the HTTP response based on the client's request.
  *
- * This function determines the requested resource, reads the corresponding file,
- * and sets up the HTTP response with appropriate headers and body.
+ * This function determines the requested method (GET, POST, DELETE), 
+ * validates it, and calls the appropriate handler to process the request.
+ * 
+ * It also checks if the request is for a CGI script
+ * and spawns the CGI handler if necessary.
  *
- * @note If the requested resource is not found or an error occurs,
- * the response will contain an error page.
- *
- * @see FileHandler for file operations and error handling.
+ * 
+ * @throws AHttpException for various HTTP errors
+ * 
+ * @return false if a CGI script is being handled, true otherwise.
  *
  */
-void Client::prepareResponse()
+bool Client::prepareResponse()
 {
 	CgiSpawner cgiHandler(m_req, m_serverConfig);
 
@@ -187,7 +190,7 @@ void Client::prepareResponse()
 	{
 		cgiHandler.spawnCgi(this);
 		m_events = 0;
-		return;
+		return false;
 	}
 
 	const size_t		   segmentSize	 = m_req.getSegmentSize();
@@ -201,6 +204,7 @@ void Client::prepareResponse()
 		handleDeleteRequest(ressourcePath);
 	else
 		throw Http405Exception(m_req.getMethod().getStrType());
+	return true;
 }
 
 
@@ -230,7 +234,8 @@ void Client::onPollIn()
 		if (!m_req.isComplete())
 			return;
 		m_req.parse(m_serverConfig);
-		prepareResponse();
+		if (!prepareResponse())
+			return;
 	}
 	catch (const AHttpException &e)
 	{

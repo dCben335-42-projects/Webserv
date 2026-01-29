@@ -107,7 +107,7 @@ void CgiPipe::onPollErr()
 void CgiPipe::onPollHangUp()
 {
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
-	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE);
+	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
 	if (bytesRead < 0)
 	{
