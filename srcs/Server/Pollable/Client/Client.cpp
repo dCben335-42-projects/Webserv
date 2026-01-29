@@ -96,12 +96,17 @@ void Client::handlePostRequest()
 	m_res.setStatusCode(201);
 }
 
-void Client::handleDeleteRequest()
+void Client::handleDeleteRequest(const std::string &ressourcePath)
 {
+	const char *fullPath = ressourcePath.c_str();
+	if (access(fullPath, F_OK) == -1)
+		throw Http404Exception();
+	if (access(fullPath, R_OK | W_OK) == -1)
+		throw Http403Exception();
+	std::remove(fullPath);
 	m_res.setStatusCode(204);
+	m_res.setBody("File deleted successfully.");
 }
-
-
 
 
 /**
@@ -193,7 +198,7 @@ void Client::prepareResponse()
 	else if (method == HttpMethod::POST)
 		handlePostRequest();
 	else if (method == HttpMethod::DELETE)
-		handleDeleteRequest();
+		handleDeleteRequest(ressourcePath);
 	else
 		throw Http405Exception(m_req.getMethod().getStrType());
 }

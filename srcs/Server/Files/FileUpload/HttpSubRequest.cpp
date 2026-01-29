@@ -33,8 +33,6 @@ std::string HttpSubRequest::extractValue(const std::string &token, const std::st
 	size_t			   firstQuote = token.find_first_of("\"");
 	size_t			   lastQuote  = token.find_last_of("\"");
 	const std::string &result	  = token.substr(firstQuote + 1, lastQuote - (firstQuote + 1));
-	Logger::log("Name :");
-	Logger::log(result);
 	return (result);
 }
 

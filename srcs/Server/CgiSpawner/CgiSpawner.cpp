@@ -7,6 +7,7 @@
 
 #include "Location.hpp"
 #include "CgiParams.hpp"
+#include "cgiEnv.hpp"
 
 #include "Signals.hpp"
 
@@ -75,24 +76,34 @@ std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &va
 
 void CgiSpawner::setupEnv()
 {
-	m_env.push(makeEnvVar("AUTH_TYPE", ""));
-	m_env.push(makeEnvVar("GATEWAY_INTERFACE", GATEWAY_INTERFACE));
-	m_env.push(makeEnvVar("PATH_INFO", m_pathInfo));
-	m_env.push(makeEnvVar("PATH_TRANSLATED", m_scriptPath));
-	m_env.push(makeEnvVar("QUERY_STRING", m_req.getQueryString()));
-	m_env.push(makeEnvVar("REMOTE_ADDR", m_req.getHeader("Remote Adress")));
-	m_env.push(makeEnvVar("REMOTE_HOST", m_req.getHeader("Remote Host")));
-	m_env.push(makeEnvVar("REQUEST_METHOD", m_req.getMethod().getStrType()));
-	m_env.push(makeEnvVar("SCRIPT_NAME", m_scriptName));
-	m_env.push(makeEnvVar("SERVER_NAME", SERVER_NAME));
-	m_env.push(makeEnvVar("SERVER_PORT", Number::toString(m_config.getPort())));
-	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
-	m_env.push(makeEnvVar("SERVER_SOFTWARE", SERVER_NAME));
+	m_env.push(makeEnvVar(CGI_AUTH_TYPE, ""));
+	m_env.push(makeEnvVar(CGI_GATEWAY_INTERFACE, GATEWAY_INTERFACE));
+	m_env.push(makeEnvVar(CGI_PATH_INFO, m_pathInfo));
+	m_env.push(makeEnvVar(CGI_PATH_TRANSLATED, m_scriptPath));
+	m_env.push(makeEnvVar(CGI_QUERY_STRING, m_req.getQueryString()));
+	m_env.push(makeEnvVar(CGI_REMOTE_ADDR, m_req.getHeader(HEADER_REMOTE_ADRESS)));
+	m_env.push(makeEnvVar(CGI_REMOTE_HOST, m_req.getHeader(HEADER_REMOTE_HOST)));
+	m_env.push(makeEnvVar(CGI_REQUEST_METHOD, m_req.getMethod().getStrType()));
+	m_env.push(makeEnvVar(CGI_SCRIPT_NAME, m_scriptName));
+	m_env.push(makeEnvVar(CGI_SERVER_NAME, SERVER_NAME));
+	m_env.push(makeEnvVar(CGI_SERVER_PORT, Number::toString(m_config.getPort())));
+	m_env.push(makeEnvVar(CGI_SERVER_PROTOCOL, PROTOCOL));
+	m_env.push(makeEnvVar(CGI_SERVER_SOFTWARE, SERVER_NAME));
 	if (m_has_post_data)
 	{
-		m_env.push(makeEnvVar("CONTENT_TYPE", m_req.getHeader(HEADER_CONTENT_TYPE)));
-		m_env.push(makeEnvVar("CONTENT_LENGTH", m_req.getHeader(HEADER_CONTENT_LENGTH)));
+		m_env.push(makeEnvVar(CGI_CONTENT_TYPE, m_req.getHeader(HEADER_CONTENT_TYPE)));
+		m_env.push(makeEnvVar(CGI_CONTENT_LENGTH, m_req.getHeader(HEADER_CONTENT_LENGTH)));
 	}
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT, m_req.getHeader(HEADER_ACCEPT)));
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT_LANGUAGE, m_req.getHeader(HEADER_ACCEPT_LANGUAGE)));
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT_CHARSET, m_req.getHeader(HEADER_ACCEPT_CHARSET)));
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT_ENCODING, m_req.getHeader(HEADER_ACCEPT_ENCODING)));
+	m_env.push(makeEnvVar(CGI_HTTP_TRANSFER_ENCODING, m_req.getHeader(HEADER_TRANSFER_ENCODING)));
+	m_env.push(makeEnvVar(CGI_HTTP_CONTENT_ENCODING, m_req.getHeader(HEADER_CONTENT_ENCODING)));
+	m_env.push(makeEnvVar(CGI_HTTP_EXPIRES, m_req.getHeader(HEADER_EXPIRES)));
+	m_env.push(makeEnvVar(CGI_HTTP_USER_AGENT, m_req.getHeader(HEADER_USER_AGENT)));
+	m_env.push(makeEnvVar(CGI_HTTP_COOKIE, m_req.getHeader(HEADER_COOKIE)));
+	m_env.push(makeEnvVar(CGI_HTTP_REFERER, m_req.getHeader(HEADER_REFERER)));
 }
 
 #include <stdio.h>

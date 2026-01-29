@@ -136,7 +136,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	size_t pos = m_firstLineEndPos + lineEndSize;
 	AHttpInboundMessage::parse(m_rawStr, pos);
 
-	// std::cout << *this << std::endl;
+	std::cout << *this << std::endl;
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
 	parseActiveLocations(serverConfig);

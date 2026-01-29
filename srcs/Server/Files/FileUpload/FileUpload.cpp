@@ -77,13 +77,11 @@ void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
 	const std::string fullPath = m_req.getUploadPath() + "/" + subRequest.getFileName();
 	const std::string body	   = subRequest.getBody();
 
-	Logger::error("wesh");
 
 	if (body == HEADER_LINE_ENDING)
 		return;
 	if (access(fullPath.c_str(), F_OK) == 0)
 		throw Http409Exception();
-	Logger::log(fullPath);
 	int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY, 0644);
 	if (fd == -1)
 		throw Http500Exception();
@@ -92,5 +90,4 @@ void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
 		throw Http403Exception();
 	(void) bytesWritten;
 	close(fd);
-	Logger::error("close");
 }

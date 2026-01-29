@@ -18,15 +18,13 @@ void EventLoop::init()
 	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
-	binmap1.set(".cub", "/home/bcabocel/Documents/projects/m5/webserv/cub3D_bonus");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
 	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.htm", true, param2);
 	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", true, NULL);
 	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
-	// loc2->setMethods(allowedMethods1);
-	Config::Location *loc8 = new Config::Location("/cgi-bin", "", "files/www/usr/bin", "", true, NULL);
-	Config::Location *loc9 = new Config::Location("/uploads", "", "files/www/uploads", "", true, NULL);
+	Config::Location *loc8			  = new Config::Location("/cgi-bin", "", "files/www/usr/bin", "", true, NULL);
+	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", "", true, NULL);
 	loc9->setUpload("files/www/uploads/");
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);

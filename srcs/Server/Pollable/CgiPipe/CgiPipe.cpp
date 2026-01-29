@@ -121,9 +121,7 @@ void CgiPipe::onPollHangUp()
 		return;
 	}
 	waitChild();
-	std::cerr << "Read ended" << std::endl;
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
-	std::cout << "Response: " << m_client->getResponse().getFullResponse() << std::endl;
 }
