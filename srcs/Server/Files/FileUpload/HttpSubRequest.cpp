@@ -65,7 +65,7 @@ void HttpSubRequest::parseSubRequest()
 		throw Http400Exception();
 	if (headersMap.has("Content-Disposition") == false)
 		throw Http400Exception();
-	if (headersMap.has(HEADER_CONTENT_TYPE) == false)
-		headersMap.set(HEADER_CONTENT_TYPE, MIME_PLAIN);
+	// if (headersMap.has(HEADER_CONTENT_TYPE) == false)
+	// 	headersMap.set(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	parseNameAndFileName(headersMap);
 }

@@ -73,7 +73,7 @@ void CgiPipe::onPollIn()
 		std::cerr << "Read error" << std::endl;
 	onError();
 }
-
+#include "Logger.hpp"
 void CgiPipe::onError()
 {
 	m_events		  = 0;

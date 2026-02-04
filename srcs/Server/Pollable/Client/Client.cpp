@@ -168,15 +168,15 @@ void Client::handleGetRequest(std::string ressourcePath)
  *
  * @brief Prepares the HTTP response based on the client's request.
  *
- * This function determines the requested method (GET, POST, DELETE), 
+ * This function determines the requested method (GET, POST, DELETE),
  * validates it, and calls the appropriate handler to process the request.
- * 
+ *
  * It also checks if the request is for a CGI script
  * and spawns the CGI handler if necessary.
  *
- * 
+ *
  * @throws AHttpException for various HTTP errors
- * 
+ *
  * @return false if a CGI script is being handled, true otherwise.
  *
  */

@@ -82,12 +82,20 @@ void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
 		return;
 	if (access(fullPath.c_str(), F_OK) == 0)
 		throw Http409Exception();
-	int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY, 0644);
-	if (fd == -1)
+	// int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY, 0644);
+	// if (fd == -1)
+	// 	throw Http500Exception();
+	// int bytesWritten = write(fd, body.c_str(), body.size());
+	// if (bytesWritten == -1)
+	// 	throw Http403Exception();
+	// (void) bytesWritten;
+	// close(fd);
+
+	// TODO need to choose between the c++ way or the c way
+	std::ofstream file;
+	file.open(fullPath.c_str(), std::ofstream::out);
+	if (!file.is_open())
 		throw Http500Exception();
-	int bytesWritten = write(fd, body.c_str(), body.size());
-	if (bytesWritten == -1)
-		throw Http403Exception();
-	(void) bytesWritten;
-	close(fd);
+	file << body;
+	file.close();
 }

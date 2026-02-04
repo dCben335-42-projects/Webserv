@@ -139,9 +139,9 @@ void CgiSpawner::generateEnvp()
 	m_envp[i] = NULL;
 }
 
-ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments)
+ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const size_t start)
 {
-	for (size_t i = 0; i < urlSegments.size(); i++)
+	for (size_t i = start; i < urlSegments.size(); i++)
 	{
 		std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
 		if (fileExtension.empty())
@@ -198,12 +198,25 @@ bool CgiSpawner::isCgi()
 				m_activeBinMap.set(first, mit->second);
 			}
 		}
+
 		const Vec<std::string> &urlSegments = m_req.getSegments();
-		ssize_t					scriptIndex = getScriptIndex(urlSegments);
+		const ssize_t			size		= urlSegments.size();
+		ssize_t					scriptIndex = getScriptIndex(urlSegments, 0);
+
+		while (scriptIndex != -1 && scriptIndex < size)
+		{
+			if (!FileHandler::folderExists(m_scriptPath))
+			{
+				if (!FileHandler::fileExists(m_scriptPath))
+					throw Http404Exception();
+				if (!FileHandler::hasReadPermission(m_scriptPath))
+					throw Http403Exception();
+				break;
+			}
+			scriptIndex = getScriptIndex(urlSegments, scriptIndex);
+		}
 		if (scriptIndex == -1)
 			return false;
-		if (FileHandler::fileExists(m_scriptPath) && !FileHandler::hasReadPermission(m_scriptPath))
-			throw Http403Exception();
 		buildPathInfo(urlSegments, scriptIndex);
 		buildScriptName(urlSegments, scriptIndex);
 	}
