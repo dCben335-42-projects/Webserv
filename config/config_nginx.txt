@@ -27,6 +27,7 @@ basic_http_stmt	::= 'sendfile' TAB_SPACE BOOL
 				|= 'access_log' TAB_SPACE PATH
 				|= 'error_log' TAB_SPACE PATH SPACE LOG_LEVEL
 				|= 'server_tokens' TAB_SPACE BOOL
+				|= 'gzip' TAB_SPACE ( BOOL | btp ) btp
 
 btp				::= BOOL BOOL
 

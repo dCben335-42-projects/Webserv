@@ -362,7 +362,6 @@ void Parser::resolvePath()
 	pathsTop	 = basePaths;
 	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
 	{
-		Logger::log("======== Resolving index: " + LoggerJson::get(k) + " ========");
 		Map<ARulePath, Vec<ARulePath> > &mapCurrent = m_indexedPaths[k];
 
 		Vec<const ARulePath *>						   vecKey;
@@ -381,16 +380,6 @@ void Parser::resolvePath()
 				for (size_t j = 0; j < vecKey.size(); ++j)
 				{
 					bool found		 = false;
-					if (k == 417)
-					{
-						Logger::log("vecValue: " + LoggerJson::get(vecValue, true) + ", vecKey: " + LoggerJson::get(*vecKey[j], true));
-					}
-					if (k == 418)
-					{
-						Logger::log("vecValue: " + LoggerJson::get(vecValue, true) + ", vecKey: " + LoggerJson::get(*vecKey[j], true));
-					}
-					// if (vecValue.back() != vecKey[j]->back())
-					// 	continue;
 
 					if (!compare(vecValue, *vecKey[j]))
 						continue;
@@ -399,8 +388,6 @@ void Parser::resolvePath()
 					{
 						if (pathsTop[l]->rulePath == ident)
 						{
-							if (k == 419)
-								Logger::log("vecValue: " + LoggerJson::get(vecValue, true) + ", vecKey: " + LoggerJson::get(*vecKey[j], true));
 							if (found)
 								throw std::runtime_error("Ambiguous path resolution.");
 							pathsTop[l]->setNext(*vecKey[j]);
@@ -412,7 +399,6 @@ void Parser::resolvePath()
 		}
 
 		Vec<BNFPath *> bufferTemp;
-		Logger::log("original pathsTop size: " + LoggerJson::get(pathsTop.size()));
 		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
 		{
 			BNFPath &current = *pathsTop[i];
@@ -458,15 +444,6 @@ void Parser::parse(const std::string &stringToParsed)
 
 	Logger::log(m_semantic);
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
-	// for (ARuleMap::iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
-	// {
-	// 	for (size_t i = 0; i < it->second.size(); ++i)
-	// 	{
-	// 		m_startingPaths.push_once(it->second[i].path);
-	// 	}
-	// }
-
-
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
@@ -484,19 +461,19 @@ void Parser::parse(const std::string &stringToParsed)
 		mapPathNext.clear();
 	}
 	// clang-format off
-	for (size_t k = 0; k < m_indexedPaths.size(); ++k)
-	{
-		Logger::log("Index: " + LoggerJson::get(k));
-		for (Map<ARulePath, Vec<ARulePath> >::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
-		{
-			Logger::log("----");
-			Logger::log("\tKey: " + LoggerJson::get(mapIt->first, true));
-			for (Vec<ARulePath>::iterator pathIt = mapIt->second.begin(); pathIt != mapIt->second.end(); ++pathIt)
-			{
-				Logger::log("\t\tValue: " + LoggerJson::get(pathIt->back(), true));
-			}
-		}
-	}
+	// for (size_t k = 0; k < m_indexedPaths.size(); ++k)
+	// {
+	// 	Logger::log("Index: " + LoggerJson::get(k));
+	// 	for (Map<ARulePath, Vec<ARulePath> >::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
+	// 	{
+	// 		Logger::log("----");
+	// 		Logger::log("\tKey: " + LoggerJson::get(mapIt->first, true));
+	// 		for (Vec<ARulePath>::iterator pathIt = mapIt->second.begin(); pathIt != mapIt->second.end(); ++pathIt)
+	// 		{
+	// 			Logger::log("\t\tValue: " + LoggerJson::get(pathIt->back(), true));
+	// 		}
+	// 	}
+	// }
 	resolvePath();
 
 

@@ -1,32 +1,5 @@
 [
     [
-        {
-            "type": "repeat",
-            "content": [
-                {
-                    "STATEMENT": {
-                        "type": "line",
-                        "content": [
-                            {
-                                "type": "choice",
-                                "content": [
-                                    {
-                                        "type": "line",
-                                        "content": []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
-    ]
-]
-
-
-[
-    [
         [
             {
                 "STATEMENT": [
@@ -45,17 +18,28 @@
                                 [
                                     [
                                         {
-                                            "EVENT_STMT": {
-                                                "worker_connections": "1024"
-                                            }
+                                            "EVENT_STMT": [
+                                                [
+                                                    {
+                                                        "EVENT_RULE": {
+                                                            "worker_connections": "1024"
+                                                        }
+                                                    }
+                                                ]
+                                            ]
                                         },
                                         {
-                                            "EVENT_STMT": {
-                                                "multi_accept": "on"
-                                            }
+                                            "EVENT_STMT": [
+                                                [
+                                                    {
+                                                        "EVENT_RULE": {
+                                                            "multi_accept": "on"
+                                                        }
+                                                    }
+                                                ]
+                                            ]
                                         }
-                                    ],
-                                    "1on"
+                                    ]
                                 ]
                             ]
                         },
