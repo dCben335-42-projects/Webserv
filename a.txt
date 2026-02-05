@@ -9,14 +9,14 @@ make[1]: Nothing to be done for 'all'.
 
 [{,statement,}]
 [(,user_stmt,|,worker_stmt,|,pid_stmt,|,events_block,|,http_block,),{,LINE_JUMP,}]
-['user',SPACE,user_name,';']
+['user',SPACE,!user_name,';']
 ['worker_processes',SPACE,IDENT,';']
 ['pid',SPACE,PATH,';']
 ['events',[,SPACE,],'{',LINE_JUMP,{,event_stmt,},'}']
 [[,TAB_SPACE,],event_rule,';',[,LINE_JUMP,]]
 ['worker_connections',SPACE,NUMBER]
 ['multi_accept',SPACE,BOOL]
-['http',[,SPACE,],'{',LINE_JUMP,{,http_stmt,},'}']
+['http',[,SPACE,],'{',LINE_JUMP,{,!http_stmt,},'}']
 [[,TAB_SPACE,],(,basic_http_stmt,|,gzip_stmt,|,include_stmt,),';',LINE_JUMP]
 [LINE_JUMP]
 ['sendfile',TAB_SPACE,BOOL]
@@ -78,15 +78,18 @@ make[1]: Nothing to be done for 'all'.
         "position": "<head>_0",
         "type": "SEQUENCE",
         "index": 0,
-        "ptr": "0x2ae9b1b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6420",
         "content": [
-          {my_address: 0x2ae9abb0, value: statement}
+          {my_address: 0x334a1bb0, value: statement}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2ae9abb0, value: statement}
+          {my_address: 0x334a1bb0, value: statement}
         ]
       }
     ]
@@ -95,11 +98,11 @@ make[1]: Nothing to be done for 'all'.
 
     ]
   "terminal_chars":[
-      0x2ae9fad0,
-      0x2aea0150,
-      0x2aea06e0,
-      0x2aea0c00,
-      0x2aea2160
+      0x334a6bc0,
+      0x334a72f0,
+      0x334a7900,
+      0x334a7ea0,
+      0x334a9500
     ]
 },APPLICATION_MIME: {
   "concept_name": "APPLICATION_MIME"
@@ -110,44 +113,47 @@ make[1]: Nothing to be done for 'all'.
         "position": "APPLICATION_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeaa850",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b20b0",
         "content": [
-          {my_address: 0x2aeaaba0, value: application/json},
-          {my_address: 0x2aeaabc8, value: application/javascript},
-          {my_address: 0x2aeaabf0, value: application/vnd.ms-fontobject},
-          {my_address: 0x2aeaac18, value: application/pdf},
-          {my_address: 0x2aeaac40, value: application/xml},
-          {my_address: 0x2aeaac68, value: application/zip},
-          {my_address: 0x2aeaac90, value: application/x-www-form-urlencoded},
-          {my_address: 0x2aeaacb8, value: application/x-yaml},
-          {my_address: 0x2aeaace0, value: application/toml},
-          {my_address: 0x2aeaad08, value: application/rtf},
-          {my_address: 0x2aeaad30, value: application/octet-stream}
+          {my_address: 0x334b2a10, value: application/json},
+          {my_address: 0x334b2a38, value: application/javascript},
+          {my_address: 0x334b2a60, value: application/vnd.ms-fontobject},
+          {my_address: 0x334b2a88, value: application/pdf},
+          {my_address: 0x334b2ab0, value: application/xml},
+          {my_address: 0x334b2ad8, value: application/zip},
+          {my_address: 0x334b2b00, value: application/x-www-form-urlencoded},
+          {my_address: 0x334b2b28, value: application/x-yaml},
+          {my_address: 0x334b2b50, value: application/toml},
+          {my_address: 0x334b2b78, value: application/rtf},
+          {my_address: 0x334b2ba0, value: application/octet-stream}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeaaba0, value: application/json},
-          {my_address: 0x2aeaabc8, value: application/javascript},
-          {my_address: 0x2aeaabf0, value: application/vnd.ms-fontobject},
-          {my_address: 0x2aeaac18, value: application/pdf},
-          {my_address: 0x2aeaac40, value: application/xml},
-          {my_address: 0x2aeaac68, value: application/zip},
-          {my_address: 0x2aeaac90, value: application/x-www-form-urlencoded},
-          {my_address: 0x2aeaacb8, value: application/x-yaml},
-          {my_address: 0x2aeaace0, value: application/toml},
-          {my_address: 0x2aeaad08, value: application/rtf},
-          {my_address: 0x2aeaad30, value: application/octet-stream}
+          {my_address: 0x334b2a10, value: application/json},
+          {my_address: 0x334b2a38, value: application/javascript},
+          {my_address: 0x334b2a60, value: application/vnd.ms-fontobject},
+          {my_address: 0x334b2a88, value: application/pdf},
+          {my_address: 0x334b2ab0, value: application/xml},
+          {my_address: 0x334b2ad8, value: application/zip},
+          {my_address: 0x334b2b00, value: application/x-www-form-urlencoded},
+          {my_address: 0x334b2b28, value: application/x-yaml},
+          {my_address: 0x334b2b50, value: application/toml},
+          {my_address: 0x334b2b78, value: application/rtf},
+          {my_address: 0x334b2ba0, value: application/octet-stream}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aeaa850
+      0x334b20b0
     ]
 },AUDIO_MIME: {
   "concept_name": "AUDIO_MIME"
@@ -158,28 +164,31 @@ make[1]: Nothing to be done for 'all'.
         "position": "AUDIO_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeab810",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b36a0",
         "content": [
-          {my_address: 0x2aeab8d0, value: audio/mpeg},
-          {my_address: 0x2aeab8f8, value: audio/wav},
-          {my_address: 0x2aeab920, value: audio/flac}
+          {my_address: 0x334b3770, value: audio/mpeg},
+          {my_address: 0x334b3798, value: audio/wav},
+          {my_address: 0x334b37c0, value: audio/flac}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeab8d0, value: audio/mpeg},
-          {my_address: 0x2aeab8f8, value: audio/wav},
-          {my_address: 0x2aeab920, value: audio/flac}
+          {my_address: 0x334b3770, value: audio/mpeg},
+          {my_address: 0x334b3798, value: audio/wav},
+          {my_address: 0x334b37c0, value: audio/flac}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aeab810
+      0x334b36a0
     ]
 },BOOL: {
   "concept_name": "BOOL"
@@ -190,35 +199,38 @@ make[1]: Nothing to be done for 'all'.
         "position": "BOOL_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aea8eb0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b0c90",
         "content": [
-          {my_address: 0x2aea5e40, value: on},
-          {my_address: 0x2aea5e68, value: off}
+          {my_address: 0x334ad7e0, value: on},
+          {my_address: 0x334ad808, value: off}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea5e40, value: on},
-          {my_address: 0x2aea5e68, value: off}
+          {my_address: 0x334ad7e0, value: on},
+          {my_address: 0x334ad808, value: off}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea1e80,
-      0x2aea31f0,
-      0x2aea3540,
-      0x2aea38c0,
-      0x2aea4fe0,
-      0x2aea53c0,
-      0x2aea57f0,
-      0x2aea5890,
-      0x2aea5cc0,
-      0x2aea63e0
+      0x334a9200,
+      0x334aa730,
+      0x334aaae0,
+      0x334aaec0,
+      0x334ac860,
+      0x334acca0,
+      0x334ad100,
+      0x334ad1c0,
+      0x334ad650,
+      0x334ade20
     ]
   "terminal_chars":[
-      0x2aea8eb0
+      0x334b0c90
     ]
 },DIGIT: {
   "concept_name": "DIGIT"
@@ -229,45 +241,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "DIGIT_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeae800",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b68b0",
         "content": [
-          {my_address: 0x2aeadfa0, value: 0},
-          {my_address: 0x2aeadfc8, value: 1},
-          {my_address: 0x2aeadff0, value: 2},
-          {my_address: 0x2aeae018, value: 3},
-          {my_address: 0x2aeae040, value: 4},
-          {my_address: 0x2aeae068, value: 5},
-          {my_address: 0x2aeae090, value: 6},
-          {my_address: 0x2aeae0b8, value: 7},
-          {my_address: 0x2aeae0e0, value: 8},
-          {my_address: 0x2aeae108, value: 9}
+          {my_address: 0x334b6050, value: 0},
+          {my_address: 0x334b6078, value: 1},
+          {my_address: 0x334b60a0, value: 2},
+          {my_address: 0x334b60c8, value: 3},
+          {my_address: 0x334b60f0, value: 4},
+          {my_address: 0x334b6118, value: 5},
+          {my_address: 0x334b6140, value: 6},
+          {my_address: 0x334b6168, value: 7},
+          {my_address: 0x334b6190, value: 8},
+          {my_address: 0x334b61b8, value: 9}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeadfa0, value: 0},
-          {my_address: 0x2aeadfc8, value: 1},
-          {my_address: 0x2aeadff0, value: 2},
-          {my_address: 0x2aeae018, value: 3},
-          {my_address: 0x2aeae040, value: 4},
-          {my_address: 0x2aeae068, value: 5},
-          {my_address: 0x2aeae090, value: 6},
-          {my_address: 0x2aeae0b8, value: 7},
-          {my_address: 0x2aeae0e0, value: 8},
-          {my_address: 0x2aeae108, value: 9}
+          {my_address: 0x334b6050, value: 0},
+          {my_address: 0x334b6078, value: 1},
+          {my_address: 0x334b60a0, value: 2},
+          {my_address: 0x334b60c8, value: 3},
+          {my_address: 0x334b60f0, value: 4},
+          {my_address: 0x334b6118, value: 5},
+          {my_address: 0x334b6140, value: 6},
+          {my_address: 0x334b6168, value: 7},
+          {my_address: 0x334b6190, value: 8},
+          {my_address: 0x334b61b8, value: 9}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea85b0,
-      0x2aea8c30,
-      0x2aea94a0,
-      0x2aeacea0
+      0x334b0310,
+      0x334b09f0,
+      0x334b12d0,
+      0x334b4e60
     ]
   "terminal_chars":[
-      0x2aeae800
+      0x334b68b0
     ]
 },FONT_MIME: {
   "concept_name": "FONT_MIME"
@@ -278,30 +293,33 @@ make[1]: Nothing to be done for 'all'.
         "position": "FONT_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeab390",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b3200",
         "content": [
-          {my_address: 0x2aeab450, value: font/woff},
-          {my_address: 0x2aeab478, value: font/woff2},
-          {my_address: 0x2aeab4a0, value: font/ttf},
-          {my_address: 0x2aeab4c8, value: font/otf}
+          {my_address: 0x334b32d0, value: font/woff},
+          {my_address: 0x334b32f8, value: font/woff2},
+          {my_address: 0x334b3320, value: font/ttf},
+          {my_address: 0x334b3348, value: font/otf}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeab450, value: font/woff},
-          {my_address: 0x2aeab478, value: font/woff2},
-          {my_address: 0x2aeab4a0, value: font/ttf},
-          {my_address: 0x2aeab4c8, value: font/otf}
+          {my_address: 0x334b32d0, value: font/woff},
+          {my_address: 0x334b32f8, value: font/woff2},
+          {my_address: 0x334b3320, value: font/ttf},
+          {my_address: 0x334b3348, value: font/otf}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aeab390
+      0x334b3200
     ]
 },IDENT: {
   "concept_name": "IDENT"
@@ -312,39 +330,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "IDENT_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea88f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b0670",
         "content": LETTER
         "next": [
-          0x2aea8990
+          0x334b0730
         ]
         items": [
-          {my_address: 0x2aea8750, value: LETTER}
+          {my_address: 0x334b04d0, value: LETTER}
         ]
       },
       {
         "position": "IDENT_0",
         "type": "SEQUENCE",
         "index": 1,
-        "ptr": "0x2aea8990",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b0730",
         "content": [
-          {my_address: 0x2aea8720, value: LETTER}
+          {my_address: 0x334b04a0, value: LETTER}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea8720, value: LETTER}
+          {my_address: 0x334b04a0, value: LETTER}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea0300,
-      0x2aea6730
+      0x334a74e0,
+      0x334ae1d0
     ]
   "terminal_chars":[
-      0x2aead480,
-      0x2aead700
+      0x334b56e0,
+      0x334b5d80
     ]
 },IMAGE_MIME: {
   "concept_name": "IMAGE_MIME"
@@ -355,44 +379,47 @@ make[1]: Nothing to be done for 'all'.
         "position": "IMAGE_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeabcf0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b3cb0",
         "content": [
-          {my_address: 0x2aeabeb0, value: image/png},
-          {my_address: 0x2aeabed8, value: image/jpeg},
-          {my_address: 0x2aeabf00, value: image/webp},
-          {my_address: 0x2aeabf28, value: image/gif},
-          {my_address: 0x2aeabf50, value: image/svg+xml},
-          {my_address: 0x2aeabf78, value: image/avif},
-          {my_address: 0x2aeabfa0, value: image/heic},
-          {my_address: 0x2aeabfc8, value: image/icns},
-          {my_address: 0x2aeabff0, value: image/bmp},
-          {my_address: 0x2aeac018, value: image/tiff},
-          {my_address: 0x2aeac040, value: image/x-icon}
+          {my_address: 0x334b3e30, value: image/png},
+          {my_address: 0x334b3e58, value: image/jpeg},
+          {my_address: 0x334b3e80, value: image/webp},
+          {my_address: 0x334b3ea8, value: image/gif},
+          {my_address: 0x334b3ed0, value: image/svg+xml},
+          {my_address: 0x334b3ef8, value: image/avif},
+          {my_address: 0x334b3f20, value: image/heic},
+          {my_address: 0x334b3f48, value: image/icns},
+          {my_address: 0x334b3f70, value: image/bmp},
+          {my_address: 0x334b3f98, value: image/tiff},
+          {my_address: 0x334b3fc0, value: image/x-icon}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeabeb0, value: image/png},
-          {my_address: 0x2aeabed8, value: image/jpeg},
-          {my_address: 0x2aeabf00, value: image/webp},
-          {my_address: 0x2aeabf28, value: image/gif},
-          {my_address: 0x2aeabf50, value: image/svg+xml},
-          {my_address: 0x2aeabf78, value: image/avif},
-          {my_address: 0x2aeabfa0, value: image/heic},
-          {my_address: 0x2aeabfc8, value: image/icns},
-          {my_address: 0x2aeabff0, value: image/bmp},
-          {my_address: 0x2aeac018, value: image/tiff},
-          {my_address: 0x2aeac040, value: image/x-icon}
+          {my_address: 0x334b3e30, value: image/png},
+          {my_address: 0x334b3e58, value: image/jpeg},
+          {my_address: 0x334b3e80, value: image/webp},
+          {my_address: 0x334b3ea8, value: image/gif},
+          {my_address: 0x334b3ed0, value: image/svg+xml},
+          {my_address: 0x334b3ef8, value: image/avif},
+          {my_address: 0x334b3f20, value: image/heic},
+          {my_address: 0x334b3f48, value: image/icns},
+          {my_address: 0x334b3f70, value: image/bmp},
+          {my_address: 0x334b3f98, value: image/tiff},
+          {my_address: 0x334b3fc0, value: image/x-icon}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aeabcf0
+      0x334b3cb0
     ]
 },LETTER: {
   "concept_name": "LETTER"
@@ -403,30 +430,33 @@ make[1]: Nothing to be done for 'all'.
         "position": "LETTER_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aead220",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b5130",
         "content": [
-          {my_address: 0x2aeac670, value: UPCASE_LETTER},
-          {my_address: 0x2aeac698, value: LOCASE_LETTER}
+          {my_address: 0x334b45c0, value: UPCASE_LETTER},
+          {my_address: 0x334b45e8, value: LOCASE_LETTER}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeac670, value: UPCASE_LETTER},
-          {my_address: 0x2aeac698, value: LOCASE_LETTER}
+          {my_address: 0x334b45c0, value: UPCASE_LETTER},
+          {my_address: 0x334b45e8, value: LOCASE_LETTER}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea88f0,
-      0x2aea8990,
-      0x2aea94a0,
-      0x2aeacea0
+      0x334b0670,
+      0x334b0730,
+      0x334b12d0,
+      0x334b4e60
     ]
   "terminal_chars":[
-      0x2aead480,
-      0x2aead700
+      0x334b56e0,
+      0x334b5d80
     ]
 },LINE_JUMP: {
   "concept_name": "LINE_JUMP"
@@ -437,31 +467,34 @@ make[1]: Nothing to be done for 'all'.
         "position": "LINE_JUMP_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aeaf290",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b7310",
         "content": 
 
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeaf0f0, value: 
+          {my_address: 0x334b7170, value: 
 }
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9f890,
-      0x2aea0ee0,
-      0x2aea1690,
-      0x2aea2420,
-      0x2aea2c70,
-      0x2aea2dd0,
-      0x2aea7850,
-      0x2aea7da0
+      0x334a6960,
+      0x334a8100,
+      0x334a8960,
+      0x334a9810,
+      0x334aa130,
+      0x334aa2b0,
+      0x334af4b0,
+      0x334afa70
     ]
   "terminal_chars":[
-      0x2aeaf290
+      0x334b7310
     ]
 },LOCASE_LETTER: {
   "concept_name": "LOCASE_LETTER"
@@ -472,76 +505,79 @@ make[1]: Nothing to be done for 'all'.
         "position": "LOCASE_LETTER_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aead480",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b5d80",
         "content": [
-          {my_address: 0x2aeae230, value: a},
-          {my_address: 0x2aeae258, value: b},
-          {my_address: 0x2aeae280, value: c},
-          {my_address: 0x2aeae2a8, value: d},
-          {my_address: 0x2aeae2d0, value: e},
-          {my_address: 0x2aeae2f8, value: f},
-          {my_address: 0x2aeae320, value: g},
-          {my_address: 0x2aeae348, value: h},
-          {my_address: 0x2aeae370, value: i},
-          {my_address: 0x2aeae398, value: j},
-          {my_address: 0x2aeae3c0, value: k},
-          {my_address: 0x2aeae3e8, value: l},
-          {my_address: 0x2aeae410, value: m},
-          {my_address: 0x2aeae438, value: n},
-          {my_address: 0x2aeae460, value: o},
-          {my_address: 0x2aeae488, value: p},
-          {my_address: 0x2aeae4b0, value: q},
-          {my_address: 0x2aeae4d8, value: r},
-          {my_address: 0x2aeae500, value: s},
-          {my_address: 0x2aeae528, value: t},
-          {my_address: 0x2aeae550, value: u},
-          {my_address: 0x2aeae578, value: v},
-          {my_address: 0x2aeae5a0, value: w},
-          {my_address: 0x2aeae5c8, value: x},
-          {my_address: 0x2aeae5f0, value: y},
-          {my_address: 0x2aeae618, value: z}
+          {my_address: 0x334b62e0, value: a},
+          {my_address: 0x334b6308, value: b},
+          {my_address: 0x334b6330, value: c},
+          {my_address: 0x334b6358, value: d},
+          {my_address: 0x334b6380, value: e},
+          {my_address: 0x334b63a8, value: f},
+          {my_address: 0x334b63d0, value: g},
+          {my_address: 0x334b63f8, value: h},
+          {my_address: 0x334b6420, value: i},
+          {my_address: 0x334b6448, value: j},
+          {my_address: 0x334b6470, value: k},
+          {my_address: 0x334b6498, value: l},
+          {my_address: 0x334b64c0, value: m},
+          {my_address: 0x334b64e8, value: n},
+          {my_address: 0x334b6510, value: o},
+          {my_address: 0x334b6538, value: p},
+          {my_address: 0x334b6560, value: q},
+          {my_address: 0x334b6588, value: r},
+          {my_address: 0x334b65b0, value: s},
+          {my_address: 0x334b65d8, value: t},
+          {my_address: 0x334b6600, value: u},
+          {my_address: 0x334b6628, value: v},
+          {my_address: 0x334b6650, value: w},
+          {my_address: 0x334b6678, value: x},
+          {my_address: 0x334b66a0, value: y},
+          {my_address: 0x334b66c8, value: z}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeae230, value: a},
-          {my_address: 0x2aeae258, value: b},
-          {my_address: 0x2aeae280, value: c},
-          {my_address: 0x2aeae2a8, value: d},
-          {my_address: 0x2aeae2d0, value: e},
-          {my_address: 0x2aeae2f8, value: f},
-          {my_address: 0x2aeae320, value: g},
-          {my_address: 0x2aeae348, value: h},
-          {my_address: 0x2aeae370, value: i},
-          {my_address: 0x2aeae398, value: j},
-          {my_address: 0x2aeae3c0, value: k},
-          {my_address: 0x2aeae3e8, value: l},
-          {my_address: 0x2aeae410, value: m},
-          {my_address: 0x2aeae438, value: n},
-          {my_address: 0x2aeae460, value: o},
-          {my_address: 0x2aeae488, value: p},
-          {my_address: 0x2aeae4b0, value: q},
-          {my_address: 0x2aeae4d8, value: r},
-          {my_address: 0x2aeae500, value: s},
-          {my_address: 0x2aeae528, value: t},
-          {my_address: 0x2aeae550, value: u},
-          {my_address: 0x2aeae578, value: v},
-          {my_address: 0x2aeae5a0, value: w},
-          {my_address: 0x2aeae5c8, value: x},
-          {my_address: 0x2aeae5f0, value: y},
-          {my_address: 0x2aeae618, value: z}
+          {my_address: 0x334b62e0, value: a},
+          {my_address: 0x334b6308, value: b},
+          {my_address: 0x334b6330, value: c},
+          {my_address: 0x334b6358, value: d},
+          {my_address: 0x334b6380, value: e},
+          {my_address: 0x334b63a8, value: f},
+          {my_address: 0x334b63d0, value: g},
+          {my_address: 0x334b63f8, value: h},
+          {my_address: 0x334b6420, value: i},
+          {my_address: 0x334b6448, value: j},
+          {my_address: 0x334b6470, value: k},
+          {my_address: 0x334b6498, value: l},
+          {my_address: 0x334b64c0, value: m},
+          {my_address: 0x334b64e8, value: n},
+          {my_address: 0x334b6510, value: o},
+          {my_address: 0x334b6538, value: p},
+          {my_address: 0x334b6560, value: q},
+          {my_address: 0x334b6588, value: r},
+          {my_address: 0x334b65b0, value: s},
+          {my_address: 0x334b65d8, value: t},
+          {my_address: 0x334b6600, value: u},
+          {my_address: 0x334b6628, value: v},
+          {my_address: 0x334b6650, value: w},
+          {my_address: 0x334b6678, value: x},
+          {my_address: 0x334b66a0, value: y},
+          {my_address: 0x334b66c8, value: z}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea8510,
-      0x2aea85b0,
-      0x2aead220
+      0x334b0250,
+      0x334b0310,
+      0x334b5130
     ]
   "terminal_chars":[
-      0x2aead480
+      0x334b5d80
     ]
 },LOG_LEVEL: {
   "concept_name": "LOG_LEVEL"
@@ -552,34 +588,37 @@ make[1]: Nothing to be done for 'all'.
         "position": "LOG_LEVEL_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeac870",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b47c0",
         "content": [
-          {my_address: 0x2aeaaa00, value: debug},
-          {my_address: 0x2aeaaa28, value: info},
-          {my_address: 0x2aeaaa50, value: notice},
-          {my_address: 0x2aeaaa78, value: warn},
-          {my_address: 0x2aeaaaa0, value: error},
-          {my_address: 0x2aeaaac8, value: crit}
+          {my_address: 0x334b2870, value: debug},
+          {my_address: 0x334b2898, value: info},
+          {my_address: 0x334b28c0, value: notice},
+          {my_address: 0x334b28e8, value: warn},
+          {my_address: 0x334b2910, value: error},
+          {my_address: 0x334b2938, value: crit}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeaaa00, value: debug},
-          {my_address: 0x2aeaaa28, value: info},
-          {my_address: 0x2aeaaa50, value: notice},
-          {my_address: 0x2aeaaa78, value: warn},
-          {my_address: 0x2aeaaaa0, value: error},
-          {my_address: 0x2aeaaac8, value: crit}
+          {my_address: 0x334b2870, value: debug},
+          {my_address: 0x334b2898, value: info},
+          {my_address: 0x334b28c0, value: notice},
+          {my_address: 0x334b28e8, value: warn},
+          {my_address: 0x334b2910, value: error},
+          {my_address: 0x334b2938, value: crit}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea4be0
+      0x334ac400
     ]
   "terminal_chars":[
-      0x2aeac870
+      0x334b47c0
     ]
 },MIME: {
   "concept_name": "MIME"
@@ -590,43 +629,46 @@ make[1]: Nothing to be done for 'all'.
         "position": "MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aea9bb0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b19f0",
         "content": [
-          {my_address: 0x2aea9d40, value: TEXT_MIME},
-          {my_address: 0x2aea9d68, value: APPLICATION_MIME},
-          {my_address: 0x2aea9d90, value: FONT_MIME},
-          {my_address: 0x2aea9db8, value: MULTIPART_MIME},
-          {my_address: 0x2aea9de0, value: AUDIO_MIME},
-          {my_address: 0x2aea9e08, value: VIDEO_MIME},
-          {my_address: 0x2aea9e30, value: IMAGE_MIME}
+          {my_address: 0x334b1b90, value: TEXT_MIME},
+          {my_address: 0x334b1bb8, value: APPLICATION_MIME},
+          {my_address: 0x334b1be0, value: FONT_MIME},
+          {my_address: 0x334b1c08, value: MULTIPART_MIME},
+          {my_address: 0x334b1c30, value: AUDIO_MIME},
+          {my_address: 0x334b1c58, value: VIDEO_MIME},
+          {my_address: 0x334b1c80, value: IMAGE_MIME}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea9d40, value: TEXT_MIME},
-          {my_address: 0x2aea9d68, value: APPLICATION_MIME},
-          {my_address: 0x2aea9d90, value: FONT_MIME},
-          {my_address: 0x2aea9db8, value: MULTIPART_MIME},
-          {my_address: 0x2aea9de0, value: AUDIO_MIME},
-          {my_address: 0x2aea9e08, value: VIDEO_MIME},
-          {my_address: 0x2aea9e30, value: IMAGE_MIME}
+          {my_address: 0x334b1b90, value: TEXT_MIME},
+          {my_address: 0x334b1bb8, value: APPLICATION_MIME},
+          {my_address: 0x334b1be0, value: FONT_MIME},
+          {my_address: 0x334b1c08, value: MULTIPART_MIME},
+          {my_address: 0x334b1c30, value: AUDIO_MIME},
+          {my_address: 0x334b1c58, value: VIDEO_MIME},
+          {my_address: 0x334b1c80, value: IMAGE_MIME}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea4310,
-      0x2aea7cb0
+      0x334aba30,
+      0x334af960
     ]
   "terminal_chars":[
-      0x2aea9f90,
-      0x2aeaa850,
-      0x2aeab390,
-      0x2aeab600,
-      0x2aeab810,
-      0x2aeabad0,
-      0x2aeabcf0
+      0x334b1de0,
+      0x334b20b0,
+      0x334b3200,
+      0x334b3480,
+      0x334b36a0,
+      0x334b3970,
+      0x334b3cb0
     ]
 },MULTIPART_MIME: {
   "concept_name": "MULTIPART_MIME"
@@ -637,24 +679,27 @@ make[1]: Nothing to be done for 'all'.
         "position": "MULTIPART_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeab600",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b3480",
         "content": [
-          {my_address: 0x2aeab100, value: multipart/form-data}
+          {my_address: 0x334b2f70, value: multipart/form-data}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeab100, value: multipart/form-data}
+          {my_address: 0x334b2f70, value: multipart/form-data}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aeab600
+      0x334b3480
     ]
 },NUMBER: {
   "concept_name": "NUMBER"
@@ -665,31 +710,34 @@ make[1]: Nothing to be done for 'all'.
         "position": "NUMBER_0",
         "type": "SEQUENCE",
         "index": 0,
-        "ptr": "0x2aea8c30",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b09f0",
         "content": [
-          {my_address: 0x2aea8ab0, value: DIGIT}
+          {my_address: 0x334b0870, value: DIGIT}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea8ab0, value: DIGIT}
+          {my_address: 0x334b0870, value: DIGIT}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea1b60,
-      0x2aea3c60,
-      0x2aea3ff0,
-      0x2aea6ad0,
-      0x2aea6df0,
-      0x2aeac1e0,
-      0x2aeac320,
-      0x2aeac510
+      0x334a8e80,
+      0x334ab2c0,
+      0x334ab6b0,
+      0x334ae5d0,
+      0x334ae950,
+      0x334b3ba0,
+      0x334b4220,
+      0x334b4430
     ]
   "terminal_chars":[
-      0x2aeae800
+      0x334b68b0
     ]
 },PATH: {
   "concept_name": "PATH"
@@ -700,40 +748,46 @@ make[1]: Nothing to be done for 'all'.
         "position": "PATH_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea9160",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b0f50",
         "content": /
         "next": [
-          0x2aea9200
+          0x334b1010
         ]
         items": [
-          {my_address: 0x2aea8cf0, value: /}
+          {my_address: 0x334b0ad0, value: /}
         ]
       },
       {
         "position": "PATH_0",
         "type": "SEQUENCE",
         "index": 1,
-        "ptr": "0x2aea9200",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b1010",
         "content": [
-          {my_address: 0x2aea8a80, value: PATH_CHAR}
+          {my_address: 0x334b0840, value: PATH_CHAR}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea8a80, value: PATH_CHAR}
+          {my_address: 0x334b0840, value: PATH_CHAR}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea0820,
-      0x2aea4660,
-      0x2aea49b0,
-      0x2aea8230
+      0x334a7a80,
+      0x334abde0,
+      0x334ac190,
+      0x334aff50
     ]
   "terminal_chars":[
-      0x2aea9160
+      0x334b0f50
     ]
 },PATH_CHAR: {
   "concept_name": "PATH_CHAR"
@@ -744,39 +798,42 @@ make[1]: Nothing to be done for 'all'.
         "position": "PATH_CHAR_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aea94a0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b12d0",
         "content": [
-          {my_address: 0x2aea9610, value: LETTER},
-          {my_address: 0x2aea9638, value: DIGIT},
-          {my_address: 0x2aea9660, value: /},
-          {my_address: 0x2aea9688, value: .},
-          {my_address: 0x2aea96b0, value: _},
-          {my_address: 0x2aea96d8, value: *},
-          {my_address: 0x2aea9700, value: -}
+          {my_address: 0x334b1450, value: LETTER},
+          {my_address: 0x334b1478, value: DIGIT},
+          {my_address: 0x334b14a0, value: /},
+          {my_address: 0x334b14c8, value: .},
+          {my_address: 0x334b14f0, value: _},
+          {my_address: 0x334b1518, value: *},
+          {my_address: 0x334b1540, value: -}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea9610, value: LETTER},
-          {my_address: 0x2aea9638, value: DIGIT},
-          {my_address: 0x2aea9660, value: /},
-          {my_address: 0x2aea9688, value: .},
-          {my_address: 0x2aea96b0, value: _},
-          {my_address: 0x2aea96d8, value: *},
-          {my_address: 0x2aea9700, value: -}
+          {my_address: 0x334b1450, value: LETTER},
+          {my_address: 0x334b1478, value: DIGIT},
+          {my_address: 0x334b14a0, value: /},
+          {my_address: 0x334b14c8, value: .},
+          {my_address: 0x334b14f0, value: _},
+          {my_address: 0x334b1518, value: *},
+          {my_address: 0x334b1540, value: -}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9200
+      0x334b1010
     ]
   "terminal_chars":[
-      0x2aea94a0,
-      0x2aead480,
-      0x2aead700,
-      0x2aeae800
+      0x334b12d0,
+      0x334b56e0,
+      0x334b5d80,
+      0x334b68b0
     ]
 },SIZE: {
   "concept_name": "SIZE"
@@ -787,39 +844,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "SIZE_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aeac510",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4430",
         "content": NUMBER
         "next": [
-          0x2aeac5b0
+          0x334b44f0
         ]
         items": [
-          {my_address: 0x2aeaa2e0, value: NUMBER}
+          {my_address: 0x334b2210, value: NUMBER}
         ]
       },
       {
         "position": "SIZE_0",
         "type": "GROUP",
         "index": 1,
-        "ptr": "0x2aeac5b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b44f0",
         "content": [
-          {my_address: 0x2aeabb90, value: k},
-          {my_address: 0x2aeabbb8, value: m}
+          {my_address: 0x334b3a40, value: k},
+          {my_address: 0x334b3a68, value: m}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeabb90, value: k},
-          {my_address: 0x2aeabbb8, value: m}
+          {my_address: 0x334b3a40, value: k},
+          {my_address: 0x334b3a68, value: m}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea7020
+      0x334aebc0
     ]
   "terminal_chars":[
-      0x2aeae800
+      0x334b68b0
     ]
 },SPACE: {
   "concept_name": "SPACE"
@@ -830,32 +893,35 @@ make[1]: Nothing to be done for 'all'.
         "position": "SPACE_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aeaf030",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b7090",
         "content":  
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeaee90, value:  }
+          {my_address: 0x334b6ef0, value:  }
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9fb70,
-      0x2aea0210,
-      0x2aea0780,
-      0x2aea0ca0,
-      0x2aea1a70,
-      0x2aea1de0,
-      0x2aea2200,
-      0x2aea4ae0,
-      0x2aea6f20,
-      0x2aeacea0,
-      0x2aeaeb80
+      0x334a6a20,
+      0x334a6c80,
+      0x334a73d0,
+      0x334a79c0,
+      0x334a8d70,
+      0x334a9140,
+      0x334a95c0,
+      0x334ac2e0,
+      0x334aeaa0,
+      0x334b4e60,
+      0x334b5460
     ]
   "terminal_chars":[
-      0x2aeaf030
+      0x334b7090
     ]
 },STRING: {
   "concept_name": "STRING"
@@ -866,50 +932,59 @@ make[1]: Nothing to be done for 'all'.
         "position": "STRING_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aeaca30",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4990",
         "content": "
         "next": [
-          0x2aeacad0
+          0x334b4a50
         ]
         items": [
-          {my_address: 0x2aeaa510, value: "}
+          {my_address: 0x334b2440, value: "}
         ]
       },
       {
         "position": "STRING_0",
         "type": "SEQUENCE",
         "index": 1,
-        "ptr": "0x2aeacad0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4a50",
         "content": [
-          {my_address: 0x2aeaa480, value: STRING_CHAR}
+          {my_address: 0x334b23b0, value: STRING_CHAR}
         ]
         "next": [
-          0x2aeacbc0
+          0x334b4b60
         ]
         items": [
-          {my_address: 0x2aeaa480, value: STRING_CHAR}
+          {my_address: 0x334b23b0, value: STRING_CHAR}
         ]
       },
       {
         "position": "STRING_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aeacbc0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4b60",
         "content": "
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeacc60, value: "}
+          {my_address: 0x334b4c20, value: "}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea6060
+      0x334ada40
     ]
   "terminal_chars":[
-      0x2aeaca30
+      0x334b4990
     ]
 },STRING_CHAR: {
   "concept_name": "STRING_CHAR"
@@ -920,36 +995,39 @@ make[1]: Nothing to be done for 'all'.
         "position": "STRING_CHAR_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeacea0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4e60",
         "content": [
-          {my_address: 0x2aead010, value: LETTER},
-          {my_address: 0x2aead038, value: DIGIT},
-          {my_address: 0x2aead060, value: SPACE},
-          {my_address: 0x2aead088, value: _},
-          {my_address: 0x2aead0b0, value: .}
+          {my_address: 0x334b4fe0, value: LETTER},
+          {my_address: 0x334b5008, value: DIGIT},
+          {my_address: 0x334b5030, value: SPACE},
+          {my_address: 0x334b5058, value: _},
+          {my_address: 0x334b5080, value: .}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aead010, value: LETTER},
-          {my_address: 0x2aead038, value: DIGIT},
-          {my_address: 0x2aead060, value: SPACE},
-          {my_address: 0x2aead088, value: _},
-          {my_address: 0x2aead0b0, value: .}
+          {my_address: 0x334b4fe0, value: LETTER},
+          {my_address: 0x334b5008, value: DIGIT},
+          {my_address: 0x334b5030, value: SPACE},
+          {my_address: 0x334b5058, value: _},
+          {my_address: 0x334b5080, value: .}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aeacad0
+      0x334b4a50
     ]
   "terminal_chars":[
-      0x2aeacea0,
-      0x2aead480,
-      0x2aead700,
-      0x2aeae800,
-      0x2aeaf030
+      0x334b4e60,
+      0x334b56e0,
+      0x334b5d80,
+      0x334b68b0,
+      0x334b7090
     ]
 },TAB: {
   "concept_name": "TAB"
@@ -960,22 +1038,25 @@ make[1]: Nothing to be done for 'all'.
         "position": "TAB_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aeaeda0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b6de0",
         "content": 	
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeacd20, value: 	}
+          {my_address: 0x334b4ce0, value: 	}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aeaeb80
+      0x334b5460
     ]
   "terminal_chars":[
-      0x2aeaeda0
+      0x334b6de0
     ]
 },TAB_SPACE: {
   "concept_name": "TAB_SPACE"
@@ -986,47 +1067,50 @@ make[1]: Nothing to be done for 'all'.
         "position": "TAB_SPACE_0",
         "type": "SEQUENCE",
         "index": 0,
-        "ptr": "0x2aeaeb80",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b5460",
         "content": [
-          {my_address: 0x2aead300, value: SPACE},
-          {my_address: 0x2aead328, value: TAB}
+          {my_address: 0x334b52e0, value: SPACE},
+          {my_address: 0x334b5308, value: TAB}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aead300, value: SPACE},
-          {my_address: 0x2aead328, value: TAB}
+          {my_address: 0x334b52e0, value: SPACE},
+          {my_address: 0x334b5308, value: TAB}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea13b0,
-      0x2aea28f0,
-      0x2aea3130,
-      0x2aea3470,
-      0x2aea37f0,
-      0x2aea3b70,
-      0x2aea3f30,
-      0x2aea4270,
-      0x2aea4590,
-      0x2aea48e0,
-      0x2aea4f10,
-      0x2aea52f0,
-      0x2aea5bd0,
-      0x2aea5f90,
-      0x2aea6310,
-      0x2aea6660,
-      0x2aea6a00,
-      0x2aea6d50,
-      0x2aea72c0,
-      0x2aea7bf0,
-      0x2aea8140
+      0x334a8630,
+      0x334a9d70,
+      0x334aa650,
+      0x334aa9f0,
+      0x334aadd0,
+      0x334ab1b0,
+      0x334ab5d0,
+      0x334ab970,
+      0x334abcf0,
+      0x334ac0a0,
+      0x334ac770,
+      0x334acbb0,
+      0x334ad540,
+      0x334ad950,
+      0x334add30,
+      0x334ae0e0,
+      0x334ae4e0,
+      0x334ae890,
+      0x334aeea0,
+      0x334af890,
+      0x334afe40
     ]
   "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030
+      0x334b6de0,
+      0x334b7090
     ]
 },TEXT_MIME: {
   "concept_name": "TEXT_MIME"
@@ -1037,32 +1121,35 @@ make[1]: Nothing to be done for 'all'.
         "position": "TEXT_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aea9f90",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b1de0",
         "content": [
-          {my_address: 0x2aeaa100, value: text/html},
-          {my_address: 0x2aeaa128, value: text/plain},
-          {my_address: 0x2aeaa150, value: text/css},
-          {my_address: 0x2aeaa178, value: text/csv},
-          {my_address: 0x2aeaa1a0, value: text/xml}
+          {my_address: 0x334b1f60, value: text/html},
+          {my_address: 0x334b1f88, value: text/plain},
+          {my_address: 0x334b1fb0, value: text/css},
+          {my_address: 0x334b1fd8, value: text/csv},
+          {my_address: 0x334b2000, value: text/xml}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeaa100, value: text/html},
-          {my_address: 0x2aeaa128, value: text/plain},
-          {my_address: 0x2aeaa150, value: text/css},
-          {my_address: 0x2aeaa178, value: text/csv},
-          {my_address: 0x2aeaa1a0, value: text/xml}
+          {my_address: 0x334b1f60, value: text/html},
+          {my_address: 0x334b1f88, value: text/plain},
+          {my_address: 0x334b1fb0, value: text/css},
+          {my_address: 0x334b1fd8, value: text/csv},
+          {my_address: 0x334b2000, value: text/xml}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aea9f90
+      0x334b1de0
     ]
 },UPCASE_LETTER: {
   "concept_name": "UPCASE_LETTER"
@@ -1073,74 +1160,77 @@ make[1]: Nothing to be done for 'all'.
         "position": "UPCASE_LETTER_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aead700",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b56e0",
         "content": [
-          {my_address: 0x2aead7c0, value: A},
-          {my_address: 0x2aead7e8, value: B},
-          {my_address: 0x2aead810, value: C},
-          {my_address: 0x2aead838, value: D},
-          {my_address: 0x2aead860, value: E},
-          {my_address: 0x2aead888, value: F},
-          {my_address: 0x2aead8b0, value: G},
-          {my_address: 0x2aead8d8, value: H},
-          {my_address: 0x2aead900, value: I},
-          {my_address: 0x2aead928, value: J},
-          {my_address: 0x2aead950, value: K},
-          {my_address: 0x2aead978, value: L},
-          {my_address: 0x2aead9a0, value: M},
-          {my_address: 0x2aead9c8, value: N},
-          {my_address: 0x2aead9f0, value: O},
-          {my_address: 0x2aeada18, value: P},
-          {my_address: 0x2aeada40, value: Q},
-          {my_address: 0x2aeada68, value: R},
-          {my_address: 0x2aeada90, value: S},
-          {my_address: 0x2aeadab8, value: T},
-          {my_address: 0x2aeadae0, value: U},
-          {my_address: 0x2aeadb08, value: V},
-          {my_address: 0x2aeadb30, value: W},
-          {my_address: 0x2aeadb58, value: X},
-          {my_address: 0x2aeadb80, value: Y},
-          {my_address: 0x2aeadba8, value: Z}
+          {my_address: 0x334b57b0, value: A},
+          {my_address: 0x334b57d8, value: B},
+          {my_address: 0x334b5800, value: C},
+          {my_address: 0x334b5828, value: D},
+          {my_address: 0x334b5850, value: E},
+          {my_address: 0x334b5878, value: F},
+          {my_address: 0x334b58a0, value: G},
+          {my_address: 0x334b58c8, value: H},
+          {my_address: 0x334b58f0, value: I},
+          {my_address: 0x334b5918, value: J},
+          {my_address: 0x334b5940, value: K},
+          {my_address: 0x334b5968, value: L},
+          {my_address: 0x334b5990, value: M},
+          {my_address: 0x334b59b8, value: N},
+          {my_address: 0x334b59e0, value: O},
+          {my_address: 0x334b5a08, value: P},
+          {my_address: 0x334b5a30, value: Q},
+          {my_address: 0x334b5a58, value: R},
+          {my_address: 0x334b5a80, value: S},
+          {my_address: 0x334b5aa8, value: T},
+          {my_address: 0x334b5ad0, value: U},
+          {my_address: 0x334b5af8, value: V},
+          {my_address: 0x334b5b20, value: W},
+          {my_address: 0x334b5b48, value: X},
+          {my_address: 0x334b5b70, value: Y},
+          {my_address: 0x334b5b98, value: Z}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aead7c0, value: A},
-          {my_address: 0x2aead7e8, value: B},
-          {my_address: 0x2aead810, value: C},
-          {my_address: 0x2aead838, value: D},
-          {my_address: 0x2aead860, value: E},
-          {my_address: 0x2aead888, value: F},
-          {my_address: 0x2aead8b0, value: G},
-          {my_address: 0x2aead8d8, value: H},
-          {my_address: 0x2aead900, value: I},
-          {my_address: 0x2aead928, value: J},
-          {my_address: 0x2aead950, value: K},
-          {my_address: 0x2aead978, value: L},
-          {my_address: 0x2aead9a0, value: M},
-          {my_address: 0x2aead9c8, value: N},
-          {my_address: 0x2aead9f0, value: O},
-          {my_address: 0x2aeada18, value: P},
-          {my_address: 0x2aeada40, value: Q},
-          {my_address: 0x2aeada68, value: R},
-          {my_address: 0x2aeada90, value: S},
-          {my_address: 0x2aeadab8, value: T},
-          {my_address: 0x2aeadae0, value: U},
-          {my_address: 0x2aeadb08, value: V},
-          {my_address: 0x2aeadb30, value: W},
-          {my_address: 0x2aeadb58, value: X},
-          {my_address: 0x2aeadb80, value: Y},
-          {my_address: 0x2aeadba8, value: Z}
+          {my_address: 0x334b57b0, value: A},
+          {my_address: 0x334b57d8, value: B},
+          {my_address: 0x334b5800, value: C},
+          {my_address: 0x334b5828, value: D},
+          {my_address: 0x334b5850, value: E},
+          {my_address: 0x334b5878, value: F},
+          {my_address: 0x334b58a0, value: G},
+          {my_address: 0x334b58c8, value: H},
+          {my_address: 0x334b58f0, value: I},
+          {my_address: 0x334b5918, value: J},
+          {my_address: 0x334b5940, value: K},
+          {my_address: 0x334b5968, value: L},
+          {my_address: 0x334b5990, value: M},
+          {my_address: 0x334b59b8, value: N},
+          {my_address: 0x334b59e0, value: O},
+          {my_address: 0x334b5a08, value: P},
+          {my_address: 0x334b5a30, value: Q},
+          {my_address: 0x334b5a58, value: R},
+          {my_address: 0x334b5a80, value: S},
+          {my_address: 0x334b5aa8, value: T},
+          {my_address: 0x334b5ad0, value: U},
+          {my_address: 0x334b5af8, value: V},
+          {my_address: 0x334b5b20, value: W},
+          {my_address: 0x334b5b48, value: X},
+          {my_address: 0x334b5b70, value: Y},
+          {my_address: 0x334b5b98, value: Z}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aead220
+      0x334b5130
     ]
   "terminal_chars":[
-      0x2aead700
+      0x334b56e0
     ]
 },VERSION: {
   "concept_name": "VERSION"
@@ -1151,48 +1241,57 @@ make[1]: Nothing to be done for 'all'.
         "position": "VERSION_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aeac1e0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b3ba0",
         "content": NUMBER
         "next": [
-          0x2aeac280
+          0x334b4160
         ]
         items": [
-          {my_address: 0x2aeab270, value: NUMBER}
+          {my_address: 0x334b30e0, value: NUMBER}
         ]
       },
       {
         "position": "VERSION_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aeac280",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4160",
         "content": .
         "next": [
-          0x2aeac320
+          0x334b4220
         ]
         items": [
-          {my_address: 0x2aeab0d0, value: .}
+          {my_address: 0x334b2f40, value: .}
         ]
       },
       {
         "position": "VERSION_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aeac320",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b4220",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aeab080, value: NUMBER}
+          {my_address: 0x334b2ef0, value: NUMBER}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea73b0
+      0x334aefb0
     ]
   "terminal_chars":[
-      0x2aeae800
+      0x334b68b0
     ]
 },VIDEO_MIME: {
   "concept_name": "VIDEO_MIME"
@@ -1203,26 +1302,29 @@ make[1]: Nothing to be done for 'all'.
         "position": "VIDEO_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2aeabad0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b3970",
         "content": [
-          {my_address: 0x2aea8f70, value: video/mp4},
-          {my_address: 0x2aea8f98, value: video/webm}
+          {my_address: 0x334b0d60, value: video/mp4},
+          {my_address: 0x334b0d88, value: video/webm}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea8f70, value: video/mp4},
-          {my_address: 0x2aea8f98, value: video/webm}
+          {my_address: 0x334b0d60, value: video/mp4},
+          {my_address: 0x334b0d88, value: video/webm}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea9bb0
+      0x334b19f0
     ]
   "terminal_chars":[
-      0x2aeabad0
+      0x334b3970
     ]
 },basic_http_stmt: {
   "concept_name": "basic_http_stmt"
@@ -1233,39 +1335,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea3070",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa570",
         "content": sendfile
         "next": [
-          0x2aea3130
+          0x334aa650
         ]
         items": [
-          {my_address: 0x2aea2da0, value: sendfile}
+          {my_address: 0x334aa280, value: sendfile}
         ]
       },
       {
         "position": "basic_http_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea3130",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa650",
         "content": TAB_SPACE
         "next": [
-          0x2aea31f0
+          0x334aa730
         ]
         items": [
-          {my_address: 0x2aea2ea0, value: TAB_SPACE}
+          {my_address: 0x334aa3a0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea31f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa730",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea3290, value: BOOL}
+          {my_address: 0x334aa7f0, value: BOOL}
         ]
       }
     ],
@@ -1274,39 +1385,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_1",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea33d0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa930",
         "content": tcp_nopush
         "next": [
-          0x2aea3470
+          0x334aa9f0
         ]
         items": [
-          {my_address: 0x2aea3320, value: tcp_nopush}
+          {my_address: 0x334aa880, value: tcp_nopush}
         ]
       },
       {
         "position": "basic_http_stmt_1",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea3470",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa9f0",
         "content": TAB_SPACE
         "next": [
-          0x2aea3540
+          0x334aaae0
         ]
         items": [
-          {my_address: 0x2aea3350, value: TAB_SPACE}
+          {my_address: 0x334aa8b0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_1",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea3540",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aaae0",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea35e0, value: BOOL}
+          {my_address: 0x334aaba0, value: BOOL}
         ]
       }
     ],
@@ -1315,39 +1435,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_2",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea3750",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aad10",
         "content": tcp_nodelay
         "next": [
-          0x2aea37f0
+          0x334aadd0
         ]
         items": [
-          {my_address: 0x2aea36a0, value: tcp_nodelay}
+          {my_address: 0x334aac60, value: tcp_nodelay}
         ]
       },
       {
         "position": "basic_http_stmt_2",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea37f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aadd0",
         "content": TAB_SPACE
         "next": [
-          0x2aea38c0
+          0x334aaec0
         ]
         items": [
-          {my_address: 0x2aea36d0, value: TAB_SPACE}
+          {my_address: 0x334aac90, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_2",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea38c0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aaec0",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea3960, value: BOOL}
+          {my_address: 0x334aaf80, value: BOOL}
         ]
       }
     ],
@@ -1356,39 +1485,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_3",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea3ad0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab0f0",
         "content": keepalive_timeout
         "next": [
-          0x2aea3b70
+          0x334ab1b0
         ]
         items": [
-          {my_address: 0x2aea39f0, value: keepalive_timeout}
+          {my_address: 0x334ab010, value: keepalive_timeout}
         ]
       },
       {
         "position": "basic_http_stmt_3",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea3b70",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab1b0",
         "content": TAB_SPACE
         "next": [
-          0x2aea3c60
+          0x334ab2c0
         ]
         items": [
-          {my_address: 0x2aea3a50, value: TAB_SPACE}
+          {my_address: 0x334ab070, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_3",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea3c60",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab2c0",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea3d00, value: NUMBER}
+          {my_address: 0x334ab380, value: NUMBER}
         ]
       }
     ],
@@ -1397,39 +1535,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_4",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea3e90",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab510",
         "content": types_hash_max_size
         "next": [
-          0x2aea3f30
+          0x334ab5d0
         ]
         items": [
-          {my_address: 0x2aea3670, value: types_hash_max_size}
+          {my_address: 0x334aac30, value: types_hash_max_size}
         ]
       },
       {
         "position": "basic_http_stmt_4",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea3f30",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab5d0",
         "content": TAB_SPACE
         "next": [
-          0x2aea3ff0
+          0x334ab6b0
         ]
         items": [
-          {my_address: 0x2aea3d90, value: TAB_SPACE}
+          {my_address: 0x334ab410, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_4",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea3ff0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab6b0",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea4090, value: NUMBER}
+          {my_address: 0x334ab770, value: NUMBER}
         ]
       }
     ],
@@ -1438,39 +1585,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_5",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea41d0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab8b0",
         "content": default_type
         "next": [
-          0x2aea4270
+          0x334ab970
         ]
         items": [
-          {my_address: 0x2aea3a20, value: default_type}
+          {my_address: 0x334ab040, value: default_type}
         ]
       },
       {
         "position": "basic_http_stmt_5",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea4270",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ab970",
         "content": TAB_SPACE
         "next": [
-          0x2aea4310
+          0x334aba30
         ]
         items": [
-          {my_address: 0x2aea4120, value: TAB_SPACE}
+          {my_address: 0x334ab800, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_5",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea4310",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aba30",
         "content": MIME
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea43b0, value: MIME}
+          {my_address: 0x334abaf0, value: MIME}
         ]
       }
     ],
@@ -1479,39 +1635,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_6",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea44f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334abc30",
         "content": access_log
         "next": [
-          0x2aea4590
+          0x334abcf0
         ]
         items": [
-          {my_address: 0x2aea4440, value: access_log}
+          {my_address: 0x334abb80, value: access_log}
         ]
       },
       {
         "position": "basic_http_stmt_6",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea4590",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334abcf0",
         "content": TAB_SPACE
         "next": [
-          0x2aea4660
+          0x334abde0
         ]
         items": [
-          {my_address: 0x2aea4470, value: TAB_SPACE}
+          {my_address: 0x334abbb0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_6",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea4660",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334abde0",
         "content": PATH
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea4700, value: PATH}
+          {my_address: 0x334abea0, value: PATH}
         ]
       }
     ],
@@ -1520,65 +1685,80 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea4840",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334abfe0",
         "content": error_log
         "next": [
-          0x2aea48e0
+          0x334ac0a0
         ]
         items": [
-          {my_address: 0x2aea4790, value: error_log}
+          {my_address: 0x334abf30, value: error_log}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea48e0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac0a0",
         "content": TAB_SPACE
         "next": [
-          0x2aea49b0
+          0x334ac190
         ]
         items": [
-          {my_address: 0x2aea47c0, value: TAB_SPACE}
+          {my_address: 0x334abf60, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea49b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac190",
         "content": PATH
         "next": [
-          0x2aea4ae0
+          0x334ac2e0
         ]
         items": [
-          {my_address: 0x2aea4a50, value: PATH}
+          {my_address: 0x334ac250, value: PATH}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea4ae0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac2e0",
         "content": SPACE
         "next": [
-          0x2aea4be0
+          0x334ac400
         ]
         items": [
-          {my_address: 0x2aea4b80, value: SPACE}
+          {my_address: 0x334ac3a0, value: SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 4,
-        "ptr": "0x2aea4be0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac400",
         "content": LOG_LEVEL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea4c80, value: LOG_LEVEL}
+          {my_address: 0x334ac4c0, value: LOG_LEVEL}
         ]
       }
     ],
@@ -1587,39 +1767,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_8",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea4e70",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac6b0",
         "content": server_tokens
         "next": [
-          0x2aea4f10
+          0x334ac770
         ]
         items": [
-          {my_address: 0x2aea4ab0, value: server_tokens}
+          {my_address: 0x334ac2b0, value: server_tokens}
         ]
       },
       {
         "position": "basic_http_stmt_8",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea4f10",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac770",
         "content": TAB_SPACE
         "next": [
-          0x2aea4fe0
+          0x334ac860
         ]
         items": [
-          {my_address: 0x2aea4ce0, value: TAB_SPACE}
+          {my_address: 0x334ac520, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_8",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea4fe0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ac860",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea5080, value: BOOL}
+          {my_address: 0x334ac920, value: BOOL}
         ]
       }
     ],
@@ -1628,74 +1817,86 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_9",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea5250",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334acaf0",
         "content": gzip
         "next": [
-          0x2aea52f0
+          0x334acbb0
         ]
         items": [
-          {my_address: 0x2aea5110, value: gzip}
+          {my_address: 0x334ac9b0, value: gzip}
         ]
       },
       {
         "position": "basic_http_stmt_9",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea52f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334acbb0",
         "content": TAB_SPACE
         "next": [
-          0x2aea53c0
+          0x334acca0
         ]
         items": [
-          {my_address: 0x2aea5140, value: TAB_SPACE}
+          {my_address: 0x334ac9e0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_9",
         "type": "GROUP",
         "index": 2,
-        "ptr": "0x2aea53c0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334acca0",
         "content": [
-          {my_address: 0x2ae9f520, value: BOOL},
-          {my_address: 0x2ae9f548, value: btp}
+          {my_address: 0x334a65e0, value: BOOL},
+          {my_address: 0x334a6608, value: btp}
         ]
         "next": [
-          0x2aea54e0
+          0x334acdd0
         ]
         items": [
-          {my_address: 0x2ae9f520, value: BOOL},
-          {my_address: 0x2ae9f548, value: btp}
+          {my_address: 0x334a65e0, value: BOOL},
+          {my_address: 0x334a6608, value: btp}
         ]
       },
       {
         "position": "basic_http_stmt_9",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea54e0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334acdd0",
         "content": btp
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea5580, value: btp}
+          {my_address: 0x334ace90, value: btp}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea29b0
+      0x334a9e40
     ]
   "terminal_chars":[
-      0x2aea3070,
-      0x2aea33d0,
-      0x2aea3750,
-      0x2aea3ad0,
-      0x2aea3e90,
-      0x2aea41d0,
-      0x2aea44f0,
-      0x2aea4840,
-      0x2aea4e70,
-      0x2aea5250
+      0x334aa570,
+      0x334aa930,
+      0x334aad10,
+      0x334ab0f0,
+      0x334ab510,
+      0x334ab8b0,
+      0x334abc30,
+      0x334abfe0,
+      0x334ac6b0,
+      0x334acaf0
     ]
 },btp: {
   "concept_name": "btp"
@@ -1706,37 +1907,43 @@ make[1]: Nothing to be done for 'all'.
         "position": "btp_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea57f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad100",
         "content": BOOL
         "next": [
-          0x2aea5890
+          0x334ad1c0
         ]
         items": [
-          {my_address: 0x2aea55e0, value: BOOL}
+          {my_address: 0x334acef0, value: BOOL}
         ]
       },
       {
         "position": "btp_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea5890",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad1c0",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea5610, value: BOOL}
+          {my_address: 0x334acf20, value: BOOL}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea53c0,
-      0x2aea54e0,
-      0x2aea5cc0
+      0x334acca0,
+      0x334acdd0,
+      0x334ad650
     ]
   "terminal_chars":[
-      0x2aea8eb0
+      0x334b0c90
     ]
 },event_rule: {
   "concept_name": "event_rule"
@@ -1747,39 +1954,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "event_rule_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea19b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8c90",
         "content": worker_connections
         "next": [
-          0x2aea1a70
+          0x334a8d70
         ]
         items": [
-          {my_address: 0x2aea17b0, value: worker_connections}
+          {my_address: 0x334a8a90, value: worker_connections}
         ]
       },
       {
         "position": "event_rule_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea1a70",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8d70",
         "content": SPACE
         "next": [
-          0x2aea1b60
+          0x334a8e80
         ]
         items": [
-          {my_address: 0x2aea1910, value: SPACE}
+          {my_address: 0x334a8bf0, value: SPACE}
         ]
       },
       {
         "position": "event_rule_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea1b60",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8e80",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea1c00, value: NUMBER}
+          {my_address: 0x334a8f40, value: NUMBER}
         ]
       }
     ],
@@ -1788,49 +2004,58 @@ make[1]: Nothing to be done for 'all'.
         "position": "event_rule_1",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea1d40",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9080",
         "content": multi_accept
         "next": [
-          0x2aea1de0
+          0x334a9140
         ]
         items": [
-          {my_address: 0x2aea17e0, value: multi_accept}
+          {my_address: 0x334a8ac0, value: multi_accept}
         ]
       },
       {
         "position": "event_rule_1",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea1de0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9140",
         "content": SPACE
         "next": [
-          0x2aea1e80
+          0x334a9200
         ]
         items": [
-          {my_address: 0x2aea1c90, value: SPACE}
+          {my_address: 0x334a8fd0, value: SPACE}
         ]
       },
       {
         "position": "event_rule_1",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea1e80",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9200",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea1f20, value: BOOL}
+          {my_address: 0x334a92c0, value: BOOL}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea1470
+      0x334a8700
     ]
   "terminal_chars":[
-      0x2aea19b0,
-      0x2aea1d40
+      0x334a8c90,
+      0x334a9080
     ]
 },event_stmt: {
   "concept_name": "event_stmt"
@@ -1841,66 +2066,78 @@ make[1]: Nothing to be done for 'all'.
         "position": "event_stmt_0",
         "type": "OPTION",
         "index": 0,
-        "ptr": "0x2aea13b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8630",
         "content": [
-          {my_address: 0x2aea11b0, value: TAB_SPACE}
+          {my_address: 0x334a8430, value: TAB_SPACE}
         ]
         "next": [
-          0x2aea1470
+          0x334a8700
         ]
         items": [
-          {my_address: 0x2aea11b0, value: TAB_SPACE}
+          {my_address: 0x334a8430, value: TAB_SPACE}
         ]
       },
       {
         "position": "event_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea1470",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8700",
         "content": event_rule
         "next": [
-          0x2aea1560
+          0x334a8810
         ]
         items": [
-          {my_address: 0x2aea11e0, value: event_rule}
+          {my_address: 0x334a8460, value: event_rule}
         ]
       },
       {
         "position": "event_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea1560",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8810",
         "content": ;
         "next": [
-          0x2aea1690
+          0x334a8960
         ]
         items": [
-          {my_address: 0x2aea1600, value: ;}
+          {my_address: 0x334a88d0, value: ;}
         ]
       },
       {
         "position": "event_stmt_0",
         "type": "OPTION",
         "index": 3,
-        "ptr": "0x2aea1690",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8960",
         "content": [
-          {my_address: 0x2aea1750, value: LINE_JUMP}
+          {my_address: 0x334a8a30, value: LINE_JUMP}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea1750, value: LINE_JUMP}
+          {my_address: 0x334a8a30, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea0fe0
+      0x334a8220
     ]
   "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030
+      0x334b6de0,
+      0x334b7090
     ]
 },events_block: {
   "concept_name": "events_block"
@@ -1911,91 +2148,109 @@ make[1]: Nothing to be done for 'all'.
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea0c00",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a7ea0",
         "content": events
         "next": [
-          0x2aea0ca0
+          0x334a6a20
         ]
         items": [
-          {my_address: 0x2aea0a50, value: events}
+          {my_address: 0x334a7cf0, value: events}
         ]
       },
       {
         "position": "events_block_0",
         "type": "OPTION",
         "index": 1,
-        "ptr": "0x2aea0ca0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6a20",
         "content": [
-          {my_address: 0x2aea0a80, value: SPACE}
+          {my_address: 0x334a7d20, value: SPACE}
         ]
         "next": [
-          0x2aea0db0
+          0x334a7fb0
         ]
         items": [
-          {my_address: 0x2aea0a80, value: SPACE}
+          {my_address: 0x334a7d20, value: SPACE}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea0db0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a7fb0",
         "content": {
         "next": [
-          0x2aea0ee0
+          0x334a8100
         ]
         items": [
-          {my_address: 0x2aea0e50, value: {}
+          {my_address: 0x334a8070, value: {}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea0ee0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8100",
         "content": LINE_JUMP
         "next": [
-          0x2aea0fe0
+          0x334a8220
         ]
         items": [
-          {my_address: 0x2aea0f80, value: LINE_JUMP}
+          {my_address: 0x334a81c0, value: LINE_JUMP}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SEQUENCE",
         "index": 4,
-        "ptr": "0x2aea0fe0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8220",
         "content": [
-          {my_address: 0x2aea1080, value: event_stmt}
+          {my_address: 0x334a82e0, value: event_stmt}
         ]
         "next": [
-          0x2aea10e0
+          0x334a8340
         ]
         items": [
-          {my_address: 0x2aea1080, value: event_stmt}
+          {my_address: 0x334a82e0, value: event_stmt}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 5,
-        "ptr": "0x2aea10e0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a8340",
         "content": }
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea0eb0, value: }}
+          {my_address: 0x334a80d0, value: }}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9f5d0
+      0x334a6690
     ]
   "terminal_chars":[
-      0x2aea0c00
+      0x334a7ea0
     ]
 },gzip_mines: {
   "concept_name": "gzip_mines"
@@ -2006,53 +2261,62 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_mines_0",
         "type": "OPTION",
         "index": 0,
-        "ptr": "0x2aea7bf0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334af890",
         "content": [
-          {my_address: 0x2aea7a40, value: TAB_SPACE}
+          {my_address: 0x334af6e0, value: TAB_SPACE}
         ]
         "next": [
-          0x2aea7cb0
+          0x334af960
         ]
         items": [
-          {my_address: 0x2aea7a40, value: TAB_SPACE}
+          {my_address: 0x334af6e0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_mines_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea7cb0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334af960",
         "content": MIME
         "next": [
-          0x2aea7da0
+          0x334afa70
         ]
         items": [
-          {my_address: 0x2aea7a70, value: MIME}
+          {my_address: 0x334af710, value: MIME}
         ]
       },
       {
         "position": "gzip_mines_0",
         "type": "OPTION",
         "index": 2,
-        "ptr": "0x2aea7da0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334afa70",
         "content": [
-          {my_address: 0x2aea7e60, value: LINE_JUMP}
+          {my_address: 0x334afb40, value: LINE_JUMP}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea7e60, value: LINE_JUMP}
+          {my_address: 0x334afb40, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea7910
+      0x334af590
     ]
   "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030
+      0x334b6de0,
+      0x334b7090
     ]
 },gzip_stmt: {
   "concept_name": "gzip_stmt"
@@ -2063,43 +2327,52 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea5b10",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad460",
         "content": gzip
         "next": [
-          0x2aea5bd0
+          0x334ad540
         ]
         items": [
-          {my_address: 0x2aea5990, value: gzip}
+          {my_address: 0x334ad2e0, value: gzip}
         ]
       },
       {
         "position": "gzip_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea5bd0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad540",
         "content": TAB_SPACE
         "next": [
-          0x2aea5cc0
+          0x334ad650
         ]
         items": [
-          {my_address: 0x2aea5960, value: TAB_SPACE}
+          {my_address: 0x334ad2b0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_0",
         "type": "GROUP",
         "index": 2,
-        "ptr": "0x2aea5cc0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad650",
         "content": [
-          {my_address: 0x2aea5640, value: BOOL},
-          {my_address: 0x2aea5668, value: btp}
+          {my_address: 0x334acf50, value: BOOL},
+          {my_address: 0x334acf78, value: btp}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea5640, value: BOOL},
-          {my_address: 0x2aea5668, value: btp}
+          {my_address: 0x334acf50, value: BOOL},
+          {my_address: 0x334acf78, value: btp}
         ]
       }
     ],
@@ -2108,39 +2381,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_1",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea5ef0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad890",
         "content": gzip_disable
         "next": [
-          0x2aea5f90
+          0x334ad950
         ]
         items": [
-          {my_address: 0x2aea5de0, value: gzip_disable}
+          {my_address: 0x334ad780, value: gzip_disable}
         ]
       },
       {
         "position": "gzip_stmt_1",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea5f90",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ad950",
         "content": TAB_SPACE
         "next": [
-          0x2aea6060
+          0x334ada40
         ]
         items": [
-          {my_address: 0x2aea5e10, value: TAB_SPACE}
+          {my_address: 0x334ad7b0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_1",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea6060",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ada40",
         "content": STRING
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea6100, value: STRING}
+          {my_address: 0x334adb00, value: STRING}
         ]
       }
     ],
@@ -2149,39 +2431,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_2",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea6270",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334adc70",
         "content": gzip_vary
         "next": [
-          0x2aea6310
+          0x334add30
         ]
         items": [
-          {my_address: 0x2aea61c0, value: gzip_vary}
+          {my_address: 0x334adbc0, value: gzip_vary}
         ]
       },
       {
         "position": "gzip_stmt_2",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea6310",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334add30",
         "content": TAB_SPACE
         "next": [
-          0x2aea63e0
+          0x334ade20
         ]
         items": [
-          {my_address: 0x2aea61f0, value: TAB_SPACE}
+          {my_address: 0x334adbf0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_2",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea63e0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ade20",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea6480, value: BOOL}
+          {my_address: 0x334adee0, value: BOOL}
         ]
       }
     ],
@@ -2190,39 +2481,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_3",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea65c0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae020",
         "content": gzip_proxied
         "next": [
-          0x2aea6660
+          0x334ae0e0
         ]
         items": [
-          {my_address: 0x2aea6510, value: gzip_proxied}
+          {my_address: 0x334adf70, value: gzip_proxied}
         ]
       },
       {
         "position": "gzip_stmt_3",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea6660",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae0e0",
         "content": TAB_SPACE
         "next": [
-          0x2aea6730
+          0x334ae1d0
         ]
         items": [
-          {my_address: 0x2aea6540, value: TAB_SPACE}
+          {my_address: 0x334adfa0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_3",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea6730",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae1d0",
         "content": IDENT
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea67d0, value: IDENT}
+          {my_address: 0x334ae290, value: IDENT}
         ]
       }
     ],
@@ -2231,39 +2531,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_4",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea6960",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae420",
         "content": gzip_comp_level
         "next": [
-          0x2aea6a00
+          0x334ae4e0
         ]
         items": [
-          {my_address: 0x2aea6190, value: gzip_comp_level}
+          {my_address: 0x334adb90, value: gzip_comp_level}
         ]
       },
       {
         "position": "gzip_stmt_4",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea6a00",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae4e0",
         "content": TAB_SPACE
         "next": [
-          0x2aea6ad0
+          0x334ae5d0
         ]
         items": [
-          {my_address: 0x2aea6890, value: TAB_SPACE}
+          {my_address: 0x334ae350, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_4",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea6ad0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae5d0",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea6b70, value: NUMBER}
+          {my_address: 0x334ae690, value: NUMBER}
         ]
       }
     ],
@@ -2272,65 +2581,80 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea6cb0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae7d0",
         "content": gzip_buffers
         "next": [
-          0x2aea6d50
+          0x334ae890
         ]
         items": [
-          {my_address: 0x2aea6860, value: gzip_buffers}
+          {my_address: 0x334ae320, value: gzip_buffers}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea6d50",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae890",
         "content": TAB_SPACE
         "next": [
-          0x2aea6df0
+          0x334ae950
         ]
         items": [
-          {my_address: 0x2aea6c00, value: TAB_SPACE}
+          {my_address: 0x334ae720, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea6df0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334ae950",
         "content": NUMBER
         "next": [
-          0x2aea6f20
+          0x334aeaa0
         ]
         items": [
-          {my_address: 0x2aea6e90, value: NUMBER}
+          {my_address: 0x334aea10, value: NUMBER}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea6f20",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aeaa0",
         "content": SPACE
         "next": [
-          0x2aea7020
+          0x334aebc0
         ]
         items": [
-          {my_address: 0x2aea6fc0, value: SPACE}
+          {my_address: 0x334aeb60, value: SPACE}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 4,
-        "ptr": "0x2aea7020",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aebc0",
         "content": SIZE
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea70c0, value: SIZE}
+          {my_address: 0x334aec80, value: SIZE}
         ]
       }
     ],
@@ -2339,39 +2663,48 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_6",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea7220",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aede0",
         "content": gzip_http_version
         "next": [
-          0x2aea72c0
+          0x334aeea0
         ]
         items": [
-          {my_address: 0x2aea6ef0, value: gzip_http_version}
+          {my_address: 0x334aea70, value: gzip_http_version}
         ]
       },
       {
         "position": "gzip_stmt_6",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea72c0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aeea0",
         "content": TAB_SPACE
         "next": [
-          0x2aea73b0
+          0x334aefb0
         ]
         items": [
-          {my_address: 0x2aea71a0, value: TAB_SPACE}
+          {my_address: 0x334aed60, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_6",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea73b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aefb0",
         "content": VERSION
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea7450, value: VERSION}
+          {my_address: 0x334af070, value: VERSION}
         ]
       }
     ],
@@ -2380,29 +2713,32 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_7",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea7540",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334af160",
         "content": gzip_types
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea74e0, value: gzip_types}
+          {my_address: 0x334af100, value: gzip_types}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea29b0
+      0x334a9e40
     ]
   "terminal_chars":[
-      0x2aea5b10,
-      0x2aea5ef0,
-      0x2aea6270,
-      0x2aea65c0,
-      0x2aea6960,
-      0x2aea6cb0,
-      0x2aea7220,
-      0x2aea77b0
+      0x334ad460,
+      0x334ad890,
+      0x334adc70,
+      0x334ae020,
+      0x334ae420,
+      0x334ae7d0,
+      0x334aede0,
+      0x334af3f0
     ]
 },gzip_types: {
   "concept_name": "gzip_types"
@@ -2413,51 +2749,60 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_types_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea77b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334af3f0",
         "content": gzip_types
         "next": [
-          0x2aea7850
+          0x334af4b0
         ]
         items": [
-          {my_address: 0x2aea7120, value: gzip_types}
+          {my_address: 0x334aece0, value: gzip_types}
         ]
       },
       {
         "position": "gzip_types_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea7850",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334af4b0",
         "content": LINE_JUMP
         "next": [
-          0x2aea7910
+          0x334af590
         ]
         items": [
-          {my_address: 0x2aea75e0, value: LINE_JUMP}
+          {my_address: 0x334af220, value: LINE_JUMP}
         ]
       },
       {
         "position": "gzip_types_0",
         "type": "SEQUENCE",
         "index": 2,
-        "ptr": "0x2aea7910",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334af590",
         "content": [
-          {my_address: 0x2aea79b0, value: gzip_mines}
+          {my_address: 0x334af650, value: gzip_mines}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea79b0, value: gzip_mines}
+          {my_address: 0x334af650, value: gzip_mines}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea7540,
-      0x2aea77b0
+      0x334af160,
+      0x334af3f0
     ]
   "terminal_chars":[
-      0x2aea77b0
+      0x334af3f0
     ]
 },http_block: {
   "concept_name": "http_block"
@@ -2468,91 +2813,109 @@ make[1]: Nothing to be done for 'all'.
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea2160",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9500",
         "content": http
         "next": [
-          0x2aea2200
+          0x334a95c0
         ]
         items": [
-          {my_address: 0x2aea1fb0, value: http}
+          {my_address: 0x334a9350, value: http}
         ]
       },
       {
         "position": "http_block_0",
         "type": "OPTION",
         "index": 1,
-        "ptr": "0x2aea2200",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a95c0",
         "content": [
-          {my_address: 0x2aea1fe0, value: SPACE}
+          {my_address: 0x334a9380, value: SPACE}
         ]
         "next": [
-          0x2aea22f0
+          0x334a96c0
         ]
         items": [
-          {my_address: 0x2aea1fe0, value: SPACE}
+          {my_address: 0x334a9380, value: SPACE}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea22f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a96c0",
         "content": {
         "next": [
-          0x2aea2420
+          0x334a9810
         ]
         items": [
-          {my_address: 0x2aea2390, value: {}
+          {my_address: 0x334a9780, value: {}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea2420",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9810",
         "content": LINE_JUMP
         "next": [
-          0x2aea2520
+          0x334a9930
         ]
         items": [
-          {my_address: 0x2aea24c0, value: LINE_JUMP}
+          {my_address: 0x334a98d0, value: LINE_JUMP}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SEQUENCE",
         "index": 4,
-        "ptr": "0x2aea2520",
+        "is_required_in_json": [
+          http_stmt
+        ],
+        "ptr": "0x334a9930",
         "content": [
-          {my_address: 0x2aea25c0, value: http_stmt}
+          {my_address: 0x334a99f0, value: http_stmt}
         ]
         "next": [
-          0x2aea2620
+          0x334a9a80
         ]
         items": [
-          {my_address: 0x2aea25c0, value: http_stmt}
+          {my_address: 0x334a99f0, value: http_stmt}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 5,
-        "ptr": "0x2aea2620",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9a80",
         "content": }
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea23f0, value: }}
+          {my_address: 0x334a97e0, value: }}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9f5d0
+      0x334a6690
     ]
   "terminal_chars":[
-      0x2aea2160
+      0x334a9500
     ]
 },http_stmt: {
   "concept_name": "http_stmt"
@@ -2563,60 +2926,72 @@ make[1]: Nothing to be done for 'all'.
         "position": "http_stmt_0",
         "type": "OPTION",
         "index": 0,
-        "ptr": "0x2aea28f0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9d70",
         "content": [
-          {my_address: 0x2aea26f0, value: TAB_SPACE}
+          {my_address: 0x334a9b70, value: TAB_SPACE}
         ]
         "next": [
-          0x2aea29b0
+          0x334a9e40
         ]
         items": [
-          {my_address: 0x2aea26f0, value: TAB_SPACE}
+          {my_address: 0x334a9b70, value: TAB_SPACE}
         ]
       },
       {
         "position": "http_stmt_0",
         "type": "GROUP",
         "index": 1,
-        "ptr": "0x2aea29b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9e40",
         "content": [
-          {my_address: 0x2aea2a70, value: basic_http_stmt},
-          {my_address: 0x2aea2a98, value: gzip_stmt},
-          {my_address: 0x2aea2ac0, value: include_stmt}
+          {my_address: 0x334a9f10, value: basic_http_stmt},
+          {my_address: 0x334a9f38, value: gzip_stmt},
+          {my_address: 0x334a9f60, value: include_stmt}
         ]
         "next": [
-          0x2aea2b40
+          0x334a9fe0
         ]
         items": [
-          {my_address: 0x2aea2a70, value: basic_http_stmt},
-          {my_address: 0x2aea2a98, value: gzip_stmt},
-          {my_address: 0x2aea2ac0, value: include_stmt}
+          {my_address: 0x334a9f10, value: basic_http_stmt},
+          {my_address: 0x334a9f38, value: gzip_stmt},
+          {my_address: 0x334a9f60, value: include_stmt}
         ]
       },
       {
         "position": "http_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea2b40",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a9fe0",
         "content": ;
         "next": [
-          0x2aea2c70
+          0x334aa130
         ]
         items": [
-          {my_address: 0x2aea2be0, value: ;}
+          {my_address: 0x334aa0a0, value: ;}
         ]
       },
       {
         "position": "http_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea2c70",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa130",
         "content": LINE_JUMP
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea2d10, value: LINE_JUMP}
+          {my_address: 0x334aa1f0, value: LINE_JUMP}
         ]
       }
     ],
@@ -2625,24 +3000,27 @@ make[1]: Nothing to be done for 'all'.
         "position": "http_stmt_1",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea2dd0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aa2b0",
         "content": LINE_JUMP
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea2d70, value: LINE_JUMP}
+          {my_address: 0x334aa250, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea2520
+      0x334a9930
     ]
   "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030,
-      0x2aeaf290
+      0x334b6de0,
+      0x334b7090,
+      0x334b7310
     ]
 },include_stmt: {
   "concept_name": "include_stmt"
@@ -2653,48 +3031,57 @@ make[1]: Nothing to be done for 'all'.
         "position": "include_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea80a0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334afd80",
         "content": include
         "next": [
-          0x2aea8140
+          0x334afe40
         ]
         items": [
-          {my_address: 0x2aea7ef0, value: include}
+          {my_address: 0x334afbd0, value: include}
         ]
       },
       {
         "position": "include_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea8140",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334afe40",
         "content": TAB_SPACE
         "next": [
-          0x2aea8230
+          0x334aff50
         ]
         items": [
-          {my_address: 0x2aea7f20, value: TAB_SPACE}
+          {my_address: 0x334afc00, value: TAB_SPACE}
         ]
       },
       {
         "position": "include_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea8230",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334aff50",
         "content": PATH
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea82d0, value: PATH}
+          {my_address: 0x334b0010, value: PATH}
         ]
       }
     ]
   ]
   "parents":[
-      0x2aea29b0
+      0x334a9e40
     ]
   "terminal_chars":[
-      0x2aea80a0
+      0x334afd80
     ]
 },pid_stmt: {
   "concept_name": "pid_stmt"
@@ -2705,61 +3092,73 @@ make[1]: Nothing to be done for 'all'.
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea06e0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a7900",
         "content": pid
         "next": [
-          0x2aea0780
+          0x334a79c0
         ]
         items": [
-          {my_address: 0x2ae9fef0, value: pid}
+          {my_address: 0x334a7090, value: pid}
         ]
       },
       {
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea0780",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a79c0",
         "content": SPACE
         "next": [
-          0x2aea0820
+          0x334a7a80
         ]
         items": [
-          {my_address: 0x2aea0530, value: SPACE}
+          {my_address: 0x334a7750, value: SPACE}
         ]
       },
       {
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea0820",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a7a80",
         "content": PATH
         "next": [
-          0x2aea0950
+          0x334a7bd0
         ]
         items": [
-          {my_address: 0x2aea08c0, value: PATH}
+          {my_address: 0x334a7b40, value: PATH}
         ]
       },
       {
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea0950",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a7bd0",
         "content": ;
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea09f0, value: ;}
+          {my_address: 0x334a7c90, value: ;}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9f5d0
+      0x334a6690
     ]
   "terminal_chars":[
-      0x2aea06e0
+      0x334a7900
     ]
 },statement: {
   "concept_name": "statement"
@@ -2770,51 +3169,57 @@ make[1]: Nothing to be done for 'all'.
         "position": "statement_0",
         "type": "GROUP",
         "index": 0,
-        "ptr": "0x2ae9f5d0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6690",
         "content": [
-          {my_address: 0x2ae9f740, value: user_stmt},
-          {my_address: 0x2ae9f768, value: worker_stmt},
-          {my_address: 0x2ae9f790, value: pid_stmt},
-          {my_address: 0x2ae9f7b8, value: events_block},
-          {my_address: 0x2ae9f7e0, value: http_block}
+          {my_address: 0x334a6810, value: user_stmt},
+          {my_address: 0x334a6838, value: worker_stmt},
+          {my_address: 0x334a6860, value: pid_stmt},
+          {my_address: 0x334a6888, value: events_block},
+          {my_address: 0x334a68b0, value: http_block}
         ]
         "next": [
-          0x2ae9f890
+          0x334a6960
         ]
         items": [
-          {my_address: 0x2ae9f740, value: user_stmt},
-          {my_address: 0x2ae9f768, value: worker_stmt},
-          {my_address: 0x2ae9f790, value: pid_stmt},
-          {my_address: 0x2ae9f7b8, value: events_block},
-          {my_address: 0x2ae9f7e0, value: http_block}
+          {my_address: 0x334a6810, value: user_stmt},
+          {my_address: 0x334a6838, value: worker_stmt},
+          {my_address: 0x334a6860, value: pid_stmt},
+          {my_address: 0x334a6888, value: events_block},
+          {my_address: 0x334a68b0, value: http_block}
         ]
       },
       {
         "position": "statement_0",
         "type": "SEQUENCE",
         "index": 1,
-        "ptr": "0x2ae9f890",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6960",
         "content": [
-          {my_address: 0x2ae9b2a0, value: LINE_JUMP}
+          {my_address: 0x334a22a0, value: LINE_JUMP}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2ae9b2a0, value: LINE_JUMP}
+          {my_address: 0x334a22a0, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9b1b0
+      0x334a6420
     ]
   "terminal_chars":[
-      0x2ae9fad0,
-      0x2aea0150,
-      0x2aea06e0,
-      0x2aea0c00,
-      0x2aea2160
+      0x334a6bc0,
+      0x334a72f0,
+      0x334a7900,
+      0x334a7ea0,
+      0x334a9500
     ]
 },user_name: {
   "concept_name": "user_name"
@@ -2825,43 +3230,49 @@ make[1]: Nothing to be done for 'all'.
         "position": "user_name_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea8510",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b0250",
         "content": LOCASE_LETTER
         "next": [
-          0x2aea85b0
+          0x334b0310
         ]
         items": [
-          {my_address: 0x2aea8360, value: LOCASE_LETTER}
+          {my_address: 0x334b00a0, value: LOCASE_LETTER}
         ]
       },
       {
         "position": "user_name_0",
         "type": "SEQUENCE",
         "index": 1,
-        "ptr": "0x2aea85b0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334b0310",
         "content": [
-          {my_address: 0x2aea8650, value: LOCASE_LETTER},
-          {my_address: 0x2aea8678, value: DIGIT},
-          {my_address: 0x2aea86a0, value: _},
-          {my_address: 0x2aea86c8, value: -}
+          {my_address: 0x334b03d0, value: LOCASE_LETTER},
+          {my_address: 0x334b03f8, value: DIGIT},
+          {my_address: 0x334b0420, value: _},
+          {my_address: 0x334b0448, value: -}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea8650, value: LOCASE_LETTER},
-          {my_address: 0x2aea8678, value: DIGIT},
-          {my_address: 0x2aea86a0, value: _},
-          {my_address: 0x2aea86c8, value: -}
+          {my_address: 0x334b03d0, value: LOCASE_LETTER},
+          {my_address: 0x334b03f8, value: DIGIT},
+          {my_address: 0x334b0420, value: _},
+          {my_address: 0x334b0448, value: -}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9fc90
+      0x334a6dc0
     ]
   "terminal_chars":[
-      0x2aead480
+      0x334b5d80
     ]
 },user_stmt: {
   "concept_name": "user_stmt"
@@ -2872,61 +3283,73 @@ make[1]: Nothing to be done for 'all'.
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2ae9fad0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6bc0",
         "content": user
         "next": [
-          0x2ae9fb70
+          0x334a6c80
         ]
         items": [
-          {my_address: 0x2ae9faa0, value: user}
+          {my_address: 0x334a6b90, value: user}
         ]
       },
       {
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2ae9fb70",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6c80",
         "content": SPACE
         "next": [
-          0x2ae9fc90
+          0x334a6dc0
         ]
         items": [
-          {my_address: 0x2ae9fc10, value: SPACE}
+          {my_address: 0x334a6d40, value: SPACE}
         ]
       },
       {
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2ae9fc90",
+        "is_required_in_json": [
+          user_name
+        ],
+        "ptr": "0x334a6dc0",
         "content": user_name
         "next": [
-          0x2ae9fdc0
+          0x334a6f40
         ]
         items": [
-          {my_address: 0x2ae9fd30, value: user_name}
+          {my_address: 0x334a6e80, value: user_name}
         ]
       },
       {
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2ae9fdc0",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a6f40",
         "content": ;
         "next": [
 
         ]
         items": [
-          {my_address: 0x2ae9fe60, value: ;}
+          {my_address: 0x334a7000, value: ;}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9f5d0
+      0x334a6690
     ]
   "terminal_chars":[
-      0x2ae9fad0
+      0x334a6bc0
     ]
 },worker_stmt: {
   "concept_name": "worker_stmt"
@@ -2937,3041 +3360,74 @@ make[1]: Nothing to be done for 'all'.
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "ptr": "0x2aea0150",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a72f0",
         "content": worker_processes
         "next": [
-          0x2aea0210
+          0x334a73d0
         ]
         items": [
-          {my_address: 0x2ae9fec0, value: worker_processes}
+          {my_address: 0x334a7060, value: worker_processes}
         ]
       },
       {
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "ptr": "0x2aea0210",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a73d0",
         "content": SPACE
         "next": [
-          0x2aea0300
+          0x334a74e0
         ]
         items": [
-          {my_address: 0x2aea00b0, value: SPACE}
+          {my_address: 0x334a7250, value: SPACE}
         ]
       },
       {
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "ptr": "0x2aea0300",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a74e0",
         "content": IDENT
         "next": [
-          0x2aea0430
+          0x334a7630
         ]
         items": [
-          {my_address: 0x2aea03a0, value: IDENT}
+          {my_address: 0x334a75a0, value: IDENT}
         ]
       },
       {
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "ptr": "0x2aea0430",
+        "is_required_in_json": [
+
+        ],
+        "ptr": "0x334a7630",
         "content": ;
         "next": [
 
         ]
         items": [
-          {my_address: 0x2aea04d0, value: ;}
+          {my_address: 0x334a76f0, value: ;}
         ]
       }
     ]
   ]
   "parents":[
-      0x2ae9f5d0
+      0x334a6690
     ]
   "terminal_chars":[
-      0x2aea0150
+      0x334a72f0
     ]
 }}
 
-{<head>: {
-  "concept_name": "<head>"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "<head>_0",
-        "type": "SEQUENCE",
-        "index": 0,
-        "ptr": "0x2ae9b1b0",
-        "content": [
-          {my_address: 0x2ae9abb0, value: statement}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2ae9abb0, value: statement}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-
-    ]
-  "terminal_chars":[
-      0x2ae9fad0,
-      0x2aea0150,
-      0x2aea06e0,
-      0x2aea0c00,
-      0x2aea2160
-    ]
-},APPLICATION_MIME: {
-  "concept_name": "APPLICATION_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "APPLICATION_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeaa850",
-        "content": [
-          {my_address: 0x2aeaaba0, value: application/json},
-          {my_address: 0x2aeaabc8, value: application/javascript},
-          {my_address: 0x2aeaabf0, value: application/vnd.ms-fontobject},
-          {my_address: 0x2aeaac18, value: application/pdf},
-          {my_address: 0x2aeaac40, value: application/xml},
-          {my_address: 0x2aeaac68, value: application/zip},
-          {my_address: 0x2aeaac90, value: application/x-www-form-urlencoded},
-          {my_address: 0x2aeaacb8, value: application/x-yaml},
-          {my_address: 0x2aeaace0, value: application/toml},
-          {my_address: 0x2aeaad08, value: application/rtf},
-          {my_address: 0x2aeaad30, value: application/octet-stream}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeaaba0, value: application/json},
-          {my_address: 0x2aeaabc8, value: application/javascript},
-          {my_address: 0x2aeaabf0, value: application/vnd.ms-fontobject},
-          {my_address: 0x2aeaac18, value: application/pdf},
-          {my_address: 0x2aeaac40, value: application/xml},
-          {my_address: 0x2aeaac68, value: application/zip},
-          {my_address: 0x2aeaac90, value: application/x-www-form-urlencoded},
-          {my_address: 0x2aeaacb8, value: application/x-yaml},
-          {my_address: 0x2aeaace0, value: application/toml},
-          {my_address: 0x2aeaad08, value: application/rtf},
-          {my_address: 0x2aeaad30, value: application/octet-stream}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aeaa850
-    ]
-},AUDIO_MIME: {
-  "concept_name": "AUDIO_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "AUDIO_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeab810",
-        "content": [
-          {my_address: 0x2aeab8d0, value: audio/mpeg},
-          {my_address: 0x2aeab8f8, value: audio/wav},
-          {my_address: 0x2aeab920, value: audio/flac}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeab8d0, value: audio/mpeg},
-          {my_address: 0x2aeab8f8, value: audio/wav},
-          {my_address: 0x2aeab920, value: audio/flac}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aeab810
-    ]
-},BOOL: {
-  "concept_name": "BOOL"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "BOOL_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aea8eb0",
-        "content": [
-          {my_address: 0x2aea5e40, value: on},
-          {my_address: 0x2aea5e68, value: off}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea5e40, value: on},
-          {my_address: 0x2aea5e68, value: off}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea1e80,
-      0x2aea31f0,
-      0x2aea3540,
-      0x2aea38c0,
-      0x2aea4fe0,
-      0x2aea53c0,
-      0x2aea57f0,
-      0x2aea5890,
-      0x2aea5cc0,
-      0x2aea63e0
-    ]
-  "terminal_chars":[
-      0x2aea8eb0
-    ]
-},DIGIT: {
-  "concept_name": "DIGIT"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "DIGIT_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeae800",
-        "content": [
-          {my_address: 0x2aeadfa0, value: 0},
-          {my_address: 0x2aeadfc8, value: 1},
-          {my_address: 0x2aeadff0, value: 2},
-          {my_address: 0x2aeae018, value: 3},
-          {my_address: 0x2aeae040, value: 4},
-          {my_address: 0x2aeae068, value: 5},
-          {my_address: 0x2aeae090, value: 6},
-          {my_address: 0x2aeae0b8, value: 7},
-          {my_address: 0x2aeae0e0, value: 8},
-          {my_address: 0x2aeae108, value: 9}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeadfa0, value: 0},
-          {my_address: 0x2aeadfc8, value: 1},
-          {my_address: 0x2aeadff0, value: 2},
-          {my_address: 0x2aeae018, value: 3},
-          {my_address: 0x2aeae040, value: 4},
-          {my_address: 0x2aeae068, value: 5},
-          {my_address: 0x2aeae090, value: 6},
-          {my_address: 0x2aeae0b8, value: 7},
-          {my_address: 0x2aeae0e0, value: 8},
-          {my_address: 0x2aeae108, value: 9}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea85b0,
-      0x2aea8c30,
-      0x2aea94a0,
-      0x2aeacea0
-    ]
-  "terminal_chars":[
-      0x2aeae800
-    ]
-},FONT_MIME: {
-  "concept_name": "FONT_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "FONT_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeab390",
-        "content": [
-          {my_address: 0x2aeab450, value: font/woff},
-          {my_address: 0x2aeab478, value: font/woff2},
-          {my_address: 0x2aeab4a0, value: font/ttf},
-          {my_address: 0x2aeab4c8, value: font/otf}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeab450, value: font/woff},
-          {my_address: 0x2aeab478, value: font/woff2},
-          {my_address: 0x2aeab4a0, value: font/ttf},
-          {my_address: 0x2aeab4c8, value: font/otf}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aeab390
-    ]
-},IDENT: {
-  "concept_name": "IDENT"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "IDENT_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea88f0",
-        "content": LETTER
-        "next": [
-          0x2aea8990
-        ]
-        items": [
-          {my_address: 0x2aea8750, value: LETTER}
-        ]
-      },
-      {
-        "position": "IDENT_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "ptr": "0x2aea8990",
-        "content": [
-          {my_address: 0x2aea8720, value: LETTER}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea8720, value: LETTER}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea0300,
-      0x2aea6730
-    ]
-  "terminal_chars":[
-      0x2aead480,
-      0x2aead700
-    ]
-},IMAGE_MIME: {
-  "concept_name": "IMAGE_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "IMAGE_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeabcf0",
-        "content": [
-          {my_address: 0x2aeabeb0, value: image/png},
-          {my_address: 0x2aeabed8, value: image/jpeg},
-          {my_address: 0x2aeabf00, value: image/webp},
-          {my_address: 0x2aeabf28, value: image/gif},
-          {my_address: 0x2aeabf50, value: image/svg+xml},
-          {my_address: 0x2aeabf78, value: image/avif},
-          {my_address: 0x2aeabfa0, value: image/heic},
-          {my_address: 0x2aeabfc8, value: image/icns},
-          {my_address: 0x2aeabff0, value: image/bmp},
-          {my_address: 0x2aeac018, value: image/tiff},
-          {my_address: 0x2aeac040, value: image/x-icon}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeabeb0, value: image/png},
-          {my_address: 0x2aeabed8, value: image/jpeg},
-          {my_address: 0x2aeabf00, value: image/webp},
-          {my_address: 0x2aeabf28, value: image/gif},
-          {my_address: 0x2aeabf50, value: image/svg+xml},
-          {my_address: 0x2aeabf78, value: image/avif},
-          {my_address: 0x2aeabfa0, value: image/heic},
-          {my_address: 0x2aeabfc8, value: image/icns},
-          {my_address: 0x2aeabff0, value: image/bmp},
-          {my_address: 0x2aeac018, value: image/tiff},
-          {my_address: 0x2aeac040, value: image/x-icon}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aeabcf0
-    ]
-},LETTER: {
-  "concept_name": "LETTER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LETTER_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aead220",
-        "content": [
-          {my_address: 0x2aeac670, value: UPCASE_LETTER},
-          {my_address: 0x2aeac698, value: LOCASE_LETTER}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeac670, value: UPCASE_LETTER},
-          {my_address: 0x2aeac698, value: LOCASE_LETTER}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea88f0,
-      0x2aea8990,
-      0x2aea94a0,
-      0x2aeacea0
-    ]
-  "terminal_chars":[
-      0x2aead480,
-      0x2aead700
-    ]
-},LINE_JUMP: {
-  "concept_name": "LINE_JUMP"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LINE_JUMP_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aeaf290",
-        "content": 
-
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeaf0f0, value: 
-}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9f890,
-      0x2aea0ee0,
-      0x2aea1690,
-      0x2aea2420,
-      0x2aea2c70,
-      0x2aea2dd0,
-      0x2aea7850,
-      0x2aea7da0
-    ]
-  "terminal_chars":[
-      0x2aeaf290
-    ]
-},LOCASE_LETTER: {
-  "concept_name": "LOCASE_LETTER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LOCASE_LETTER_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aead480",
-        "content": [
-          {my_address: 0x2aeae230, value: a},
-          {my_address: 0x2aeae258, value: b},
-          {my_address: 0x2aeae280, value: c},
-          {my_address: 0x2aeae2a8, value: d},
-          {my_address: 0x2aeae2d0, value: e},
-          {my_address: 0x2aeae2f8, value: f},
-          {my_address: 0x2aeae320, value: g},
-          {my_address: 0x2aeae348, value: h},
-          {my_address: 0x2aeae370, value: i},
-          {my_address: 0x2aeae398, value: j},
-          {my_address: 0x2aeae3c0, value: k},
-          {my_address: 0x2aeae3e8, value: l},
-          {my_address: 0x2aeae410, value: m},
-          {my_address: 0x2aeae438, value: n},
-          {my_address: 0x2aeae460, value: o},
-          {my_address: 0x2aeae488, value: p},
-          {my_address: 0x2aeae4b0, value: q},
-          {my_address: 0x2aeae4d8, value: r},
-          {my_address: 0x2aeae500, value: s},
-          {my_address: 0x2aeae528, value: t},
-          {my_address: 0x2aeae550, value: u},
-          {my_address: 0x2aeae578, value: v},
-          {my_address: 0x2aeae5a0, value: w},
-          {my_address: 0x2aeae5c8, value: x},
-          {my_address: 0x2aeae5f0, value: y},
-          {my_address: 0x2aeae618, value: z}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeae230, value: a},
-          {my_address: 0x2aeae258, value: b},
-          {my_address: 0x2aeae280, value: c},
-          {my_address: 0x2aeae2a8, value: d},
-          {my_address: 0x2aeae2d0, value: e},
-          {my_address: 0x2aeae2f8, value: f},
-          {my_address: 0x2aeae320, value: g},
-          {my_address: 0x2aeae348, value: h},
-          {my_address: 0x2aeae370, value: i},
-          {my_address: 0x2aeae398, value: j},
-          {my_address: 0x2aeae3c0, value: k},
-          {my_address: 0x2aeae3e8, value: l},
-          {my_address: 0x2aeae410, value: m},
-          {my_address: 0x2aeae438, value: n},
-          {my_address: 0x2aeae460, value: o},
-          {my_address: 0x2aeae488, value: p},
-          {my_address: 0x2aeae4b0, value: q},
-          {my_address: 0x2aeae4d8, value: r},
-          {my_address: 0x2aeae500, value: s},
-          {my_address: 0x2aeae528, value: t},
-          {my_address: 0x2aeae550, value: u},
-          {my_address: 0x2aeae578, value: v},
-          {my_address: 0x2aeae5a0, value: w},
-          {my_address: 0x2aeae5c8, value: x},
-          {my_address: 0x2aeae5f0, value: y},
-          {my_address: 0x2aeae618, value: z}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea8510,
-      0x2aea85b0,
-      0x2aead220
-    ]
-  "terminal_chars":[
-      0x2aead480
-    ]
-},LOG_LEVEL: {
-  "concept_name": "LOG_LEVEL"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LOG_LEVEL_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeac870",
-        "content": [
-          {my_address: 0x2aeaaa00, value: debug},
-          {my_address: 0x2aeaaa28, value: info},
-          {my_address: 0x2aeaaa50, value: notice},
-          {my_address: 0x2aeaaa78, value: warn},
-          {my_address: 0x2aeaaaa0, value: error},
-          {my_address: 0x2aeaaac8, value: crit}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeaaa00, value: debug},
-          {my_address: 0x2aeaaa28, value: info},
-          {my_address: 0x2aeaaa50, value: notice},
-          {my_address: 0x2aeaaa78, value: warn},
-          {my_address: 0x2aeaaaa0, value: error},
-          {my_address: 0x2aeaaac8, value: crit}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea4be0
-    ]
-  "terminal_chars":[
-      0x2aeac870
-    ]
-},MIME: {
-  "concept_name": "MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aea9bb0",
-        "content": [
-          {my_address: 0x2aea9d40, value: TEXT_MIME},
-          {my_address: 0x2aea9d68, value: APPLICATION_MIME},
-          {my_address: 0x2aea9d90, value: FONT_MIME},
-          {my_address: 0x2aea9db8, value: MULTIPART_MIME},
-          {my_address: 0x2aea9de0, value: AUDIO_MIME},
-          {my_address: 0x2aea9e08, value: VIDEO_MIME},
-          {my_address: 0x2aea9e30, value: IMAGE_MIME}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea9d40, value: TEXT_MIME},
-          {my_address: 0x2aea9d68, value: APPLICATION_MIME},
-          {my_address: 0x2aea9d90, value: FONT_MIME},
-          {my_address: 0x2aea9db8, value: MULTIPART_MIME},
-          {my_address: 0x2aea9de0, value: AUDIO_MIME},
-          {my_address: 0x2aea9e08, value: VIDEO_MIME},
-          {my_address: 0x2aea9e30, value: IMAGE_MIME}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea4310,
-      0x2aea7cb0
-    ]
-  "terminal_chars":[
-      0x2aea9f90,
-      0x2aeaa850,
-      0x2aeab390,
-      0x2aeab600,
-      0x2aeab810,
-      0x2aeabad0,
-      0x2aeabcf0
-    ]
-},MULTIPART_MIME: {
-  "concept_name": "MULTIPART_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "MULTIPART_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeab600",
-        "content": [
-          {my_address: 0x2aeab100, value: multipart/form-data}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeab100, value: multipart/form-data}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aeab600
-    ]
-},NUMBER: {
-  "concept_name": "NUMBER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "NUMBER_0",
-        "type": "SEQUENCE",
-        "index": 0,
-        "ptr": "0x2aea8c30",
-        "content": [
-          {my_address: 0x2aea8ab0, value: DIGIT}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea8ab0, value: DIGIT}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea1b60,
-      0x2aea3c60,
-      0x2aea3ff0,
-      0x2aea6ad0,
-      0x2aea6df0,
-      0x2aeac1e0,
-      0x2aeac320,
-      0x2aeac510
-    ]
-  "terminal_chars":[
-      0x2aeae800
-    ]
-},PATH: {
-  "concept_name": "PATH"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "PATH_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea9160",
-        "content": /
-        "next": [
-          0x2aea9200
-        ]
-        items": [
-          {my_address: 0x2aea8cf0, value: /}
-        ]
-      },
-      {
-        "position": "PATH_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "ptr": "0x2aea9200",
-        "content": [
-          {my_address: 0x2aea8a80, value: PATH_CHAR}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea8a80, value: PATH_CHAR}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea0820,
-      0x2aea4660,
-      0x2aea49b0,
-      0x2aea8230
-    ]
-  "terminal_chars":[
-      0x2aea9160
-    ]
-},PATH_CHAR: {
-  "concept_name": "PATH_CHAR"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "PATH_CHAR_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aea94a0",
-        "content": [
-          {my_address: 0x2aea9610, value: LETTER},
-          {my_address: 0x2aea9638, value: DIGIT},
-          {my_address: 0x2aea9660, value: /},
-          {my_address: 0x2aea9688, value: .},
-          {my_address: 0x2aea96b0, value: _},
-          {my_address: 0x2aea96d8, value: *},
-          {my_address: 0x2aea9700, value: -}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea9610, value: LETTER},
-          {my_address: 0x2aea9638, value: DIGIT},
-          {my_address: 0x2aea9660, value: /},
-          {my_address: 0x2aea9688, value: .},
-          {my_address: 0x2aea96b0, value: _},
-          {my_address: 0x2aea96d8, value: *},
-          {my_address: 0x2aea9700, value: -}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9200
-    ]
-  "terminal_chars":[
-      0x2aea94a0,
-      0x2aead480,
-      0x2aead700,
-      0x2aeae800
-    ]
-},SIZE: {
-  "concept_name": "SIZE"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "SIZE_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aeac510",
-        "content": NUMBER
-        "next": [
-          0x2aeac5b0
-        ]
-        items": [
-          {my_address: 0x2aeaa2e0, value: NUMBER}
-        ]
-      },
-      {
-        "position": "SIZE_0",
-        "type": "GROUP",
-        "index": 1,
-        "ptr": "0x2aeac5b0",
-        "content": [
-          {my_address: 0x2aeabb90, value: k},
-          {my_address: 0x2aeabbb8, value: m}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeabb90, value: k},
-          {my_address: 0x2aeabbb8, value: m}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea7020
-    ]
-  "terminal_chars":[
-      0x2aeae800
-    ]
-},SPACE: {
-  "concept_name": "SPACE"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "SPACE_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aeaf030",
-        "content":  
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeaee90, value:  }
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9fb70,
-      0x2aea0210,
-      0x2aea0780,
-      0x2aea0ca0,
-      0x2aea1a70,
-      0x2aea1de0,
-      0x2aea2200,
-      0x2aea4ae0,
-      0x2aea6f20,
-      0x2aeacea0,
-      0x2aeaeb80
-    ]
-  "terminal_chars":[
-      0x2aeaf030
-    ]
-},STRING: {
-  "concept_name": "STRING"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "STRING_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aeaca30",
-        "content": "
-        "next": [
-          0x2aeacad0
-        ]
-        items": [
-          {my_address: 0x2aeaa510, value: "}
-        ]
-      },
-      {
-        "position": "STRING_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "ptr": "0x2aeacad0",
-        "content": [
-          {my_address: 0x2aeaa480, value: STRING_CHAR}
-        ]
-        "next": [
-          0x2aeacbc0
-        ]
-        items": [
-          {my_address: 0x2aeaa480, value: STRING_CHAR}
-        ]
-      },
-      {
-        "position": "STRING_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aeacbc0",
-        "content": "
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeacc60, value: "}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea6060
-    ]
-  "terminal_chars":[
-      0x2aeaca30
-    ]
-},STRING_CHAR: {
-  "concept_name": "STRING_CHAR"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "STRING_CHAR_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeacea0",
-        "content": [
-          {my_address: 0x2aead010, value: LETTER},
-          {my_address: 0x2aead038, value: DIGIT},
-          {my_address: 0x2aead060, value: SPACE},
-          {my_address: 0x2aead088, value: _},
-          {my_address: 0x2aead0b0, value: .}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aead010, value: LETTER},
-          {my_address: 0x2aead038, value: DIGIT},
-          {my_address: 0x2aead060, value: SPACE},
-          {my_address: 0x2aead088, value: _},
-          {my_address: 0x2aead0b0, value: .}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aeacad0
-    ]
-  "terminal_chars":[
-      0x2aeacea0,
-      0x2aead480,
-      0x2aead700,
-      0x2aeae800,
-      0x2aeaf030
-    ]
-},TAB: {
-  "concept_name": "TAB"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "TAB_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aeaeda0",
-        "content": 	
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeacd20, value: 	}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aeaeb80
-    ]
-  "terminal_chars":[
-      0x2aeaeda0
-    ]
-},TAB_SPACE: {
-  "concept_name": "TAB_SPACE"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "TAB_SPACE_0",
-        "type": "SEQUENCE",
-        "index": 0,
-        "ptr": "0x2aeaeb80",
-        "content": [
-          {my_address: 0x2aead300, value: SPACE},
-          {my_address: 0x2aead328, value: TAB}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aead300, value: SPACE},
-          {my_address: 0x2aead328, value: TAB}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea13b0,
-      0x2aea28f0,
-      0x2aea3130,
-      0x2aea3470,
-      0x2aea37f0,
-      0x2aea3b70,
-      0x2aea3f30,
-      0x2aea4270,
-      0x2aea4590,
-      0x2aea48e0,
-      0x2aea4f10,
-      0x2aea52f0,
-      0x2aea5bd0,
-      0x2aea5f90,
-      0x2aea6310,
-      0x2aea6660,
-      0x2aea6a00,
-      0x2aea6d50,
-      0x2aea72c0,
-      0x2aea7bf0,
-      0x2aea8140
-    ]
-  "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030
-    ]
-},TEXT_MIME: {
-  "concept_name": "TEXT_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "TEXT_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aea9f90",
-        "content": [
-          {my_address: 0x2aeaa100, value: text/html},
-          {my_address: 0x2aeaa128, value: text/plain},
-          {my_address: 0x2aeaa150, value: text/css},
-          {my_address: 0x2aeaa178, value: text/csv},
-          {my_address: 0x2aeaa1a0, value: text/xml}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeaa100, value: text/html},
-          {my_address: 0x2aeaa128, value: text/plain},
-          {my_address: 0x2aeaa150, value: text/css},
-          {my_address: 0x2aeaa178, value: text/csv},
-          {my_address: 0x2aeaa1a0, value: text/xml}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aea9f90
-    ]
-},UPCASE_LETTER: {
-  "concept_name": "UPCASE_LETTER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "UPCASE_LETTER_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aead700",
-        "content": [
-          {my_address: 0x2aead7c0, value: A},
-          {my_address: 0x2aead7e8, value: B},
-          {my_address: 0x2aead810, value: C},
-          {my_address: 0x2aead838, value: D},
-          {my_address: 0x2aead860, value: E},
-          {my_address: 0x2aead888, value: F},
-          {my_address: 0x2aead8b0, value: G},
-          {my_address: 0x2aead8d8, value: H},
-          {my_address: 0x2aead900, value: I},
-          {my_address: 0x2aead928, value: J},
-          {my_address: 0x2aead950, value: K},
-          {my_address: 0x2aead978, value: L},
-          {my_address: 0x2aead9a0, value: M},
-          {my_address: 0x2aead9c8, value: N},
-          {my_address: 0x2aead9f0, value: O},
-          {my_address: 0x2aeada18, value: P},
-          {my_address: 0x2aeada40, value: Q},
-          {my_address: 0x2aeada68, value: R},
-          {my_address: 0x2aeada90, value: S},
-          {my_address: 0x2aeadab8, value: T},
-          {my_address: 0x2aeadae0, value: U},
-          {my_address: 0x2aeadb08, value: V},
-          {my_address: 0x2aeadb30, value: W},
-          {my_address: 0x2aeadb58, value: X},
-          {my_address: 0x2aeadb80, value: Y},
-          {my_address: 0x2aeadba8, value: Z}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aead7c0, value: A},
-          {my_address: 0x2aead7e8, value: B},
-          {my_address: 0x2aead810, value: C},
-          {my_address: 0x2aead838, value: D},
-          {my_address: 0x2aead860, value: E},
-          {my_address: 0x2aead888, value: F},
-          {my_address: 0x2aead8b0, value: G},
-          {my_address: 0x2aead8d8, value: H},
-          {my_address: 0x2aead900, value: I},
-          {my_address: 0x2aead928, value: J},
-          {my_address: 0x2aead950, value: K},
-          {my_address: 0x2aead978, value: L},
-          {my_address: 0x2aead9a0, value: M},
-          {my_address: 0x2aead9c8, value: N},
-          {my_address: 0x2aead9f0, value: O},
-          {my_address: 0x2aeada18, value: P},
-          {my_address: 0x2aeada40, value: Q},
-          {my_address: 0x2aeada68, value: R},
-          {my_address: 0x2aeada90, value: S},
-          {my_address: 0x2aeadab8, value: T},
-          {my_address: 0x2aeadae0, value: U},
-          {my_address: 0x2aeadb08, value: V},
-          {my_address: 0x2aeadb30, value: W},
-          {my_address: 0x2aeadb58, value: X},
-          {my_address: 0x2aeadb80, value: Y},
-          {my_address: 0x2aeadba8, value: Z}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aead220
-    ]
-  "terminal_chars":[
-      0x2aead700
-    ]
-},VERSION: {
-  "concept_name": "VERSION"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "VERSION_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aeac1e0",
-        "content": NUMBER
-        "next": [
-          0x2aeac280
-        ]
-        items": [
-          {my_address: 0x2aeab270, value: NUMBER}
-        ]
-      },
-      {
-        "position": "VERSION_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aeac280",
-        "content": .
-        "next": [
-          0x2aeac320
-        ]
-        items": [
-          {my_address: 0x2aeab0d0, value: .}
-        ]
-      },
-      {
-        "position": "VERSION_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aeac320",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aeab080, value: NUMBER}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea73b0
-    ]
-  "terminal_chars":[
-      0x2aeae800
-    ]
-},VIDEO_MIME: {
-  "concept_name": "VIDEO_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "VIDEO_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2aeabad0",
-        "content": [
-          {my_address: 0x2aea8f70, value: video/mp4},
-          {my_address: 0x2aea8f98, value: video/webm}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea8f70, value: video/mp4},
-          {my_address: 0x2aea8f98, value: video/webm}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea9bb0
-    ]
-  "terminal_chars":[
-      0x2aeabad0
-    ]
-},basic_http_stmt: {
-  "concept_name": "basic_http_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "basic_http_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea3070",
-        "content": sendfile
-        "next": [
-          0x2aea3130
-        ]
-        items": [
-          {my_address: 0x2aea2da0, value: sendfile}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea3130",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea31f0
-        ]
-        items": [
-          {my_address: 0x2aea2ea0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea31f0",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea3290, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea33d0",
-        "content": tcp_nopush
-        "next": [
-          0x2aea3470
-        ]
-        items": [
-          {my_address: 0x2aea3320, value: tcp_nopush}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_1",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea3470",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea3540
-        ]
-        items": [
-          {my_address: 0x2aea3350, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_1",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea3540",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea35e0, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_2",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea3750",
-        "content": tcp_nodelay
-        "next": [
-          0x2aea37f0
-        ]
-        items": [
-          {my_address: 0x2aea36a0, value: tcp_nodelay}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_2",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea37f0",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea38c0
-        ]
-        items": [
-          {my_address: 0x2aea36d0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_2",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea38c0",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea3960, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_3",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea3ad0",
-        "content": keepalive_timeout
-        "next": [
-          0x2aea3b70
-        ]
-        items": [
-          {my_address: 0x2aea39f0, value: keepalive_timeout}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_3",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea3b70",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea3c60
-        ]
-        items": [
-          {my_address: 0x2aea3a50, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_3",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea3c60",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea3d00, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_4",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea3e90",
-        "content": types_hash_max_size
-        "next": [
-          0x2aea3f30
-        ]
-        items": [
-          {my_address: 0x2aea3670, value: types_hash_max_size}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_4",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea3f30",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea3ff0
-        ]
-        items": [
-          {my_address: 0x2aea3d90, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_4",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea3ff0",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea4090, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_5",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea41d0",
-        "content": default_type
-        "next": [
-          0x2aea4270
-        ]
-        items": [
-          {my_address: 0x2aea3a20, value: default_type}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_5",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea4270",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea4310
-        ]
-        items": [
-          {my_address: 0x2aea4120, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_5",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea4310",
-        "content": MIME
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea43b0, value: MIME}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_6",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea44f0",
-        "content": access_log
-        "next": [
-          0x2aea4590
-        ]
-        items": [
-          {my_address: 0x2aea4440, value: access_log}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_6",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea4590",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea4660
-        ]
-        items": [
-          {my_address: 0x2aea4470, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_6",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea4660",
-        "content": PATH
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea4700, value: PATH}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea4840",
-        "content": error_log
-        "next": [
-          0x2aea48e0
-        ]
-        items": [
-          {my_address: 0x2aea4790, value: error_log}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea48e0",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea49b0
-        ]
-        items": [
-          {my_address: 0x2aea47c0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea49b0",
-        "content": PATH
-        "next": [
-          0x2aea4ae0
-        ]
-        items": [
-          {my_address: 0x2aea4a50, value: PATH}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea4ae0",
-        "content": SPACE
-        "next": [
-          0x2aea4be0
-        ]
-        items": [
-          {my_address: 0x2aea4b80, value: SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 4,
-        "ptr": "0x2aea4be0",
-        "content": LOG_LEVEL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea4c80, value: LOG_LEVEL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_8",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea4e70",
-        "content": server_tokens
-        "next": [
-          0x2aea4f10
-        ]
-        items": [
-          {my_address: 0x2aea4ab0, value: server_tokens}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_8",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea4f10",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea4fe0
-        ]
-        items": [
-          {my_address: 0x2aea4ce0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_8",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea4fe0",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea5080, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_9",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea5250",
-        "content": gzip
-        "next": [
-          0x2aea52f0
-        ]
-        items": [
-          {my_address: 0x2aea5110, value: gzip}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_9",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea52f0",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea53c0
-        ]
-        items": [
-          {my_address: 0x2aea5140, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_9",
-        "type": "GROUP",
-        "index": 2,
-        "ptr": "0x2aea53c0",
-        "content": [
-          {my_address: 0x2ae9f520, value: BOOL},
-          {my_address: 0x2ae9f548, value: btp}
-        ]
-        "next": [
-          0x2aea54e0
-        ]
-        items": [
-          {my_address: 0x2ae9f520, value: BOOL},
-          {my_address: 0x2ae9f548, value: btp}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_9",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea54e0",
-        "content": btp
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea5580, value: btp}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea29b0
-    ]
-  "terminal_chars":[
-      0x2aea3070,
-      0x2aea33d0,
-      0x2aea3750,
-      0x2aea3ad0,
-      0x2aea3e90,
-      0x2aea41d0,
-      0x2aea44f0,
-      0x2aea4840,
-      0x2aea4e70,
-      0x2aea5250
-    ]
-},btp: {
-  "concept_name": "btp"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "btp_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea57f0",
-        "content": BOOL
-        "next": [
-          0x2aea5890
-        ]
-        items": [
-          {my_address: 0x2aea55e0, value: BOOL}
-        ]
-      },
-      {
-        "position": "btp_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea5890",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea5610, value: BOOL}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea53c0,
-      0x2aea54e0,
-      0x2aea5cc0
-    ]
-  "terminal_chars":[
-      0x2aea8eb0
-    ]
-},event_rule: {
-  "concept_name": "event_rule"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "event_rule_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea19b0",
-        "content": worker_connections
-        "next": [
-          0x2aea1a70
-        ]
-        items": [
-          {my_address: 0x2aea17b0, value: worker_connections}
-        ]
-      },
-      {
-        "position": "event_rule_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea1a70",
-        "content": SPACE
-        "next": [
-          0x2aea1b60
-        ]
-        items": [
-          {my_address: 0x2aea1910, value: SPACE}
-        ]
-      },
-      {
-        "position": "event_rule_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea1b60",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea1c00, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "event_rule_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea1d40",
-        "content": multi_accept
-        "next": [
-          0x2aea1de0
-        ]
-        items": [
-          {my_address: 0x2aea17e0, value: multi_accept}
-        ]
-      },
-      {
-        "position": "event_rule_1",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea1de0",
-        "content": SPACE
-        "next": [
-          0x2aea1e80
-        ]
-        items": [
-          {my_address: 0x2aea1c90, value: SPACE}
-        ]
-      },
-      {
-        "position": "event_rule_1",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea1e80",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea1f20, value: BOOL}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea1470
-    ]
-  "terminal_chars":[
-      0x2aea19b0,
-      0x2aea1d40
-    ]
-},event_stmt: {
-  "concept_name": "event_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "event_stmt_0",
-        "type": "OPTION",
-        "index": 0,
-        "ptr": "0x2aea13b0",
-        "content": [
-          {my_address: 0x2aea11b0, value: TAB_SPACE}
-        ]
-        "next": [
-          0x2aea1470
-        ]
-        items": [
-          {my_address: 0x2aea11b0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "event_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea1470",
-        "content": event_rule
-        "next": [
-          0x2aea1560
-        ]
-        items": [
-          {my_address: 0x2aea11e0, value: event_rule}
-        ]
-      },
-      {
-        "position": "event_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea1560",
-        "content": ;
-        "next": [
-          0x2aea1690
-        ]
-        items": [
-          {my_address: 0x2aea1600, value: ;}
-        ]
-      },
-      {
-        "position": "event_stmt_0",
-        "type": "OPTION",
-        "index": 3,
-        "ptr": "0x2aea1690",
-        "content": [
-          {my_address: 0x2aea1750, value: LINE_JUMP}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea1750, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea0fe0
-    ]
-  "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030
-    ]
-},events_block: {
-  "concept_name": "events_block"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea0c00",
-        "content": events
-        "next": [
-          0x2aea0ca0
-        ]
-        items": [
-          {my_address: 0x2aea0a50, value: events}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "OPTION",
-        "index": 1,
-        "ptr": "0x2aea0ca0",
-        "content": [
-          {my_address: 0x2aea0a80, value: SPACE}
-        ]
-        "next": [
-          0x2aea0db0
-        ]
-        items": [
-          {my_address: 0x2aea0a80, value: SPACE}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea0db0",
-        "content": {
-        "next": [
-          0x2aea0ee0
-        ]
-        items": [
-          {my_address: 0x2aea0e50, value: {}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea0ee0",
-        "content": LINE_JUMP
-        "next": [
-          0x2aea0fe0
-        ]
-        items": [
-          {my_address: 0x2aea0f80, value: LINE_JUMP}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SEQUENCE",
-        "index": 4,
-        "ptr": "0x2aea0fe0",
-        "content": [
-          {my_address: 0x2aea1080, value: event_stmt}
-        ]
-        "next": [
-          0x2aea10e0
-        ]
-        items": [
-          {my_address: 0x2aea1080, value: event_stmt}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 5,
-        "ptr": "0x2aea10e0",
-        "content": }
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea0eb0, value: }}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9f5d0
-    ]
-  "terminal_chars":[
-      0x2aea0c00
-    ]
-},gzip_mines: {
-  "concept_name": "gzip_mines"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "gzip_mines_0",
-        "type": "OPTION",
-        "index": 0,
-        "ptr": "0x2aea7bf0",
-        "content": [
-          {my_address: 0x2aea7a40, value: TAB_SPACE}
-        ]
-        "next": [
-          0x2aea7cb0
-        ]
-        items": [
-          {my_address: 0x2aea7a40, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_mines_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea7cb0",
-        "content": MIME
-        "next": [
-          0x2aea7da0
-        ]
-        items": [
-          {my_address: 0x2aea7a70, value: MIME}
-        ]
-      },
-      {
-        "position": "gzip_mines_0",
-        "type": "OPTION",
-        "index": 2,
-        "ptr": "0x2aea7da0",
-        "content": [
-          {my_address: 0x2aea7e60, value: LINE_JUMP}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea7e60, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea7910
-    ]
-  "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030
-    ]
-},gzip_stmt: {
-  "concept_name": "gzip_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "gzip_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea5b10",
-        "content": gzip
-        "next": [
-          0x2aea5bd0
-        ]
-        items": [
-          {my_address: 0x2aea5990, value: gzip}
-        ]
-      },
-      {
-        "position": "gzip_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea5bd0",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea5cc0
-        ]
-        items": [
-          {my_address: 0x2aea5960, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_0",
-        "type": "GROUP",
-        "index": 2,
-        "ptr": "0x2aea5cc0",
-        "content": [
-          {my_address: 0x2aea5640, value: BOOL},
-          {my_address: 0x2aea5668, value: btp}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea5640, value: BOOL},
-          {my_address: 0x2aea5668, value: btp}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea5ef0",
-        "content": gzip_disable
-        "next": [
-          0x2aea5f90
-        ]
-        items": [
-          {my_address: 0x2aea5de0, value: gzip_disable}
-        ]
-      },
-      {
-        "position": "gzip_stmt_1",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea5f90",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea6060
-        ]
-        items": [
-          {my_address: 0x2aea5e10, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_1",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea6060",
-        "content": STRING
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea6100, value: STRING}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_2",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea6270",
-        "content": gzip_vary
-        "next": [
-          0x2aea6310
-        ]
-        items": [
-          {my_address: 0x2aea61c0, value: gzip_vary}
-        ]
-      },
-      {
-        "position": "gzip_stmt_2",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea6310",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea63e0
-        ]
-        items": [
-          {my_address: 0x2aea61f0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_2",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea63e0",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea6480, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_3",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea65c0",
-        "content": gzip_proxied
-        "next": [
-          0x2aea6660
-        ]
-        items": [
-          {my_address: 0x2aea6510, value: gzip_proxied}
-        ]
-      },
-      {
-        "position": "gzip_stmt_3",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea6660",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea6730
-        ]
-        items": [
-          {my_address: 0x2aea6540, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_3",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea6730",
-        "content": IDENT
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea67d0, value: IDENT}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_4",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea6960",
-        "content": gzip_comp_level
-        "next": [
-          0x2aea6a00
-        ]
-        items": [
-          {my_address: 0x2aea6190, value: gzip_comp_level}
-        ]
-      },
-      {
-        "position": "gzip_stmt_4",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea6a00",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea6ad0
-        ]
-        items": [
-          {my_address: 0x2aea6890, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_4",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea6ad0",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea6b70, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea6cb0",
-        "content": gzip_buffers
-        "next": [
-          0x2aea6d50
-        ]
-        items": [
-          {my_address: 0x2aea6860, value: gzip_buffers}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea6d50",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea6df0
-        ]
-        items": [
-          {my_address: 0x2aea6c00, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea6df0",
-        "content": NUMBER
-        "next": [
-          0x2aea6f20
-        ]
-        items": [
-          {my_address: 0x2aea6e90, value: NUMBER}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea6f20",
-        "content": SPACE
-        "next": [
-          0x2aea7020
-        ]
-        items": [
-          {my_address: 0x2aea6fc0, value: SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 4,
-        "ptr": "0x2aea7020",
-        "content": SIZE
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea70c0, value: SIZE}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_6",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea7220",
-        "content": gzip_http_version
-        "next": [
-          0x2aea72c0
-        ]
-        items": [
-          {my_address: 0x2aea6ef0, value: gzip_http_version}
-        ]
-      },
-      {
-        "position": "gzip_stmt_6",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea72c0",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea73b0
-        ]
-        items": [
-          {my_address: 0x2aea71a0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_6",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea73b0",
-        "content": VERSION
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea7450, value: VERSION}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_7",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea7540",
-        "content": gzip_types
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea74e0, value: gzip_types}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea29b0
-    ]
-  "terminal_chars":[
-      0x2aea5b10,
-      0x2aea5ef0,
-      0x2aea6270,
-      0x2aea65c0,
-      0x2aea6960,
-      0x2aea6cb0,
-      0x2aea7220,
-      0x2aea77b0
-    ]
-},gzip_types: {
-  "concept_name": "gzip_types"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "gzip_types_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea77b0",
-        "content": gzip_types
-        "next": [
-          0x2aea7850
-        ]
-        items": [
-          {my_address: 0x2aea7120, value: gzip_types}
-        ]
-      },
-      {
-        "position": "gzip_types_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea7850",
-        "content": LINE_JUMP
-        "next": [
-          0x2aea7910
-        ]
-        items": [
-          {my_address: 0x2aea75e0, value: LINE_JUMP}
-        ]
-      },
-      {
-        "position": "gzip_types_0",
-        "type": "SEQUENCE",
-        "index": 2,
-        "ptr": "0x2aea7910",
-        "content": [
-          {my_address: 0x2aea79b0, value: gzip_mines}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea79b0, value: gzip_mines}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea7540,
-      0x2aea77b0
-    ]
-  "terminal_chars":[
-      0x2aea77b0
-    ]
-},http_block: {
-  "concept_name": "http_block"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea2160",
-        "content": http
-        "next": [
-          0x2aea2200
-        ]
-        items": [
-          {my_address: 0x2aea1fb0, value: http}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "OPTION",
-        "index": 1,
-        "ptr": "0x2aea2200",
-        "content": [
-          {my_address: 0x2aea1fe0, value: SPACE}
-        ]
-        "next": [
-          0x2aea22f0
-        ]
-        items": [
-          {my_address: 0x2aea1fe0, value: SPACE}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea22f0",
-        "content": {
-        "next": [
-          0x2aea2420
-        ]
-        items": [
-          {my_address: 0x2aea2390, value: {}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea2420",
-        "content": LINE_JUMP
-        "next": [
-          0x2aea2520
-        ]
-        items": [
-          {my_address: 0x2aea24c0, value: LINE_JUMP}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SEQUENCE",
-        "index": 4,
-        "ptr": "0x2aea2520",
-        "content": [
-          {my_address: 0x2aea25c0, value: http_stmt}
-        ]
-        "next": [
-          0x2aea2620
-        ]
-        items": [
-          {my_address: 0x2aea25c0, value: http_stmt}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 5,
-        "ptr": "0x2aea2620",
-        "content": }
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea23f0, value: }}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9f5d0
-    ]
-  "terminal_chars":[
-      0x2aea2160
-    ]
-},http_stmt: {
-  "concept_name": "http_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "http_stmt_0",
-        "type": "OPTION",
-        "index": 0,
-        "ptr": "0x2aea28f0",
-        "content": [
-          {my_address: 0x2aea26f0, value: TAB_SPACE}
-        ]
-        "next": [
-          0x2aea29b0
-        ]
-        items": [
-          {my_address: 0x2aea26f0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "http_stmt_0",
-        "type": "GROUP",
-        "index": 1,
-        "ptr": "0x2aea29b0",
-        "content": [
-          {my_address: 0x2aea2a70, value: basic_http_stmt},
-          {my_address: 0x2aea2a98, value: gzip_stmt},
-          {my_address: 0x2aea2ac0, value: include_stmt}
-        ]
-        "next": [
-          0x2aea2b40
-        ]
-        items": [
-          {my_address: 0x2aea2a70, value: basic_http_stmt},
-          {my_address: 0x2aea2a98, value: gzip_stmt},
-          {my_address: 0x2aea2ac0, value: include_stmt}
-        ]
-      },
-      {
-        "position": "http_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea2b40",
-        "content": ;
-        "next": [
-          0x2aea2c70
-        ]
-        items": [
-          {my_address: 0x2aea2be0, value: ;}
-        ]
-      },
-      {
-        "position": "http_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea2c70",
-        "content": LINE_JUMP
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea2d10, value: LINE_JUMP}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "http_stmt_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea2dd0",
-        "content": LINE_JUMP
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea2d70, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea2520
-    ]
-  "terminal_chars":[
-      0x2aeaeda0,
-      0x2aeaf030,
-      0x2aeaf290
-    ]
-},include_stmt: {
-  "concept_name": "include_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "include_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea80a0",
-        "content": include
-        "next": [
-          0x2aea8140
-        ]
-        items": [
-          {my_address: 0x2aea7ef0, value: include}
-        ]
-      },
-      {
-        "position": "include_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea8140",
-        "content": TAB_SPACE
-        "next": [
-          0x2aea8230
-        ]
-        items": [
-          {my_address: 0x2aea7f20, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "include_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea8230",
-        "content": PATH
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea82d0, value: PATH}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2aea29b0
-    ]
-  "terminal_chars":[
-      0x2aea80a0
-    ]
-},pid_stmt: {
-  "concept_name": "pid_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea06e0",
-        "content": pid
-        "next": [
-          0x2aea0780
-        ]
-        items": [
-          {my_address: 0x2ae9fef0, value: pid}
-        ]
-      },
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea0780",
-        "content": SPACE
-        "next": [
-          0x2aea0820
-        ]
-        items": [
-          {my_address: 0x2aea0530, value: SPACE}
-        ]
-      },
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea0820",
-        "content": PATH
-        "next": [
-          0x2aea0950
-        ]
-        items": [
-          {my_address: 0x2aea08c0, value: PATH}
-        ]
-      },
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea0950",
-        "content": ;
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea09f0, value: ;}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9f5d0
-    ]
-  "terminal_chars":[
-      0x2aea06e0
-    ]
-},statement: {
-  "concept_name": "statement"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "statement_0",
-        "type": "GROUP",
-        "index": 0,
-        "ptr": "0x2ae9f5d0",
-        "content": [
-          {my_address: 0x2ae9f740, value: user_stmt},
-          {my_address: 0x2ae9f768, value: worker_stmt},
-          {my_address: 0x2ae9f790, value: pid_stmt},
-          {my_address: 0x2ae9f7b8, value: events_block},
-          {my_address: 0x2ae9f7e0, value: http_block}
-        ]
-        "next": [
-          0x2ae9f890
-        ]
-        items": [
-          {my_address: 0x2ae9f740, value: user_stmt},
-          {my_address: 0x2ae9f768, value: worker_stmt},
-          {my_address: 0x2ae9f790, value: pid_stmt},
-          {my_address: 0x2ae9f7b8, value: events_block},
-          {my_address: 0x2ae9f7e0, value: http_block}
-        ]
-      },
-      {
-        "position": "statement_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "ptr": "0x2ae9f890",
-        "content": [
-          {my_address: 0x2ae9b2a0, value: LINE_JUMP}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2ae9b2a0, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9b1b0
-    ]
-  "terminal_chars":[
-      0x2ae9fad0,
-      0x2aea0150,
-      0x2aea06e0,
-      0x2aea0c00,
-      0x2aea2160
-    ]
-},user_name: {
-  "concept_name": "user_name"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "user_name_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea8510",
-        "content": LOCASE_LETTER
-        "next": [
-          0x2aea85b0
-        ]
-        items": [
-          {my_address: 0x2aea8360, value: LOCASE_LETTER}
-        ]
-      },
-      {
-        "position": "user_name_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "ptr": "0x2aea85b0",
-        "content": [
-          {my_address: 0x2aea8650, value: LOCASE_LETTER},
-          {my_address: 0x2aea8678, value: DIGIT},
-          {my_address: 0x2aea86a0, value: _},
-          {my_address: 0x2aea86c8, value: -}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea8650, value: LOCASE_LETTER},
-          {my_address: 0x2aea8678, value: DIGIT},
-          {my_address: 0x2aea86a0, value: _},
-          {my_address: 0x2aea86c8, value: -}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9fc90
-    ]
-  "terminal_chars":[
-      0x2aead480
-    ]
-},user_stmt: {
-  "concept_name": "user_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2ae9fad0",
-        "content": user
-        "next": [
-          0x2ae9fb70
-        ]
-        items": [
-          {my_address: 0x2ae9faa0, value: user}
-        ]
-      },
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2ae9fb70",
-        "content": SPACE
-        "next": [
-          0x2ae9fc90
-        ]
-        items": [
-          {my_address: 0x2ae9fc10, value: SPACE}
-        ]
-      },
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2ae9fc90",
-        "content": user_name
-        "next": [
-          0x2ae9fdc0
-        ]
-        items": [
-          {my_address: 0x2ae9fd30, value: user_name}
-        ]
-      },
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2ae9fdc0",
-        "content": ;
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2ae9fe60, value: ;}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9f5d0
-    ]
-  "terminal_chars":[
-      0x2ae9fad0
-    ]
-},worker_stmt: {
-  "concept_name": "worker_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "ptr": "0x2aea0150",
-        "content": worker_processes
-        "next": [
-          0x2aea0210
-        ]
-        items": [
-          {my_address: 0x2ae9fec0, value: worker_processes}
-        ]
-      },
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "ptr": "0x2aea0210",
-        "content": SPACE
-        "next": [
-          0x2aea0300
-        ]
-        items": [
-          {my_address: 0x2aea00b0, value: SPACE}
-        ]
-      },
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "ptr": "0x2aea0300",
-        "content": IDENT
-        "next": [
-          0x2aea0430
-        ]
-        items": [
-          {my_address: 0x2aea03a0, value: IDENT}
-        ]
-      },
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "ptr": "0x2aea0430",
-        "content": ;
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2aea04d0, value: ;}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2ae9f5d0
-    ]
-  "terminal_chars":[
-      0x2aea0150
-    ]
-}}
-
-[
-  {
-    "position": "<head>_0",
-    "type": "SEQUENCE",
-    "index": 0,
-    "ptr": "0x2ae9b1b0",
-    "content": [
-      {my_address: 0x2ae9abb0, value: statement}
-    ]
-    "next": [
-
-    ]
-    items": [
-      {my_address: 0x2ae9abb0, value: statement}
-    ]
-  },
-  {
-    "position": "statement_0",
-    "type": "GROUP",
-    "index": 0,
-    "ptr": "0x2ae9f5d0",
-    "content": [
-      {my_address: 0x2ae9f740, value: user_stmt},
-      {my_address: 0x2ae9f768, value: worker_stmt},
-      {my_address: 0x2ae9f790, value: pid_stmt},
-      {my_address: 0x2ae9f7b8, value: events_block},
-      {my_address: 0x2ae9f7e0, value: http_block}
-    ]
-    "next": [
-      0x2ae9f890
-    ]
-    items": [
-      {my_address: 0x2ae9f740, value: user_stmt},
-      {my_address: 0x2ae9f768, value: worker_stmt},
-      {my_address: 0x2ae9f790, value: pid_stmt},
-      {my_address: 0x2ae9f7b8, value: events_block},
-      {my_address: 0x2ae9f7e0, value: http_block}
-    ]
-  },
-  {
-    "position": "http_block_0",
-    "type": "SYMBOL",
-    "index": 5,
-    "ptr": "0x2aea2620",
-    "content": }
-    "next": [
-
-    ]
-    items": [
-      {my_address: 0x2aea23f0, value: }}
-    ]
-  }
-]
 Parsing complete ✅

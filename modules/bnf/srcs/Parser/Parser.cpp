@@ -418,7 +418,7 @@ void Parser::resolvePath()
 		mapPrev = mapCurrent;
 	}
 
-	generateJson(pathsTop);
+	// generateJson(pathsTop);
 }
 
 
@@ -441,18 +441,13 @@ void Parser::parse(const std::string &stringToParsed)
 	char	 c;
 
 	currentRule = NULL;
-
-	Logger::log(m_semantic);
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		c = stringToParsed[i];
-		// Logger::log("index: " + LoggerJson::get(i) + ", char: '" + c + "'");
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
-		// else
-		// Logger::log("✅");
 		if (i == stringToParsed.size() - 1)
 			break;
 		completePath();
@@ -460,20 +455,6 @@ void Parser::parse(const std::string &stringToParsed)
 		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();
 	}
-	// clang-format off
-	// for (size_t k = 0; k < m_indexedPaths.size(); ++k)
-	// {
-	// 	Logger::log("Index: " + LoggerJson::get(k));
-	// 	for (Map<ARulePath, Vec<ARulePath> >::iterator mapIt = m_indexedPaths[k].begin(); mapIt != m_indexedPaths[k].end(); ++mapIt)
-	// 	{
-	// 		Logger::log("----");
-	// 		Logger::log("\tKey: " + LoggerJson::get(mapIt->first, true));
-	// 		for (Vec<ARulePath>::iterator pathIt = mapIt->second.begin(); pathIt != mapIt->second.end(); ++pathIt)
-	// 		{
-	// 			Logger::log("\t\tValue: " + LoggerJson::get(pathIt->back(), true));
-	// 		}
-	// 	}
-	// }
 	resolvePath();
 
 
@@ -485,7 +466,6 @@ void Parser::parse(const std::string &stringToParsed)
 
 std::ostream &operator<<(std::ostream &os, const BNFPath &data)
 {
-	// Logger::log(LoggerJson::get(*(data.rulePath)));
 	os << LoggerJson::get((data.rulePath));
 	return (os);
 }

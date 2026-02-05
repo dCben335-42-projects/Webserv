@@ -114,6 +114,7 @@ void SemanticDescriptor::parseBlocks()
 	catch (const SemanticException &e)
 	{
 		std::cout << e;
+		throw std::runtime_error("semantic descriptor is not valid");
 	}
 }
 
@@ -249,17 +250,26 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	Logger::log(words);
 
 	std::string word;
-	ARule	   *arule	   = NULL;
-	size_t		aruleIndex = 0;
+	ARule	   *arule			 = NULL;
+	size_t		aruleIndex		 = 0;
+	bool		isRequiredInJson = false;
+
 
 	for (size_t i = 0; i < words.size(); ++i)
 	{
 		word = words[i];
+
+		if (!word.empty() && word[0] == '!')
+		{
+			isRequiredInJson = true;
+			word.erase(word.begin());
+			if (word.empty())
+				continue;
+		}
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
 		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept, conceptDef);
-
 
 		if (map.hasClosure)
 		{
@@ -270,6 +280,13 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		}
 		while (word != map.closer)
 		{
+			if (!word.empty() && word[0] == '!')
+			{
+				isRequiredInJson = true;
+				word.erase(word.begin());
+				if (word.empty())
+					continue;
+			}
 			if (ARule::isKeyWord(word, false))
 				throw std::runtime_error("Bad closing keyword: " + word);
 			if (word != DIVIDER)
@@ -277,6 +294,11 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 				if (!validate_string_strict(word))
 					throw InvalidConceptNameException(word);
 				arule->addItem(TerminalSymbol::specify(word));
+				if (isRequiredInJson)
+				{
+					arule->addRequiredInJson(word);
+					isRequiredInJson = false;
+				}
 				if (!map.hasClosure)
 					break;
 			}

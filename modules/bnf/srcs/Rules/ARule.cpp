@@ -185,6 +185,16 @@ bool ARule::isSequence() const
 	return m_type == SEQUENCE;
 }
 
+const Vec<std::string> &ARule::getRequiredInJson() const
+{
+	return m_requiredInJson;
+}
+
+void ARule::addRequiredInJson(const std::string &val)
+{
+	m_requiredInJson.push(val);
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << "{\n";
@@ -192,6 +202,7 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	os << Logger::indent() << "\"position\": " << "\"" << data.getConceptName() << "_" << data.getConceptDefIndex() << "\",\n";
 	os << Logger::indent() << "\"type\": " << "\"" << data.getTypeName() << "\",\n";
 	os << Logger::indent() << "\"index\": " << data.getRuleIndex() << ",\n";
+	os << Logger::indent() << "\"is_required_in_json\": " << LoggerJson::get(data.getRequiredInJson()) << ",\n";
 	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
 	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
 	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";

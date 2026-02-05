@@ -34,6 +34,7 @@ class ARule
 		ConceptDef		   *m_conceptDefPtr;
 		Set<const ARule *>	m_nextRules;
 		Vec<TerminalSymbol> m_items;
+		Vec<std::string>	m_requiredInJson;
 
 		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 
@@ -53,6 +54,9 @@ class ARule
 		size_t			  getRuleIndex() const;
 		ARulePath		  getNextRules(ARulePath supRuleParent) const;
 
+		const Vec<std::string> &getRequiredInJson() const;
+
+		void addRequiredInJson(const std::string &val);
 
 		std::string	 printNext() const;
 		const ARule *tryGetAdjacentRules() const;
