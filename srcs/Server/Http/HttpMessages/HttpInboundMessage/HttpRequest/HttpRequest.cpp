@@ -91,9 +91,21 @@ const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
 	return m_activeLocations;
 }
 
+bool HttpRequest::determineConnectionKeepAlive() const
+{
+	const std::string connectionHeader = getHeader(HEADER_CONNECTION);
 
+	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+		return false;
+	if (connectionHeader == HEADER_CONNECTION_CLOSE)
+		return true;
+	return true;
+}
 
-
+bool HttpRequest::getConnectionKeepAlive() const
+{
+	return m_connectionKeepAlive;
+}
 
 /**
  *
@@ -140,6 +152,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	if (getHeader(HEADER_HOST).empty())
 		throw std::invalid_argument("Missing Host Header Field");
 	parseActiveLocations(serverConfig);
+	m_connectionKeepAlive = determineConnectionKeepAlive();
 	return *this;
 }
 

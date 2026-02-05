@@ -21,7 +21,6 @@ class Client : public Pollable
 
 
 		bool prepareResponse();
-		bool shouldCloseConnection() const;
 
 		bool isRequestComplete();
 

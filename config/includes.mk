@@ -21,6 +21,7 @@ INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpExceptions/5xx
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpExceptions
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpExceptions
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages
+INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/CgiOutput
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/HttpInboundMessage
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/HttpInboundMessage/HttpRequest
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/HttpResponse

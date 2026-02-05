@@ -12,6 +12,7 @@ SRC_FILES += Server/Files/FileUpload/HttpSubRequest.cpp
 SRC_FILES += Server/Files/IndexOf/IndexOf.cpp
 SRC_FILES += Server/Http/HttpExceptions/AHttpException.cpp
 SRC_FILES += Server/Http/HttpMessages/AHttpMessage.cpp
+SRC_FILES += Server/Http/HttpMessages/CgiOutput/CgiOutput.cpp
 SRC_FILES += Server/Http/HttpMessages/HttpInboundMessage/AHttpInboundMessage.cpp
 SRC_FILES += Server/Http/HttpMessages/HttpInboundMessage/HttpRequest/HttpRequest.cpp
 SRC_FILES += Server/Http/HttpMessages/HttpResponse/HttpResponse.cpp

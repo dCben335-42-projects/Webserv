@@ -247,32 +247,11 @@ void Client::onPollIn()
 	const std::string date = Date::getCurrentHttpDate();
 	if (!date.empty())
 		m_res.setHeader(HEADER_DATE, date);
-	m_res.setHeader(HEADER_CONNECTION, shouldCloseConnection() ? HEADER_CONNECTION_CLOSE : HEADER_CONNECTION_KEEP_ALIVE);
+	m_res.setHeader(HEADER_CONNECTION, m_req.getConnectionKeepAlive() ? HEADER_CONNECTION_CLOSE : HEADER_CONNECTION_KEEP_ALIVE);
 	m_res.build();
 	m_events = POLLOUT;
 }
 
-
-/**
- *
- * @brief Determines if the connection should be closed after the response.
- *
- * This function checks the "Connection" header in the HTTP request
- * to decide whether to keep the connection alive or close it.
- *
- * @return true if the connection should be closed, false otherwise.
- *
- */
-bool Client::shouldCloseConnection() const
-{
-	const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-
-	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-		return false;
-	if (connectionHeader == HEADER_CONNECTION_CLOSE)
-		return true;
-	return true;
-}
 
 /**
  *
@@ -289,7 +268,7 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		if (shouldCloseConnection())
+		if (m_req.getConnectionKeepAlive())
 		{
 			m_connectionClosed = true;
 			m_events		   = 0;

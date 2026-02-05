@@ -6,13 +6,9 @@
 class HttpResponse : public AHttpMessage
 {
 	private:
-		unsigned short m_statusCode;
-		std::string	   m_fullResponse;
-		size_t		   m_sentBytes;
+		std::string m_fullResponse;
+		size_t		m_sentBytes;
 
-		static const Map<unsigned short, std::string> m_statusReasonMap;
-
-		static Map<unsigned short, std::string> initStatusReasonMap();
 
 	public:
 		HttpResponse();
@@ -28,11 +24,8 @@ class HttpResponse : public AHttpMessage
 
 		bool sendOnce(int socket);
 
-		void		build();
-		std::string buildHead() const;
-		void		reset();
+		void build();
+		void reset();
 };
-
-std::ostream &operator<<(std::ostream &o, HttpResponse const &response);
 
 #endif
