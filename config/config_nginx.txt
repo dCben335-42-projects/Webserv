@@ -2,7 +2,7 @@
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
-user_stmt		::= 'user' SPACE !user_name ';'
+user_stmt		::= 'user' SPACE 0>user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
 pid_stmt		::= 'pid' SPACE PATH ';'
 

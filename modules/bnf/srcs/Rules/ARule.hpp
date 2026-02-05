@@ -26,15 +26,15 @@ struct BnfMap
 class ARule
 {
 	protected:
-		const ERuleType		m_type;
-		const std::string	m_conceptName;
-		const size_t		m_conceptDefIndex;
-		const size_t		m_ruleIndex;
-		Concept			   *m_conceptPtr;
-		ConceptDef		   *m_conceptDefPtr;
-		Set<const ARule *>	m_nextRules;
-		Vec<TerminalSymbol> m_items;
-		Vec<std::string>	m_requiredInJson;
+		const ERuleType				  m_type;
+		const std::string			  m_conceptName;
+		const size_t				  m_conceptDefIndex;
+		const size_t				  m_ruleIndex;
+		Concept						 *m_conceptPtr;
+		ConceptDef					 *m_conceptDefPtr;
+		Set<const ARule *>			  m_nextRules;
+		Vec<TerminalSymbol>			  m_items;
+		Map<size_t, Vec<std::string>> m_requiredInJson;
 
 		ARule(ERuleType t, const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 
@@ -54,9 +54,9 @@ class ARule
 		size_t			  getRuleIndex() const;
 		ARulePath		  getNextRules(ARulePath supRuleParent) const;
 
-		const Vec<std::string> &getRequiredInJson() const;
+		const Map<size_t, Vec<std::string>> &getRequiredInJsonMap() const;
 
-		void addRequiredInJson(const std::string &val);
+		void addRequiredInJson(size_t index, const std::string &val);
 
 		std::string	 printNext() const;
 		const ARule *tryGetAdjacentRules() const;

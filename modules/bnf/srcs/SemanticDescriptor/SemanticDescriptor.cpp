@@ -296,7 +296,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 				arule->addItem(TerminalSymbol::specify(word));
 				if (isRequiredInJson)
 				{
-					arule->addRequiredInJson(word);
+					arule->addRequiredInJson(0, word);
 					isRequiredInJson = false;
 				}
 				if (!map.hasClosure)

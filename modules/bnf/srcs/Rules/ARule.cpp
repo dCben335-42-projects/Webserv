@@ -185,14 +185,16 @@ bool ARule::isSequence() const
 	return m_type == SEQUENCE;
 }
 
-const Vec<std::string> &ARule::getRequiredInJson() const
+const Map<size_t, Vec<std::string>> &ARule::getRequiredInJsonMap() const
 {
 	return m_requiredInJson;
 }
 
-void ARule::addRequiredInJson(const std::string &val)
+void ARule::addRequiredInJson(size_t index, const std::string &val)
 {
-	m_requiredInJson.push(val);
+	if (!m_requiredInJson.has(index))
+		m_requiredInJson.set(index, Vec<std::string>());
+	m_requiredInJson.get(index).push(val);
 }
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
@@ -202,7 +204,7 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	os << Logger::indent() << "\"position\": " << "\"" << data.getConceptName() << "_" << data.getConceptDefIndex() << "\",\n";
 	os << Logger::indent() << "\"type\": " << "\"" << data.getTypeName() << "\",\n";
 	os << Logger::indent() << "\"index\": " << data.getRuleIndex() << ",\n";
-	os << Logger::indent() << "\"is_required_in_json\": " << LoggerJson::get(data.getRequiredInJson()) << ",\n";
+	os << Logger::indent() << "\"is_required_in_json\": " << LoggerJson::get(data.getRequiredInJsonMap()) << ",\n";
 	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
 	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
 	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";
