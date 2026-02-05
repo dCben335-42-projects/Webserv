@@ -40,4 +40,5 @@
 #define HEADER_CONNECTION_KEEP_ALIVE "keep-alive"
 #define HEADER_CONNECTION_CLOSE "close"
 
+#define HEADER_SUB_CONTENT_DISPOSITION "Content-Disposition"
 #endif

@@ -101,7 +101,7 @@ void Client::handleDeleteRequest(const std::string &ressourcePath)
 	const char *fullPath = ressourcePath.c_str();
 	if (access(fullPath, F_OK) == -1)
 		throw Http404Exception();
-	if (access(fullPath, R_OK | W_OK) == -1)
+	if (access(fullPath, W_OK) == -1)
 		throw Http403Exception();
 	std::remove(fullPath);
 	m_res.setStatusCode(204);

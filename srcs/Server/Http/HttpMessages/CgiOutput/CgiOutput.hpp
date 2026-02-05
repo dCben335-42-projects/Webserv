@@ -1,10 +1,10 @@
 #ifndef CGIOUTPUT_HPP
 #define CGIOUTPUT_HPP
 
+#include "AHttpInboundMessage.hpp"
 
-class CgiOutput
+class CgiOutput : public AHttpInboundMessage
 {
-	private:
 	public:
 		CgiOutput();
 		~CgiOutput();
