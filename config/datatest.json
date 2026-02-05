@@ -1,0 +1,91 @@
+[
+    [
+        {
+            "type": "repeat",
+            "content": [
+                {
+                    "STATEMENT": {
+                        "type": "line",
+                        "content": [
+                            {
+                                "type": "choice",
+                                "content": [
+                                    {
+                                        "type": "line",
+                                        "content": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+]
+
+
+[
+    [
+        [
+            {
+                "STATEMENT": [
+                    [
+                        {
+                            "USER_STMT": "www-data"
+                        },
+                        {
+                            "WORKER_STMT": "auto"
+                        },
+                        {
+                            "PID_STMT": "/run/nginx.pid"
+                        },
+                        {
+                            "EVENT_BLOCK": [
+                                [
+                                    [
+                                        {
+                                            "EVENT_STMT": {
+                                                "worker_connections": "1024"
+                                            }
+                                        },
+                                        {
+                                            "EVENT_STMT": {
+                                                "multi_accept": "on"
+                                            }
+                                        }
+                                    ],
+                                    "1on"
+                                ]
+                            ]
+                        },
+                        {
+                            "HTTP_BLOCK": [
+                                [
+                                    [
+                                        {
+                                            "HTTP_STMT": {
+                                                "sendfile": "on"
+                                            }
+                                        },
+                                        {
+                                            "HTTP_STMT": {
+                                                "gzip": "on"
+                                            }
+                                        }
+                                        {
+                                            "HTTP_STMT": {
+                                                "gzip_types": "text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript"
+                                            }
+                                        }
+                                    ],
+                                    "1on"
+                                ]
+                            ]
+                        }
+                    ]
+                ]
+            }
+        ]
+    ]
+]

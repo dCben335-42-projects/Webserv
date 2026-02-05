@@ -4,8 +4,6 @@ statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block
 
 user_stmt		::= 'user' SPACE user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
-
-ok				::= '_proc' 'esses'
 pid_stmt		::= 'pid' SPACE PATH ';'
 
 events_block	::= 'events' [ SPACE ] '{' LINE_JUMP { event_stmt } '}'
@@ -30,7 +28,9 @@ basic_http_stmt	::= 'sendfile' TAB_SPACE BOOL
 				|= 'error_log' TAB_SPACE PATH SPACE LOG_LEVEL
 				|= 'server_tokens' TAB_SPACE BOOL
 
-gzip_stmt		::= 'gzip' TAB_SPACE BOOL
+btp				::= BOOL BOOL
+
+gzip_stmt		::= 'gzip' TAB_SPACE ( BOOL | btp )
 				|= 'gzip_disable' TAB_SPACE STRING
 				|= 'gzip_vary' TAB_SPACE BOOL
 				|= 'gzip_proxied' TAB_SPACE IDENT

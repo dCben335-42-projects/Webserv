@@ -326,9 +326,27 @@ class BNFPath
 		}
 };
 
-void generateJson()
+void generateJson(Vec<BNFPath *> pathsTop)
 {
+	Logger::log(LoggerJson::get(pathsTop[0]->rulePath));
 }
+
+
+
+
+bool compare(const ARulePath &a, const ARulePath &b)
+{
+	if (a.size() != b.size())
+		return false;
+	for (size_t i = 0; i < a.size(); ++i)
+	{
+		if (a[i] != b[i])
+			return false;
+	}
+	return true;
+}
+
+
 
 
 void Parser::resolvePath()
@@ -363,12 +381,26 @@ void Parser::resolvePath()
 				for (size_t j = 0; j < vecKey.size(); ++j)
 				{
 					bool found		 = false;
-					if (vecValue.back() != vecKey[j]->back())
+					if (k == 417)
+					{
+						Logger::log("vecValue: " + LoggerJson::get(vecValue, true) + ", vecKey: " + LoggerJson::get(*vecKey[j], true));
+					}
+					if (k == 418)
+					{
+						Logger::log("vecValue: " + LoggerJson::get(vecValue, true) + ", vecKey: " + LoggerJson::get(*vecKey[j], true));
+					}
+					// if (vecValue.back() != vecKey[j]->back())
+					// 	continue;
+
+					if (!compare(vecValue, *vecKey[j]))
 						continue;
+					
 					for (size_t l = 0; l < pathsTop.size(); ++l)
 					{
 						if (pathsTop[l]->rulePath == ident)
 						{
+							if (k == 419)
+								Logger::log("vecValue: " + LoggerJson::get(vecValue, true) + ", vecKey: " + LoggerJson::get(*vecKey[j], true));
 							if (found)
 								throw std::runtime_error("Ambiguous path resolution.");
 							pathsTop[l]->setNext(*vecKey[j]);
@@ -399,6 +431,8 @@ void Parser::resolvePath()
 		pathsTop.concat(bufferTemp);
 		mapPrev = mapCurrent;
 	}
+
+	generateJson(pathsTop);
 }
 
 
