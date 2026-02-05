@@ -19,6 +19,7 @@ class JsonObject : public AJson
 		void set(const std::string &key, AJson *value);
 		void remove(const std::string &key);
 
+		void create(const std::string &key, const char *value);
 		void create(const std::string &key, const std::string &value);
 		void create(const std::string &key, const double value);
 		void create(const std::string &key, const bool value);

@@ -7,13 +7,13 @@ JsonBool::JsonBool(const bool value) :
 {
 }
 
-bool JsonBool::getValue() const
+bool JsonBool::get() const
 {
 	return m_value;
 }
 
 std::ostream &operator<<(std::ostream &os, const JsonBool &b)
 {
-	os << Logger::get(b.getValue());
+	os << Logger::get(b.get());
 	return os;
 }

@@ -7,6 +7,7 @@ class JsonNull : public AJson
 {
 	public:
 		JsonNull();
+		std::string get() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const JsonNull &null);

@@ -4,23 +4,30 @@
 
 void testJson()
 {
-	JsonObject obj;
+	JsonObject *obj = new JsonObject();
 
-	obj.create("name", "John");
-	obj.create("age", 30.0);
-	obj.create("isStudent", false);
+	obj->create("name", "John");
+	obj->create("age", 30.0);
+	obj->create("isStudent", false);
 
 	Vec<AJson *> hobbies;
 	hobbies.push(AJson::createString("reading"));
 	hobbies.push(AJson::createString("coding"));
-	obj.create("hobbies", hobbies);
+	obj->create("hobbies", hobbies);
 
 	Vec<AJson *> address;
 	address.push(AJson::createString("street"));
 	address.push(AJson::createString("city"));
-	obj.create("address", address);
+	address.push(AJson::createNumber(12345));
+	address.push(AJson::createObject());
+	JsonObject *nestedObj = address.get(3)->asObject();
+	nestedObj->create("nestedKey", "nestedValue");
+	nestedObj->create("nestedNumber", 42.0);
+
+	obj->create("address", address);
 
 	Logger::log("JSON Object:" + Logger::get(obj));
+	delete obj;
 }
 
 int main()
@@ -28,9 +35,9 @@ int main()
 	try
 	{
 		testJson();
-		EventLoop::init();
-		EventLoop::run();
-		EventLoop::destroy();
+		// EventLoop::init();
+		// EventLoop::run();
+		// EventLoop::destroy();
 		return 0;
 	}
 	catch (const std::exception &e)

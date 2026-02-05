@@ -10,7 +10,7 @@ class JsonNumber : public AJson
 
 	public:
 		JsonNumber(const double value);
-		double getValue() const;
+		double get() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const JsonNumber &num);

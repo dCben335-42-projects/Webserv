@@ -14,7 +14,7 @@ JsonString::JsonString(const std::string &value) :
  * @return A const reference to the string value of this JsonString
  *
  */
-const std::string &JsonString::getValue() const
+const std::string &JsonString::get() const
 {
 	return m_value;
 }
@@ -23,6 +23,6 @@ const std::string &JsonString::getValue() const
 
 std::ostream &operator<<(std::ostream &os, const JsonString &str)
 {
-	os << Logger::get(str.getValue());
+	os << Logger::get(str.get());
 	return os;
 }

@@ -11,7 +11,7 @@ class JsonString : public AJson
 
 	public:
 		JsonString(const std::string &value);
-		const std::string &getValue() const;
+		const std::string &get() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const JsonString &str);

@@ -272,14 +272,13 @@ std::ostream &operator<<(std::ostream &os, const AJson &json)
 	switch (json.getType())
 	{
 		case AJson::STRING:
-
-			os << Logger::get(json.asString()->getValue());
+			os << Logger::get(json.asString()->get());
 			return os;
 		case AJson::NUMBER:
-			os << Logger::get(json.asNumber()->getValue());
+			os << Logger::get(json.asNumber()->get());
 			return os;
 		case AJson::BOOL:
-			os << Logger::get(json.asBool()->getValue());
+			os << Logger::get(json.asBool()->get());
 			return os;
 		case AJson::ARRAY:
 			os << Logger::get(json.asArray()->get());

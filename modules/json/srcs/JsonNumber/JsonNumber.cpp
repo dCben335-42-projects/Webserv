@@ -15,13 +15,13 @@ JsonNumber::JsonNumber(const double value) :
  * @return The value of the JSON number.
  *
  */
-double JsonNumber::getValue() const
+double JsonNumber::get() const
 {
 	return m_value;
 }
 
 std::ostream &operator<<(std::ostream &os, const JsonNumber &num)
 {
-	os << Logger::get(num.getValue());
+	os << Logger::get(num.get());
 	return os;
 }

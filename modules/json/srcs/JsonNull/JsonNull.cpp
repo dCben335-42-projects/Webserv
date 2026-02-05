@@ -5,9 +5,13 @@ JsonNull::JsonNull() :
 {
 }
 
+std::string JsonNull::get() const
+{
+	return "null";
+}
+
 std::ostream &operator<<(std::ostream &os, const JsonNull &null)
 {
-	(void) null;
-	os << "null";
+	os << null.get();
 	return os;
 }
