@@ -88,7 +88,7 @@
 // =============================
 #define MIME_C "text/x-c"
 #define MIME_CPP "text/x-c++"
-#define MIME_CSHARP "text/plain" // safest for HTTP
+#define MIME_CSHARP MIME_TEXT
 #define MIME_GO "text/x-go"
 #define MIME_RUST "text/rust"
 #define MIME_PYTHON "text/x-python"

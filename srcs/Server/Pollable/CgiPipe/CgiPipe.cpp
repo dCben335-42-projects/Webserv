@@ -117,7 +117,7 @@ void CgiPipe::onPollHangUp()
 	if (bytesRead > 0)
 	{
 		HttpResponse &res = m_client->getResponse();
-		res.appendToFulFullResponse(buffer, bytesRead);
+		res.appendToFullResponse(buffer, bytesRead);
 		return;
 	}
 	waitChild();

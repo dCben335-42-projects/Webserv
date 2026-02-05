@@ -24,7 +24,7 @@ class HttpResponse : public AHttpMessage
 
 		void setStatusCode(unsigned short code);
 		void setFullResponse(const std::string str);
-		void appendToFulFullResponse(const char *buf, size_t size);
+		void appendToFullResponse(const char *buf, size_t size);
 
 		bool sendOnce(int socket);
 
