@@ -75,8 +75,10 @@ void HttpResponse::setFullResponse(const std::string str)
 	m_fullResponse = str;
 }
 
-void HttpResponse::appendToFulFullResponse(const char *buf, size_t size)
+#include "Logger.hpp"
+void HttpResponse::appendToFullResponse(const char *buf, size_t size)
 {
+	Logger::debug("Appending to full response: " + Number::toString(size) + " bytes");
 	m_fullResponse.append(buf, size);
 }
 

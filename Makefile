@@ -54,8 +54,13 @@ MODULE_KIT_NAME					= $(MODULE_KIT_DIR)/libkit.a
 MODULE_KIT_INCLUDES				= $(MODULE_KIT_DIR)/includes
 MODULE_KIT_FLAGS 				= -L $(MODULE_KIT_DIR) -lkit
 
-MODULES_INCLUDES_FLAGS 			+= -I $(MODULE_BNF_INCLUDES) -I $(MODULE_LOG_INCLUDES) -I $(MODULE_KIT_INCLUDES)
-MODULES_FLAGS 					= $(MODULE_BNF_FLAGS) $(MODULE_LOG_FLAGS) $(MODULE_KIT_FLAGS)
+MODULE_JSON_DIR 				= $(MODULES_DIR)/json
+MODULE_JSON_NAME				= $(MODULE_JSON_DIR)/libjson.a
+MODULE_JSON_INCLUDES			= $(MODULE_JSON_DIR)/includes
+MODULE_JSON_FLAGS 				= -L $(MODULE_JSON_DIR) -ljson
+
+MODULES_INCLUDES_FLAGS 			+= -I $(MODULE_BNF_INCLUDES) -I $(MODULE_LOG_INCLUDES) -I $(MODULE_KIT_INCLUDES) -I $(MODULE_JSON_INCLUDES)
+MODULES_FLAGS 					= $(MODULE_BNF_FLAGS) $(MODULE_LOG_FLAGS) $(MODULE_KIT_FLAGS) $(MODULE_JSON_FLAGS)
 
 INCLUDES_FLAGS					+= $(MODULES_INCLUDES_FLAGS)
 
@@ -72,7 +77,7 @@ COMPILED_SRCS					:= 0
 # rules
 all: $(NAME)
 
-$(NAME): $(MODULE_BNF_NAME) $(MODULE_LOG_NAME) $(MODULE_KIT_NAME) $(OBJS)
+$(NAME): $(MODULE_BNF_NAME) $(MODULE_LOG_NAME) $(MODULE_KIT_NAME) $(MODULE_JSON_NAME) $(OBJS)
 	@echo "\n$(BLUE)$(ALIAS) Linking $(NAME)...$(NC)"
 	@$(CXX) $(CXX_FLAGS) $(OBJS) -o $(NAME) $(INCLUDES_FLAGS) $(MODULES_FLAGS) 
 
@@ -95,6 +100,10 @@ $(MODULE_KIT_NAME): force
 	@echo "$(YELLOW)$(ALIAS) Generating kit module library...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) -C $(MODULE_KIT_DIR);
 
+$(MODULE_JSON_NAME): force
+	@echo "$(YELLOW)$(ALIAS) Generating json module library...$(NC)"
+	@$(MAKE) $(MAKE_FLAGS) -C $(MODULE_JSON_DIR);
+
 clean:
 	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
 	@$(RM) $(BUILD_DIR)
@@ -104,12 +113,14 @@ clean_libs: clean
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_BNF_DIR)
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
+	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_JSON_DIR)
 
 fclean_libs: fclean
 	@echo "$(YELLOW)$(ALIAS) Removing libraries and obj.mk...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_BNF_DIR)
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
+	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_JSON_DIR)
 
 fclean: clean
 	@echo "$(RED)$(ALIAS) Removing $(NAME)...$(NC)"
@@ -143,6 +154,7 @@ gen:
 	$(MAKE) $(MAKE_FLAGS) gen -C $(MODULE_LOG_DIR);
 	$(MAKE) $(MAKE_FLAGS) gen -C $(MODULE_BNF_DIR);
 	$(MAKE) $(MAKE_FLAGS) gen -C $(MODULE_KIT_DIR);
+	$(MAKE) $(MAKE_FLAGS) gen -C $(MODULE_JSON_DIR);
 	@$(MKDIR) $(CONF_DIR)
 	@echo "Generating sources.mk..."
 	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) SRC_FILES 0
