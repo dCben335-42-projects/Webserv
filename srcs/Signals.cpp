@@ -7,6 +7,8 @@ void Signals::sendStop(int signum)
 {
 	(void) signum;
 	EventLoop::destroy();
+	if (!m_isChild)
+		exit(0);
 }
 
 void Signals::catchSigs()

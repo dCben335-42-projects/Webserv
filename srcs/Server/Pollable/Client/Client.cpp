@@ -88,7 +88,7 @@ void Client::handlePostRequest()
 	FileUpload file(m_req);
 
 	if (!m_req.hasUpload())
-		throw Http401Exception();
+		throw Http403Exception();
 	if (!file.isUploadValid())
 		throw Http400Exception();
 	m_req.setBody("File uploaded successfully.");
@@ -317,7 +317,8 @@ void Client::onPollOut()
 void Client::onPollErr()
 {
 	Logger::error("Poll error on client socket.");
-	m_events = 0;
+	m_events		   = 0;
+	m_connectionClosed = true;
 }
 
 void Client::onPollHangUp()

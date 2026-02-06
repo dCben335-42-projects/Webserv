@@ -3,7 +3,7 @@
 size_t		   Logger::m_indent = 0;
 Logger::Target Logger::m_target = Logger::Stdout;
 std::ofstream  Logger::m_file;
-Logger::Format Logger::m_format = Logger::PlainText;
+Logger::Format Logger::m_format = Logger::Json;
 
 std::string Logger::m_customPrefix = "";
 std::string Logger::m_customColor  = "";
