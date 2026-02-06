@@ -13,6 +13,8 @@ class JsonArray : public AJson
 		JsonArray(const Vec<AJson *> &elements);
 		~JsonArray();
 
+		typedef Vec<AJson *>::iterator iterator;
+
 		const Vec<AJson *> &get() const;
 		AJson			   *get(size_t index) const;
 
@@ -21,6 +23,7 @@ class JsonArray : public AJson
 		void remove(size_t index);
 		bool contains(AJson *value) const;
 
+		void create(const char *value);
 		void create(const std::string &value);
 		void create(double value);
 		void create(bool value);

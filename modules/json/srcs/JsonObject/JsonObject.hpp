@@ -13,6 +13,9 @@ class JsonObject : public AJson
 		JsonObject(const Map<std::string, AJson *> &members);
 		~JsonObject();
 
+		typedef Map<std::string, AJson *>::iterator iterator;
+
+
 		const Map<std::string, AJson *> &get() const;
 		const AJson						*get(const std::string &key) const;
 

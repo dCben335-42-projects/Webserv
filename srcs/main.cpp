@@ -26,7 +26,7 @@ void testJson()
 
 	obj->create("address", address);
 
-	Logger::log("JSON Object:" + Logger::get(obj));
+	Logger::log(Logger::get(obj));
 	delete obj;
 }
 

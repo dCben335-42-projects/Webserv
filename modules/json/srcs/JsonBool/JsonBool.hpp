@@ -10,7 +10,9 @@ class JsonBool : public AJson
 
 	public:
 		JsonBool(const bool value);
-		bool get() const;
+
+		bool		get() const;
+		std::string getString() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const JsonBool &b);

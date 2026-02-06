@@ -98,6 +98,17 @@ bool JsonArray::contains(AJson *value) const
 }
 
 
+/**
+ *
+ * @brief Creates a new JSON string with the given value and adds it to the array.
+ *
+ * @param value The value of the JSON string to be created and added to the array.
+ *
+ */
+void JsonArray::create(const char *value)
+{
+	m_elements.push(createString(value));
+}
 
 /**
  *
@@ -158,6 +169,6 @@ void JsonArray::create(const Map<std::string, AJson *> &object)
 
 std::ostream &operator<<(std::ostream &os, const JsonArray &arr)
 {
-	os << Logger::get(LoggerJson::get(arr.get(), true));
+	os << Logger::get(arr.get());
 	return os;
 }
