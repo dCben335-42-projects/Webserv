@@ -15,17 +15,15 @@
 #include <stdexcept>
 #include <iostream>
 #include "File.hpp"
+#include "httpExceptions.hpp"
 
 #include "Config.hpp"
 #include "Location.hpp"
 
 HttpRequest::HttpRequest() :
-	AHttpInboundMessage(),
-	m_queryString("")
+	AHttpInboundMessage()
 {
-}
-HttpRequest::~HttpRequest()
-{
+	reset();
 }
 
 
@@ -38,7 +36,11 @@ HttpRequest &HttpRequest::reset()
 	m_target.clear();
 	m_headers.clear();
 	m_body.clear();
-	m_method = HttpMethod();
+	m_method			= HttpMethod();
+	m_firstLineEndPos	= 0;
+	m_headersEndPos		= 0;
+	m_totalLen			= 0;
+	m_isFirstLineParsed = false;
 	return *this;
 }
 
@@ -131,7 +133,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 {
 	const size_t lineEndSize = std::strlen(HEADER_LINE_ENDING);
 
-	size_t pos = parseFirstLine(m_rawStr) + lineEndSize;
+	size_t pos = m_firstLineEndPos + lineEndSize;
 	AHttpInboundMessage::parse(m_rawStr, pos);
 
 	std::cout << *this << std::endl;
@@ -157,13 +159,13 @@ void HttpRequest::parseTargetQuery(const std::string &path)
 
 	if (queryPos != std::string::npos)
 	{
-		m_target	  = path.substr(0, queryPos);
+		m_target	  = String::urlDecode(path.substr(0, queryPos));
 		m_segments	  = String::split(m_target, "/");
 		m_queryString = path.substr(queryPos + 1);
 		return;
 	}
-	m_segments = String::split(path, "/");
-	m_target   = path;
+	m_target   = String::urlDecode(path);
+	m_segments = String::split(m_target, "/");
 }
 
 /**
@@ -176,10 +178,9 @@ void HttpRequest::parseTargetQuery(const std::string &path)
  */
 void HttpRequest::parseActiveLocations(const Config &config)
 {
-	Vec<const Config::Location *>		 empty;
 	const Map<const Config::Location *> &locs = config.getLocations();
 
-	empty.push(config.getDefaultLocation());
+	m_activeLocations.push(config.getDefaultLocation());
 	for (Vec<std::string>::size_type i = 0; i < m_segments.size(); ++i)
 	{
 		std::string currentPath = "/";
@@ -190,7 +191,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 			currentPath += m_segments[j];
 		}
 		if (locs.has(currentPath))
-			empty.push(locs.get(currentPath));
+			m_activeLocations.push(locs.get(currentPath));
 		if (i == m_segments.size() - 1)
 		{
 			if (m_target[m_target.size() - 1] != '/')
@@ -198,10 +199,9 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		}
 		currentPath += "/";
 		if (locs.has(currentPath))
-			empty.push(locs.get(currentPath));
+			m_activeLocations.push(locs.get(currentPath));
 	}
-	std::sort(empty.begin(), empty.end(), Config::Location::compare);
-	m_activeLocations = empty;
+	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Config::Location::compare);
 }
 
 
@@ -211,20 +211,18 @@ void HttpRequest::parseActiveLocations(const Config &config)
  * @brief Parses the first line of the raw HTTP request string,
  * extracting the HTTP method, target, and version.
  *
- * @param rawRequest The raw HTTP request string.
- *
  * @return The position of the end of the first line.
  *
- * @throws std::invalid_argument if the request line is malformed.
+ * @throws AHttpException if the request line is invalid or has unsupported HTTP version.
  *
  */
-size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
+size_t HttpRequest::parseFirstLine()
 {
-	const size_t lineEnd = rawRequest.find(HEADER_LINE_ENDING);
+	const size_t lineEnd = m_rawStr.find(HEADER_LINE_ENDING);
 	if (lineEnd == std::string::npos)
 		throw std::invalid_argument("Invalid Request Line");
 
-	const std::string requestLine = rawRequest.substr(0, lineEnd);
+	const std::string requestLine = m_rawStr.substr(0, lineEnd);
 	const size_t	  methodEnd	  = requestLine.find(' ');
 	if (methodEnd != std::string::npos)
 		setMethod(HttpMethod(requestLine.substr(0, methodEnd)));
@@ -255,30 +253,63 @@ size_t HttpRequest::parseFirstLine(const std::string &rawRequest)
  *
  * @brief Reads the Content-Length header from the HTTP request.
  *
- * @param request The raw HTTP request string.
- * @param headersEnd The position of the end of the headers in the request string.
+ * @param headers The raw HTTP header string.
+ *
+ * @throws Http400Exception if the Content-Length header is malformed.
  *
  * @return The value of the Content-Length header, or 0 if not present or invalid.
  *
  */
-size_t HttpRequest::readContentLength(std::string request, const size_t headersEnd)
+ssize_t HttpRequest::readContentLength(const std::string &headers)
 {
-	size_t clPos = request.find(HEADER_CONTENT_LENGTH, 0, headersEnd);
+	const size_t len   = headers.size();
+	size_t		 clPos = headers.find(HEADER_CONTENT_LENGTH);
 	if (clPos == std::string::npos)
-		return 0;
+		throw Http400Exception();
+
 
 	clPos += std::strlen(HEADER_CONTENT_LENGTH);
-	while (clPos < headersEnd && std::isspace(static_cast<unsigned char>(request[clPos])))
+	while (clPos < len && std::isspace(static_cast<unsigned char>(headers[clPos])))
 		++clPos;
+	if (headers[clPos] != ':')
+		throw Http400Exception();
 
+
+	++clPos;
+	while (clPos < len && std::isspace(static_cast<unsigned char>(headers[clPos])))
+		++clPos;
 	size_t endPos = clPos;
-	while (endPos < headersEnd && std::isdigit(static_cast<unsigned char>(request[endPos])))
+	while (endPos < len && std::isdigit(static_cast<unsigned char>(headers[endPos])))
 		++endPos;
 
-	if (endPos <= clPos)
-		return 0;
 
-	return Number::toSizeT(request.substr(clPos, endPos - clPos));
+	if (endPos <= clPos)
+		throw Http400Exception();
+	return Number::toSizeT(headers.substr(clPos, endPos - clPos));
+}
+
+
+
+/**
+ *
+ * @brief Reads the HTTP method from the raw request string.
+ *
+ * @param currentRawStr The raw HTTP request string.
+ *
+ * @return A string representing the HTTP method.
+ *
+ */
+std::string HttpRequest::readMethodString(const std::string &currentRawStr) const
+{
+	const size_t lineEnd = currentRawStr.find(HEADER_LINE_ENDING);
+	if (lineEnd == std::string::npos)
+		return "";
+
+	const std::string requestLine = currentRawStr.substr(0, lineEnd);
+	const size_t	  methodEnd	  = requestLine.find(' ');
+	if (methodEnd != std::string::npos)
+		return requestLine.substr(0, methodEnd);
+	return "";
 }
 
 
@@ -334,6 +365,13 @@ std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
 	return resourcePath;
 }
 
+/**
+ *
+ * @brief Retrieves the active auto-index setting from the matched locations.
+ *
+ * @return true if auto-index is enabled, false otherwise.
+ *
+ */
 bool HttpRequest::getActiveAutoIndex() const
 {
 	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
@@ -348,6 +386,62 @@ bool HttpRequest::getActiveAutoIndex() const
 	return false;
 }
 
+
+/**
+ *
+ * @brief Retrieves the upload path from the matched locations.
+ *
+ * @return A string representing the upload path, or an empty string if not set.
+ *
+ */
+std::string HttpRequest::getUploadPath() const
+{
+	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
+	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+
+	while (it != begin)
+	{
+		--it;
+		if ((*it)->hasUpload())
+		{
+			Logger::info("Upload path found: " + (*it)->getUpload());
+			return (*it)->getUpload();
+		}
+	}
+	return "";
+}
+
+
+/**
+ *
+ * @brief Checks if any of the active locations allow file uploads.
+ *
+ * @return true if uploads are allowed, false otherwise.
+ *
+ */
+bool HttpRequest::hasUpload() const
+{
+	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
+	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+
+	while (it != begin)
+	{
+		--it;
+		if ((*it)->hasUpload())
+			return true;
+	}
+	return false;
+}
+
+
+/**
+ *
+ * @brief Checks if the HTTP method of the request is allowed
+ * based on the active locations' configurations.
+ *
+ * @return true if the method is allowed, false otherwise.
+ *
+ */
 bool HttpRequest::isAllowedMethod() const
 {
 	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
@@ -362,6 +456,46 @@ bool HttpRequest::isAllowedMethod() const
 	return true;
 }
 
+
+
+/**
+ *
+ * @brief Checks if the HTTP request is complete,
+ * meaning it has received all headers and body based on Content-Length.
+ *
+ * @note Updates m_totalLen member.
+ * @note Updates m_isFirstLineParsed member.
+ * @note Updates m_firstLineEndPos member.
+ *
+ * @note It is meant to be called multiple times as data is read from the socket.
+ *
+ * @throws AHttpException if the request is malformed.
+ *
+ * @return true if the request is complete, false otherwise.
+ *
+ */
+bool HttpRequest::isComplete()
+{
+	if (m_totalLen)
+		return m_rawStr.size() >= m_totalLen;
+	if (!m_isFirstLineParsed)
+	{
+		size_t headersEnd = m_rawStr.find(HEADER_ENDING);
+		if (headersEnd == std::string::npos)
+			return false;
+		m_headersEndPos		= headersEnd;
+		m_firstLineEndPos	= parseFirstLine();
+		m_isFirstLineParsed = true;
+	}
+	const HttpMethod::Type methodType = m_method.getType();
+	if (methodType != HttpMethod::POST &&
+		methodType != HttpMethod::PUT &&
+		methodType != HttpMethod::PATCH)
+		return true;
+	const ssize_t contentLength = readContentLength(m_rawStr);
+	m_totalLen					= m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
+	return m_rawStr.size() >= m_totalLen;
+}
 
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)

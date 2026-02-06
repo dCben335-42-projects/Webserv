@@ -7,8 +7,9 @@
 
 #include "Location.hpp"
 #include "CgiParams.hpp"
+#include "cgiEnv.hpp"
 
-#include "Logger.hpp"
+#include "Signals.hpp"
 
 CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	m_req(req),
@@ -20,7 +21,11 @@ CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	std::cout << m_has_post_data << std::endl;
 }
 
-void CgiSpawner::spawn(const std::string &script_path)
+CgiSpawner::~CgiSpawner()
+{
+}
+
+void CgiSpawner::spawn()
 {
 	setupPipes();
 	setupEnv();
@@ -37,8 +42,14 @@ void CgiSpawner::spawn(const std::string &script_path)
 			close(m_stdinPipe[0]);
 	}
 	if (m_pid == 0)
-		childprocess(script_path);
-	parentProcess();
+		childprocess();
+	close(m_stdoutPipe[1]);
+	close(m_stdinPipe[0]);
+	if (!m_has_post_data)
+	{
+		close(m_stdinPipe[1]);
+		m_stdinPipe[1] = -1;
+	}
 }
 
 void CgiSpawner::setupPipes()
@@ -65,51 +76,59 @@ std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &va
 
 void CgiSpawner::setupEnv()
 {
-	m_env.push(makeEnvVar("HTTP_ACCEPT", m_req.getHeader(HEADER_ACCEPT)));
-	m_env.push(makeEnvVar("HTTP_ACCEPT_ENCODING", m_req.getHeader(HEADER_ACCEPT_ENCODING)));
-	m_env.push(makeEnvVar("HTTP_ACCEPT_LANGUAGE", m_req.getHeader(HEADER_ACCEPT_LANGUAGE)));
-	m_env.push(makeEnvVar("HTTP_USER_AGENT", m_req.getHeader(HEADER_USER_AGENT)));
-	m_env.push(makeEnvVar("HTTP_COOKIE", m_req.getHeader(HEADER_COOKIE)));
-
-	m_env.push(makeEnvVar("GATEWAY_INTERFACE", GATEWAY_INTERFACE));
-	m_env.push(makeEnvVar("REQUEST_METHOD", m_req.getMethod().getStrType()));
-	m_env.push(makeEnvVar("HTTP_HOST", m_req.getHeader(HEADER_HOST)));
-	m_env.push(makeEnvVar("SERVER_NAME", SERVER_NAME));
-	m_env.push(makeEnvVar("SCRIPT_NAME", m_req.getTarget()));
-	m_env.push(makeEnvVar("SERVER_PROTOCOL", PROTOCOL));
-	m_env.push(makeEnvVar("PATH_INFO", "\"\""));
-
+	m_env.push(makeEnvVar(CGI_AUTH_TYPE, ""));
+	m_env.push(makeEnvVar(CGI_GATEWAY_INTERFACE, GATEWAY_INTERFACE));
+	m_env.push(makeEnvVar(CGI_PATH_INFO, m_pathInfo));
+	m_env.push(makeEnvVar(CGI_PATH_TRANSLATED, m_scriptPath));
+	m_env.push(makeEnvVar(CGI_QUERY_STRING, m_req.getQueryString()));
+	m_env.push(makeEnvVar(CGI_REMOTE_ADDR, m_req.getHeader(HEADER_REMOTE_ADRESS)));
+	m_env.push(makeEnvVar(CGI_REMOTE_HOST, m_req.getHeader(HEADER_REMOTE_HOST)));
+	m_env.push(makeEnvVar(CGI_REQUEST_METHOD, m_req.getMethod().getStrType()));
+	m_env.push(makeEnvVar(CGI_SCRIPT_NAME, m_scriptName));
+	m_env.push(makeEnvVar(CGI_SERVER_NAME, SERVER_NAME));
+	m_env.push(makeEnvVar(CGI_SERVER_PORT, Number::toString(m_config.getPort())));
+	m_env.push(makeEnvVar(CGI_SERVER_PROTOCOL, PROTOCOL));
+	m_env.push(makeEnvVar(CGI_SERVER_SOFTWARE, SERVER_NAME));
 	if (m_has_post_data)
 	{
-		m_env.push(makeEnvVar("CONTENT_TYPE", m_req.getHeader(HEADER_CONTENT_TYPE)));
-		m_env.push(makeEnvVar("CONTENT_LENGTH", m_req.getHeader(HEADER_CONTENT_LENGTH)));
+		m_env.push(makeEnvVar(CGI_CONTENT_TYPE, m_req.getHeader(HEADER_CONTENT_TYPE)));
+		m_env.push(makeEnvVar(CGI_CONTENT_LENGTH, m_req.getHeader(HEADER_CONTENT_LENGTH)));
 	}
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT, m_req.getHeader(HEADER_ACCEPT)));
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT_LANGUAGE, m_req.getHeader(HEADER_ACCEPT_LANGUAGE)));
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT_CHARSET, m_req.getHeader(HEADER_ACCEPT_CHARSET)));
+	m_env.push(makeEnvVar(CGI_HTTP_ACCEPT_ENCODING, m_req.getHeader(HEADER_ACCEPT_ENCODING)));
+	m_env.push(makeEnvVar(CGI_HTTP_TRANSFER_ENCODING, m_req.getHeader(HEADER_TRANSFER_ENCODING)));
+	m_env.push(makeEnvVar(CGI_HTTP_CONTENT_ENCODING, m_req.getHeader(HEADER_CONTENT_ENCODING)));
+	m_env.push(makeEnvVar(CGI_HTTP_EXPIRES, m_req.getHeader(HEADER_EXPIRES)));
+	m_env.push(makeEnvVar(CGI_HTTP_USER_AGENT, m_req.getHeader(HEADER_USER_AGENT)));
+	m_env.push(makeEnvVar(CGI_HTTP_COOKIE, m_req.getHeader(HEADER_COOKIE)));
+	m_env.push(makeEnvVar(CGI_HTTP_REFERER, m_req.getHeader(HEADER_REFERER)));
 }
 
 #include <stdio.h>
-void CgiSpawner::childprocess(const std::string &script_path)
+#include <ctime>
+void CgiSpawner::childprocess()
 {
-	(void) script_path;
-	(void) m_config;
-	return;
-	// const std::string &fileExt = File::determineExtension(, NULL);
-	// const std::string &bin	   = m_config.getCgiBin(m_req.getTarget(), );
-	// char *const		   argv[3] = {
-	// 	   const_cast<char *>(bin.c_str()),
-	// 	   const_cast<char *>(script_path.c_str()),
-	// 	   NULL};
-	// generateEnvp();
-	// if (dup2(m_stdinPipe[0], STDIN_FILENO) == -1)
-	// 	throw std::runtime_error("Dup2 failed");
-	// close(m_stdinPipe[1]);
-	// close(m_stdinPipe[0]);
-	// if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
-	// 	throw std::runtime_error("Dup2 failed");
-	// close(m_stdoutPipe[0]);
-	// close(m_stdoutPipe[1]);
-	// execve(argv[0], argv, m_envp);
-	// perror("execve: ");
-	// exit(127);
+	Signals::setIsChild(true);
+	char *const argv[3] = {
+		const_cast<char *>(m_binPath.c_str()),
+		const_cast<char *>(m_scriptPath.c_str()),
+		NULL};
+	generateEnvp();
+	if (dup2(m_stdinPipe[0], STDIN_FILENO) == -1)
+		throw std::runtime_error("Dup2 failed");
+	close(m_stdinPipe[1]);
+	close(m_stdinPipe[0]);
+	if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
+		throw std::runtime_error("Dup2 failed");
+	close(m_stdoutPipe[0]);
+	close(m_stdoutPipe[1]);
+	execve(argv[0], argv, m_envp);
+	perror("execve");
+	EventLoop::destroy();
+	(*this).~CgiSpawner();
+	exit(127);
 }
 
 void CgiSpawner::generateEnvp()
@@ -120,15 +139,44 @@ void CgiSpawner::generateEnvp()
 	m_envp[i] = NULL;
 }
 
-void CgiSpawner::parentProcess()
+ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments)
 {
-	close(m_stdoutPipe[1]);
-	const std::string &body = m_req.getBody();
-	write(m_stdinPipe[1], body.data(), body.size());
-	close(m_stdinPipe[0]);
-	close(m_stdinPipe[1]);
+	for (size_t i = 0; i < urlSegments.size(); i++)
+	{
+		std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
+		if (fileExtension.empty())
+			continue;
+		if (!m_activeBinMap.has(fileExtension))
+			continue;
+		m_binPath	 = m_activeBinMap.get(fileExtension);
+		m_scriptPath = m_req.buildResourcePath(i);
+		return i;
+	}
+	return -1;
 }
 
+void CgiSpawner::buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex)
+{
+	for (Vec<std::string>::const_iterator it = urlSegments.begin() + scriptIndex + 1; it != urlSegments.end(); it++)
+	{
+		m_pathInfo.append("/");
+		m_pathInfo.append(*it);
+	}
+	const std::string target = m_req.getTarget();
+	if (target.at(target.size() - 1) == '/')
+		m_pathInfo.append("/");
+}
+
+void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex)
+{
+	for (Vec<std::string>::const_iterator it = urlSegments.begin(); it != urlSegments.begin() + scriptIndex + 1; it++)
+	{
+		m_scriptName.append("/");
+		m_scriptName.append(*it);
+	}
+}
+
+// TODO Need access() the binary but where ?
 bool CgiSpawner::isCgi()
 {
 	try
@@ -141,37 +189,30 @@ bool CgiSpawner::isCgi()
 			if ((*it)->getCgiParams())
 				cgiParams.push((*it)->getCgiParams());
 		}
-		Map<std::string> activeBinMap;
 		for (Vec<const Config::CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
 		{
 			const Map<std::string> binMap = (*it)->getBinMap();
 			for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)
 			{
 				std::string first = mit->first;
-				activeBinMap.set(first, mit->second);
+				m_activeBinMap.set(first, mit->second);
 			}
 		}
-		Logger::log("active bin map " + LoggerJson::get(activeBinMap));
-		// TODO change to ref
-		Vec<std::string> urlSegments = m_req.getSegments();
-		for (Vec<std::string>::iterator it = urlSegments.begin(); it != urlSegments.end(); it++)
-		{
-			std::string fileExtension = File::determineExtension((*it), NULL);
-			if (fileExtension.empty())
-				continue;
-			if (!activeBinMap.has(fileExtension))
-				continue;
-			m_binPath = activeBinMap.get(fileExtension);
-			Logger::log(m_binPath);
-			break;
-		}
+		const Vec<std::string> &urlSegments = m_req.getSegments();
+		ssize_t					scriptIndex = getScriptIndex(urlSegments);
+		if (scriptIndex == -1)
+			return false;
+		if (FileHandler::fileExists(m_scriptPath) && !FileHandler::hasReadPermission(m_scriptPath))
+			throw Http403Exception();
+		buildPathInfo(urlSegments, scriptIndex);
+		buildScriptName(urlSegments, scriptIndex);
 	}
 	catch (const FileHandler::FileHandlerException &e)
 	{
 		std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
-	return false;
+	return true;
 }
 
 /**
@@ -186,17 +227,19 @@ bool CgiSpawner::isCgi()
  * @param scriptPath The path to the CGI script to be executed.
  *
  */
-void CgiSpawner::spawnCgi(const std::string &scriptPath, Client *const client)
+void CgiSpawner::spawnCgi(Client *const client)
 {
-	spawn(scriptPath);
+	spawn();
 	if (m_stdoutPipe[0] >= 0)
 	{
 		CgiPipe *cgiPipeOut = new CgiPipe(m_pid, m_stdoutPipe[0], client);
 		EventLoop::addHandler(cgiPipeOut);
+		cgiPipeOut->setEvents(POLLIN);
 	}
 	if (m_stdinPipe[1] >= 0)
 	{
-		CgiPipe *cgiPipeIn = new CgiPipe(m_pid, m_stdinPipe[1], client);
+		CgiPipe *cgiPipeIn = new CgiPipe(-1, m_stdinPipe[1], client);
 		EventLoop::addHandler(cgiPipeIn);
+		cgiPipeIn->setEvents(POLLOUT);
 	}
 }

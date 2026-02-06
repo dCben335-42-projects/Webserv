@@ -5,7 +5,7 @@
 #include "../includes/Logger.hpp"
 #include "IsType.hpp"
 #include <sstream>
-
+#include "Number.hpp"
 
 /**
  *
@@ -44,7 +44,10 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 		}
 		else
 		{
-			if (!is_string<ValueType>::value && !is_char<ValueType>::value && !is_number<ValueType>::value)
+			Logger::get(ValueType());
+			if (!is_string<ValueType>::value &&
+				!is_char<ValueType>::value &&
+				!is_number<ValueType>::value)
 			{
 				result += "\n";
 				Logger::incrementIndent();
@@ -66,7 +69,7 @@ std::string LoggerJson::mapGet(const MapType &m, const bool getAddress)
 			result += "\n";
 	}
 	Logger::decrementIndent();
-	result += "}";
+	result += Logger::indent() + "}";
 	return result;
 }
 

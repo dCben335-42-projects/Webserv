@@ -95,48 +95,6 @@ void Config::setDomain(const std::string &domain)
 	m_domain = domain;
 }
 
-/**
- *
- * @brief Gets the root directory for the specified location path.
- *
- * @param locationPath The path of the location.
- *
- * @return The root directory as a constant reference to a string.
- *
- */
-const std::string &Config::getRoot(const std::string &locationPath) const
-{
-	if (m_locations.has(locationPath))
-	{
-		const std::string &root = m_locations.get(locationPath)->getRoot();
-		if (!root.empty())
-			return root;
-	}
-	return m_defaultLocation->getRoot();
-}
-/**
- *
- * @brief Gets the CGI binary directory for the specified location path.
- * @param locationPath The path of the location.
- *
- * @return The CGI binary directory as a constant reference to a string.
- *
- */
-const std::string &Config::getCgiBin(const std::string &locationPath, std::string &fileExt) const
-{
-	(void) locationPath;
-	(void) fileExt;
-	static const std::string emptyString = "";
-	// const Config::CgiParams *cgiParams	 = NULL;
-
-	// if (m_locations.has(locationPath))
-	// 	cgiParams = m_locations.get(locationPath)->getCgiParams();
-	// if (!cgiParams)
-	// 	cgiParams = m_defaultLocation->getCgiParams();
-	// if (cgiParams)
-	// 	return cgiParams->getBinFromMap(fileExt);
-	return emptyString;
-}
 
 /**
  *
@@ -147,35 +105,24 @@ const std::string &Config::getCgiBin(const std::string &locationPath, std::strin
  * @return The index file as a constant reference to a string.
  *
  */
-const std::string &Config::getIndexFile(const std::string &locationPath) const
+const std::string Config::getIndexFile(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-	{
-		const std::string &indexFile = m_locations.get(locationPath)->getIndexFile();
-		if (!indexFile.empty())
-			return indexFile;
-	}
-	return m_defaultLocation->getIndexFile();
+		return m_locations.get(locationPath)->getIndexFile();
+	if (locationPath == "/")
+		return m_defaultLocation->getIndexFile();
+	return "";
 }
 
-/**
- *
- * @brief Gets whether auto-indexing is enabled for the specified location path.
- *
- * @param locationPath The path of the location.
- *
- * @return true if auto-indexing is enabled, false otherwise.
- *
- */
-bool Config::getAutoIndex(const std::string &locationPath) const
+bool Config::hasIndexFile(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-	{
-		if (m_locations.get(locationPath)->getAutoIndex())
-			return true;
-	}
-	return m_defaultLocation->getAutoIndex();
+		return m_locations.get(locationPath)->hasIndexFile();
+	if (locationPath == "/")
+		return m_defaultLocation->hasIndexFile();
+	return false;
 }
+
 
 Config::Location const *Config::getDefaultLocation() const
 {
@@ -186,6 +133,8 @@ const Map<const Config::Location *> &Config::getLocations() const
 {
 	return m_locations;
 }
+
+
 
 
 

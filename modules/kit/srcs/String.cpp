@@ -66,6 +66,14 @@ std::string String::trim(const std::string &str)
 	return str.substr(start, end - start);
 }
 
+std::string String::trimBegin(const std::string &str)
+{
+	size_t start = 0;
+	while (start < str.size() && std::isspace(static_cast<unsigned char>(str[start])))
+		++start;
+	return str.substr(start);
+}
+
 
 /**
  *
@@ -207,7 +215,45 @@ std::string String::removeDuplicateSlashes(const std::string &path)
 	}
 	return result;
 }
-#include <iostream>
+
+/**
+ *
+ * @brief Decodes a URL-encoded string.
+ *
+ * @param str The input URL-encoded string.
+ *
+ * @return A new string with URL-encoded characters decoded.
+ *
+ */
+std::string String::urlDecode(const std::string &str)
+{
+	std::string result;
+	result.reserve(str.size());
+	for (size_t i = 0; i < str.size(); ++i)
+	{
+		if (str[i] == '%')
+		{
+			if (i + 2 < str.size())
+			{
+				std::string hexStr	 = str.substr(i + 1, 2);
+				char		charCode = static_cast<char>(std::strtol(hexStr.c_str(), NULL, 16));
+				result += charCode;
+				i += 2;
+			}
+		}
+		else if (str[i] == '+')
+		{
+			result += ' ';
+		}
+		else
+		{
+			result += str[i];
+		}
+	}
+	return result;
+}
+
+
 /**
  *
  * @brief Splits a string into tokens based on specified delimiters.
@@ -232,6 +278,25 @@ Vec<std::string> String::split(const std::string &str, const char *delimiters)
 		if (!token.empty())
 			result.push_back(token);
 		start = (end == std::string::npos) ? end : end + 1;
+	}
+	return result;
+}
+
+Vec<std::string> String::splitPattern(const std::string &str, const std::string &pattern)
+{
+	Vec<std::string> result;
+	size_t			 start = 0;
+	size_t			 end   = 0;
+	std::string		 token;
+	const size_t	 boundaryLen = pattern.size();
+
+	while (end != std::string::npos)
+	{
+		end	  = str.find(pattern, start);
+		token = str.substr(start, end - start);
+		if (!token.empty())
+			result.push_back(token);
+		start = end + boundaryLen;
 	}
 	return result;
 }

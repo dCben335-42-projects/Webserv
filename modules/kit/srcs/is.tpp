@@ -23,13 +23,18 @@ struct is_same<A, A> {
 // ANCHOR: String and Char type traits
 template<typename V>
 struct is_string {
-    static const bool value = is_same<V, std::string>::value;
+    static const bool value = is_same<V, std::string>::value || is_same<V, const std::string>::value;
 };
 
 
 template<typename V>
 struct is_char {
-    static const bool value = is_same<V, char>::value;
+    static const bool value = is_same<V, char>::value || is_same<V, const char>::value;
+};
+
+template<typename V>
+struct is_char_ptr {
+    static const bool value = is_same<V, char *>::value || is_same<V, const char *>::value;
 };
 
 template<typename V>
@@ -82,6 +87,11 @@ struct is_unsigned_short {
 };
 
 template<typename V>
+struct is_bool {
+    static const bool value = is_same<V, bool>::value;
+};
+
+template<typename V>
 struct is_number {
     static const bool value =
         is_int<V>::value ||
@@ -91,7 +101,8 @@ struct is_number {
         is_short<V>::value ||
         is_unsigned_int<V>::value ||
         is_unsigned_long<V>::value ||
-        is_unsigned_short<V>::value;
+        is_unsigned_short<V>::value ||
+        is_bool<V>::value;
 };
 
 

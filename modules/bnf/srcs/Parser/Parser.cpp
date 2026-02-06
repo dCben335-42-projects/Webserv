@@ -2,7 +2,6 @@
 #include <iostream>
 #include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
-#include "Json.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -231,8 +230,10 @@ bool Parser::isFullyOptional(const ARule &rule) const
 	{
 		if (item->isTerminalChar())
 			continue;
-		const Vec<ConceptDef *> &def = m_semantic.getConceptDefs(item->getValue());
-		for (Vec<ConceptDef *>::const_iterator cdef = def.begin(); cdef != def.end(); ++cdef)
+		Concept			 *cpt = m_semantic.getConcepts().get(item->getValue());
+		Vec<ConceptDef *> def = cpt->getDefinitions();
+
+		for (Vec<ConceptDef *>::iterator cdef = def.begin(); cdef != def.end(); ++cdef)
 		{
 			ARulePath rules				= (*cdef)->getRules();
 			size_t	  isOptionalCounter = 0;

@@ -1,24 +1,21 @@
 #include "Client.hpp"
 #include "httpExceptions.hpp"
-
 #include "CgiSpawner.hpp"
 #include "httpMimes.hpp"
-
-
 #include "FileHandler.hpp"
 #include "FileUpload.hpp"
 #include "Date.hpp"
-
 #include "IndexOf.hpp"
-
 #include "Logger.hpp"
-
+#include "EventLoop.hpp"
+#include "webserv.hpp"
 
 Client::Client(int fd, const Config &config) :
 	Pollable(fd),
 	m_serverConfig(config)
 {
 	m_events = POLLIN;
+	EventLoop::addHandler(this);
 }
 
 Client::~Client()
@@ -26,7 +23,6 @@ Client::~Client()
 	if (m_fd != -1)
 		close(m_fd);
 }
-
 
 /**
  *
@@ -58,7 +54,6 @@ HttpResponse &Client::getResponse()
 	return m_res;
 }
 
-
 /**
  *
  * @brief Sets the events for the client.
@@ -77,7 +72,6 @@ void Client::setEvents(const short events)
 	m_events = events;
 }
 
-
 /**
  *
  * @brief Handles HTTP POST requests.
@@ -93,16 +87,26 @@ void Client::handlePostRequest()
 {
 	FileUpload file(m_req);
 
+	if (!m_req.hasUpload())
+		throw Http401Exception();
 	if (!file.isUploadValid())
 		throw Http400Exception();
+	m_req.setBody("File uploaded successfully.");
+	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
+	m_res.setStatusCode(201);
 }
 
-void Client::handleDeleteRequest()
+void Client::handleDeleteRequest(const std::string &ressourcePath)
 {
+	const char *fullPath = ressourcePath.c_str();
+	if (access(fullPath, F_OK) == -1)
+		throw Http404Exception();
+	if (access(fullPath, R_OK | W_OK) == -1)
+		throw Http403Exception();
+	std::remove(fullPath);
 	m_res.setStatusCode(204);
+	m_res.setBody("File deleted successfully.");
 }
-
-
 
 
 /**
@@ -119,27 +123,32 @@ void Client::handleDeleteRequest()
  */
 void Client::handleGetRequest(std::string ressourcePath)
 {
-	const std::string target = m_req.getTarget();
+	const std::string target		  = m_req.getTarget();
+	const size_t	  targetLen		  = target.length();
+	bool			  isFolderRequest = targetLen && target[targetLen - 1] == '/';
 
 	try
 	{
-		if (FileHandler::folderExists(ressourcePath))
+		if (isFolderRequest && FileHandler::folderExists(ressourcePath))
 		{
-			if (m_req.getActiveAutoIndex())
+			const std::string fallbackPath = ressourcePath + "/" + FALLBACK_INDEX;
+			if (m_serverConfig.hasIndexFile(target))
+			{
+				const std::string indexPath = ressourcePath + "/" + m_serverConfig.getIndexFile(target);
+				if (!FileHandler::fileExists(indexPath))
+					throw Http403Exception();
+				ressourcePath = indexPath;
+			}
+			else if (FileHandler::fileExists(fallbackPath))
+				ressourcePath = fallbackPath;
+			else if (m_req.getActiveAutoIndex())
 			{
 				IndexOf index(ressourcePath, target);
 				m_res.setBody(index.getPage());
 				m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-				const std::string date = Date::getCurrentDate();
-				if (!date.empty())
-					m_res.setHeader(HEADER_DATE, date);
 				m_res.setStatusCode(200);
 				return;
 			}
-			const std::string indexFile = m_serverConfig.getIndexFile(target);
-			if (indexFile.empty())
-				throw Http403Exception();
-			ressourcePath = ressourcePath + "/" + indexFile;
 		}
 		m_res.setBody(FileHandler::readFile(ressourcePath));
 		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
@@ -159,65 +168,44 @@ void Client::handleGetRequest(std::string ressourcePath)
  *
  * @brief Prepares the HTTP response based on the client's request.
  *
- * This function determines the requested resource, reads the corresponding file,
- * and sets up the HTTP response with appropriate headers and body.
+ * This function determines the requested method (GET, POST, DELETE), 
+ * validates it, and calls the appropriate handler to process the request.
+ * 
+ * It also checks if the request is for a CGI script
+ * and spawns the CGI handler if necessary.
  *
- * @note If the requested resource is not found or an error occurs,
- * the response will contain an error page.
- *
- * @see FileHandler for file operations and error handling.
+ * 
+ * @throws AHttpException for various HTTP errors
+ * 
+ * @return false if a CGI script is being handled, true otherwise.
  *
  */
-void Client::prepareResponse()
+bool Client::prepareResponse()
 {
-	CgiSpawner		  cgiHandler(m_req, m_serverConfig);
-	const size_t	  segmentSize	= m_req.getSegmentSize();
-	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
+	CgiSpawner cgiHandler(m_req, m_serverConfig);
 
 	if (!m_req.isAllowedMethod())
 		throw Http403Exception();
 	if (cgiHandler.isCgi())
 	{
-		cgiHandler.spawnCgi("files/www/website/" + m_req.getTarget(), this);
+		cgiHandler.spawnCgi(this);
 		m_events = 0;
-		return;
+		return false;
 	}
-	const HttpMethod::Type method = m_req.getMethod().getType();
+
+	const size_t		   segmentSize	 = m_req.getSegmentSize();
+	const std::string	   ressourcePath = m_req.buildResourcePath(segmentSize - 1);
+	const HttpMethod::Type method		 = m_req.getMethod().getType();
 	if (method == HttpMethod::GET)
 		handleGetRequest(ressourcePath);
 	else if (method == HttpMethod::POST)
 		handlePostRequest();
 	else if (method == HttpMethod::DELETE)
-		handleDeleteRequest();
+		handleDeleteRequest(ressourcePath);
 	else
 		throw Http405Exception(m_req.getMethod().getStrType());
-}
-
-/**
- *
- * @brief Checks if the HTTP request from the client is complete.
- *
- * This function verifies if the entire HTTP request has been received
- * by checking for the end of headers and the content length.
- *
- * @return true if the request is complete, false otherwise.
- *
- */
-bool Client::isRequestComplete()
-{
-	const std::string rawRequest = m_req.getRawRequest();
-	size_t			  headersEnd = rawRequest.find(HEADER_ENDING);
-	if (headersEnd == std::string::npos)
-		return false;
-	const size_t contentLength = m_req.readContentLength(rawRequest, headersEnd);
-	const size_t totalLength   = headersEnd + std::strlen(HEADER_ENDING) + contentLength;
-
-	if (rawRequest.size() < totalLength)
-		return false;
 	return true;
 }
-
-
 
 
 
@@ -241,50 +229,48 @@ void Client::onPollIn()
 		m_events = 0;
 		return;
 	}
-	if (!isRequestComplete())
-	{
-		m_events = POLLIN;
-		return;
-	}
 	try
 	{
+		if (!m_req.isComplete())
+			return;
 		m_req.parse(m_serverConfig);
-		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
-		prepareResponse();
-		const std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
+		if (!prepareResponse())
+			return;
 	}
 	catch (const AHttpException &e)
 	{
 		m_res.reset();
-		const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-		if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-			m_res.setHeader(HEADER_CONNECTION, connectionHeader == HEADER_CONNECTION_KEEP_ALIVE ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
-		const std::string date = Date::getCurrentDate();
-		if (!date.empty())
-			m_res.setHeader(HEADER_DATE, date);
 		m_res.setStatusCode(e.getStatusCode());
 		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 		m_res.setBody(e.getPage());
 	}
+	const std::string date = Date::getCurrentHttpDate();
+	if (!date.empty())
+		m_res.setHeader(HEADER_DATE, date);
+	m_res.setHeader(HEADER_CONNECTION, shouldCloseConnection() ? HEADER_CONNECTION_CLOSE : HEADER_CONNECTION_KEEP_ALIVE);
 	m_res.build();
 	m_events = POLLOUT;
 }
 
+
+/**
+ *
+ * @brief Determines if the connection should be closed after the response.
+ *
+ * This function checks the "Connection" header in the HTTP request
+ * to decide whether to keep the connection alive or close it.
+ *
+ * @return true if the connection should be closed, false otherwise.
+ *
+ */
 bool Client::shouldCloseConnection() const
 {
-	const Map<std::string>			&headers = m_req.getHeaders();
-	Map<std::string>::const_iterator it		 = headers.find(HEADER_CONNECTION);
-	if (it != headers.end())
-	{
-		if (it->second == "close")
-			return true;
-		else if (it->second == "keep-alive")
-			return false;
-	}
+	const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
+
+	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+		return false;
+	if (connectionHeader == HEADER_CONNECTION_CLOSE)
+		return true;
 	return true;
 }
 
@@ -309,7 +295,6 @@ void Client::onPollOut()
 			m_events		   = 0;
 			return;
 		}
-		Logger::info("Response sent to client. Waiting for new request.");
 		m_req.reset();
 		m_res.reset();
 		m_events = POLLIN;

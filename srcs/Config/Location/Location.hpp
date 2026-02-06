@@ -12,6 +12,8 @@ class Config::Location
 		std::string m_root;
 		std::string m_alias;
 		std::string m_indexFile;
+		std::string m_upload;
+
 
 		const Config::CgiParams *m_cgi;
 
@@ -20,6 +22,7 @@ class Config::Location
 
 		bool m_hasAutoIndex;
 		bool m_autoIndex;
+
 
 	public:
 		Location(
@@ -46,6 +49,7 @@ class Config::Location
 		bool					 getAutoIndex() const;
 		const Config::CgiParams *getCgiParams() const;
 		const Set<HttpMethod>	&getAllowedMethods() const;
+		const std::string		&getUpload() const;
 
 		bool hasAlias() const;
 		bool hasCgi() const;
@@ -54,6 +58,7 @@ class Config::Location
 		bool hasAutoIndexSet() const;
 		bool hasCgiParams() const;
 		bool hasMethods() const;
+		bool hasUpload() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
@@ -62,6 +67,7 @@ class Config::Location
 		void setAutoIndex(const bool autoIndex);
 		void setCgiParams(const Config::CgiParams *cgi);
 		void setMethods(const Set<HttpMethod> &methods);
+		void setUpload(const std::string &upload);
 };
 
 std::ostream &operator<<(std::ostream &os, const Config::Location &location);

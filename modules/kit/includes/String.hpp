@@ -17,6 +17,8 @@ class String
 		static std::string toLower(const std::string &str);
 
 		static std::string trim(const std::string &str);
+		static std::string trimBegin(const std::string &str);
+
 		static std::string htmlEscape(const std::string &input);
 
 		static void replaceAll(
@@ -30,8 +32,10 @@ class String
 			const std::string &to);
 
 		static std::string removeDuplicateSlashes(const std::string &path);
+		static std::string urlDecode(const std::string &str);
 
 		static Vec<std::string> split(const std::string &str, const char *delimiters);
+		static Vec<std::string> splitPattern(const std::string &str, const std::string &pattern);
 };
 
 #endif

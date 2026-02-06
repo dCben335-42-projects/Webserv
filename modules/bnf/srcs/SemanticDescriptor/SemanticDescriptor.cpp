@@ -274,17 +274,17 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
-	Concept *concept;
+	Concept	   *cpt;
 	ConceptDef *conceptDef = new ConceptDef(m_lastKey);
 
-	if (!m_concepts.try_get(m_lastKey, concept))
+	if (!m_concepts.try_get(m_lastKey, cpt))
 	{
-		concept = new Concept(m_lastKey);
-		m_concepts.set(m_lastKey, concept);
+		cpt = new Concept(m_lastKey);
+		m_concepts.set(m_lastKey, cpt);
 	}
 
-	const size_t conceptDefIndex = concept->getDefinitions().size();
-	concept->pushDef(conceptDef);
+	size_t conceptDefIndex = cpt->getDefinitions().size();
+	cpt->pushDef(conceptDef);
 
 	const Vec<std::string> words = splitwords(m_content.substr(cursor));
 	Logger::log(words);
@@ -302,7 +302,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
-		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, concept, conceptDef);
+		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, cpt, conceptDef);
 
 		if (map.hasClosure)
 		{

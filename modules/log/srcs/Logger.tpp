@@ -42,23 +42,7 @@ std::string Logger::get(T *ptr)
 		return LoggerPlain::get(*ptr);
 	return LoggerJson::get(*ptr);
 }
-// /**
-//  *
-//  * @brief Get the string representation of a const pointer to a value.
-//  *
-//  * @param ptr The const pointer to the value to get the string representation of.
-//  *
-//  * @return std::string The string representation of the value pointed to.
-//  *
-//  */
-// template <typename T>
-// std::string Logger::get(T const *ptr)
-// {
-// 	if (ptr)
-// 		return Logger::get(*ptr);
-// 	else
-// 		return "null";
-// }
+
 
 /**
  *
@@ -68,9 +52,10 @@ std::string Logger::get(T *ptr)
  *
  */
 template <typename V>
-void Logger::log(const V &v)
+Logger &Logger::log(const V &v)
 {
 	stream() << indent() << Logger::get(v) << std::endl;
+	return instance();
 }
 
 
@@ -82,7 +67,7 @@ void Logger::log(const V &v)
  *
  */
 template <typename V>
-void Logger::log(V *ptr)
+Logger &Logger::log(V *ptr)
 {
 	if (ptr)
 	{
@@ -90,6 +75,7 @@ void Logger::log(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
+	return instance();
 }
 
 
@@ -102,9 +88,9 @@ void Logger::log(V *ptr)
  *
  */
 template <typename V>
-void Logger::info(const V &v)
+Logger &Logger::info(const V &v)
 {
-	Logger::log(LOG_INFO_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(LOG_INFO_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -114,7 +100,7 @@ void Logger::info(const V &v)
  *
  */
 template <typename V>
-void Logger::info(V *ptr)
+Logger &Logger::info(V *ptr)
 {
 	if (ptr)
 	{
@@ -122,6 +108,7 @@ void Logger::info(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
+	return instance();
 }
 
 
@@ -135,9 +122,9 @@ void Logger::info(V *ptr)
  *
  */
 template <typename V>
-void Logger::error(const V &v)
+Logger &Logger::error(const V &v)
 {
-	Logger::log(LOG_ERROR_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(LOG_ERROR_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -147,7 +134,7 @@ void Logger::error(const V &v)
  *
  */
 template <typename V>
-void Logger::error(V *ptr)
+Logger &Logger::error(V *ptr)
 {
 	if (ptr)
 	{
@@ -155,6 +142,7 @@ void Logger::error(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
+	return instance();
 }
 
 
@@ -167,9 +155,9 @@ void Logger::error(V *ptr)
  *
  */
 template <typename V>
-void Logger::warn(const V &v)
+Logger &Logger::warn(const V &v)
 {
-	Logger::log(LOG_WARN_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(LOG_WARN_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -179,7 +167,7 @@ void Logger::warn(const V &v)
  *
  */
 template <typename V>
-void Logger::warn(V *ptr)
+Logger &Logger::warn(V *ptr)
 {
 	if (ptr)
 	{
@@ -187,6 +175,7 @@ void Logger::warn(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
+	return instance();
 }
 
 /**
@@ -197,9 +186,9 @@ void Logger::warn(V *ptr)
  *
  */
 template <typename V>
-void Logger::debug(const V &v)
+Logger &Logger::debug(const V &v)
 {
-	Logger::log(LOG_DEBUG_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(LOG_DEBUG_PREFIX + Logger::get(v) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -209,7 +198,7 @@ void Logger::debug(const V &v)
  *
  */
 template <typename V>
-void Logger::debug(V *ptr)
+Logger &Logger::debug(V *ptr)
 {
 	if (ptr)
 	{
@@ -217,6 +206,7 @@ void Logger::debug(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
+	return instance();
 }
 
 
@@ -229,9 +219,9 @@ void Logger::debug(V *ptr)
  *
  */
 template <typename V>
-void Logger::custom(const V &v)
+Logger &Logger::custom(const V &v)
 {
-	Logger::log(m_customColor + m_customPrefix + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + Logger::get(v) + LOG_RESET_COLOR);
 }
 /**
  *
@@ -241,7 +231,7 @@ void Logger::custom(const V &v)
  *
  */
 template <typename V>
-void Logger::custom(V *ptr)
+Logger &Logger::custom(V *ptr)
 {
 	if (ptr)
 	{
@@ -249,6 +239,7 @@ void Logger::custom(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
+	return instance();
 }
 
 #endif

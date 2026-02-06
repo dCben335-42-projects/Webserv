@@ -17,9 +17,10 @@ class Client : public Pollable
 
 		void handleGetRequest(std::string ressourcePath);
 		void handlePostRequest();
-		void handleDeleteRequest();
+		void handleDeleteRequest(const std::string &ressourcePath);
 
-		void prepareResponse();
+
+		bool prepareResponse();
 		bool shouldCloseConnection() const;
 
 		bool isRequestComplete();
