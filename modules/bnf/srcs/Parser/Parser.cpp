@@ -2,6 +2,7 @@
 #include <iostream>
 #include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
+#include "Json.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -301,9 +302,6 @@ void Parser::completePath()
 	m_originelRules.clear();
 }
 
-
-
-
 bool compare(const ARulePath &a, const ARulePath &b)
 {
 	if (a.size() != b.size())
@@ -319,10 +317,10 @@ bool compare(const ARulePath &a, const ARulePath &b)
 class BNFPath
 {
 	public:
-		BNFPath(const ARulePath &p) : rulePath(p), prev(NULL)
+		BNFPath(const ARulePath &p) : rulePath(p), prev(NULL), isInvalidedPath(false)
 		{
 		}
-		BNFPath(const ARulePath &p, BNFPath *pr) : rulePath(p), prev(pr)
+		BNFPath(const ARulePath &p, BNFPath *pr) : rulePath(p), prev(pr), isInvalidedPath(false)
 		{
 		}
 		~BNFPath()
@@ -331,6 +329,7 @@ class BNFPath
 		const ARulePath &rulePath;
 		BNFPath			*prev;
 		Vec<BNFPath>	 next;
+		bool			 isInvalidedPath;
 
 		BNFPath operator=(const BNFPath &other)
 		{
@@ -354,26 +353,11 @@ class BNFPath
 
 			while (parent)
 			{
-				Logger::log("Deleting branch " + LoggerJson::get(current->rulePath, true));
 				if (parent->next.size() > 1)
 				{
-					Logger::log("Deleting branch555 " + LoggerJson::get(current->rulePath, true));
-
-
-					Logger::log("todel6: " + LoggerJson::get(current, true));
-
-					int idx = parent->next.indexOf(*current);
-					Logger::log(idx);
-					// Logger::log(parent->next[0]);
-
-					Logger::log(parent->next.size());
-					Logger::log("todel: " + LoggerJson::get(parent->next[idx], true));
-					if (idx != -1)
-						parent->next.remove(idx);
-					Logger::log(parent->next);
+					current->isInvalidedPath = true;
 					return;
 				}
-
 				current = parent;
 				parent	= parent->prev;
 			}
@@ -382,68 +366,226 @@ class BNFPath
 		const BNFPath *getHead() const
 		{
 			const BNFPath *head = this;
+
 			while (head->prev)
+			{
 				head = head->prev;
+				Logger::log(LoggerJson::get(head->rulePath, true));
+			}
 			return head;
 		}
 };
 
 std::ostream &operator<<(std::ostream &os, const BNFPath &data)
 {
-	// os << LoggerJson::get("RulePath:" + LoggerJson::get(data.rulePath, true));
-	// os << LoggerJson::get("Next:" + LoggerJson::get(data.next.size(), true));
 	os << data.next.size();
 	return os;
 }
 
 
-void generateJson(Vec<BNFPath *> pathsTop)
-{
-	Logger::log(LoggerJson::get(pathsTop[0]->rulePath));
-}
-
-
-
-
-
-// bool compare(const ARulePath &a, const ARulePath &b)
+// void generateJson(Vec<BNFPath *> pathsTop)
 // {
-// 	if (a.size() != b.size())
-// 		return false;
-// 	for (size_t i = 0; i < a.size(); ++i)
-// 	{
-// 		if (&a[i] != &b[i])
-// 			return false;
-// 	}
-// 	return true;
+// 	Logger::log(LoggerJson::get(pathsTop[0]->rulePath));
 // }
 
-
-
-
-void Parser::resolvePath()
+void generateJson(const BNFPath *cursor, const std::string &stringToParsed)
 {
+	// clang-format off
+
+	Logger::log("--------------------------------------------------");
+
+
+	// START VARS
+
+	// ARulePath path = cursor->rulePath;
+	// JsonArray *line	 = AJson::createArray();
+	// size_t index = 0;
+	// AJson *ptr = NULL;
+
+	Vec<ARulePath> pathStack;
+	pathStack.push_back(cursor->rulePath);
+	size_t count = 0;
+
+	while (cursor->next.size() > 0)
+	{
+		for (size_t i = 0; i < cursor->next.size(); ++i)
+		{
+			if (!cursor->next[i].isInvalidedPath)
+			{
+				cursor = &cursor->next[i];
+			}
+		}
+		count++;
+
+
+		pathStack.push_back(cursor->rulePath);
+	}
+
+	// [....][.....]
+	// [..][..][...]
+	Logger::log(LoggerJson::get(pathStack, true));
+
+
+	Vec<std::string> line;
+	std::string str = "";
+
+	if (!pathStack.empty())
+	{
+		str.push_back(stringToParsed[0]);  // char
+
+		for (size_t i = 1; i < pathStack.size(); ++i)
+		{
+			if (pathStack[i - 1].back() == pathStack[i].back())
+			{
+
+				str.push_back(stringToParsed[i]);  // char
+			}
+			else
+			{
+				line.push_back(str);
+				Logger::log(pathStack[i - 1].back());
+				Logger::log(pathStack[i].back());
+				Logger::log(LoggerJson::get(str));
+				Logger::log("--------------------------------------------------");
+				str = "";
+				str.push_back(stringToParsed[i]);
+			}
+		}
+
+		line.push_back(str);
+	}
+
+	// Bug ici devrai aboir meme nombre
+	Logger::log(count);
+	Logger::log(stringToParsed.length());
+
+
+	// Logger::log(LoggerJson::get(line[2]));
+
+	// for (size_t i = 0; i < line.size(); ++i)
+	// {
+	// 	Logger::log(LoggerJson::get(line[i]));
+	// }
+
+
+
+
+
+	// pathStack[0].back();
+	// index0 => firstIndex of line
+	// index1 => lastindex of line
+	// line = [ 0, 0 ]
+
+
+
+
+
+		// Logger::log(pathStack[0][1]);
+
+
+
+
+
+		// std::string str	  = "";
+
+		// for (int i = cursor->rulePath.size() - 1; i >= 0; --i)
+
+		// for (int i = cursor->rulePath.size() - 1; i >= 0; --i)
+		// {
+		// 	if ()
+		// }
+
+
+
+
+
+		// bool lastIsSequence = false;
+
+
+
+
+		// for (size_t i = 0; i < cursor->rulePath.size(); ++i)
+		// {
+		// 	if (cursor->rulePath[i]->isSequence())
+		// 	{
+		// 		AJson *newArray = AJson::createArray();
+		// 		line->push(newArray);
+		// 		ptr = newArray;
+		// 	}
+		// }
+
+
+
+
+
+		// 	// path.push_back(cursor->rulePath[i]);
+		// }
+
+		// if ()
+
+		// line->createString("test");
+
+		// for (size_t i = 0; i < pathsTop[0]->rulePath.size(); ++i)
+		// {
+		// 	line->push(LoggerJson::get(pathsTop[0]->rulePath[i]->getItems()));
+		// }
+
+		(void) cursor;
+	(void) stringToParsed;
+
+
+
+
+	// Vec<ConceptDef *> defs      = pathsTop[0]->rulePath[0]->getConceptPtr()->getDefinitions();
+	// for (size_t i = 0; i < defs.size(); ++i)
+	// {
+	//     // JsonArray *cptdef = new JsonArray();
+	//     // for (size_t j = 0; j < defs[i]->size(); ++j)
+	//     // {
+
+
+	//     //     cptdef->push()
+	//     // }
+
+	//     pathsTop[0]->rulePath[1]->
+
+	//         cptdefs->push(cptdef);
+	// }
+
+
+	// for ()
+
+
+	// pathsTop[0]->rulePath
+
+
+	// pathsTop[0]->prev = NULL;
+}
+
+void Parser::resolvePath(const std::string &stringToParsed)
+{
+	// clang-format off
 	Vec<BNFPath *> basePaths;
 	Vec<BNFPath *> pathsTop;
-	// clang-format off
-	Map<ARulePath, Vec<ARulePath> > &mapPrev = m_indexedPaths[0];
-	for (Map<ARulePath, Vec<ARulePath> >::const_iterator it = mapPrev.begin(); it != mapPrev.end(); ++it)
+	Map<ARulePath, Vec<ARulePath> > *mapPrev = &m_indexedPaths[0];
+	typedef Map<ARulePath, Vec<ARulePath> >::const_iterator MapIt;
+	for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
 	{
 		basePaths.push_once(new BNFPath(it->first));
 	}
 	pathsTop	 = basePaths;
 	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
 	{
-		Map<ARulePath, Vec<ARulePath> > &mapCurrent = m_indexedPaths[k];
+		Map<ARulePath, Vec<ARulePath> > *mapCurrent = &m_indexedPaths[k];
 
 		Vec<const ARulePath *>						   vecKey;
 		Map<const ARulePath *, Vec<const ARulePath *> > mapValueToKey;
-		for (Map<ARulePath, Vec<ARulePath> >::iterator it = mapCurrent.begin(); it != mapCurrent.end(); ++it)
+		for (MapIt it = mapCurrent->begin(); it != mapCurrent->end(); ++it)
 		{
 			vecKey.push_once(&it->first);
 		}
 
-		for (Map<ARulePath, Vec<ARulePath> >::iterator it = mapPrev.begin(); it != mapPrev.end(); ++it)
+		for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
 		{
 			const ARulePath &ident = it->first;
 			for (size_t i = 0; i < it->second.size(); ++i)
@@ -452,18 +594,18 @@ void Parser::resolvePath()
 				for (size_t j = 0; j < vecKey.size(); ++j)
 				{
 					bool found		 = false;
+					const ARulePath &vecKeyValue = *vecKey[j];
 
-					if (!compare(vecValue, *vecKey[j]))
+					if (!compare(vecValue, vecKeyValue))
 						continue;
 					
 					for (size_t l = 0; l < pathsTop.size(); ++l)
 					{
-						// Logger::log("Comparing " + LoggerJson::get(pathsTop[l]->rulePath) + " with " + LoggerJson::get(ident));
 						if (pathsTop[l]->rulePath == ident)
 						{
 							if (found)
 								throw std::runtime_error("Ambiguous path resolution.");
-							pathsTop[l]->setNext(*vecKey[j]);
+							pathsTop[l]->setNext(vecKeyValue);
 							found = true;
 						}
 					}
@@ -471,21 +613,15 @@ void Parser::resolvePath()
 			}
 		}
 
-		Vec<BNFPath *> toDeleteBranches;
 		Vec<BNFPath *> bufferTemp;
 		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
 		{
-			Logger::log("Removed path555");
-
 			BNFPath &current = *pathsTop[i];
-			// Logger::log("Current path: " + LoggerJson::get(current.rulePath, true) + " with " + LoggerJson::get(current.next.size()) + " next paths");
 
 			if (current.next.empty())
 			{
-				toDeleteBranches.push_once(pathsTop[i]);
 				pathsTop.remove(i);
-				// current.deleteBranch();
-				Logger::log("Removed path");
+				current.deleteBranch();
 				i--;
 				continue;
 			}
@@ -497,23 +633,14 @@ void Parser::resolvePath()
 		}
 		pathsTop.concat(bufferTemp);
 		mapPrev = mapCurrent;
-		for (size_t i = 0; i < toDeleteBranches.size(); ++i)
-		{
-			toDeleteBranches[i]->deleteBranch();
-		}
 	}
-
-
+	// Logger::log(LoggerJson::get(pathStack, true));
+	
 	const BNFPath *nextbnf = pathsTop[0]->getHead();
-	// Logger::log(nextbnf);
-	while (nextbnf->next.size() > 0)
-	{
-		Logger::log(nextbnf);
-		nextbnf = &nextbnf->next[0];
-	}
-
-
-	// generateJson(pathsTop);
+	// Logger::log(nextbnf->rulePath);
+	// cursor->rulePath
+	(void) stringToParsed;
+	generateJson(nextbnf, stringToParsed);
 }
 
 
@@ -550,7 +677,7 @@ void Parser::parse(const std::string &stringToParsed)
 		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();
 	}
-	resolvePath();
+	resolvePath(stringToParsed);
 
 
 	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide

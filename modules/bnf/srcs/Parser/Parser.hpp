@@ -39,7 +39,7 @@ class Parser
 
 		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path);
 
-		void resolvePath();
+		void resolvePath(const std::string &stringToParsed);
 		void completePath();
 		bool word(
 			TerminalCharInfo  *data,
@@ -55,7 +55,7 @@ class Parser
 
 		void parse(const std::string &stringToParsed);
 
-		
+
 		// clang-format off
 		Vec< Map<ARulePath, Vec<ARulePath> > > m_indexedPaths;
 
