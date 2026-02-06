@@ -9,14 +9,16 @@ make[1]: Nothing to be done for 'all'.
 
 [{,statement,}]
 [(,user_stmt,|,worker_stmt,|,pid_stmt,|,events_block,|,http_block,),{,LINE_JUMP,}]
-['user',SPACE,!user_name,';']
+['user',SPACE,97>user_name,';']
+ok3
+97
 ['worker_processes',SPACE,IDENT,';']
 ['pid',SPACE,PATH,';']
 ['events',[,SPACE,],'{',LINE_JUMP,{,event_stmt,},'}']
 [[,TAB_SPACE,],event_rule,';',[,LINE_JUMP,]]
 ['worker_connections',SPACE,NUMBER]
 ['multi_accept',SPACE,BOOL]
-['http',[,SPACE,],'{',LINE_JUMP,{,!http_stmt,},'}']
+['http',[,SPACE,],'{',LINE_JUMP,{,http_stmt,},'}']
 [[,TAB_SPACE,],(,basic_http_stmt,|,gzip_stmt,|,include_stmt,),';',LINE_JUMP]
 [LINE_JUMP]
 ['sendfile',TAB_SPACE,BOOL]
@@ -78,18 +80,17 @@ make[1]: Nothing to be done for 'all'.
         "position": "<head>_0",
         "type": "SEQUENCE",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6420",
+        "is_required_in_json": {
+},
+        "ptr": "0x234704b0",
         "content": [
-          {my_address: 0x334a1bb0, value: statement}
+          {my_address: 0x2346bbb0, value: statement}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a1bb0, value: statement}
+          {my_address: 0x2346bbb0, value: statement}
         ]
       }
     ]
@@ -98,11 +99,11 @@ make[1]: Nothing to be done for 'all'.
 
     ]
   "terminal_chars":[
-      0x334a6bc0,
-      0x334a72f0,
-      0x334a7900,
-      0x334a7ea0,
-      0x334a9500
+      0x23470a00,
+      0x23471200,
+      0x23471850,
+      0x23471e30,
+      0x23473690
     ]
 },APPLICATION_MIME: {
   "concept_name": "APPLICATION_MIME"
@@ -113,47 +114,46 @@ make[1]: Nothing to be done for 'all'.
         "position": "APPLICATION_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b20b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347cf30",
         "content": [
-          {my_address: 0x334b2a10, value: application/json},
-          {my_address: 0x334b2a38, value: application/javascript},
-          {my_address: 0x334b2a60, value: application/vnd.ms-fontobject},
-          {my_address: 0x334b2a88, value: application/pdf},
-          {my_address: 0x334b2ab0, value: application/xml},
-          {my_address: 0x334b2ad8, value: application/zip},
-          {my_address: 0x334b2b00, value: application/x-www-form-urlencoded},
-          {my_address: 0x334b2b28, value: application/x-yaml},
-          {my_address: 0x334b2b50, value: application/toml},
-          {my_address: 0x334b2b78, value: application/rtf},
-          {my_address: 0x334b2ba0, value: application/octet-stream}
+          {my_address: 0x2347d2b0, value: application/json},
+          {my_address: 0x2347d2d8, value: application/javascript},
+          {my_address: 0x2347d300, value: application/vnd.ms-fontobject},
+          {my_address: 0x2347d328, value: application/pdf},
+          {my_address: 0x2347d350, value: application/xml},
+          {my_address: 0x2347d378, value: application/zip},
+          {my_address: 0x2347d3a0, value: application/x-www-form-urlencoded},
+          {my_address: 0x2347d3c8, value: application/x-yaml},
+          {my_address: 0x2347d3f0, value: application/toml},
+          {my_address: 0x2347d418, value: application/rtf},
+          {my_address: 0x2347d440, value: application/octet-stream}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b2a10, value: application/json},
-          {my_address: 0x334b2a38, value: application/javascript},
-          {my_address: 0x334b2a60, value: application/vnd.ms-fontobject},
-          {my_address: 0x334b2a88, value: application/pdf},
-          {my_address: 0x334b2ab0, value: application/xml},
-          {my_address: 0x334b2ad8, value: application/zip},
-          {my_address: 0x334b2b00, value: application/x-www-form-urlencoded},
-          {my_address: 0x334b2b28, value: application/x-yaml},
-          {my_address: 0x334b2b50, value: application/toml},
-          {my_address: 0x334b2b78, value: application/rtf},
-          {my_address: 0x334b2ba0, value: application/octet-stream}
+          {my_address: 0x2347d2b0, value: application/json},
+          {my_address: 0x2347d2d8, value: application/javascript},
+          {my_address: 0x2347d300, value: application/vnd.ms-fontobject},
+          {my_address: 0x2347d328, value: application/pdf},
+          {my_address: 0x2347d350, value: application/xml},
+          {my_address: 0x2347d378, value: application/zip},
+          {my_address: 0x2347d3a0, value: application/x-www-form-urlencoded},
+          {my_address: 0x2347d3c8, value: application/x-yaml},
+          {my_address: 0x2347d3f0, value: application/toml},
+          {my_address: 0x2347d418, value: application/rtf},
+          {my_address: 0x2347d440, value: application/octet-stream}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b20b0
+      0x2347cf30
     ]
 },AUDIO_MIME: {
   "concept_name": "AUDIO_MIME"
@@ -164,31 +164,30 @@ make[1]: Nothing to be done for 'all'.
         "position": "AUDIO_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b36a0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347df80",
         "content": [
-          {my_address: 0x334b3770, value: audio/mpeg},
-          {my_address: 0x334b3798, value: audio/wav},
-          {my_address: 0x334b37c0, value: audio/flac}
+          {my_address: 0x2347e070, value: audio/mpeg},
+          {my_address: 0x2347e098, value: audio/wav},
+          {my_address: 0x2347e0c0, value: audio/flac}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b3770, value: audio/mpeg},
-          {my_address: 0x334b3798, value: audio/wav},
-          {my_address: 0x334b37c0, value: audio/flac}
+          {my_address: 0x2347e070, value: audio/mpeg},
+          {my_address: 0x2347e098, value: audio/wav},
+          {my_address: 0x2347e0c0, value: audio/flac}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b36a0
+      0x2347df80
     ]
 },BOOL: {
   "concept_name": "BOOL"
@@ -199,38 +198,37 @@ make[1]: Nothing to be done for 'all'.
         "position": "BOOL_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b0c90",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347b3a0",
         "content": [
-          {my_address: 0x334ad7e0, value: on},
-          {my_address: 0x334ad808, value: off}
+          {my_address: 0x23477ca0, value: on},
+          {my_address: 0x23477cc8, value: off}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ad7e0, value: on},
-          {my_address: 0x334ad808, value: off}
+          {my_address: 0x23477ca0, value: on},
+          {my_address: 0x23477cc8, value: off}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a9200,
-      0x334aa730,
-      0x334aaae0,
-      0x334aaec0,
-      0x334ac860,
-      0x334acca0,
-      0x334ad100,
-      0x334ad1c0,
-      0x334ad650,
-      0x334ade20
+      0x23473380,
+      0x23474990,
+      0x23474d70,
+      0x23475180,
+      0x23476c60,
+      0x234770d0,
+      0x23477560,
+      0x23477630,
+      0x23477af0,
+      0x23478330
     ]
   "terminal_chars":[
-      0x334b0c90
+      0x2347b3a0
     ]
 },DIGIT: {
   "concept_name": "DIGIT"
@@ -241,48 +239,47 @@ make[1]: Nothing to be done for 'all'.
         "position": "DIGIT_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b68b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23481300",
         "content": [
-          {my_address: 0x334b6050, value: 0},
-          {my_address: 0x334b6078, value: 1},
-          {my_address: 0x334b60a0, value: 2},
-          {my_address: 0x334b60c8, value: 3},
-          {my_address: 0x334b60f0, value: 4},
-          {my_address: 0x334b6118, value: 5},
-          {my_address: 0x334b6140, value: 6},
-          {my_address: 0x334b6168, value: 7},
-          {my_address: 0x334b6190, value: 8},
-          {my_address: 0x334b61b8, value: 9}
+          {my_address: 0x23480aa0, value: 0},
+          {my_address: 0x23480ac8, value: 1},
+          {my_address: 0x23480af0, value: 2},
+          {my_address: 0x23480b18, value: 3},
+          {my_address: 0x23480b40, value: 4},
+          {my_address: 0x23480b68, value: 5},
+          {my_address: 0x23480b90, value: 6},
+          {my_address: 0x23480bb8, value: 7},
+          {my_address: 0x23480be0, value: 8},
+          {my_address: 0x23480c08, value: 9}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b6050, value: 0},
-          {my_address: 0x334b6078, value: 1},
-          {my_address: 0x334b60a0, value: 2},
-          {my_address: 0x334b60c8, value: 3},
-          {my_address: 0x334b60f0, value: 4},
-          {my_address: 0x334b6118, value: 5},
-          {my_address: 0x334b6140, value: 6},
-          {my_address: 0x334b6168, value: 7},
-          {my_address: 0x334b6190, value: 8},
-          {my_address: 0x334b61b8, value: 9}
+          {my_address: 0x23480aa0, value: 0},
+          {my_address: 0x23480ac8, value: 1},
+          {my_address: 0x23480af0, value: 2},
+          {my_address: 0x23480b18, value: 3},
+          {my_address: 0x23480b40, value: 4},
+          {my_address: 0x23480b68, value: 5},
+          {my_address: 0x23480b90, value: 6},
+          {my_address: 0x23480bb8, value: 7},
+          {my_address: 0x23480be0, value: 8},
+          {my_address: 0x23480c08, value: 9}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b0310,
-      0x334b09f0,
-      0x334b12d0,
-      0x334b4e60
+      0x2347a9e0,
+      0x2347b0f0,
+      0x2347ba20,
+      0x2347f840
     ]
   "terminal_chars":[
-      0x334b68b0
+      0x23481300
     ]
 },FONT_MIME: {
   "concept_name": "FONT_MIME"
@@ -293,33 +290,32 @@ make[1]: Nothing to be done for 'all'.
         "position": "FONT_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b3200",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347daa0",
         "content": [
-          {my_address: 0x334b32d0, value: font/woff},
-          {my_address: 0x334b32f8, value: font/woff2},
-          {my_address: 0x334b3320, value: font/ttf},
-          {my_address: 0x334b3348, value: font/otf}
+          {my_address: 0x2347db90, value: font/woff},
+          {my_address: 0x2347dbb8, value: font/woff2},
+          {my_address: 0x2347dbe0, value: font/ttf},
+          {my_address: 0x2347dc08, value: font/otf}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b32d0, value: font/woff},
-          {my_address: 0x334b32f8, value: font/woff2},
-          {my_address: 0x334b3320, value: font/ttf},
-          {my_address: 0x334b3348, value: font/otf}
+          {my_address: 0x2347db90, value: font/woff},
+          {my_address: 0x2347dbb8, value: font/woff2},
+          {my_address: 0x2347dbe0, value: font/ttf},
+          {my_address: 0x2347dc08, value: font/otf}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b3200
+      0x2347daa0
     ]
 },IDENT: {
   "concept_name": "IDENT"
@@ -330,45 +326,43 @@ make[1]: Nothing to be done for 'all'.
         "position": "IDENT_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b0670",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347ad50",
         "content": LETTER
         "next": [
-          0x334b0730
+          0x2347ae20
         ]
         items": [
-          {my_address: 0x334b04d0, value: LETTER}
+          {my_address: 0x2347abb0, value: LETTER}
         ]
       },
       {
         "position": "IDENT_0",
         "type": "SEQUENCE",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b0730",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347ae20",
         "content": [
-          {my_address: 0x334b04a0, value: LETTER}
+          {my_address: 0x2347ab80, value: LETTER}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b04a0, value: LETTER}
+          {my_address: 0x2347ab80, value: LETTER}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a74e0,
-      0x334ae1d0
+      0x23471410,
+      0x23478710
     ]
   "terminal_chars":[
-      0x334b56e0,
-      0x334b5d80
+      0x23480110,
+      0x234807b0
     ]
 },IMAGE_MIME: {
   "concept_name": "IMAGE_MIME"
@@ -379,47 +373,46 @@ make[1]: Nothing to be done for 'all'.
         "position": "IMAGE_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b3cb0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347e5d0",
         "content": [
-          {my_address: 0x334b3e30, value: image/png},
-          {my_address: 0x334b3e58, value: image/jpeg},
-          {my_address: 0x334b3e80, value: image/webp},
-          {my_address: 0x334b3ea8, value: image/gif},
-          {my_address: 0x334b3ed0, value: image/svg+xml},
-          {my_address: 0x334b3ef8, value: image/avif},
-          {my_address: 0x334b3f20, value: image/heic},
-          {my_address: 0x334b3f48, value: image/icns},
-          {my_address: 0x334b3f70, value: image/bmp},
-          {my_address: 0x334b3f98, value: image/tiff},
-          {my_address: 0x334b3fc0, value: image/x-icon}
+          {my_address: 0x2347e770, value: image/png},
+          {my_address: 0x2347e798, value: image/jpeg},
+          {my_address: 0x2347e7c0, value: image/webp},
+          {my_address: 0x2347e7e8, value: image/gif},
+          {my_address: 0x2347e810, value: image/svg+xml},
+          {my_address: 0x2347e838, value: image/avif},
+          {my_address: 0x2347e860, value: image/heic},
+          {my_address: 0x2347e888, value: image/icns},
+          {my_address: 0x2347e8b0, value: image/bmp},
+          {my_address: 0x2347e8d8, value: image/tiff},
+          {my_address: 0x2347e900, value: image/x-icon}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b3e30, value: image/png},
-          {my_address: 0x334b3e58, value: image/jpeg},
-          {my_address: 0x334b3e80, value: image/webp},
-          {my_address: 0x334b3ea8, value: image/gif},
-          {my_address: 0x334b3ed0, value: image/svg+xml},
-          {my_address: 0x334b3ef8, value: image/avif},
-          {my_address: 0x334b3f20, value: image/heic},
-          {my_address: 0x334b3f48, value: image/icns},
-          {my_address: 0x334b3f70, value: image/bmp},
-          {my_address: 0x334b3f98, value: image/tiff},
-          {my_address: 0x334b3fc0, value: image/x-icon}
+          {my_address: 0x2347e770, value: image/png},
+          {my_address: 0x2347e798, value: image/jpeg},
+          {my_address: 0x2347e7c0, value: image/webp},
+          {my_address: 0x2347e7e8, value: image/gif},
+          {my_address: 0x2347e810, value: image/svg+xml},
+          {my_address: 0x2347e838, value: image/avif},
+          {my_address: 0x2347e860, value: image/heic},
+          {my_address: 0x2347e888, value: image/icns},
+          {my_address: 0x2347e8b0, value: image/bmp},
+          {my_address: 0x2347e8d8, value: image/tiff},
+          {my_address: 0x2347e900, value: image/x-icon}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b3cb0
+      0x2347e5d0
     ]
 },LETTER: {
   "concept_name": "LETTER"
@@ -430,33 +423,32 @@ make[1]: Nothing to be done for 'all'.
         "position": "LETTER_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b5130",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347fcc0",
         "content": [
-          {my_address: 0x334b45c0, value: UPCASE_LETTER},
-          {my_address: 0x334b45e8, value: LOCASE_LETTER}
+          {my_address: 0x2347ef50, value: UPCASE_LETTER},
+          {my_address: 0x2347ef78, value: LOCASE_LETTER}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b45c0, value: UPCASE_LETTER},
-          {my_address: 0x334b45e8, value: LOCASE_LETTER}
+          {my_address: 0x2347ef50, value: UPCASE_LETTER},
+          {my_address: 0x2347ef78, value: LOCASE_LETTER}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b0670,
-      0x334b0730,
-      0x334b12d0,
-      0x334b4e60
+      0x2347ad50,
+      0x2347ae20,
+      0x2347ba20,
+      0x2347f840
     ]
   "terminal_chars":[
-      0x334b56e0,
-      0x334b5d80
+      0x23480110,
+      0x234807b0
     ]
 },LINE_JUMP: {
   "concept_name": "LINE_JUMP"
@@ -467,34 +459,33 @@ make[1]: Nothing to be done for 'all'.
         "position": "LINE_JUMP_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b7310",
+        "is_required_in_json": {
+},
+        "ptr": "0x23481dc0",
         "content": 
 
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b7170, value: 
+          {my_address: 0x23481c20, value: 
 }
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6960,
-      0x334a8100,
-      0x334a8960,
-      0x334a9810,
-      0x334aa130,
-      0x334aa2b0,
-      0x334af4b0,
-      0x334afa70
+      0x23470930,
+      0x234721a0,
+      0x23472a70,
+      0x234739e0,
+      0x23474350,
+      0x234744e0,
+      0x23479ad0,
+      0x2347a0e0
     ]
   "terminal_chars":[
-      0x334b7310
+      0x23481dc0
     ]
 },LOCASE_LETTER: {
   "concept_name": "LOCASE_LETTER"
@@ -505,79 +496,78 @@ make[1]: Nothing to be done for 'all'.
         "position": "LOCASE_LETTER_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b5d80",
+        "is_required_in_json": {
+},
+        "ptr": "0x234807b0",
         "content": [
-          {my_address: 0x334b62e0, value: a},
-          {my_address: 0x334b6308, value: b},
-          {my_address: 0x334b6330, value: c},
-          {my_address: 0x334b6358, value: d},
-          {my_address: 0x334b6380, value: e},
-          {my_address: 0x334b63a8, value: f},
-          {my_address: 0x334b63d0, value: g},
-          {my_address: 0x334b63f8, value: h},
-          {my_address: 0x334b6420, value: i},
-          {my_address: 0x334b6448, value: j},
-          {my_address: 0x334b6470, value: k},
-          {my_address: 0x334b6498, value: l},
-          {my_address: 0x334b64c0, value: m},
-          {my_address: 0x334b64e8, value: n},
-          {my_address: 0x334b6510, value: o},
-          {my_address: 0x334b6538, value: p},
-          {my_address: 0x334b6560, value: q},
-          {my_address: 0x334b6588, value: r},
-          {my_address: 0x334b65b0, value: s},
-          {my_address: 0x334b65d8, value: t},
-          {my_address: 0x334b6600, value: u},
-          {my_address: 0x334b6628, value: v},
-          {my_address: 0x334b6650, value: w},
-          {my_address: 0x334b6678, value: x},
-          {my_address: 0x334b66a0, value: y},
-          {my_address: 0x334b66c8, value: z}
+          {my_address: 0x23480d30, value: a},
+          {my_address: 0x23480d58, value: b},
+          {my_address: 0x23480d80, value: c},
+          {my_address: 0x23480da8, value: d},
+          {my_address: 0x23480dd0, value: e},
+          {my_address: 0x23480df8, value: f},
+          {my_address: 0x23480e20, value: g},
+          {my_address: 0x23480e48, value: h},
+          {my_address: 0x23480e70, value: i},
+          {my_address: 0x23480e98, value: j},
+          {my_address: 0x23480ec0, value: k},
+          {my_address: 0x23480ee8, value: l},
+          {my_address: 0x23480f10, value: m},
+          {my_address: 0x23480f38, value: n},
+          {my_address: 0x23480f60, value: o},
+          {my_address: 0x23480f88, value: p},
+          {my_address: 0x23480fb0, value: q},
+          {my_address: 0x23480fd8, value: r},
+          {my_address: 0x23481000, value: s},
+          {my_address: 0x23481028, value: t},
+          {my_address: 0x23481050, value: u},
+          {my_address: 0x23481078, value: v},
+          {my_address: 0x234810a0, value: w},
+          {my_address: 0x234810c8, value: x},
+          {my_address: 0x234810f0, value: y},
+          {my_address: 0x23481118, value: z}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b62e0, value: a},
-          {my_address: 0x334b6308, value: b},
-          {my_address: 0x334b6330, value: c},
-          {my_address: 0x334b6358, value: d},
-          {my_address: 0x334b6380, value: e},
-          {my_address: 0x334b63a8, value: f},
-          {my_address: 0x334b63d0, value: g},
-          {my_address: 0x334b63f8, value: h},
-          {my_address: 0x334b6420, value: i},
-          {my_address: 0x334b6448, value: j},
-          {my_address: 0x334b6470, value: k},
-          {my_address: 0x334b6498, value: l},
-          {my_address: 0x334b64c0, value: m},
-          {my_address: 0x334b64e8, value: n},
-          {my_address: 0x334b6510, value: o},
-          {my_address: 0x334b6538, value: p},
-          {my_address: 0x334b6560, value: q},
-          {my_address: 0x334b6588, value: r},
-          {my_address: 0x334b65b0, value: s},
-          {my_address: 0x334b65d8, value: t},
-          {my_address: 0x334b6600, value: u},
-          {my_address: 0x334b6628, value: v},
-          {my_address: 0x334b6650, value: w},
-          {my_address: 0x334b6678, value: x},
-          {my_address: 0x334b66a0, value: y},
-          {my_address: 0x334b66c8, value: z}
+          {my_address: 0x23480d30, value: a},
+          {my_address: 0x23480d58, value: b},
+          {my_address: 0x23480d80, value: c},
+          {my_address: 0x23480da8, value: d},
+          {my_address: 0x23480dd0, value: e},
+          {my_address: 0x23480df8, value: f},
+          {my_address: 0x23480e20, value: g},
+          {my_address: 0x23480e48, value: h},
+          {my_address: 0x23480e70, value: i},
+          {my_address: 0x23480e98, value: j},
+          {my_address: 0x23480ec0, value: k},
+          {my_address: 0x23480ee8, value: l},
+          {my_address: 0x23480f10, value: m},
+          {my_address: 0x23480f38, value: n},
+          {my_address: 0x23480f60, value: o},
+          {my_address: 0x23480f88, value: p},
+          {my_address: 0x23480fb0, value: q},
+          {my_address: 0x23480fd8, value: r},
+          {my_address: 0x23481000, value: s},
+          {my_address: 0x23481028, value: t},
+          {my_address: 0x23481050, value: u},
+          {my_address: 0x23481078, value: v},
+          {my_address: 0x234810a0, value: w},
+          {my_address: 0x234810c8, value: x},
+          {my_address: 0x234810f0, value: y},
+          {my_address: 0x23481118, value: z}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b0250,
-      0x334b0310,
-      0x334b5130
+      0x2347a910,
+      0x2347a9e0,
+      0x2347fcc0
     ]
   "terminal_chars":[
-      0x334b5d80
+      0x234807b0
     ]
 },LOG_LEVEL: {
   "concept_name": "LOG_LEVEL"
@@ -588,37 +578,36 @@ make[1]: Nothing to be done for 'all'.
         "position": "LOG_LEVEL_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b47c0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347f150",
         "content": [
-          {my_address: 0x334b2870, value: debug},
-          {my_address: 0x334b2898, value: info},
-          {my_address: 0x334b28c0, value: notice},
-          {my_address: 0x334b28e8, value: warn},
-          {my_address: 0x334b2910, value: error},
-          {my_address: 0x334b2938, value: crit}
+          {my_address: 0x2347d110, value: debug},
+          {my_address: 0x2347d138, value: info},
+          {my_address: 0x2347d160, value: notice},
+          {my_address: 0x2347d188, value: warn},
+          {my_address: 0x2347d1b0, value: error},
+          {my_address: 0x2347d1d8, value: crit}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b2870, value: debug},
-          {my_address: 0x334b2898, value: info},
-          {my_address: 0x334b28c0, value: notice},
-          {my_address: 0x334b28e8, value: warn},
-          {my_address: 0x334b2910, value: error},
-          {my_address: 0x334b2938, value: crit}
+          {my_address: 0x2347d110, value: debug},
+          {my_address: 0x2347d138, value: info},
+          {my_address: 0x2347d160, value: notice},
+          {my_address: 0x2347d188, value: warn},
+          {my_address: 0x2347d1b0, value: error},
+          {my_address: 0x2347d1d8, value: crit}
         ]
       }
     ]
   ]
   "parents":[
-      0x334ac400
+      0x234767d0
     ]
   "terminal_chars":[
-      0x334b47c0
+      0x2347f150
     ]
 },MIME: {
   "concept_name": "MIME"
@@ -629,46 +618,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b19f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347c160",
         "content": [
-          {my_address: 0x334b1b90, value: TEXT_MIME},
-          {my_address: 0x334b1bb8, value: APPLICATION_MIME},
-          {my_address: 0x334b1be0, value: FONT_MIME},
-          {my_address: 0x334b1c08, value: MULTIPART_MIME},
-          {my_address: 0x334b1c30, value: AUDIO_MIME},
-          {my_address: 0x334b1c58, value: VIDEO_MIME},
-          {my_address: 0x334b1c80, value: IMAGE_MIME}
+          {my_address: 0x2347c320, value: TEXT_MIME},
+          {my_address: 0x2347c348, value: APPLICATION_MIME},
+          {my_address: 0x2347c370, value: FONT_MIME},
+          {my_address: 0x2347c398, value: MULTIPART_MIME},
+          {my_address: 0x2347c3c0, value: AUDIO_MIME},
+          {my_address: 0x2347c3e8, value: VIDEO_MIME},
+          {my_address: 0x2347c410, value: IMAGE_MIME}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b1b90, value: TEXT_MIME},
-          {my_address: 0x334b1bb8, value: APPLICATION_MIME},
-          {my_address: 0x334b1be0, value: FONT_MIME},
-          {my_address: 0x334b1c08, value: MULTIPART_MIME},
-          {my_address: 0x334b1c30, value: AUDIO_MIME},
-          {my_address: 0x334b1c58, value: VIDEO_MIME},
-          {my_address: 0x334b1c80, value: IMAGE_MIME}
+          {my_address: 0x2347c320, value: TEXT_MIME},
+          {my_address: 0x2347c348, value: APPLICATION_MIME},
+          {my_address: 0x2347c370, value: FONT_MIME},
+          {my_address: 0x2347c398, value: MULTIPART_MIME},
+          {my_address: 0x2347c3c0, value: AUDIO_MIME},
+          {my_address: 0x2347c3e8, value: VIDEO_MIME},
+          {my_address: 0x2347c410, value: IMAGE_MIME}
         ]
       }
     ]
   ]
   "parents":[
-      0x334aba30,
-      0x334af960
+      0x23475d80,
+      0x23479fc0
     ]
   "terminal_chars":[
-      0x334b1de0,
-      0x334b20b0,
-      0x334b3200,
-      0x334b3480,
-      0x334b36a0,
-      0x334b3970,
-      0x334b3cb0
+      0x2347c570,
+      0x2347cf30,
+      0x2347daa0,
+      0x2347dd40,
+      0x2347df80,
+      0x2347e270,
+      0x2347e5d0
     ]
 },MULTIPART_MIME: {
   "concept_name": "MULTIPART_MIME"
@@ -679,27 +667,26 @@ make[1]: Nothing to be done for 'all'.
         "position": "MULTIPART_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b3480",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347dd40",
         "content": [
-          {my_address: 0x334b2f70, value: multipart/form-data}
+          {my_address: 0x2347d810, value: multipart/form-data}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b2f70, value: multipart/form-data}
+          {my_address: 0x2347d810, value: multipart/form-data}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b3480
+      0x2347dd40
     ]
 },NUMBER: {
   "concept_name": "NUMBER"
@@ -710,34 +697,33 @@ make[1]: Nothing to be done for 'all'.
         "position": "NUMBER_0",
         "type": "SEQUENCE",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b09f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347b0f0",
         "content": [
-          {my_address: 0x334b0870, value: DIGIT}
+          {my_address: 0x2347af70, value: DIGIT}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b0870, value: DIGIT}
+          {my_address: 0x2347af70, value: DIGIT}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a8e80,
-      0x334ab2c0,
-      0x334ab6b0,
-      0x334ae5d0,
-      0x334ae950,
-      0x334b3ba0,
-      0x334b4220,
-      0x334b4430
+      0x23472fd0,
+      0x234755b0,
+      0x234759d0,
+      0x23478b40,
+      0x23478ef0,
+      0x2347c860,
+      0x2347eb70,
+      0x2347ed90
     ]
   "terminal_chars":[
-      0x334b68b0
+      0x23481300
     ]
 },PATH: {
   "concept_name": "PATH"
@@ -748,46 +734,44 @@ make[1]: Nothing to be done for 'all'.
         "position": "PATH_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b0f50",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347b680",
         "content": /
         "next": [
-          0x334b1010
+          0x2347b750
         ]
         items": [
-          {my_address: 0x334b0ad0, value: /}
+          {my_address: 0x2347b1e0, value: /}
         ]
       },
       {
         "position": "PATH_0",
         "type": "SEQUENCE",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b1010",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347b750",
         "content": [
-          {my_address: 0x334b0840, value: PATH_CHAR}
+          {my_address: 0x2347af40, value: PATH_CHAR}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b0840, value: PATH_CHAR}
+          {my_address: 0x2347af40, value: PATH_CHAR}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a7a80,
-      0x334abde0,
-      0x334ac190,
-      0x334aff50
+      0x234719f0,
+      0x23476160,
+      0x23476540,
+      0x2347a600
     ]
   "terminal_chars":[
-      0x334b0f50
+      0x2347b680
     ]
 },PATH_CHAR: {
   "concept_name": "PATH_CHAR"
@@ -798,42 +782,41 @@ make[1]: Nothing to be done for 'all'.
         "position": "PATH_CHAR_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b12d0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347ba20",
         "content": [
-          {my_address: 0x334b1450, value: LETTER},
-          {my_address: 0x334b1478, value: DIGIT},
-          {my_address: 0x334b14a0, value: /},
-          {my_address: 0x334b14c8, value: .},
-          {my_address: 0x334b14f0, value: _},
-          {my_address: 0x334b1518, value: *},
-          {my_address: 0x334b1540, value: -}
+          {my_address: 0x2347bbc0, value: LETTER},
+          {my_address: 0x2347bbe8, value: DIGIT},
+          {my_address: 0x2347bc10, value: /},
+          {my_address: 0x2347bc38, value: .},
+          {my_address: 0x2347bc60, value: _},
+          {my_address: 0x2347bc88, value: *},
+          {my_address: 0x2347bcb0, value: -}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b1450, value: LETTER},
-          {my_address: 0x334b1478, value: DIGIT},
-          {my_address: 0x334b14a0, value: /},
-          {my_address: 0x334b14c8, value: .},
-          {my_address: 0x334b14f0, value: _},
-          {my_address: 0x334b1518, value: *},
-          {my_address: 0x334b1540, value: -}
+          {my_address: 0x2347bbc0, value: LETTER},
+          {my_address: 0x2347bbe8, value: DIGIT},
+          {my_address: 0x2347bc10, value: /},
+          {my_address: 0x2347bc38, value: .},
+          {my_address: 0x2347bc60, value: _},
+          {my_address: 0x2347bc88, value: *},
+          {my_address: 0x2347bcb0, value: -}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b1010
+      0x2347b750
     ]
   "terminal_chars":[
-      0x334b12d0,
-      0x334b56e0,
-      0x334b5d80,
-      0x334b68b0
+      0x2347ba20,
+      0x23480110,
+      0x234807b0,
+      0x23481300
     ]
 },SIZE: {
   "concept_name": "SIZE"
@@ -844,45 +827,43 @@ make[1]: Nothing to be done for 'all'.
         "position": "SIZE_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4430",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347ed90",
         "content": NUMBER
         "next": [
-          0x334b44f0
+          0x2347ee60
         ]
         items": [
-          {my_address: 0x334b2210, value: NUMBER}
+          {my_address: 0x2347c9c0, value: NUMBER}
         ]
       },
       {
         "position": "SIZE_0",
         "type": "GROUP",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b44f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347ee60",
         "content": [
-          {my_address: 0x334b3a40, value: k},
-          {my_address: 0x334b3a68, value: m}
+          {my_address: 0x2347e360, value: k},
+          {my_address: 0x2347e388, value: m}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b3a40, value: k},
-          {my_address: 0x334b3a68, value: m}
+          {my_address: 0x2347e360, value: k},
+          {my_address: 0x2347e388, value: m}
         ]
       }
     ]
   ]
   "parents":[
-      0x334aebc0
+      0x23479180
     ]
   "terminal_chars":[
-      0x334b68b0
+      0x23481300
     ]
 },SPACE: {
   "concept_name": "SPACE"
@@ -893,35 +874,34 @@ make[1]: Nothing to be done for 'all'.
         "position": "SPACE_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b7090",
+        "is_required_in_json": {
+},
+        "ptr": "0x23481b30",
         "content":  
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b6ef0, value:  }
+          {my_address: 0x23481990, value:  }
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6a20,
-      0x334a6c80,
-      0x334a73d0,
-      0x334a79c0,
-      0x334a8d70,
-      0x334a9140,
-      0x334a95c0,
-      0x334ac2e0,
-      0x334aeaa0,
-      0x334b4e60,
-      0x334b5460
+      0x23470ba0,
+      0x234712f0,
+      0x23471920,
+      0x23471f00,
+      0x23472eb0,
+      0x234732b0,
+      0x23473760,
+      0x234766a0,
+      0x23479050,
+      0x2347f840,
+      0x2347fb30
     ]
   "terminal_chars":[
-      0x334b7090
+      0x23481b30
     ]
 },STRING: {
   "concept_name": "STRING"
@@ -932,59 +912,56 @@ make[1]: Nothing to be done for 'all'.
         "position": "STRING_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4990",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347f340",
         "content": "
         "next": [
-          0x334b4a50
+          0x2347f410
         ]
         items": [
-          {my_address: 0x334b2440, value: "}
+          {my_address: 0x2347cbf0, value: "}
         ]
       },
       {
         "position": "STRING_0",
         "type": "SEQUENCE",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4a50",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347f410",
         "content": [
-          {my_address: 0x334b23b0, value: STRING_CHAR}
+          {my_address: 0x2347cb60, value: STRING_CHAR}
         ]
         "next": [
-          0x334b4b60
+          0x2347f530
         ]
         items": [
-          {my_address: 0x334b23b0, value: STRING_CHAR}
+          {my_address: 0x2347cb60, value: STRING_CHAR}
         ]
       },
       {
         "position": "STRING_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4b60",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347f530",
         "content": "
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b4c20, value: "}
+          {my_address: 0x2347f600, value: "}
         ]
       }
     ]
   ]
   "parents":[
-      0x334ada40
+      0x23477f20
     ]
   "terminal_chars":[
-      0x334b4990
+      0x2347f340
     ]
 },STRING_CHAR: {
   "concept_name": "STRING_CHAR"
@@ -995,39 +972,38 @@ make[1]: Nothing to be done for 'all'.
         "position": "STRING_CHAR_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4e60",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347f840",
         "content": [
-          {my_address: 0x334b4fe0, value: LETTER},
-          {my_address: 0x334b5008, value: DIGIT},
-          {my_address: 0x334b5030, value: SPACE},
-          {my_address: 0x334b5058, value: _},
-          {my_address: 0x334b5080, value: .}
+          {my_address: 0x2347f9e0, value: LETTER},
+          {my_address: 0x2347fa08, value: DIGIT},
+          {my_address: 0x2347fa30, value: SPACE},
+          {my_address: 0x2347fa58, value: _},
+          {my_address: 0x2347fa80, value: .}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b4fe0, value: LETTER},
-          {my_address: 0x334b5008, value: DIGIT},
-          {my_address: 0x334b5030, value: SPACE},
-          {my_address: 0x334b5058, value: _},
-          {my_address: 0x334b5080, value: .}
+          {my_address: 0x2347f9e0, value: LETTER},
+          {my_address: 0x2347fa08, value: DIGIT},
+          {my_address: 0x2347fa30, value: SPACE},
+          {my_address: 0x2347fa58, value: _},
+          {my_address: 0x2347fa80, value: .}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b4a50
+      0x2347f410
     ]
   "terminal_chars":[
-      0x334b4e60,
-      0x334b56e0,
-      0x334b5d80,
-      0x334b68b0,
-      0x334b7090
+      0x2347f840,
+      0x23480110,
+      0x234807b0,
+      0x23481300,
+      0x23481b30
     ]
 },TAB: {
   "concept_name": "TAB"
@@ -1038,25 +1014,24 @@ make[1]: Nothing to be done for 'all'.
         "position": "TAB_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b6de0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23481870",
         "content": 	
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b4ce0, value: 	}
+          {my_address: 0x2347f6c0, value: 	}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b5460
+      0x2347fb30
     ]
   "terminal_chars":[
-      0x334b6de0
+      0x23481870
     ]
 },TAB_SPACE: {
   "concept_name": "TAB_SPACE"
@@ -1067,50 +1042,49 @@ make[1]: Nothing to be done for 'all'.
         "position": "TAB_SPACE_0",
         "type": "SEQUENCE",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b5460",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347fb30",
         "content": [
-          {my_address: 0x334b52e0, value: SPACE},
-          {my_address: 0x334b5308, value: TAB}
+          {my_address: 0x2347fdd0, value: SPACE},
+          {my_address: 0x2347fdf8, value: TAB}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b52e0, value: SPACE},
-          {my_address: 0x334b5308, value: TAB}
+          {my_address: 0x2347fdd0, value: SPACE},
+          {my_address: 0x2347fdf8, value: TAB}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a8630,
-      0x334a9d70,
-      0x334aa650,
-      0x334aa9f0,
-      0x334aadd0,
-      0x334ab1b0,
-      0x334ab5d0,
-      0x334ab970,
-      0x334abcf0,
-      0x334ac0a0,
-      0x334ac770,
-      0x334acbb0,
-      0x334ad540,
-      0x334ad950,
-      0x334add30,
-      0x334ae0e0,
-      0x334ae4e0,
-      0x334ae890,
-      0x334aeea0,
-      0x334af890,
-      0x334afe40
+      0x23472700,
+      0x23473f40,
+      0x234748a0,
+      0x23474c70,
+      0x23475080,
+      0x23475490,
+      0x234758e0,
+      0x23475cb0,
+      0x23476060,
+      0x23476440,
+      0x23476b60,
+      0x23476fd0,
+      0x234779d0,
+      0x23477e20,
+      0x23478230,
+      0x23478610,
+      0x23478a40,
+      0x23478e20,
+      0x23479480,
+      0x23479ed0,
+      0x2347a4e0
     ]
   "terminal_chars":[
-      0x334b6de0,
-      0x334b7090
+      0x23481870,
+      0x23481b30
     ]
 },TEXT_MIME: {
   "concept_name": "TEXT_MIME"
@@ -1121,35 +1095,34 @@ make[1]: Nothing to be done for 'all'.
         "position": "TEXT_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b1de0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347c570",
         "content": [
-          {my_address: 0x334b1f60, value: text/html},
-          {my_address: 0x334b1f88, value: text/plain},
-          {my_address: 0x334b1fb0, value: text/css},
-          {my_address: 0x334b1fd8, value: text/csv},
-          {my_address: 0x334b2000, value: text/xml}
+          {my_address: 0x2347c710, value: text/html},
+          {my_address: 0x2347c738, value: text/plain},
+          {my_address: 0x2347c760, value: text/css},
+          {my_address: 0x2347c788, value: text/csv},
+          {my_address: 0x2347c7b0, value: text/xml}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b1f60, value: text/html},
-          {my_address: 0x334b1f88, value: text/plain},
-          {my_address: 0x334b1fb0, value: text/css},
-          {my_address: 0x334b1fd8, value: text/csv},
-          {my_address: 0x334b2000, value: text/xml}
+          {my_address: 0x2347c710, value: text/html},
+          {my_address: 0x2347c738, value: text/plain},
+          {my_address: 0x2347c760, value: text/css},
+          {my_address: 0x2347c788, value: text/csv},
+          {my_address: 0x2347c7b0, value: text/xml}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b1de0
+      0x2347c570
     ]
 },UPCASE_LETTER: {
   "concept_name": "UPCASE_LETTER"
@@ -1160,77 +1133,76 @@ make[1]: Nothing to be done for 'all'.
         "position": "UPCASE_LETTER_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b56e0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23480110",
         "content": [
-          {my_address: 0x334b57b0, value: A},
-          {my_address: 0x334b57d8, value: B},
-          {my_address: 0x334b5800, value: C},
-          {my_address: 0x334b5828, value: D},
-          {my_address: 0x334b5850, value: E},
-          {my_address: 0x334b5878, value: F},
-          {my_address: 0x334b58a0, value: G},
-          {my_address: 0x334b58c8, value: H},
-          {my_address: 0x334b58f0, value: I},
-          {my_address: 0x334b5918, value: J},
-          {my_address: 0x334b5940, value: K},
-          {my_address: 0x334b5968, value: L},
-          {my_address: 0x334b5990, value: M},
-          {my_address: 0x334b59b8, value: N},
-          {my_address: 0x334b59e0, value: O},
-          {my_address: 0x334b5a08, value: P},
-          {my_address: 0x334b5a30, value: Q},
-          {my_address: 0x334b5a58, value: R},
-          {my_address: 0x334b5a80, value: S},
-          {my_address: 0x334b5aa8, value: T},
-          {my_address: 0x334b5ad0, value: U},
-          {my_address: 0x334b5af8, value: V},
-          {my_address: 0x334b5b20, value: W},
-          {my_address: 0x334b5b48, value: X},
-          {my_address: 0x334b5b70, value: Y},
-          {my_address: 0x334b5b98, value: Z}
+          {my_address: 0x23480200, value: A},
+          {my_address: 0x23480228, value: B},
+          {my_address: 0x23480250, value: C},
+          {my_address: 0x23480278, value: D},
+          {my_address: 0x234802a0, value: E},
+          {my_address: 0x234802c8, value: F},
+          {my_address: 0x234802f0, value: G},
+          {my_address: 0x23480318, value: H},
+          {my_address: 0x23480340, value: I},
+          {my_address: 0x23480368, value: J},
+          {my_address: 0x23480390, value: K},
+          {my_address: 0x234803b8, value: L},
+          {my_address: 0x234803e0, value: M},
+          {my_address: 0x23480408, value: N},
+          {my_address: 0x23480430, value: O},
+          {my_address: 0x23480458, value: P},
+          {my_address: 0x23480480, value: Q},
+          {my_address: 0x234804a8, value: R},
+          {my_address: 0x234804d0, value: S},
+          {my_address: 0x234804f8, value: T},
+          {my_address: 0x23480520, value: U},
+          {my_address: 0x23480548, value: V},
+          {my_address: 0x23480570, value: W},
+          {my_address: 0x23480598, value: X},
+          {my_address: 0x234805c0, value: Y},
+          {my_address: 0x234805e8, value: Z}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b57b0, value: A},
-          {my_address: 0x334b57d8, value: B},
-          {my_address: 0x334b5800, value: C},
-          {my_address: 0x334b5828, value: D},
-          {my_address: 0x334b5850, value: E},
-          {my_address: 0x334b5878, value: F},
-          {my_address: 0x334b58a0, value: G},
-          {my_address: 0x334b58c8, value: H},
-          {my_address: 0x334b58f0, value: I},
-          {my_address: 0x334b5918, value: J},
-          {my_address: 0x334b5940, value: K},
-          {my_address: 0x334b5968, value: L},
-          {my_address: 0x334b5990, value: M},
-          {my_address: 0x334b59b8, value: N},
-          {my_address: 0x334b59e0, value: O},
-          {my_address: 0x334b5a08, value: P},
-          {my_address: 0x334b5a30, value: Q},
-          {my_address: 0x334b5a58, value: R},
-          {my_address: 0x334b5a80, value: S},
-          {my_address: 0x334b5aa8, value: T},
-          {my_address: 0x334b5ad0, value: U},
-          {my_address: 0x334b5af8, value: V},
-          {my_address: 0x334b5b20, value: W},
-          {my_address: 0x334b5b48, value: X},
-          {my_address: 0x334b5b70, value: Y},
-          {my_address: 0x334b5b98, value: Z}
+          {my_address: 0x23480200, value: A},
+          {my_address: 0x23480228, value: B},
+          {my_address: 0x23480250, value: C},
+          {my_address: 0x23480278, value: D},
+          {my_address: 0x234802a0, value: E},
+          {my_address: 0x234802c8, value: F},
+          {my_address: 0x234802f0, value: G},
+          {my_address: 0x23480318, value: H},
+          {my_address: 0x23480340, value: I},
+          {my_address: 0x23480368, value: J},
+          {my_address: 0x23480390, value: K},
+          {my_address: 0x234803b8, value: L},
+          {my_address: 0x234803e0, value: M},
+          {my_address: 0x23480408, value: N},
+          {my_address: 0x23480430, value: O},
+          {my_address: 0x23480458, value: P},
+          {my_address: 0x23480480, value: Q},
+          {my_address: 0x234804a8, value: R},
+          {my_address: 0x234804d0, value: S},
+          {my_address: 0x234804f8, value: T},
+          {my_address: 0x23480520, value: U},
+          {my_address: 0x23480548, value: V},
+          {my_address: 0x23480570, value: W},
+          {my_address: 0x23480598, value: X},
+          {my_address: 0x234805c0, value: Y},
+          {my_address: 0x234805e8, value: Z}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b5130
+      0x2347fcc0
     ]
   "terminal_chars":[
-      0x334b56e0
+      0x23480110
     ]
 },VERSION: {
   "concept_name": "VERSION"
@@ -1241,57 +1213,54 @@ make[1]: Nothing to be done for 'all'.
         "position": "VERSION_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b3ba0",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347c860",
         "content": NUMBER
         "next": [
-          0x334b4160
+          0x2347eaa0
         ]
         items": [
-          {my_address: 0x334b30e0, value: NUMBER}
+          {my_address: 0x2347d980, value: NUMBER}
         ]
       },
       {
         "position": "VERSION_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4160",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347eaa0",
         "content": .
         "next": [
-          0x334b4220
+          0x2347eb70
         ]
         items": [
-          {my_address: 0x334b2f40, value: .}
+          {my_address: 0x2347d7e0, value: .}
         ]
       },
       {
         "position": "VERSION_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b4220",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347eb70",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b2ef0, value: NUMBER}
+          {my_address: 0x2347d790, value: NUMBER}
         ]
       }
     ]
   ]
   "parents":[
-      0x334aefb0
+      0x234795a0
     ]
   "terminal_chars":[
-      0x334b68b0
+      0x23481300
     ]
 },VIDEO_MIME: {
   "concept_name": "VIDEO_MIME"
@@ -1302,29 +1271,28 @@ make[1]: Nothing to be done for 'all'.
         "position": "VIDEO_MIME_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b3970",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347e270",
         "content": [
-          {my_address: 0x334b0d60, value: video/mp4},
-          {my_address: 0x334b0d88, value: video/webm}
+          {my_address: 0x2347b490, value: video/mp4},
+          {my_address: 0x2347b4b8, value: video/webm}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b0d60, value: video/mp4},
-          {my_address: 0x334b0d88, value: video/webm}
+          {my_address: 0x2347b490, value: video/mp4},
+          {my_address: 0x2347b4b8, value: video/webm}
         ]
       }
     ]
   ]
   "parents":[
-      0x334b19f0
+      0x2347c160
     ]
   "terminal_chars":[
-      0x334b3970
+      0x2347e270
     ]
 },basic_http_stmt: {
   "concept_name": "basic_http_stmt"
@@ -1335,48 +1303,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa570",
+        "is_required_in_json": {
+},
+        "ptr": "0x234747b0",
         "content": sendfile
         "next": [
-          0x334aa650
+          0x234748a0
         ]
         items": [
-          {my_address: 0x334aa280, value: sendfile}
+          {my_address: 0x234744b0, value: sendfile}
         ]
       },
       {
         "position": "basic_http_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa650",
+        "is_required_in_json": {
+},
+        "ptr": "0x234748a0",
         "content": TAB_SPACE
         "next": [
-          0x334aa730
+          0x23474990
         ]
         items": [
-          {my_address: 0x334aa3a0, value: TAB_SPACE}
+          {my_address: 0x234745e0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa730",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474990",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334aa7f0, value: BOOL}
+          {my_address: 0x23474a60, value: BOOL}
         ]
       }
     ],
@@ -1385,48 +1350,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_1",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa930",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474ba0",
         "content": tcp_nopush
         "next": [
-          0x334aa9f0
+          0x23474c70
         ]
         items": [
-          {my_address: 0x334aa880, value: tcp_nopush}
+          {my_address: 0x23474af0, value: tcp_nopush}
         ]
       },
       {
         "position": "basic_http_stmt_1",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa9f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474c70",
         "content": TAB_SPACE
         "next": [
-          0x334aaae0
+          0x23474d70
         ]
         items": [
-          {my_address: 0x334aa8b0, value: TAB_SPACE}
+          {my_address: 0x23474b20, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_1",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aaae0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474d70",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334aaba0, value: BOOL}
+          {my_address: 0x23474e40, value: BOOL}
         ]
       }
     ],
@@ -1435,48 +1397,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_2",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aad10",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474fb0",
         "content": tcp_nodelay
         "next": [
-          0x334aadd0
+          0x23475080
         ]
         items": [
-          {my_address: 0x334aac60, value: tcp_nodelay}
+          {my_address: 0x23474f00, value: tcp_nodelay}
         ]
       },
       {
         "position": "basic_http_stmt_2",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aadd0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475080",
         "content": TAB_SPACE
         "next": [
-          0x334aaec0
+          0x23475180
         ]
         items": [
-          {my_address: 0x334aac90, value: TAB_SPACE}
+          {my_address: 0x23474f30, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_2",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aaec0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475180",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334aaf80, value: BOOL}
+          {my_address: 0x23475250, value: BOOL}
         ]
       }
     ],
@@ -1485,48 +1444,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_3",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab0f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234753c0",
         "content": keepalive_timeout
         "next": [
-          0x334ab1b0
+          0x23475490
         ]
         items": [
-          {my_address: 0x334ab010, value: keepalive_timeout}
+          {my_address: 0x234752e0, value: keepalive_timeout}
         ]
       },
       {
         "position": "basic_http_stmt_3",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab1b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475490",
         "content": TAB_SPACE
         "next": [
-          0x334ab2c0
+          0x234755b0
         ]
         items": [
-          {my_address: 0x334ab070, value: TAB_SPACE}
+          {my_address: 0x23475340, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_3",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab2c0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234755b0",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ab380, value: NUMBER}
+          {my_address: 0x23475680, value: NUMBER}
         ]
       }
     ],
@@ -1535,48 +1491,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_4",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab510",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475810",
         "content": types_hash_max_size
         "next": [
-          0x334ab5d0
+          0x234758e0
         ]
         items": [
-          {my_address: 0x334aac30, value: types_hash_max_size}
+          {my_address: 0x23474ed0, value: types_hash_max_size}
         ]
       },
       {
         "position": "basic_http_stmt_4",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab5d0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234758e0",
         "content": TAB_SPACE
         "next": [
-          0x334ab6b0
+          0x234759d0
         ]
         items": [
-          {my_address: 0x334ab410, value: TAB_SPACE}
+          {my_address: 0x23475710, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_4",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab6b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234759d0",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ab770, value: NUMBER}
+          {my_address: 0x23475aa0, value: NUMBER}
         ]
       }
     ],
@@ -1585,48 +1538,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_5",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab8b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475be0",
         "content": default_type
         "next": [
-          0x334ab970
+          0x23475cb0
         ]
         items": [
-          {my_address: 0x334ab040, value: default_type}
+          {my_address: 0x23475310, value: default_type}
         ]
       },
       {
         "position": "basic_http_stmt_5",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ab970",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475cb0",
         "content": TAB_SPACE
         "next": [
-          0x334aba30
+          0x23475d80
         ]
         items": [
-          {my_address: 0x334ab800, value: TAB_SPACE}
+          {my_address: 0x23475b30, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_5",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aba30",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475d80",
         "content": MIME
         "next": [
 
         ]
         items": [
-          {my_address: 0x334abaf0, value: MIME}
+          {my_address: 0x23475e50, value: MIME}
         ]
       }
     ],
@@ -1635,48 +1585,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_6",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334abc30",
+        "is_required_in_json": {
+},
+        "ptr": "0x23475f90",
         "content": access_log
         "next": [
-          0x334abcf0
+          0x23476060
         ]
         items": [
-          {my_address: 0x334abb80, value: access_log}
+          {my_address: 0x23475ee0, value: access_log}
         ]
       },
       {
         "position": "basic_http_stmt_6",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334abcf0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476060",
         "content": TAB_SPACE
         "next": [
-          0x334abde0
+          0x23476160
         ]
         items": [
-          {my_address: 0x334abbb0, value: TAB_SPACE}
+          {my_address: 0x23475f10, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_6",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334abde0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476160",
         "content": PATH
         "next": [
 
         ]
         items": [
-          {my_address: 0x334abea0, value: PATH}
+          {my_address: 0x23476230, value: PATH}
         ]
       }
     ],
@@ -1685,80 +1632,75 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334abfe0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476370",
         "content": error_log
         "next": [
-          0x334ac0a0
+          0x23476440
         ]
         items": [
-          {my_address: 0x334abf30, value: error_log}
+          {my_address: 0x234762c0, value: error_log}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac0a0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476440",
         "content": TAB_SPACE
         "next": [
-          0x334ac190
+          0x23476540
         ]
         items": [
-          {my_address: 0x334abf60, value: TAB_SPACE}
+          {my_address: 0x234762f0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac190",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476540",
         "content": PATH
         "next": [
-          0x334ac2e0
+          0x234766a0
         ]
         items": [
-          {my_address: 0x334ac250, value: PATH}
+          {my_address: 0x23476610, value: PATH}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac2e0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234766a0",
         "content": SPACE
         "next": [
-          0x334ac400
+          0x234767d0
         ]
         items": [
-          {my_address: 0x334ac3a0, value: SPACE}
+          {my_address: 0x23476770, value: SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_7",
         "type": "SYMBOL",
         "index": 4,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac400",
+        "is_required_in_json": {
+},
+        "ptr": "0x234767d0",
         "content": LOG_LEVEL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ac4c0, value: LOG_LEVEL}
+          {my_address: 0x234768a0, value: LOG_LEVEL}
         ]
       }
     ],
@@ -1767,48 +1709,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_8",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac6b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476a90",
         "content": server_tokens
         "next": [
-          0x334ac770
+          0x23476b60
         ]
         items": [
-          {my_address: 0x334ac2b0, value: server_tokens}
+          {my_address: 0x23476670, value: server_tokens}
         ]
       },
       {
         "position": "basic_http_stmt_8",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac770",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476b60",
         "content": TAB_SPACE
         "next": [
-          0x334ac860
+          0x23476c60
         ]
         items": [
-          {my_address: 0x334ac520, value: TAB_SPACE}
+          {my_address: 0x23476900, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_8",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ac860",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476c60",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ac920, value: BOOL}
+          {my_address: 0x23476d30, value: BOOL}
         ]
       }
     ],
@@ -1817,86 +1756,82 @@ make[1]: Nothing to be done for 'all'.
         "position": "basic_http_stmt_9",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334acaf0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476f00",
         "content": gzip
         "next": [
-          0x334acbb0
+          0x23476fd0
         ]
         items": [
-          {my_address: 0x334ac9b0, value: gzip}
+          {my_address: 0x23476dc0, value: gzip}
         ]
       },
       {
         "position": "basic_http_stmt_9",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334acbb0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23476fd0",
         "content": TAB_SPACE
         "next": [
-          0x334acca0
+          0x234770d0
         ]
         items": [
-          {my_address: 0x334ac9e0, value: TAB_SPACE}
+          {my_address: 0x23476df0, value: TAB_SPACE}
         ]
       },
       {
         "position": "basic_http_stmt_9",
         "type": "GROUP",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334acca0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234770d0",
         "content": [
-          {my_address: 0x334a65e0, value: BOOL},
-          {my_address: 0x334a6608, value: btp}
+          {my_address: 0x23470680, value: BOOL},
+          {my_address: 0x234706a8, value: btp}
         ]
         "next": [
-          0x334acdd0
+          0x23477220
         ]
         items": [
-          {my_address: 0x334a65e0, value: BOOL},
-          {my_address: 0x334a6608, value: btp}
+          {my_address: 0x23470680, value: BOOL},
+          {my_address: 0x234706a8, value: btp}
         ]
       },
       {
         "position": "basic_http_stmt_9",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334acdd0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477220",
         "content": btp
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ace90, value: btp}
+          {my_address: 0x234772f0, value: btp}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a9e40
+      0x23474030
     ]
   "terminal_chars":[
-      0x334aa570,
-      0x334aa930,
-      0x334aad10,
-      0x334ab0f0,
-      0x334ab510,
-      0x334ab8b0,
-      0x334abc30,
-      0x334abfe0,
-      0x334ac6b0,
-      0x334acaf0
+      0x234747b0,
+      0x23474ba0,
+      0x23474fb0,
+      0x234753c0,
+      0x23475810,
+      0x23475be0,
+      0x23475f90,
+      0x23476370,
+      0x23476a90,
+      0x23476f00
     ]
 },btp: {
   "concept_name": "btp"
@@ -1907,43 +1842,41 @@ make[1]: Nothing to be done for 'all'.
         "position": "btp_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad100",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477560",
         "content": BOOL
         "next": [
-          0x334ad1c0
+          0x23477630
         ]
         items": [
-          {my_address: 0x334acef0, value: BOOL}
+          {my_address: 0x23477350, value: BOOL}
         ]
       },
       {
         "position": "btp_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad1c0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477630",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334acf20, value: BOOL}
+          {my_address: 0x23477380, value: BOOL}
         ]
       }
     ]
   ]
   "parents":[
-      0x334acca0,
-      0x334acdd0,
-      0x334ad650
+      0x234770d0,
+      0x23477220,
+      0x23477af0
     ]
   "terminal_chars":[
-      0x334b0c90
+      0x2347b3a0
     ]
 },event_rule: {
   "concept_name": "event_rule"
@@ -1954,48 +1887,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "event_rule_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8c90",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472dc0",
         "content": worker_connections
         "next": [
-          0x334a8d70
+          0x23472eb0
         ]
         items": [
-          {my_address: 0x334a8a90, value: worker_connections}
+          {my_address: 0x23472bc0, value: worker_connections}
         ]
       },
       {
         "position": "event_rule_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8d70",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472eb0",
         "content": SPACE
         "next": [
-          0x334a8e80
+          0x23472fd0
         ]
         items": [
-          {my_address: 0x334a8bf0, value: SPACE}
+          {my_address: 0x23472d20, value: SPACE}
         ]
       },
       {
         "position": "event_rule_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8e80",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472fd0",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a8f40, value: NUMBER}
+          {my_address: 0x234730a0, value: NUMBER}
         ]
       }
     ],
@@ -2004,58 +1934,55 @@ make[1]: Nothing to be done for 'all'.
         "position": "event_rule_1",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9080",
+        "is_required_in_json": {
+},
+        "ptr": "0x234731e0",
         "content": multi_accept
         "next": [
-          0x334a9140
+          0x234732b0
         ]
         items": [
-          {my_address: 0x334a8ac0, value: multi_accept}
+          {my_address: 0x23472bf0, value: multi_accept}
         ]
       },
       {
         "position": "event_rule_1",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9140",
+        "is_required_in_json": {
+},
+        "ptr": "0x234732b0",
         "content": SPACE
         "next": [
-          0x334a9200
+          0x23473380
         ]
         items": [
-          {my_address: 0x334a8fd0, value: SPACE}
+          {my_address: 0x23473130, value: SPACE}
         ]
       },
       {
         "position": "event_rule_1",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9200",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473380",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a92c0, value: BOOL}
+          {my_address: 0x23473450, value: BOOL}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a8700
+      0x234727f0
     ]
   "terminal_chars":[
-      0x334a8c90,
-      0x334a9080
+      0x23472dc0,
+      0x234731e0
     ]
 },event_stmt: {
   "concept_name": "event_stmt"
@@ -2066,78 +1993,74 @@ make[1]: Nothing to be done for 'all'.
         "position": "event_stmt_0",
         "type": "OPTION",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8630",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472700",
         "content": [
-          {my_address: 0x334a8430, value: TAB_SPACE}
+          {my_address: 0x23472500, value: TAB_SPACE}
         ]
         "next": [
-          0x334a8700
+          0x234727f0
         ]
         items": [
-          {my_address: 0x334a8430, value: TAB_SPACE}
+          {my_address: 0x23472500, value: TAB_SPACE}
         ]
       },
       {
         "position": "event_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8700",
+        "is_required_in_json": {
+},
+        "ptr": "0x234727f0",
         "content": event_rule
         "next": [
-          0x334a8810
+          0x23472910
         ]
         items": [
-          {my_address: 0x334a8460, value: event_rule}
+          {my_address: 0x23472530, value: event_rule}
         ]
       },
       {
         "position": "event_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8810",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472910",
         "content": ;
         "next": [
-          0x334a8960
+          0x23472a70
         ]
         items": [
-          {my_address: 0x334a88d0, value: ;}
+          {my_address: 0x234729e0, value: ;}
         ]
       },
       {
         "position": "event_stmt_0",
         "type": "OPTION",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8960",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472a70",
         "content": [
-          {my_address: 0x334a8a30, value: LINE_JUMP}
+          {my_address: 0x23472b60, value: LINE_JUMP}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a8a30, value: LINE_JUMP}
+          {my_address: 0x23472b60, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a8220
+      0x234722d0
     ]
   "terminal_chars":[
-      0x334b6de0,
-      0x334b7090
+      0x23481870,
+      0x23481b30
     ]
 },events_block: {
   "concept_name": "events_block"
@@ -2148,109 +2071,103 @@ make[1]: Nothing to be done for 'all'.
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a7ea0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471e30",
         "content": events
         "next": [
-          0x334a6a20
+          0x23471f00
         ]
         items": [
-          {my_address: 0x334a7cf0, value: events}
+          {my_address: 0x23471c80, value: events}
         ]
       },
       {
         "position": "events_block_0",
         "type": "OPTION",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6a20",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471f00",
         "content": [
-          {my_address: 0x334a7d20, value: SPACE}
+          {my_address: 0x23471cb0, value: SPACE}
         ]
         "next": [
-          0x334a7fb0
+          0x23472040
         ]
         items": [
-          {my_address: 0x334a7d20, value: SPACE}
+          {my_address: 0x23471cb0, value: SPACE}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a7fb0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472040",
         "content": {
         "next": [
-          0x334a8100
+          0x234721a0
         ]
         items": [
-          {my_address: 0x334a8070, value: {}
+          {my_address: 0x23472110, value: {}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8100",
+        "is_required_in_json": {
+},
+        "ptr": "0x234721a0",
         "content": LINE_JUMP
         "next": [
-          0x334a8220
+          0x234722d0
         ]
         items": [
-          {my_address: 0x334a81c0, value: LINE_JUMP}
+          {my_address: 0x23472270, value: LINE_JUMP}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SEQUENCE",
         "index": 4,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8220",
+        "is_required_in_json": {
+},
+        "ptr": "0x234722d0",
         "content": [
-          {my_address: 0x334a82e0, value: event_stmt}
+          {my_address: 0x234723a0, value: event_stmt}
         ]
         "next": [
-          0x334a8340
+          0x23472400
         ]
         items": [
-          {my_address: 0x334a82e0, value: event_stmt}
+          {my_address: 0x234723a0, value: event_stmt}
         ]
       },
       {
         "position": "events_block_0",
         "type": "SYMBOL",
         "index": 5,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a8340",
+        "is_required_in_json": {
+},
+        "ptr": "0x23472400",
         "content": }
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a80d0, value: }}
+          {my_address: 0x23472170, value: }}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6690
+      0x2346ab40
     ]
   "terminal_chars":[
-      0x334a7ea0
+      0x23471e30
     ]
 },gzip_mines: {
   "concept_name": "gzip_mines"
@@ -2261,62 +2178,59 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_mines_0",
         "type": "OPTION",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334af890",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479ed0",
         "content": [
-          {my_address: 0x334af6e0, value: TAB_SPACE}
+          {my_address: 0x23479d20, value: TAB_SPACE}
         ]
         "next": [
-          0x334af960
+          0x23479fc0
         ]
         items": [
-          {my_address: 0x334af6e0, value: TAB_SPACE}
+          {my_address: 0x23479d20, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_mines_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334af960",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479fc0",
         "content": MIME
         "next": [
-          0x334afa70
+          0x2347a0e0
         ]
         items": [
-          {my_address: 0x334af710, value: MIME}
+          {my_address: 0x23479d50, value: MIME}
         ]
       },
       {
         "position": "gzip_mines_0",
         "type": "OPTION",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334afa70",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347a0e0",
         "content": [
-          {my_address: 0x334afb40, value: LINE_JUMP}
+          {my_address: 0x2347a1d0, value: LINE_JUMP}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334afb40, value: LINE_JUMP}
+          {my_address: 0x2347a1d0, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x334af590
+      0x23479bc0
     ]
   "terminal_chars":[
-      0x334b6de0,
-      0x334b7090
+      0x23481870,
+      0x23481b30
     ]
 },gzip_stmt: {
   "concept_name": "gzip_stmt"
@@ -2327,52 +2241,49 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad460",
+        "is_required_in_json": {
+},
+        "ptr": "0x234778e0",
         "content": gzip
         "next": [
-          0x334ad540
+          0x234779d0
         ]
         items": [
-          {my_address: 0x334ad2e0, value: gzip}
+          {my_address: 0x23477760, value: gzip}
         ]
       },
       {
         "position": "gzip_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad540",
+        "is_required_in_json": {
+},
+        "ptr": "0x234779d0",
         "content": TAB_SPACE
         "next": [
-          0x334ad650
+          0x23477af0
         ]
         items": [
-          {my_address: 0x334ad2b0, value: TAB_SPACE}
+          {my_address: 0x23477730, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_0",
         "type": "GROUP",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad650",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477af0",
         "content": [
-          {my_address: 0x334acf50, value: BOOL},
-          {my_address: 0x334acf78, value: btp}
+          {my_address: 0x234773b0, value: BOOL},
+          {my_address: 0x234773d8, value: btp}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334acf50, value: BOOL},
-          {my_address: 0x334acf78, value: btp}
+          {my_address: 0x234773b0, value: BOOL},
+          {my_address: 0x234773d8, value: btp}
         ]
       }
     ],
@@ -2381,48 +2292,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_1",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad890",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477d50",
         "content": gzip_disable
         "next": [
-          0x334ad950
+          0x23477e20
         ]
         items": [
-          {my_address: 0x334ad780, value: gzip_disable}
+          {my_address: 0x23477c40, value: gzip_disable}
         ]
       },
       {
         "position": "gzip_stmt_1",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ad950",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477e20",
         "content": TAB_SPACE
         "next": [
-          0x334ada40
+          0x23477f20
         ]
         items": [
-          {my_address: 0x334ad7b0, value: TAB_SPACE}
+          {my_address: 0x23477c70, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_1",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ada40",
+        "is_required_in_json": {
+},
+        "ptr": "0x23477f20",
         "content": STRING
         "next": [
 
         ]
         items": [
-          {my_address: 0x334adb00, value: STRING}
+          {my_address: 0x23477ff0, value: STRING}
         ]
       }
     ],
@@ -2431,48 +2339,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_2",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334adc70",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478160",
         "content": gzip_vary
         "next": [
-          0x334add30
+          0x23478230
         ]
         items": [
-          {my_address: 0x334adbc0, value: gzip_vary}
+          {my_address: 0x234780b0, value: gzip_vary}
         ]
       },
       {
         "position": "gzip_stmt_2",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334add30",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478230",
         "content": TAB_SPACE
         "next": [
-          0x334ade20
+          0x23478330
         ]
         items": [
-          {my_address: 0x334adbf0, value: TAB_SPACE}
+          {my_address: 0x234780e0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_2",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ade20",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478330",
         "content": BOOL
         "next": [
 
         ]
         items": [
-          {my_address: 0x334adee0, value: BOOL}
+          {my_address: 0x23478400, value: BOOL}
         ]
       }
     ],
@@ -2481,48 +2386,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_3",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae020",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478540",
         "content": gzip_proxied
         "next": [
-          0x334ae0e0
+          0x23478610
         ]
         items": [
-          {my_address: 0x334adf70, value: gzip_proxied}
+          {my_address: 0x23478490, value: gzip_proxied}
         ]
       },
       {
         "position": "gzip_stmt_3",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae0e0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478610",
         "content": TAB_SPACE
         "next": [
-          0x334ae1d0
+          0x23478710
         ]
         items": [
-          {my_address: 0x334adfa0, value: TAB_SPACE}
+          {my_address: 0x234784c0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_3",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae1d0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478710",
         "content": IDENT
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ae290, value: IDENT}
+          {my_address: 0x234787e0, value: IDENT}
         ]
       }
     ],
@@ -2531,48 +2433,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_4",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae420",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478970",
         "content": gzip_comp_level
         "next": [
-          0x334ae4e0
+          0x23478a40
         ]
         items": [
-          {my_address: 0x334adb90, value: gzip_comp_level}
+          {my_address: 0x23478080, value: gzip_comp_level}
         ]
       },
       {
         "position": "gzip_stmt_4",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae4e0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478a40",
         "content": TAB_SPACE
         "next": [
-          0x334ae5d0
+          0x23478b40
         ]
         items": [
-          {my_address: 0x334ae350, value: TAB_SPACE}
+          {my_address: 0x234788a0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_4",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae5d0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478b40",
         "content": NUMBER
         "next": [
 
         ]
         items": [
-          {my_address: 0x334ae690, value: NUMBER}
+          {my_address: 0x23478c10, value: NUMBER}
         ]
       }
     ],
@@ -2581,80 +2480,75 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae7d0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478d50",
         "content": gzip_buffers
         "next": [
-          0x334ae890
+          0x23478e20
         ]
         items": [
-          {my_address: 0x334ae320, value: gzip_buffers}
+          {my_address: 0x23478870, value: gzip_buffers}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae890",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478e20",
         "content": TAB_SPACE
         "next": [
-          0x334ae950
+          0x23478ef0
         ]
         items": [
-          {my_address: 0x334ae720, value: TAB_SPACE}
+          {my_address: 0x23478ca0, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334ae950",
+        "is_required_in_json": {
+},
+        "ptr": "0x23478ef0",
         "content": NUMBER
         "next": [
-          0x334aeaa0
+          0x23479050
         ]
         items": [
-          {my_address: 0x334aea10, value: NUMBER}
+          {my_address: 0x23478fc0, value: NUMBER}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aeaa0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479050",
         "content": SPACE
         "next": [
-          0x334aebc0
+          0x23479180
         ]
         items": [
-          {my_address: 0x334aeb60, value: SPACE}
+          {my_address: 0x23479120, value: SPACE}
         ]
       },
       {
         "position": "gzip_stmt_5",
         "type": "SYMBOL",
         "index": 4,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aebc0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479180",
         "content": SIZE
         "next": [
 
         ]
         items": [
-          {my_address: 0x334aec80, value: SIZE}
+          {my_address: 0x23479250, value: SIZE}
         ]
       }
     ],
@@ -2663,48 +2557,45 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_6",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aede0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234793b0",
         "content": gzip_http_version
         "next": [
-          0x334aeea0
+          0x23479480
         ]
         items": [
-          {my_address: 0x334aea70, value: gzip_http_version}
+          {my_address: 0x23479020, value: gzip_http_version}
         ]
       },
       {
         "position": "gzip_stmt_6",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aeea0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479480",
         "content": TAB_SPACE
         "next": [
-          0x334aefb0
+          0x234795a0
         ]
         items": [
-          {my_address: 0x334aed60, value: TAB_SPACE}
+          {my_address: 0x23479330, value: TAB_SPACE}
         ]
       },
       {
         "position": "gzip_stmt_6",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aefb0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234795a0",
         "content": VERSION
         "next": [
 
         ]
         items": [
-          {my_address: 0x334af070, value: VERSION}
+          {my_address: 0x23479670, value: VERSION}
         ]
       }
     ],
@@ -2713,32 +2604,31 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_stmt_7",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334af160",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479760",
         "content": gzip_types
         "next": [
 
         ]
         items": [
-          {my_address: 0x334af100, value: gzip_types}
+          {my_address: 0x23479700, value: gzip_types}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a9e40
+      0x23474030
     ]
   "terminal_chars":[
-      0x334ad460,
-      0x334ad890,
-      0x334adc70,
-      0x334ae020,
-      0x334ae420,
-      0x334ae7d0,
-      0x334aede0,
-      0x334af3f0
+      0x234778e0,
+      0x23477d50,
+      0x23478160,
+      0x23478540,
+      0x23478970,
+      0x23478d50,
+      0x234793b0,
+      0x23479a00
     ]
 },gzip_types: {
   "concept_name": "gzip_types"
@@ -2749,60 +2639,57 @@ make[1]: Nothing to be done for 'all'.
         "position": "gzip_types_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334af3f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479a00",
         "content": gzip_types
         "next": [
-          0x334af4b0
+          0x23479ad0
         ]
         items": [
-          {my_address: 0x334aece0, value: gzip_types}
+          {my_address: 0x234792b0, value: gzip_types}
         ]
       },
       {
         "position": "gzip_types_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334af4b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479ad0",
         "content": LINE_JUMP
         "next": [
-          0x334af590
+          0x23479bc0
         ]
         items": [
-          {my_address: 0x334af220, value: LINE_JUMP}
+          {my_address: 0x23479830, value: LINE_JUMP}
         ]
       },
       {
         "position": "gzip_types_0",
         "type": "SEQUENCE",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334af590",
+        "is_required_in_json": {
+},
+        "ptr": "0x23479bc0",
         "content": [
-          {my_address: 0x334af650, value: gzip_mines}
+          {my_address: 0x23479c90, value: gzip_mines}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334af650, value: gzip_mines}
+          {my_address: 0x23479c90, value: gzip_mines}
         ]
       }
     ]
   ]
   "parents":[
-      0x334af160,
-      0x334af3f0
+      0x23479760,
+      0x23479a00
     ]
   "terminal_chars":[
-      0x334af3f0
+      0x23479a00
     ]
 },http_block: {
   "concept_name": "http_block"
@@ -2813,109 +2700,103 @@ make[1]: Nothing to be done for 'all'.
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9500",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473690",
         "content": http
         "next": [
-          0x334a95c0
+          0x23473760
         ]
         items": [
-          {my_address: 0x334a9350, value: http}
+          {my_address: 0x234734e0, value: http}
         ]
       },
       {
         "position": "http_block_0",
         "type": "OPTION",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a95c0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473760",
         "content": [
-          {my_address: 0x334a9380, value: SPACE}
+          {my_address: 0x23473510, value: SPACE}
         ]
         "next": [
-          0x334a96c0
+          0x23473880
         ]
         items": [
-          {my_address: 0x334a9380, value: SPACE}
+          {my_address: 0x23473510, value: SPACE}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a96c0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473880",
         "content": {
         "next": [
-          0x334a9810
+          0x234739e0
         ]
         items": [
-          {my_address: 0x334a9780, value: {}
+          {my_address: 0x23473950, value: {}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9810",
+        "is_required_in_json": {
+},
+        "ptr": "0x234739e0",
         "content": LINE_JUMP
         "next": [
-          0x334a9930
+          0x23473b10
         ]
         items": [
-          {my_address: 0x334a98d0, value: LINE_JUMP}
+          {my_address: 0x23473ab0, value: LINE_JUMP}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SEQUENCE",
         "index": 4,
-        "is_required_in_json": [
-          http_stmt
-        ],
-        "ptr": "0x334a9930",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473b10",
         "content": [
-          {my_address: 0x334a99f0, value: http_stmt}
+          {my_address: 0x23473be0, value: http_stmt}
         ]
         "next": [
-          0x334a9a80
+          0x23473c40
         ]
         items": [
-          {my_address: 0x334a99f0, value: http_stmt}
+          {my_address: 0x23473be0, value: http_stmt}
         ]
       },
       {
         "position": "http_block_0",
         "type": "SYMBOL",
         "index": 5,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9a80",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473c40",
         "content": }
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a97e0, value: }}
+          {my_address: 0x234739b0, value: }}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6690
+      0x2346ab40
     ]
   "terminal_chars":[
-      0x334a9500
+      0x23473690
     ]
 },http_stmt: {
   "concept_name": "http_stmt"
@@ -2926,72 +2807,68 @@ make[1]: Nothing to be done for 'all'.
         "position": "http_stmt_0",
         "type": "OPTION",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9d70",
+        "is_required_in_json": {
+},
+        "ptr": "0x23473f40",
         "content": [
-          {my_address: 0x334a9b70, value: TAB_SPACE}
+          {my_address: 0x23473d40, value: TAB_SPACE}
         ]
         "next": [
-          0x334a9e40
+          0x23474030
         ]
         items": [
-          {my_address: 0x334a9b70, value: TAB_SPACE}
+          {my_address: 0x23473d40, value: TAB_SPACE}
         ]
       },
       {
         "position": "http_stmt_0",
         "type": "GROUP",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9e40",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474030",
         "content": [
-          {my_address: 0x334a9f10, value: basic_http_stmt},
-          {my_address: 0x334a9f38, value: gzip_stmt},
-          {my_address: 0x334a9f60, value: include_stmt}
+          {my_address: 0x23474120, value: basic_http_stmt},
+          {my_address: 0x23474148, value: gzip_stmt},
+          {my_address: 0x23474170, value: include_stmt}
         ]
         "next": [
-          0x334a9fe0
+          0x234741f0
         ]
         items": [
-          {my_address: 0x334a9f10, value: basic_http_stmt},
-          {my_address: 0x334a9f38, value: gzip_stmt},
-          {my_address: 0x334a9f60, value: include_stmt}
+          {my_address: 0x23474120, value: basic_http_stmt},
+          {my_address: 0x23474148, value: gzip_stmt},
+          {my_address: 0x23474170, value: include_stmt}
         ]
       },
       {
         "position": "http_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a9fe0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234741f0",
         "content": ;
         "next": [
-          0x334aa130
+          0x23474350
         ]
         items": [
-          {my_address: 0x334aa0a0, value: ;}
+          {my_address: 0x234742c0, value: ;}
         ]
       },
       {
         "position": "http_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa130",
+        "is_required_in_json": {
+},
+        "ptr": "0x23474350",
         "content": LINE_JUMP
         "next": [
 
         ]
         items": [
-          {my_address: 0x334aa1f0, value: LINE_JUMP}
+          {my_address: 0x23474420, value: LINE_JUMP}
         ]
       }
     ],
@@ -3000,27 +2877,26 @@ make[1]: Nothing to be done for 'all'.
         "position": "http_stmt_1",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aa2b0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234744e0",
         "content": LINE_JUMP
         "next": [
 
         ]
         items": [
-          {my_address: 0x334aa250, value: LINE_JUMP}
+          {my_address: 0x23474480, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a9930
+      0x23473b10
     ]
   "terminal_chars":[
-      0x334b6de0,
-      0x334b7090,
-      0x334b7310
+      0x23481870,
+      0x23481b30,
+      0x23481dc0
     ]
 },include_stmt: {
   "concept_name": "include_stmt"
@@ -3031,57 +2907,54 @@ make[1]: Nothing to be done for 'all'.
         "position": "include_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334afd80",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347a410",
         "content": include
         "next": [
-          0x334afe40
+          0x2347a4e0
         ]
         items": [
-          {my_address: 0x334afbd0, value: include}
+          {my_address: 0x2347a260, value: include}
         ]
       },
       {
         "position": "include_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334afe40",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347a4e0",
         "content": TAB_SPACE
         "next": [
-          0x334aff50
+          0x2347a600
         ]
         items": [
-          {my_address: 0x334afc00, value: TAB_SPACE}
+          {my_address: 0x2347a290, value: TAB_SPACE}
         ]
       },
       {
         "position": "include_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334aff50",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347a600",
         "content": PATH
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b0010, value: PATH}
+          {my_address: 0x2347a6d0, value: PATH}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a9e40
+      0x23474030
     ]
   "terminal_chars":[
-      0x334afd80
+      0x2347a410
     ]
 },pid_stmt: {
   "concept_name": "pid_stmt"
@@ -3092,73 +2965,69 @@ make[1]: Nothing to be done for 'all'.
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a7900",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471850",
         "content": pid
         "next": [
-          0x334a79c0
+          0x23471920
         ]
         items": [
-          {my_address: 0x334a7090, value: pid}
+          {my_address: 0x23470fe0, value: pid}
         ]
       },
       {
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a79c0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471920",
         "content": SPACE
         "next": [
-          0x334a7a80
+          0x234719f0
         ]
         items": [
-          {my_address: 0x334a7750, value: SPACE}
+          {my_address: 0x234716a0, value: SPACE}
         ]
       },
       {
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a7a80",
+        "is_required_in_json": {
+},
+        "ptr": "0x234719f0",
         "content": PATH
         "next": [
-          0x334a7bd0
+          0x23471b50
         ]
         items": [
-          {my_address: 0x334a7b40, value: PATH}
+          {my_address: 0x23471ac0, value: PATH}
         ]
       },
       {
         "position": "pid_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a7bd0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471b50",
         "content": ;
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a7c90, value: ;}
+          {my_address: 0x23471c20, value: ;}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6690
+      0x2346ab40
     ]
   "terminal_chars":[
-      0x334a7900
+      0x23471850
     ]
 },statement: {
   "concept_name": "statement"
@@ -3169,57 +3038,55 @@ make[1]: Nothing to be done for 'all'.
         "position": "statement_0",
         "type": "GROUP",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6690",
+        "is_required_in_json": {
+},
+        "ptr": "0x2346ab40",
         "content": [
-          {my_address: 0x334a6810, value: user_stmt},
-          {my_address: 0x334a6838, value: worker_stmt},
-          {my_address: 0x334a6860, value: pid_stmt},
-          {my_address: 0x334a6888, value: events_block},
-          {my_address: 0x334a68b0, value: http_block}
+          {my_address: 0x234707e0, value: user_stmt},
+          {my_address: 0x23470808, value: worker_stmt},
+          {my_address: 0x23470830, value: pid_stmt},
+          {my_address: 0x23470858, value: events_block},
+          {my_address: 0x23470880, value: http_block}
         ]
         "next": [
-          0x334a6960
+          0x23470930
         ]
         items": [
-          {my_address: 0x334a6810, value: user_stmt},
-          {my_address: 0x334a6838, value: worker_stmt},
-          {my_address: 0x334a6860, value: pid_stmt},
-          {my_address: 0x334a6888, value: events_block},
-          {my_address: 0x334a68b0, value: http_block}
+          {my_address: 0x234707e0, value: user_stmt},
+          {my_address: 0x23470808, value: worker_stmt},
+          {my_address: 0x23470830, value: pid_stmt},
+          {my_address: 0x23470858, value: events_block},
+          {my_address: 0x23470880, value: http_block}
         ]
       },
       {
         "position": "statement_0",
         "type": "SEQUENCE",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6960",
+        "is_required_in_json": {
+},
+        "ptr": "0x23470930",
         "content": [
-          {my_address: 0x334a22a0, value: LINE_JUMP}
+          {my_address: 0x234694e0, value: LINE_JUMP}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a22a0, value: LINE_JUMP}
+          {my_address: 0x234694e0, value: LINE_JUMP}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6420
+      0x234704b0
     ]
   "terminal_chars":[
-      0x334a6bc0,
-      0x334a72f0,
-      0x334a7900,
-      0x334a7ea0,
-      0x334a9500
+      0x23470a00,
+      0x23471200,
+      0x23471850,
+      0x23471e30,
+      0x23473690
     ]
 },user_name: {
   "concept_name": "user_name"
@@ -3230,49 +3097,47 @@ make[1]: Nothing to be done for 'all'.
         "position": "user_name_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b0250",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347a910",
         "content": LOCASE_LETTER
         "next": [
-          0x334b0310
+          0x2347a9e0
         ]
         items": [
-          {my_address: 0x334b00a0, value: LOCASE_LETTER}
+          {my_address: 0x2347a760, value: LOCASE_LETTER}
         ]
       },
       {
         "position": "user_name_0",
         "type": "SEQUENCE",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334b0310",
+        "is_required_in_json": {
+},
+        "ptr": "0x2347a9e0",
         "content": [
-          {my_address: 0x334b03d0, value: LOCASE_LETTER},
-          {my_address: 0x334b03f8, value: DIGIT},
-          {my_address: 0x334b0420, value: _},
-          {my_address: 0x334b0448, value: -}
+          {my_address: 0x2347aab0, value: LOCASE_LETTER},
+          {my_address: 0x2347aad8, value: DIGIT},
+          {my_address: 0x2347ab00, value: _},
+          {my_address: 0x2347ab28, value: -}
         ]
         "next": [
 
         ]
         items": [
-          {my_address: 0x334b03d0, value: LOCASE_LETTER},
-          {my_address: 0x334b03f8, value: DIGIT},
-          {my_address: 0x334b0420, value: _},
-          {my_address: 0x334b0448, value: -}
+          {my_address: 0x2347aab0, value: LOCASE_LETTER},
+          {my_address: 0x2347aad8, value: DIGIT},
+          {my_address: 0x2347ab00, value: _},
+          {my_address: 0x2347ab28, value: -}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6dc0
+      0x23470cf0
     ]
   "terminal_chars":[
-      0x334b5d80
+      0x234807b0
     ]
 },user_stmt: {
   "concept_name": "user_stmt"
@@ -3283,73 +3148,73 @@ make[1]: Nothing to be done for 'all'.
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6bc0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23470a00",
         "content": user
         "next": [
-          0x334a6c80
+          0x23470ba0
         ]
         items": [
-          {my_address: 0x334a6b90, value: user}
+          {my_address: 0x23470b70, value: user}
         ]
       },
       {
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6c80",
+        "is_required_in_json": {
+},
+        "ptr": "0x23470ba0",
         "content": SPACE
         "next": [
-          0x334a6dc0
+          0x23470cf0
         ]
         items": [
-          {my_address: 0x334a6d40, value: SPACE}
+          {my_address: 0x23470c70, value: SPACE}
         ]
       },
       {
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-          user_name
-        ],
-        "ptr": "0x334a6dc0",
+        "is_required_in_json": {
+          "97": 
+            [
+              user_name
+            ]
+},
+        "ptr": "0x23470cf0",
         "content": user_name
         "next": [
-          0x334a6f40
+          0x23470e80
         ]
         items": [
-          {my_address: 0x334a6e80, value: user_name}
+          {my_address: 0x23470dc0, value: user_name}
         ]
       },
       {
         "position": "user_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a6f40",
+        "is_required_in_json": {
+},
+        "ptr": "0x23470e80",
         "content": ;
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a7000, value: ;}
+          {my_address: 0x23470f50, value: ;}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6690
+      0x2346ab40
     ]
   "terminal_chars":[
-      0x334a6bc0
+      0x23470a00
     ]
 },worker_stmt: {
   "concept_name": "worker_stmt"
@@ -3360,73 +3225,69 @@ make[1]: Nothing to be done for 'all'.
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 0,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a72f0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471200",
         "content": worker_processes
         "next": [
-          0x334a73d0
+          0x234712f0
         ]
         items": [
-          {my_address: 0x334a7060, value: worker_processes}
+          {my_address: 0x23470fb0, value: worker_processes}
         ]
       },
       {
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 1,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a73d0",
+        "is_required_in_json": {
+},
+        "ptr": "0x234712f0",
         "content": SPACE
         "next": [
-          0x334a74e0
+          0x23471410
         ]
         items": [
-          {my_address: 0x334a7250, value: SPACE}
+          {my_address: 0x23471160, value: SPACE}
         ]
       },
       {
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 2,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a74e0",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471410",
         "content": IDENT
         "next": [
-          0x334a7630
+          0x23471570
         ]
         items": [
-          {my_address: 0x334a75a0, value: IDENT}
+          {my_address: 0x234714e0, value: IDENT}
         ]
       },
       {
         "position": "worker_stmt_0",
         "type": "SYMBOL",
         "index": 3,
-        "is_required_in_json": [
-
-        ],
-        "ptr": "0x334a7630",
+        "is_required_in_json": {
+},
+        "ptr": "0x23471570",
         "content": ;
         "next": [
 
         ]
         items": [
-          {my_address: 0x334a76f0, value: ;}
+          {my_address: 0x23471640, value: ;}
         ]
       }
     ]
   ]
   "parents":[
-      0x334a6690
+      0x2346ab40
     ]
   "terminal_chars":[
-      0x334a72f0
+      0x23471200
     ]
 }}
 

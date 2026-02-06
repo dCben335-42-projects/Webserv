@@ -185,7 +185,8 @@ bool ARule::isSequence() const
 	return m_type == SEQUENCE;
 }
 
-const Map<size_t, Vec<std::string>> &ARule::getRequiredInJsonMap() const
+// clang-format off
+const Map<size_t, Vec<std::string> > &ARule::getRequiredInJsonMap() const
 {
 	return m_requiredInJson;
 }

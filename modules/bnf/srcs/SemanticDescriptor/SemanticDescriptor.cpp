@@ -232,6 +232,46 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 	return result;
 }
 
+bool parseAndConsumePrefix(std::string &str, int *out)
+{
+	size_t i = 0;
+
+	if (str.empty() || !std::isdigit(str[0]))
+	{
+		return false;
+	}
+
+
+	// Parse du nombre
+	int value = 0;
+	while (i < str.size() && std::isdigit(str[i]))
+	{
+		value = value * 10 + (str[i] - '0');
+		++i;
+	}
+
+
+	// Vérification du '>'
+	if (i >= str.size() || str[i] != '>')
+	{
+		throw std::runtime_error("Erreur: nombre non suivi de '>'");
+	}
+
+	Logger::log("ok3");
+
+
+	// Consommation de "Number>"
+	str.erase(0, i + 1); // +1 pour '>'
+
+	Logger::log(value);
+
+
+
+
+	*out = value;
+	return true;
+}
+
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
 	Concept *concept;
@@ -250,22 +290,15 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	Logger::log(words);
 
 	std::string word;
-	ARule	   *arule			 = NULL;
-	size_t		aruleIndex		 = 0;
-	bool		isRequiredInJson = false;
+	ARule	   *arule	   = NULL;
+	size_t		aruleIndex = 0;
+	int			n		   = -1;
 
 
 	for (size_t i = 0; i < words.size(); ++i)
 	{
 		word = words[i];
-
-		if (!word.empty() && word[0] == '!')
-		{
-			isRequiredInJson = true;
-			word.erase(word.begin());
-			if (word.empty())
-				continue;
-		}
+		parseAndConsumePrefix(word, &n);
 		if (ARule::isKeyWord(word, true))
 			throw std::runtime_error("Invalid keyword: " + word);
 		BnfMap map = ARule::getMap(word);
@@ -280,13 +313,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		}
 		while (word != map.closer)
 		{
-			if (!word.empty() && word[0] == '!')
-			{
-				isRequiredInJson = true;
-				word.erase(word.begin());
-				if (word.empty())
-					continue;
-			}
+			parseAndConsumePrefix(word, &n);
 			if (ARule::isKeyWord(word, false))
 				throw std::runtime_error("Bad closing keyword: " + word);
 			if (word != DIVIDER)
@@ -294,11 +321,13 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 				if (!validate_string_strict(word))
 					throw InvalidConceptNameException(word);
 				arule->addItem(TerminalSymbol::specify(word));
-				if (isRequiredInJson)
+
+				if (n >= 0)
 				{
-					arule->addRequiredInJson(0, word);
-					isRequiredInJson = false;
+					arule->addRequiredInJson(n, word);
+					n = -1;
 				}
+
 				if (!map.hasClosure)
 					break;
 			}

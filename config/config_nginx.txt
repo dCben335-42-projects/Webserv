@@ -2,7 +2,7 @@
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
-user_stmt		::= 'user' SPACE 0>user_name ';'
+user_stmt		::= 'user' SPACE 97>user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
 pid_stmt		::= 'pid' SPACE PATH ';'
 
@@ -13,7 +13,7 @@ event_stmt		::= [ TAB_SPACE ] event_rule ';' [ LINE_JUMP ]
 event_rule		::= 'worker_connections' SPACE NUMBER
 				|= 'multi_accept' SPACE BOOL
 
-http_block		::= 'http' [ SPACE ] '{' LINE_JUMP { !http_stmt } '}'
+http_block		::= 'http' [ SPACE ] '{' LINE_JUMP { http_stmt } '}'
 
 http_stmt		::= [ TAB_SPACE ] ( basic_http_stmt | gzip_stmt | include_stmt ) ';' LINE_JUMP
 				|= LINE_JUMP
