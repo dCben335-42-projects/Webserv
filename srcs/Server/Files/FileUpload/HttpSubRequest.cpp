@@ -38,12 +38,12 @@ std::string HttpSubRequest::extractValue(const std::string &token, const std::st
 
 void HttpSubRequest::parseNameAndFileName(Map<std::string> &headersMap)
 {
-	if (headersMap.get("Content-Disposition").find("form-data;") == std::string::npos)
+	if (headersMap.get(HEADER_SUB_CONTENT_DISPOSITION).find("form-data;") == std::string::npos)
 		throw Http400Exception();
-	if (headersMap.get("Content-Disposition").find("name=") == std::string::npos)
+	if (headersMap.get(HEADER_SUB_CONTENT_DISPOSITION).find("name=") == std::string::npos)
 		throw Http400Exception();
 
-	Vec<std::string> contentDispositionValues = String::split(headersMap.get("Content-Disposition"), ";");
+	Vec<std::string> contentDispositionValues = String::split(headersMap.get(HEADER_SUB_CONTENT_DISPOSITION), ";");
 	for (Vec<std::string>::const_iterator it = contentDispositionValues.begin(); it != contentDispositionValues.end(); it++)
 	{
 		std::string token = String::trim((*it));
@@ -63,9 +63,9 @@ void HttpSubRequest::parseSubRequest()
 	Map<std::string> headersMap = this->getHeaders();
 	if (headersMap.size() > 2)
 		throw Http400Exception();
-	if (headersMap.has("Content-Disposition") == false)
+	if (headersMap.has(HEADER_SUB_CONTENT_DISPOSITION) == false)
 		throw Http400Exception();
-	if (headersMap.has(HEADER_CONTENT_TYPE) == false)
-		headersMap.set(HEADER_CONTENT_TYPE, MIME_PLAIN);
+	// if (headersMap.has(HEADER_CONTENT_TYPE) == false)
+	// 	headersMap.set(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	parseNameAndFileName(headersMap);
 }

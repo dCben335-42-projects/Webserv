@@ -3,12 +3,14 @@
 
 #include "Pollable.hpp"
 #include "Client.hpp"
+#include "CgiOutput.hpp"
 #include <sys/types.h>
 
 class CgiPipe : public Pollable
 {
 	private:
 		Client *const m_client;
+		CgiOutput	  m_cgiOutput;
 		pid_t		  m_pid;
 
 		void onError();

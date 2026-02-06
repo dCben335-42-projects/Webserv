@@ -1,10 +1,37 @@
 #include "AHttpMessage.hpp"
 #include "Number.hpp"
 #include "Logger.hpp"
+#include "webserv.hpp"
+#include "httpExceptions.hpp"
+
+Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
+{
+	Map<unsigned short, std::string> map;
+
+	map[200] = HTTP_200_MSG;
+	map[201] = HTTP_201_MSG;
+	map[204] = HTTP_204_MSG;
+	map[400] = HTTP_400_MSG;
+	map[401] = HTTP_401_MSG;
+	map[403] = HTTP_403_MSG;
+	map[404] = HTTP_404_MSG;
+	map[406] = HTTP_406_MSG;
+	map[409] = HTTP_409_MSG;
+	map[405] = HTTP_405_MSG;
+	map[500] = HTTP_500_MSG;
+	map[501] = HTTP_501_MSG;
+	return (map);
+}
+
+const Map<unsigned short, std::string> AHttpMessage::m_statusReasonMap =
+	AHttpMessage::initStatusReasonMap();
+
+
 
 AHttpMessage::AHttpMessage() :
 	m_method(),
-	m_body("")
+	m_body(""),
+	m_statusCode(0)
 {
 }
 
@@ -143,4 +170,47 @@ std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
 	Logger::log(message.getHeaders());
 	return o;
+}
+
+/**
+ *
+ * @brief Builds the status line of the HTTP response.
+ *
+ * @return A string representing the HTTP status line.
+ *
+ */
+std::string AHttpMessage::buildHead() const
+{
+	const Map<unsigned short, std::string>::const_iterator it =
+		m_statusReasonMap.find(m_statusCode);
+	std::ostringstream head;
+
+	head << PROTOCOL << " " << m_statusCode << " ";
+	head << (it != m_statusReasonMap.end() ? it->second : "Unknown Status") << HEADER_LINE_ENDING;
+	return head.str();
+}
+
+
+/**
+ *
+ * @brief Builds the full HTTP response string,
+ * including the status line, headers, and body.
+ *
+ * @note This function constructs the complete HTTP response
+ * and stores it in the m_fullResponse member variable.
+ *
+ * @note It is typically called after setting the status code,
+ * headers, and body of the response.
+ *
+ */
+std::string AHttpMessage::build()
+{
+	std::ostringstream responseStream;
+	responseStream << buildHead();
+	Map<std::string>::const_iterator it = m_headers.begin();
+	for (; it != m_headers.end(); ++it)
+		responseStream << it->first << HEADER_SEPARATOR << it->second << HEADER_LINE_ENDING;
+	responseStream << HEADER_LINE_ENDING;
+	responseStream << m_body;
+	return responseStream.str();
 }

@@ -1,5 +1,5 @@
 print("""HTTP/1.1 200 OK\r
-Content-type: text/html\r
+Content-Type: text/html\r
 \r
 \r
 <html>

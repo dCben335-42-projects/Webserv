@@ -14,6 +14,7 @@ class HttpRequest : public AHttpInboundMessage
 		Vec<std::string>			  m_segments;
 		Vec<const Config::Location *> m_activeLocations;
 		Vec<Accept>					  m_accepts;
+		bool						  m_connectionKeepAlive;
 
 		size_t m_firstLineEndPos;
 		size_t m_headersEndPos;
@@ -24,6 +25,7 @@ class HttpRequest : public AHttpInboundMessage
 		void   parseTargetQuery(const std::string &path);
 		void   parseActiveLocations(const Config &config);
 		void   parseAccepts(const std::string &headerValue);
+		bool   determineConnectionKeepAlive() const;
 
 	public:
 		HttpRequest();
@@ -48,6 +50,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::string getUploadPath() const;
 		bool		matchAccept(const std::string &contentType) const;
 
+		bool getConnectionKeepAlive() const;
 
 		bool isComplete();
 };

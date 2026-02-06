@@ -3,12 +3,12 @@
 
 #include "AHttpException.hpp"
 
-#define HTTP_409_ERROR_MSG "Conflict"
+#define HTTP_409_MSG "Conflict"
 
 class Http409Exception : public AHttpException
 {
 	public:
-		Http409Exception() : AHttpException(HTTP_409_ERROR_MSG, 409)
+		Http409Exception() : AHttpException(HTTP_409_MSG, 409)
 		{
 		}
 };

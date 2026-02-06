@@ -11,6 +11,14 @@ class AHttpMessage
 		Map<std::string> m_headers;
 		HttpMethod		 m_method;
 		std::string		 m_body;
+		unsigned short	 m_statusCode;
+
+		static const Map<unsigned short, std::string> m_statusReasonMap;
+
+		static Map<unsigned short, std::string> initStatusReasonMap();
+
+		std::string buildHead() const;
+		std::string build();
 
 	public:
 		AHttpMessage();

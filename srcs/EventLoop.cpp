@@ -3,6 +3,7 @@
 #include "Location.hpp"
 #include "CgiParams.hpp"
 #include "Signals.hpp"
+#include "Logger.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;

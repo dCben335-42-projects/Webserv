@@ -11,7 +11,6 @@ class HttpSubRequest : public AHttpInboundMessage
 
 		std::string extractValue(const std::string &token, const std::string &pattern) const;
 		void		parseNameAndFileName(Map<std::string> &headersMap);
-		std::string timestampGeneration();
 
 	public:
 		HttpSubRequest(const std::string &rawStr);

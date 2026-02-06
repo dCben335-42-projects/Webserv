@@ -88,7 +88,7 @@ void Client::handlePostRequest()
 	FileUpload file(m_req);
 
 	if (!m_req.hasUpload())
-		throw Http401Exception();
+		throw Http403Exception();
 	if (!file.isUploadValid())
 		throw Http400Exception();
 	m_req.setBody("File uploaded successfully.");
@@ -96,12 +96,40 @@ void Client::handlePostRequest()
 	m_res.setStatusCode(201);
 }
 
+void Client::checkFilePerms(const char *fullPath) const
+{
+	if (access(fullPath, F_OK) == -1)
+		throw Http404Exception();
+	if (access(fullPath, R_OK | W_OK) == -1)
+		throw Http403Exception();
+}
+
+void Client::handlePatchRequest(const std::string &ressourcePath)
+{
+	checkFilePerms(ressourcePath.c_str());
+	FileUpload file(m_req);
+	file.createDiskFile(ressourcePath, m_req.getBody());
+	m_res.setStatusCode(204);
+	m_res.setBody("File edited with a lot of success");
+}
+
+void Client::handlePutRequest(const std::string &ressourcePath)
+{
+	const char *fullPath = ressourcePath.c_str();
+	checkFilePerms(fullPath);
+	std::remove(fullPath);
+	FileUpload file(m_req);
+	file.createDiskFile(ressourcePath, m_req.getBody());
+	m_res.setStatusCode(204);
+	m_res.setBody("File edited with a lot of success");
+}
+
 void Client::handleDeleteRequest(const std::string &ressourcePath)
 {
 	const char *fullPath = ressourcePath.c_str();
 	if (access(fullPath, F_OK) == -1)
 		throw Http404Exception();
-	if (access(fullPath, R_OK | W_OK) == -1)
+	if (access(fullPath, W_OK) == -1)
 		throw Http403Exception();
 	if (FileHandler::folderExists(fullPath))
 		throw Http403Exception();
@@ -175,15 +203,15 @@ void Client::handleGetRequest(std::string ressourcePath)
  *
  * @brief Prepares the HTTP response based on the client's request.
  *
- * This function determines the requested method (GET, POST, DELETE), 
+ * This function determines the requested method (GET, POST, DELETE),
  * validates it, and calls the appropriate handler to process the request.
- * 
+ *
  * It also checks if the request is for a CGI script
  * and spawns the CGI handler if necessary.
  *
- * 
+ *
  * @throws AHttpException for various HTTP errors
- * 
+ *
  * @return false if a CGI script is being handled, true otherwise.
  *
  */
@@ -209,6 +237,10 @@ bool Client::prepareResponse()
 		handlePostRequest();
 	else if (method == HttpMethod::DELETE)
 		handleDeleteRequest(ressourcePath);
+	else if (method == HttpMethod::PUT)
+		handlePutRequest(ressourcePath);
+	else if (method == HttpMethod::PATCH)
+		handlePatchRequest(ressourcePath);
 	else
 		throw Http405Exception(m_req.getMethod().getStrType());
 	return true;
@@ -254,32 +286,11 @@ void Client::onPollIn()
 	const std::string date = Date::getCurrentHttpDate();
 	if (!date.empty())
 		m_res.setHeader(HEADER_DATE, date);
-	m_res.setHeader(HEADER_CONNECTION, shouldCloseConnection() ? HEADER_CONNECTION_CLOSE : HEADER_CONNECTION_KEEP_ALIVE);
+	m_res.setHeader(HEADER_CONNECTION, m_req.getConnectionKeepAlive() ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 	m_res.build();
 	m_events = POLLOUT;
 }
 
-
-/**
- *
- * @brief Determines if the connection should be closed after the response.
- *
- * This function checks the "Connection" header in the HTTP request
- * to decide whether to keep the connection alive or close it.
- *
- * @return true if the connection should be closed, false otherwise.
- *
- */
-bool Client::shouldCloseConnection() const
-{
-	const std::string connectionHeader = m_req.getHeader(HEADER_CONNECTION);
-
-	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-		return false;
-	if (connectionHeader == HEADER_CONNECTION_CLOSE)
-		return true;
-	return true;
-}
 
 /**
  *
@@ -296,7 +307,7 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		if (shouldCloseConnection())
+		if (!m_req.getConnectionKeepAlive())
 		{
 			m_connectionClosed = true;
 			m_events		   = 0;
@@ -313,7 +324,8 @@ void Client::onPollOut()
 void Client::onPollErr()
 {
 	Logger::error("Poll error on client socket.");
-	m_events = 0;
+	m_events		   = 0;
+	m_connectionClosed = true;
 }
 
 void Client::onPollHangUp()

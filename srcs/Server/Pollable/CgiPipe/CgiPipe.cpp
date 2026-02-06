@@ -3,6 +3,8 @@
 #include "webserv.hpp"
 #include <cstring>
 #include "Signals.hpp"
+#include "httpMimes.hpp"
+#include "CgiOutput.hpp"
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,
@@ -45,13 +47,13 @@ void CgiPipe::waitChild()
 			}
 			else
 			{
-				std::cout << "Wrong error code " << exit_status << std::endl;
+				std::cerr << "Wrong error code " << exit_status << std::endl;
 				onError();
 			}
 		}
 		else
 		{
-			std::cout << "Exited with signal" << std::endl;
+			std::cerr << "Exited with signal" << std::endl;
 			onError();
 		}
 	}
@@ -65,8 +67,7 @@ void CgiPipe::onPollIn()
 
 	if (bytesRead > 0)
 	{
-		HttpResponse &res = m_client->getResponse();
-		res.appendToFulFullResponse(buffer, bytesRead);
+		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
 		return;
 	}
 	if (bytesRead < 0)
@@ -80,14 +81,12 @@ void CgiPipe::onError()
 	HttpResponse &res = m_client->getResponse();
 	res.reset();
 	res.setStatusCode(500);
-	res.setHeader("Content-Type", "text/html");
+	res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 	res.setBody("<h1>CGI Script Error</h1>");
 	res.build();
 	m_client->setEvents(POLLOUT);
 }
 
-
-#include "Logger.hpp"
 void CgiPipe::onPollOut()
 {
 	const std::string &body = m_client->getRequest().getBody();
@@ -95,7 +94,6 @@ void CgiPipe::onPollOut()
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
-
 
 void CgiPipe::onPollErr()
 {
@@ -116,11 +114,14 @@ void CgiPipe::onPollHangUp()
 	}
 	if (bytesRead > 0)
 	{
-		HttpResponse &res = m_client->getResponse();
-		res.appendToFullResponse(buffer, bytesRead);
+		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
 		return;
 	}
 	waitChild();
+	m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
+	m_cgiOutput.build();
+	HttpResponse &res = m_client->getResponse();
+	res.setFullResponse(m_cgiOutput.getRes());
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;

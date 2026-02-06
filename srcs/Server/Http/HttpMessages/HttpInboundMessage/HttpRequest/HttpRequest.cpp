@@ -36,11 +36,12 @@ HttpRequest &HttpRequest::reset()
 	m_headers.clear();
 	m_body.clear();
 	m_accepts.clear();
-	m_method			= HttpMethod();
-	m_firstLineEndPos	= 0;
-	m_headersEndPos		= 0;
-	m_totalLen			= 0;
-	m_isFirstLineParsed = false;
+	m_connectionKeepAlive = false;
+	m_method			  = HttpMethod();
+	m_firstLineEndPos	  = 0;
+	m_headersEndPos		  = 0;
+	m_totalLen			  = 0;
+	m_isFirstLineParsed	  = false;
 	return *this;
 }
 
@@ -103,9 +104,21 @@ const Vec<Accept> &HttpRequest::getAccepts() const
 	return m_accepts;
 }
 
+bool HttpRequest::determineConnectionKeepAlive() const
+{
+	const std::string connectionHeader = getHeader(HEADER_CONNECTION);
 
+	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
+		return true;
+	if (connectionHeader == HEADER_CONNECTION_CLOSE)
+		return false;
+	return false;
+}
 
-
+bool HttpRequest::getConnectionKeepAlive() const
+{
+	return m_connectionKeepAlive;
+}
 
 /**
  *
@@ -153,7 +166,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 	parseActiveLocations(serverConfig);
 	parseAccepts(getHeader(HEADER_ACCEPT));
 	std::cout << *this << std::endl;
-
+	m_connectionKeepAlive = determineConnectionKeepAlive();
 	return *this;
 }
 
