@@ -19,8 +19,8 @@ File::File(
 	m_fullPath			= ressourcePath;
 	m_size				= static_cast<size_t>(fileStat.st_size);
 	m_lastModified		= Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
-	m_createdAtHuman	= Date::toHumanFormat(gmtime(&fileStat.st_ctime));
-	m_lastModifiedHuman = Date::toHumanFormat(localtime(&fileStat.st_mtime));
+	m_createdAtHuman	= Date::toHumanFormat(gmtime(&fileStat.st_b));
+	m_lastModifiedHuman = Date::toHumanFormat(gmtime(&fileStat.st_mtime));
 
 	m_extension	  = determineExtension(name, &m_extensionPos);
 	m_sizeHuman	  = Number::bytesToHumanSize(m_size);

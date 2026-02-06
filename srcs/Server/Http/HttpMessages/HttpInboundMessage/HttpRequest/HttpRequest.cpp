@@ -96,10 +96,10 @@ bool HttpRequest::determineConnectionKeepAlive() const
 	const std::string connectionHeader = getHeader(HEADER_CONNECTION);
 
 	if (connectionHeader == HEADER_CONNECTION_KEEP_ALIVE)
-		return false;
-	if (connectionHeader == HEADER_CONNECTION_CLOSE)
 		return true;
-	return true;
+	if (connectionHeader == HEADER_CONNECTION_CLOSE)
+		return false;
+	return false;
 }
 
 bool HttpRequest::getConnectionKeepAlive() const

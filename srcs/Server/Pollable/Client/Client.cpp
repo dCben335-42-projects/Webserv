@@ -96,6 +96,34 @@ void Client::handlePostRequest()
 	m_res.setStatusCode(201);
 }
 
+void Client::checkFilePerms(const char *fullPath) const
+{
+	if (access(fullPath, F_OK) == -1)
+		throw Http404Exception();
+	if (access(fullPath, R_OK | W_OK) == -1)
+		throw Http403Exception();
+}
+
+void Client::handlePatchRequest(const std::string &ressourcePath)
+{
+	checkFilePerms(ressourcePath.c_str());
+	FileUpload file(m_req);
+	file.createDiskFile(ressourcePath, m_req.getBody());
+	m_res.setStatusCode(204);
+	m_res.setBody("File edited with a lot of success");
+}
+
+void Client::handlePutRequest(const std::string &ressourcePath)
+{
+	const char *fullPath = ressourcePath.c_str();
+	checkFilePerms(fullPath);
+	std::remove(fullPath);
+	FileUpload file(m_req);
+	file.createDiskFile(ressourcePath, m_req.getBody());
+	m_res.setStatusCode(204);
+	m_res.setBody("File edited with a lot of success");
+}
+
 void Client::handleDeleteRequest(const std::string &ressourcePath)
 {
 	const char *fullPath = ressourcePath.c_str();
@@ -202,6 +230,10 @@ bool Client::prepareResponse()
 		handlePostRequest();
 	else if (method == HttpMethod::DELETE)
 		handleDeleteRequest(ressourcePath);
+	else if (method == HttpMethod::PUT)
+		handlePutRequest(ressourcePath);
+	else if (method == HttpMethod::PATCH)
+		handlePatchRequest(ressourcePath);
 	else
 		throw Http405Exception(m_req.getMethod().getStrType());
 	return true;
@@ -247,7 +279,7 @@ void Client::onPollIn()
 	const std::string date = Date::getCurrentHttpDate();
 	if (!date.empty())
 		m_res.setHeader(HEADER_DATE, date);
-	m_res.setHeader(HEADER_CONNECTION, m_req.getConnectionKeepAlive() ? HEADER_CONNECTION_CLOSE : HEADER_CONNECTION_KEEP_ALIVE);
+	m_res.setHeader(HEADER_CONNECTION, m_req.getConnectionKeepAlive() ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 	m_res.build();
 	m_events = POLLOUT;
 }
@@ -268,7 +300,7 @@ void Client::onPollOut()
 {
 	if (m_res.sendOnce(m_fd))
 	{
-		if (m_req.getConnectionKeepAlive())
+		if (!m_req.getConnectionKeepAlive())
 		{
 			m_connectionClosed = true;
 			m_events		   = 0;

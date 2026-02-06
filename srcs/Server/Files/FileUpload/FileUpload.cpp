@@ -65,35 +65,21 @@ void FileUpload::fillSubRequests(const Vec<std::string> &subTypes)
 
 void FileUpload::parseSubRequests()
 {
+	const std::string &uploadPath = m_req.getUploadPath();
 	for (Vec<HttpSubRequest>::iterator it = m_subRequests.begin(); it != m_subRequests.end(); it++)
 	{
 		(*it).parseSubRequest();
-		createDiskFile((*it));
+		const std::string &fullPath = String::removeDuplicateSlashes(uploadPath + "/" + it->getFileName());
+		if (access(fullPath.c_str(), F_OK) == 0)
+			throw Http409Exception();
+		createDiskFile(fullPath, it->getBody());
 	}
 }
 
-void FileUpload::createDiskFile(const HttpSubRequest &subRequest)
+void FileUpload::createDiskFile(const std::string &fullPath, const std::string &body)
 {
-	const std::string fullPath = m_req.getUploadPath() + "/" + subRequest.getFileName();
-	const std::string body	   = subRequest.getBody();
-
-
-	if (body == HEADER_LINE_ENDING)
-		return;
-	if (access(fullPath.c_str(), F_OK) == 0)
-		throw Http409Exception();
-	// int fd = open(fullPath.c_str(), O_CREAT | O_WRONLY, 0644);
-	// if (fd == -1)
-	// 	throw Http500Exception();
-	// int bytesWritten = write(fd, body.c_str(), body.size());
-	// if (bytesWritten == -1)
-	// 	throw Http403Exception();
-	// (void) bytesWritten;
-	// close(fd);
-
-	// TODO need to choose between the c++ way or the c way
 	std::ofstream file;
-	file.open(fullPath.c_str(), std::ofstream::out);
+	file.open(fullPath.c_str(), std::ofstream::trunc);
 	if (!file.is_open())
 		throw Http500Exception();
 	file << body;

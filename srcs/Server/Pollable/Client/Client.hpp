@@ -18,11 +18,10 @@ class Client : public Pollable
 		void handleGetRequest(std::string ressourcePath);
 		void handlePostRequest();
 		void handleDeleteRequest(const std::string &ressourcePath);
-
-
+		void handlePutRequest(const std::string &ressourcePath);
+		void handlePatchRequest(const std::string &ressourcePath);
+		void checkFilePerms(const char *fullPath) const;
 		bool prepareResponse();
-
-		bool isRequestComplete();
 
 	public:
 		Client(int fd, const Config &config);
