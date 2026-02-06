@@ -185,8 +185,7 @@ void HttpRequest::parseTargetQuery(const std::string &path)
 
 void HttpRequest::parseAccepts(const std::string &headerValue)
 {
-	Logger::info("Parsing Accept header: " + headerValue);
-	Vec<std::string> parts = String::split(headerValue, ",");
+	const Vec<std::string> parts = String::split(headerValue, ",");
 	for (Vec<std::string>::size_type i = 0; i < parts.size(); ++i)
 		m_accepts.push(Accept(parts[i]));
 	std::sort(m_accepts.begin(), m_accepts.end(), Accept::compare);
@@ -434,6 +433,17 @@ std::string HttpRequest::getUploadPath() const
 		}
 	}
 	return "";
+}
+
+bool HttpRequest::matchAccept(const std::string &contentType) const
+{
+	for (Vec<Accept>::const_iterator it = m_accepts.begin(); it != m_accepts.end(); ++it)
+	{
+		const std::string &acceptType = it->getMediaType();
+		if (String::match(acceptType, contentType))
+			return true;
+	}
+	return false;
 }
 
 

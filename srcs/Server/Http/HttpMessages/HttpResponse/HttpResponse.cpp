@@ -17,6 +17,7 @@ Map<unsigned short, std::string> HttpResponse::initStatusReasonMap()
 	map[403] = HTTP_403_MSG;
 	map[404] = HTTP_404_MSG;
 	map[405] = HTTP_405_MSG;
+	map[406] = HTTP_406_MSG;
 	map[500] = HTTP_500_MSG;
 	map[501] = HTTP_501_MSG;
 	return (map);

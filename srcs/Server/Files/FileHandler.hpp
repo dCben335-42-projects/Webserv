@@ -38,9 +38,6 @@ class FileHandler
 		static bool hasReadPermission(const std::string &path);
 
 		static std::string readFile(const std::string &path);
-		static std::string getSafePath(
-			const std::string &root,
-			const std::string &requestPath);
 
 		static std::string getContentType(const std::string &filePath);
 		static std::string getContentType(const File &file);

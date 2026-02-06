@@ -103,6 +103,8 @@ void Client::handleDeleteRequest(const std::string &ressourcePath)
 		throw Http404Exception();
 	if (access(fullPath, R_OK | W_OK) == -1)
 		throw Http403Exception();
+	if (FileHandler::folderExists(fullPath))
+		throw Http403Exception();
 	std::remove(fullPath);
 	m_res.setStatusCode(204);
 	m_res.setBody("File deleted successfully.");
@@ -143,6 +145,8 @@ void Client::handleGetRequest(std::string ressourcePath)
 				ressourcePath = fallbackPath;
 			else if (m_req.getActiveAutoIndex())
 			{
+				if (!m_req.matchAccept(MIME_HTML))
+					throw Http406Exception();
 				IndexOf index(ressourcePath, target);
 				m_res.setBody(index.getPage());
 				m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
@@ -150,11 +154,14 @@ void Client::handleGetRequest(std::string ressourcePath)
 				return;
 			}
 		}
-		m_res.setBody(FileHandler::readFile(ressourcePath));
-		m_res.setHeader(HEADER_CONTENT_TYPE, FileHandler::getContentType(ressourcePath));
-		const std::string fileDate = FileHandler::findLastModifiedDate(ressourcePath);
-		if (!fileDate.empty())
-			m_res.setHeader(HEADER_LAST_MODIFIED, fileDate);
+		File file(ressourcePath, target);
+		if (file.getIsDirectory())
+			throw Http404Exception();
+		if (!m_req.matchAccept(file.getMime()))
+			throw Http406Exception();
+		m_res.setBody(file.read().getContent());
+		m_res.setHeader(HEADER_CONTENT_TYPE, file.getMime());
+		m_res.setHeader(HEADER_LAST_MODIFIED, file.getLastModified());
 		m_res.setStatusCode(200);
 	}
 	catch (const FileHandler::FileHandlerException &e)
@@ -168,15 +175,15 @@ void Client::handleGetRequest(std::string ressourcePath)
  *
  * @brief Prepares the HTTP response based on the client's request.
  *
- * This function determines the requested method (GET, POST, DELETE), 
+ * This function determines the requested method (GET, POST, DELETE),
  * validates it, and calls the appropriate handler to process the request.
- * 
+ *
  * It also checks if the request is for a CGI script
  * and spawns the CGI handler if necessary.
  *
- * 
+ *
  * @throws AHttpException for various HTTP errors
- * 
+ *
  * @return false if a CGI script is being handled, true otherwise.
  *
  */

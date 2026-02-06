@@ -151,7 +151,6 @@ void VirtualServer::onPollIn()
 	createClient(clientFd);
 }
 
-
 void VirtualServer::onPollOut()
 {
 }

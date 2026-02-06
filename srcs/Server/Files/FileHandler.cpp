@@ -180,21 +180,46 @@ Map<std::string> FileHandler::initIconMap()
 	return iconMap;
 }
 
-
-
-
+/**
+ *
+ * @brief Checks if a file exists at the given path.
+ *
+ * @param path The path to the file to be checked.
+ *
+ * @return true if the file exists and is a regular file, false otherwise.
+ *
+ */
 bool FileHandler::fileExists(const std::string &path)
 {
 	struct stat st;
 	return stat(path.c_str(), &st) == 0 && S_ISREG(st.st_mode);
 }
 
+/**
+ *
+ * @brief Checks if a folder exists at the given path.
+ *
+ * @param path The path to the folder to be checked.
+ *
+ * @return true if the folder exists and is a directory, false otherwise.
+ *
+ */
 bool FileHandler::folderExists(const std::string &path)
 {
 	struct stat st;
 	return stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
 }
 
+
+/**
+ *
+ * @brief Checks if the file at the given path has read permissions for the user.
+ *
+ * @param path The path to the file to be checked.
+ *
+ * @return true if the file has read permissions for the user, false otherwise.
+ *
+ */
 bool FileHandler::hasReadPermission(const std::string &path)
 {
 	struct stat st;
@@ -203,6 +228,19 @@ bool FileHandler::hasReadPermission(const std::string &path)
 	return (st.st_mode & S_IRUSR);
 }
 
+/**
+ *
+ * @brief Reads the content of a file at the given path.
+ *
+ * @param path The path to the file to be read.
+ *
+ * @return The content of the file as a string.
+ *
+ * @throws FileDoesNotExistException if the file does not exist.
+ * @throws FilePermissionException if the file cannot be read due to permission issues.
+ * @throws FileReadException if there is an error while reading the file.
+ *
+ */
 std::string FileHandler::readFile(const std::string &path)
 {
 	if (!fileExists(path))
@@ -231,27 +269,15 @@ std::string FileHandler::readFile(const std::string &path)
 }
 
 
-std::string FileHandler::getSafePath(
-	const std::string &root,
-	const std::string &reqPath)
-{
-	const std::string full = root + "/" + reqPath;
-	char			  resolved[PATH_MAX];
-	char			  resolvedRoot[PATH_MAX];
-
-	if (!realpath(full.c_str(), resolved))
-		throw FileHandler::InvalidPathException(reqPath, root);
-	if (!realpath(root.c_str(), resolvedRoot))
-		throw FileHandler::InvalidPathException(root, "root");
-
-	const std::string safe = resolved;
-	const std::string base = resolvedRoot;
-	if (safe.compare(0, base.size(), base) != 0)
-		throw FileHandler::InvalidPathException(reqPath, root);
-	return (safe);
-}
-
-
+/**
+ *
+ * @brief Gets the MIME content type for a given file path based on its extension.
+ *
+ * @param filePath The path to the file for which to determine the content type.
+ *
+ * @return The MIME content type as a string. If the file extension is not recognized, returns "application/octet-stream".
+ *
+ */
 std::string FileHandler::getContentType(const std::string &filePath)
 {
 	size_t		dotPos = filePath.rfind('.');
@@ -268,6 +294,16 @@ std::string FileHandler::getContentType(const std::string &filePath)
 	return MIME_OCTET;
 }
 
+
+/**
+ *
+ * @brief Gets the MIME content type for a given file based on its extension.
+ *
+ * @param file The File object for which to determine the content type.
+ *
+ * @return The MIME content type as a string. If the file extension is not recognized, returns "application/octet-stream".
+ *
+ */
 std::string FileHandler::getContentType(const File &file)
 {
 	std::string ext = file.getExtension();
@@ -291,12 +327,4 @@ std::string FileHandler::getIcon(const File &file)
 	if (it != m_iconMap.end())
 		return it->second;
 	return m_iconMap.get("");
-}
-
-std::string FileHandler::findLastModifiedDate(const std::string &filePath)
-{
-	struct stat fileStat;
-	if (stat(filePath.c_str(), &fileStat) != 0)
-		throw FileHandler::FileDoesNotExistException(filePath);
-	return Date::toHttpDateFormat(gmtime(&fileStat.st_mtime));
 }

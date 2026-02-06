@@ -46,6 +46,8 @@ class HttpRequest : public AHttpInboundMessage
 		bool		isAllowedMethod() const;
 		bool		hasUpload() const;
 		std::string getUploadPath() const;
+		bool		matchAccept(const std::string &contentType) const;
+
 
 		bool isComplete();
 };
