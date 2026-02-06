@@ -304,6 +304,17 @@ void Parser::completePath()
 
 
 
+bool compare(const ARulePath &a, const ARulePath &b)
+{
+	if (a.size() != b.size())
+		return false;
+	for (size_t i = 0; i < a.size(); ++i)
+	{
+		if (a[i] != b[i])
+			return false;
+	}
+	return true;
+}
 
 class BNFPath
 {
@@ -321,11 +332,70 @@ class BNFPath
 		BNFPath			*prev;
 		Vec<BNFPath>	 next;
 
+		BNFPath operator=(const BNFPath &other)
+		{
+			return BNFPath(other.rulePath, other.prev);
+		}
+
+		bool operator==(const BNFPath &other) const
+		{
+			return compare(rulePath, other.rulePath);
+		}
+
 		void setNext(const ARulePath &p)
 		{
 			next.push(BNFPath(p, this));
 		}
+
+		void deleteBranch()
+		{
+			BNFPath *current = this;
+			BNFPath *parent	 = current->prev;
+
+			while (parent)
+			{
+				Logger::log("Deleting branch " + LoggerJson::get(current->rulePath, true));
+				if (parent->next.size() > 1)
+				{
+					Logger::log("Deleting branch555 " + LoggerJson::get(current->rulePath, true));
+
+
+					Logger::log("todel6: " + LoggerJson::get(current, true));
+
+					int idx = parent->next.indexOf(*current);
+					Logger::log(idx);
+					// Logger::log(parent->next[0]);
+
+					Logger::log(parent->next.size());
+					Logger::log("todel: " + LoggerJson::get(parent->next[idx], true));
+					if (idx != -1)
+						parent->next.remove(idx);
+					Logger::log(parent->next);
+					return;
+				}
+
+				current = parent;
+				parent	= parent->prev;
+			}
+		}
+
+		const BNFPath *getHead() const
+		{
+			const BNFPath *head = this;
+			while (head->prev)
+				head = head->prev;
+			return head;
+		}
 };
+
+std::ostream &operator<<(std::ostream &os, const BNFPath &data)
+{
+	// os << LoggerJson::get("RulePath:" + LoggerJson::get(data.rulePath, true));
+	// os << LoggerJson::get("Next:" + LoggerJson::get(data.next.size(), true));
+	os << data.next.size();
+	return os;
+}
+
 
 void generateJson(Vec<BNFPath *> pathsTop)
 {
@@ -335,17 +405,18 @@ void generateJson(Vec<BNFPath *> pathsTop)
 
 
 
-bool compare(const ARulePath &a, const ARulePath &b)
-{
-	if (a.size() != b.size())
-		return false;
-	for (size_t i = 0; i < a.size(); ++i)
-	{
-		if (a[i] != b[i])
-			return false;
-	}
-	return true;
-}
+
+// bool compare(const ARulePath &a, const ARulePath &b)
+// {
+// 	if (a.size() != b.size())
+// 		return false;
+// 	for (size_t i = 0; i < a.size(); ++i)
+// 	{
+// 		if (&a[i] != &b[i])
+// 			return false;
+// 	}
+// 	return true;
+// }
 
 
 
@@ -387,6 +458,7 @@ void Parser::resolvePath()
 					
 					for (size_t l = 0; l < pathsTop.size(); ++l)
 					{
+						// Logger::log("Comparing " + LoggerJson::get(pathsTop[l]->rulePath) + " with " + LoggerJson::get(ident));
 						if (pathsTop[l]->rulePath == ident)
 						{
 							if (found)
@@ -399,13 +471,21 @@ void Parser::resolvePath()
 			}
 		}
 
+		Vec<BNFPath *> toDeleteBranches;
 		Vec<BNFPath *> bufferTemp;
 		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
 		{
+			Logger::log("Removed path555");
+
 			BNFPath &current = *pathsTop[i];
+			// Logger::log("Current path: " + LoggerJson::get(current.rulePath, true) + " with " + LoggerJson::get(current.next.size()) + " next paths");
+
 			if (current.next.empty())
 			{
+				toDeleteBranches.push_once(pathsTop[i]);
 				pathsTop.remove(i);
+				// current.deleteBranch();
+				Logger::log("Removed path");
 				i--;
 				continue;
 			}
@@ -417,7 +497,21 @@ void Parser::resolvePath()
 		}
 		pathsTop.concat(bufferTemp);
 		mapPrev = mapCurrent;
+		for (size_t i = 0; i < toDeleteBranches.size(); ++i)
+		{
+			toDeleteBranches[i]->deleteBranch();
+		}
 	}
+
+
+	const BNFPath *nextbnf = pathsTop[0]->getHead();
+	// Logger::log(nextbnf);
+	while (nextbnf->next.size() > 0)
+	{
+		Logger::log(nextbnf);
+		nextbnf = &nextbnf->next[0];
+	}
+
 
 	// generateJson(pathsTop);
 }
@@ -463,10 +557,4 @@ void Parser::parse(const std::string &stringToParsed)
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
-}
-
-std::ostream &operator<<(std::ostream &os, const BNFPath &data)
-{
-	os << LoggerJson::get((data.rulePath));
-	return (os);
 }

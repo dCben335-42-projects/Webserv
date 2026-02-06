@@ -1,75 +1,145 @@
 [
     [
-        [
-            {
-                "STATEMENT": [
-                    [
-                        {
-                            "USER_STMT": "www-data"
-                        },
-                        {
-                            "WORKER_STMT": "auto"
-                        },
-                        {
-                            "PID_STMT": "/run/nginx.pid"
-                        },
-                        {
-                            "EVENT_BLOCK": [
+        {
+            "OPT"
+        },
+        {
+            "STATEMENT": [
+                [
+                    {
+                        "USER_STMT": "www-data"
+                    },
+                    {
+                        "WORKER_STMT": "auto"
+                    },
+                    {
+                        "PID_STMT": "/run/nginx.pid"
+                    },
+                    {
+                        "EVENT_BLOCK": [
+                            [
                                 [
-                                    [
-                                        {
-                                            "EVENT_STMT": [
-                                                [
-                                                    {
-                                                        "EVENT_RULE": {
-                                                            "worker_connections": "1024"
-                                                        }
+                                    {
+                                        "EVENT_STMT": [
+                                            [
+                                                {
+                                                    "EVENT_RULE": {
+                                                        "worker_connections": "1024"
                                                     }
-                                                ]
+                                                }
                                             ]
-                                        },
-                                        {
-                                            "EVENT_STMT": [
-                                                [
-                                                    {
-                                                        "EVENT_RULE": {
-                                                            "multi_accept": "on"
-                                                        }
+                                        ]
+                                    },
+                                    {
+                                        "EVENT_STMT": [
+                                            [
+                                                {
+                                                    "EVENT_RULE": {
+                                                        "multi_accept": "on"
                                                     }
-                                                ]
+                                                }
                                             ]
-                                        }
-                                    ]
+                                        ]
+                                    }
                                 ]
                             ]
-                        },
-                        {
-                            "HTTP_BLOCK": [
+                        ]
+                    },
+                    {
+                        "HTTP_BLOCK": [
+                            [
                                 [
-                                    [
-                                        {
-                                            "HTTP_STMT": {
-                                                "sendfile": "on"
-                                            }
-                                        },
-                                        {
-                                            "HTTP_STMT": {
-                                                "gzip": "on"
-                                            }
+                                    {
+                                        "HTTP_STMT": {
+                                            "sendfile": "on"
                                         }
-                                        {
-                                            "HTTP_STMT": {
-                                                "gzip_types": "text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript"
-                                            }
+                                    },
+                                    {
+                                        "HTTP_STMT": {
+                                            "gzip": "on"
                                         }
-                                    ],
-                                    "1on"
-                                ]
+                                    }
+                                        {
+                                        "HTTP_STMT": {
+                                            "gzip_types": "text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript"
+                                        }
+                                    }
+                                ],
+                                "1on"
                             ]
-                        }
-                    ]
+                        ]
+                    }
                 ]
-            }
-        ]
+            ]
+        },
+        {
+            "STATEMENT": [
+                [
+                    {
+                        "USER_STMT": "www-data"
+                    },
+                    {
+                        "WORKER_STMT": "auto"
+                    },
+                    {
+                        "PID_STMT": "/run/nginx.pid"
+                    },
+                    {
+                        "EVENT_BLOCK": [
+                            [
+                                [
+                                    {
+                                        "EVENT_STMT": [
+                                            [
+                                                {
+                                                    "EVENT_RULE": {
+                                                        "worker_connections": "1024"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    },
+                                    {
+                                        "EVENT_STMT": [
+                                            [
+                                                {
+                                                    "EVENT_RULE": {
+                                                        "multi_accept": "on"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            ]
+                        ]
+                    },
+                    {
+                        "HTTP_BLOCK": [
+                            [
+                                [
+                                    {
+                                        "HTTP_STMT": {
+                                            "sendfile": "on"
+                                        }
+                                    },
+                                    {
+                                        "HTTP_STMT": {
+                                            "gzip": "on"
+                                        }
+                                    }
+                                        {
+                                        "HTTP_STMT": {
+                                            "gzip_types": "text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript"
+                                        }
+                                    }
+                                ],
+                                "1on"
+                            ]
+                        ]
+                    }
+                ]
+            ]
+        }
     ]
 ]

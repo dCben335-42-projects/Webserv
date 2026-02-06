@@ -4,3291 +4,606 @@ make[1]: Nothing to be done for 'all'.
 make[1]: Nothing to be done for 'all'.
 [0;33m[WEBSERV] Generating kit module library...[0m
 make[1]: Nothing to be done for 'all'.
-[0;32m[WEBSERV] Running webserv...[0m
---------------------------
-
-[{,statement,}]
-[(,user_stmt,|,worker_stmt,|,pid_stmt,|,events_block,|,http_block,),{,LINE_JUMP,}]
-['user',SPACE,97>user_name,';']
+[0;33m[WEBSERV] Generating json module library...[0m
+make[1]: Nothing to be done for 'all'.
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -q -s ./webserv 
+[
+  {,
+  statement,
+  |,
+  'evnt',
+  }
+]
+[
+  (,
+  user_stmt,
+  |,
+  worker_stmt,
+  |,
+  pid_stmt,
+  |,
+  events_block,
+  |,
+  http_block,
+  ),
+  {,
+  LINE_JUMP,
+  }
+]
+[
+  'user',
+  SPACE,
+  97>user_name,
+  ';'
+]
 ok3
 97
-['worker_processes',SPACE,IDENT,';']
-['pid',SPACE,PATH,';']
-['events',[,SPACE,],'{',LINE_JUMP,{,event_stmt,},'}']
-[[,TAB_SPACE,],event_rule,';',[,LINE_JUMP,]]
-['worker_connections',SPACE,NUMBER]
-['multi_accept',SPACE,BOOL]
-['http',[,SPACE,],'{',LINE_JUMP,{,http_stmt,},'}']
-[[,TAB_SPACE,],(,basic_http_stmt,|,gzip_stmt,|,include_stmt,),';',LINE_JUMP]
-[LINE_JUMP]
-['sendfile',TAB_SPACE,BOOL]
-['tcp_nopush',TAB_SPACE,BOOL]
-['tcp_nodelay',TAB_SPACE,BOOL]
-['keepalive_timeout',TAB_SPACE,NUMBER]
-['types_hash_max_size',TAB_SPACE,NUMBER]
-['default_type',TAB_SPACE,MIME]
-['access_log',TAB_SPACE,PATH]
-['error_log',TAB_SPACE,PATH,SPACE,LOG_LEVEL]
-['server_tokens',TAB_SPACE,BOOL]
-['gzip',TAB_SPACE,(,BOOL,|,btp,),btp]
-[BOOL,BOOL]
-['gzip',TAB_SPACE,(,BOOL,|,btp,)]
-['gzip_disable',TAB_SPACE,STRING]
-['gzip_vary',TAB_SPACE,BOOL]
-['gzip_proxied',TAB_SPACE,IDENT]
-['gzip_comp_level',TAB_SPACE,NUMBER]
-['gzip_buffers',TAB_SPACE,NUMBER,SPACE,SIZE]
-['gzip_http_version',TAB_SPACE,VERSION]
-[gzip_types]
-['gzip_types',LINE_JUMP,{,gzip_mines,}]
-[[,TAB_SPACE,],MIME,[,LINE_JUMP,]]
-['include',TAB_SPACE,PATH]
-[LOCASE_LETTER,{,LOCASE_LETTER,|,DIGIT,|,'_',|,'-',}]
-[LETTER,{,LETTER,}]
-[{,DIGIT,}]
-[(,'on',|,'off',)]
-['/',{,PATH_CHAR,}]
-[(,LETTER,|,DIGIT,|,'/',|,'.',|,'_',|,'*',|,'-',)]
-[(,TEXT_MIME,|,APPLICATION_MIME,|,FONT_MIME,|,MULTIPART_MIME,|,AUDIO_MIME,|,VIDEO_MIME,|,IMAGE_MIME,)]
-[(,'text/html',|,'text/plain',|,'text/css',|,'text/csv',|,'text/xml',)]
-[(,'application/json',|,'application/javascript',|,'application/vnd.ms-fontobject',|,'application/pdf',|,'application/xml',|,'application/zip',|,'application/x-www-form-urlencoded',|,'application/x-yaml',|,'application/toml',|,'application/rtf',|,'application/octet-stream',)]
-[(,'font/woff',|,'font/woff2',|,'font/ttf',|,'font/otf',)]
-[(,'multipart/form-data',)]
-[(,'audio/mpeg',|,'audio/wav',|,'audio/flac',)]
-[(,'video/mp4',|,'video/webm',)]
-[(,'image/png',|,'image/jpeg',|,'image/webp',|,'image/gif',|,'image/svg+xml',|,'image/avif',|,'image/heic',|,'image/icns',|,'image/bmp',|,'image/tiff',|,'image/x-icon',)]
-[NUMBER,'.',NUMBER]
-[NUMBER,(,'k',|,'m',)]
-[(,'debug',|,'info',|,'notice',|,'warn',|,'error',|,'crit',)]
-['"',{,STRING_CHAR,},'"']
-[(,LETTER,|,DIGIT,|,SPACE,|,'_',|,'.',)]
-[(,UPCASE_LETTER,|,LOCASE_LETTER,)]
-[(,'a',|,'b',|,'c',|,'d',|,'e',|,'f',|,'g',|,'h',|,'i',|,'j',|,'k',|,'l',|,'m',|,'n',|,'o',|,'p',|,'q',|,'r',|,'s',|,'t',|,'u',|,'v',|,'w',|,'x',|,'y',|,'z',)]
-[(,'A',|,'B',|,'C',|,'D',|,'E',|,'F',|,'G',|,'H',|,'I',|,'J',|,'K',|,'L',|,'M',|,'N',|,'O',|,'P',|,'Q',|,'R',|,'S',|,'T',|,'U',|,'V',|,'W',|,'X',|,'Y',|,'Z',)]
-[(,'0',|,'1',|,'2',|,'3',|,'4',|,'5',|,'6',|,'7',|,'8',|,'9',)]
-[{,SPACE,|,TAB,}]
-['	']
-[' ']
-['
-']
-{<head>: {
-  "concept_name": "<head>"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "<head>_0",
-        "type": "SEQUENCE",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234704b0",
-        "content": [
-          {my_address: 0x2346bbb0, value: statement}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2346bbb0, value: statement}
-        ]
-      }
-    ]
+[
+  'worker_processes',
+  SPACE,
+  IDENT,
+  ';'
+]
+[
+  'pid',
+  SPACE,
+  PATH,
+  ';'
+]
+[
+  'events',
+  [,
+  SPACE,
+  ],
+  '{',
+  LINE_JUMP,
+  {,
+  event_stmt,
+  },
+  '}'
+]
+[
+  [,
+  TAB_SPACE,
+  ],
+  event_rule,
+  ';',
+  [,
+  LINE_JUMP,
   ]
-  "parents":[
-
-    ]
-  "terminal_chars":[
-      0x23470a00,
-      0x23471200,
-      0x23471850,
-      0x23471e30,
-      0x23473690
-    ]
-},APPLICATION_MIME: {
-  "concept_name": "APPLICATION_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "APPLICATION_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347cf30",
-        "content": [
-          {my_address: 0x2347d2b0, value: application/json},
-          {my_address: 0x2347d2d8, value: application/javascript},
-          {my_address: 0x2347d300, value: application/vnd.ms-fontobject},
-          {my_address: 0x2347d328, value: application/pdf},
-          {my_address: 0x2347d350, value: application/xml},
-          {my_address: 0x2347d378, value: application/zip},
-          {my_address: 0x2347d3a0, value: application/x-www-form-urlencoded},
-          {my_address: 0x2347d3c8, value: application/x-yaml},
-          {my_address: 0x2347d3f0, value: application/toml},
-          {my_address: 0x2347d418, value: application/rtf},
-          {my_address: 0x2347d440, value: application/octet-stream}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347d2b0, value: application/json},
-          {my_address: 0x2347d2d8, value: application/javascript},
-          {my_address: 0x2347d300, value: application/vnd.ms-fontobject},
-          {my_address: 0x2347d328, value: application/pdf},
-          {my_address: 0x2347d350, value: application/xml},
-          {my_address: 0x2347d378, value: application/zip},
-          {my_address: 0x2347d3a0, value: application/x-www-form-urlencoded},
-          {my_address: 0x2347d3c8, value: application/x-yaml},
-          {my_address: 0x2347d3f0, value: application/toml},
-          {my_address: 0x2347d418, value: application/rtf},
-          {my_address: 0x2347d440, value: application/octet-stream}
-        ]
-      }
-    ]
+]
+[
+  'worker_connections',
+  SPACE,
+  NUMBER
+]
+[
+  'multi_accept',
+  SPACE,
+  BOOL
+]
+[
+  'http',
+  [,
+  SPACE,
+  ],
+  '{',
+  LINE_JUMP,
+  {,
+  http_stmt,
+  },
+  '}'
+]
+[
+  [,
+  TAB_SPACE,
+  ],
+  (,
+  basic_http_stmt,
+  |,
+  gzip_stmt,
+  |,
+  include_stmt,
+  ),
+  ';',
+  LINE_JUMP
+]
+[
+  LINE_JUMP
+]
+[
+  'sendfile',
+  TAB_SPACE,
+  BOOL
+]
+[
+  'tcp_nopush',
+  TAB_SPACE,
+  BOOL
+]
+[
+  'tcp_nodelay',
+  TAB_SPACE,
+  BOOL
+]
+[
+  'keepalive_timeout',
+  TAB_SPACE,
+  NUMBER
+]
+[
+  'types_hash_max_size',
+  TAB_SPACE,
+  NUMBER
+]
+[
+  'default_type',
+  TAB_SPACE,
+  MIME
+]
+[
+  'access_log',
+  TAB_SPACE,
+  PATH
+]
+[
+  'error_log',
+  TAB_SPACE,
+  PATH,
+  SPACE,
+  LOG_LEVEL
+]
+[
+  'server_tokens',
+  TAB_SPACE,
+  BOOL
+]
+[
+  'gzip',
+  TAB_SPACE,
+  (,
+  BOOL,
+  |,
+  btp,
+  ),
+  btp
+]
+[
+  BOOL,
+  BOOL
+]
+[
+  'gzip',
+  TAB_SPACE,
+  (,
+  BOOL,
+  |,
+  btp,
+  )
+]
+[
+  'gzip_disable',
+  TAB_SPACE,
+  STRING
+]
+[
+  'gzip_vary',
+  TAB_SPACE,
+  BOOL
+]
+[
+  'gzip_proxied',
+  TAB_SPACE,
+  IDENT
+]
+[
+  'gzip_comp_level',
+  TAB_SPACE,
+  NUMBER
+]
+[
+  'gzip_buffers',
+  TAB_SPACE,
+  NUMBER,
+  SPACE,
+  SIZE
+]
+[
+  'gzip_http_version',
+  TAB_SPACE,
+  VERSION
+]
+[
+  gzip_types
+]
+[
+  'gzip_types',
+  LINE_JUMP,
+  {,
+  gzip_mines,
+  }
+]
+[
+  [,
+  TAB_SPACE,
+  ],
+  MIME,
+  [,
+  LINE_JUMP,
   ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347cf30
-    ]
-},AUDIO_MIME: {
-  "concept_name": "AUDIO_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "AUDIO_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347df80",
-        "content": [
-          {my_address: 0x2347e070, value: audio/mpeg},
-          {my_address: 0x2347e098, value: audio/wav},
-          {my_address: 0x2347e0c0, value: audio/flac}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347e070, value: audio/mpeg},
-          {my_address: 0x2347e098, value: audio/wav},
-          {my_address: 0x2347e0c0, value: audio/flac}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347df80
-    ]
-},BOOL: {
-  "concept_name": "BOOL"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "BOOL_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347b3a0",
-        "content": [
-          {my_address: 0x23477ca0, value: on},
-          {my_address: 0x23477cc8, value: off}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23477ca0, value: on},
-          {my_address: 0x23477cc8, value: off}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23473380,
-      0x23474990,
-      0x23474d70,
-      0x23475180,
-      0x23476c60,
-      0x234770d0,
-      0x23477560,
-      0x23477630,
-      0x23477af0,
-      0x23478330
-    ]
-  "terminal_chars":[
-      0x2347b3a0
-    ]
-},DIGIT: {
-  "concept_name": "DIGIT"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "DIGIT_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23481300",
-        "content": [
-          {my_address: 0x23480aa0, value: 0},
-          {my_address: 0x23480ac8, value: 1},
-          {my_address: 0x23480af0, value: 2},
-          {my_address: 0x23480b18, value: 3},
-          {my_address: 0x23480b40, value: 4},
-          {my_address: 0x23480b68, value: 5},
-          {my_address: 0x23480b90, value: 6},
-          {my_address: 0x23480bb8, value: 7},
-          {my_address: 0x23480be0, value: 8},
-          {my_address: 0x23480c08, value: 9}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23480aa0, value: 0},
-          {my_address: 0x23480ac8, value: 1},
-          {my_address: 0x23480af0, value: 2},
-          {my_address: 0x23480b18, value: 3},
-          {my_address: 0x23480b40, value: 4},
-          {my_address: 0x23480b68, value: 5},
-          {my_address: 0x23480b90, value: 6},
-          {my_address: 0x23480bb8, value: 7},
-          {my_address: 0x23480be0, value: 8},
-          {my_address: 0x23480c08, value: 9}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347a9e0,
-      0x2347b0f0,
-      0x2347ba20,
-      0x2347f840
-    ]
-  "terminal_chars":[
-      0x23481300
-    ]
-},FONT_MIME: {
-  "concept_name": "FONT_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "FONT_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347daa0",
-        "content": [
-          {my_address: 0x2347db90, value: font/woff},
-          {my_address: 0x2347dbb8, value: font/woff2},
-          {my_address: 0x2347dbe0, value: font/ttf},
-          {my_address: 0x2347dc08, value: font/otf}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347db90, value: font/woff},
-          {my_address: 0x2347dbb8, value: font/woff2},
-          {my_address: 0x2347dbe0, value: font/ttf},
-          {my_address: 0x2347dc08, value: font/otf}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347daa0
-    ]
-},IDENT: {
-  "concept_name": "IDENT"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "IDENT_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347ad50",
-        "content": LETTER
-        "next": [
-          0x2347ae20
-        ]
-        items": [
-          {my_address: 0x2347abb0, value: LETTER}
-        ]
-      },
-      {
-        "position": "IDENT_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347ae20",
-        "content": [
-          {my_address: 0x2347ab80, value: LETTER}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347ab80, value: LETTER}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23471410,
-      0x23478710
-    ]
-  "terminal_chars":[
-      0x23480110,
-      0x234807b0
-    ]
-},IMAGE_MIME: {
-  "concept_name": "IMAGE_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "IMAGE_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347e5d0",
-        "content": [
-          {my_address: 0x2347e770, value: image/png},
-          {my_address: 0x2347e798, value: image/jpeg},
-          {my_address: 0x2347e7c0, value: image/webp},
-          {my_address: 0x2347e7e8, value: image/gif},
-          {my_address: 0x2347e810, value: image/svg+xml},
-          {my_address: 0x2347e838, value: image/avif},
-          {my_address: 0x2347e860, value: image/heic},
-          {my_address: 0x2347e888, value: image/icns},
-          {my_address: 0x2347e8b0, value: image/bmp},
-          {my_address: 0x2347e8d8, value: image/tiff},
-          {my_address: 0x2347e900, value: image/x-icon}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347e770, value: image/png},
-          {my_address: 0x2347e798, value: image/jpeg},
-          {my_address: 0x2347e7c0, value: image/webp},
-          {my_address: 0x2347e7e8, value: image/gif},
-          {my_address: 0x2347e810, value: image/svg+xml},
-          {my_address: 0x2347e838, value: image/avif},
-          {my_address: 0x2347e860, value: image/heic},
-          {my_address: 0x2347e888, value: image/icns},
-          {my_address: 0x2347e8b0, value: image/bmp},
-          {my_address: 0x2347e8d8, value: image/tiff},
-          {my_address: 0x2347e900, value: image/x-icon}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347e5d0
-    ]
-},LETTER: {
-  "concept_name": "LETTER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LETTER_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347fcc0",
-        "content": [
-          {my_address: 0x2347ef50, value: UPCASE_LETTER},
-          {my_address: 0x2347ef78, value: LOCASE_LETTER}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347ef50, value: UPCASE_LETTER},
-          {my_address: 0x2347ef78, value: LOCASE_LETTER}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347ad50,
-      0x2347ae20,
-      0x2347ba20,
-      0x2347f840
-    ]
-  "terminal_chars":[
-      0x23480110,
-      0x234807b0
-    ]
-},LINE_JUMP: {
-  "concept_name": "LINE_JUMP"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LINE_JUMP_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23481dc0",
-        "content": 
-
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23481c20, value: 
-}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23470930,
-      0x234721a0,
-      0x23472a70,
-      0x234739e0,
-      0x23474350,
-      0x234744e0,
-      0x23479ad0,
-      0x2347a0e0
-    ]
-  "terminal_chars":[
-      0x23481dc0
-    ]
-},LOCASE_LETTER: {
-  "concept_name": "LOCASE_LETTER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LOCASE_LETTER_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234807b0",
-        "content": [
-          {my_address: 0x23480d30, value: a},
-          {my_address: 0x23480d58, value: b},
-          {my_address: 0x23480d80, value: c},
-          {my_address: 0x23480da8, value: d},
-          {my_address: 0x23480dd0, value: e},
-          {my_address: 0x23480df8, value: f},
-          {my_address: 0x23480e20, value: g},
-          {my_address: 0x23480e48, value: h},
-          {my_address: 0x23480e70, value: i},
-          {my_address: 0x23480e98, value: j},
-          {my_address: 0x23480ec0, value: k},
-          {my_address: 0x23480ee8, value: l},
-          {my_address: 0x23480f10, value: m},
-          {my_address: 0x23480f38, value: n},
-          {my_address: 0x23480f60, value: o},
-          {my_address: 0x23480f88, value: p},
-          {my_address: 0x23480fb0, value: q},
-          {my_address: 0x23480fd8, value: r},
-          {my_address: 0x23481000, value: s},
-          {my_address: 0x23481028, value: t},
-          {my_address: 0x23481050, value: u},
-          {my_address: 0x23481078, value: v},
-          {my_address: 0x234810a0, value: w},
-          {my_address: 0x234810c8, value: x},
-          {my_address: 0x234810f0, value: y},
-          {my_address: 0x23481118, value: z}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23480d30, value: a},
-          {my_address: 0x23480d58, value: b},
-          {my_address: 0x23480d80, value: c},
-          {my_address: 0x23480da8, value: d},
-          {my_address: 0x23480dd0, value: e},
-          {my_address: 0x23480df8, value: f},
-          {my_address: 0x23480e20, value: g},
-          {my_address: 0x23480e48, value: h},
-          {my_address: 0x23480e70, value: i},
-          {my_address: 0x23480e98, value: j},
-          {my_address: 0x23480ec0, value: k},
-          {my_address: 0x23480ee8, value: l},
-          {my_address: 0x23480f10, value: m},
-          {my_address: 0x23480f38, value: n},
-          {my_address: 0x23480f60, value: o},
-          {my_address: 0x23480f88, value: p},
-          {my_address: 0x23480fb0, value: q},
-          {my_address: 0x23480fd8, value: r},
-          {my_address: 0x23481000, value: s},
-          {my_address: 0x23481028, value: t},
-          {my_address: 0x23481050, value: u},
-          {my_address: 0x23481078, value: v},
-          {my_address: 0x234810a0, value: w},
-          {my_address: 0x234810c8, value: x},
-          {my_address: 0x234810f0, value: y},
-          {my_address: 0x23481118, value: z}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347a910,
-      0x2347a9e0,
-      0x2347fcc0
-    ]
-  "terminal_chars":[
-      0x234807b0
-    ]
-},LOG_LEVEL: {
-  "concept_name": "LOG_LEVEL"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "LOG_LEVEL_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347f150",
-        "content": [
-          {my_address: 0x2347d110, value: debug},
-          {my_address: 0x2347d138, value: info},
-          {my_address: 0x2347d160, value: notice},
-          {my_address: 0x2347d188, value: warn},
-          {my_address: 0x2347d1b0, value: error},
-          {my_address: 0x2347d1d8, value: crit}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347d110, value: debug},
-          {my_address: 0x2347d138, value: info},
-          {my_address: 0x2347d160, value: notice},
-          {my_address: 0x2347d188, value: warn},
-          {my_address: 0x2347d1b0, value: error},
-          {my_address: 0x2347d1d8, value: crit}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234767d0
-    ]
-  "terminal_chars":[
-      0x2347f150
-    ]
-},MIME: {
-  "concept_name": "MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347c160",
-        "content": [
-          {my_address: 0x2347c320, value: TEXT_MIME},
-          {my_address: 0x2347c348, value: APPLICATION_MIME},
-          {my_address: 0x2347c370, value: FONT_MIME},
-          {my_address: 0x2347c398, value: MULTIPART_MIME},
-          {my_address: 0x2347c3c0, value: AUDIO_MIME},
-          {my_address: 0x2347c3e8, value: VIDEO_MIME},
-          {my_address: 0x2347c410, value: IMAGE_MIME}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347c320, value: TEXT_MIME},
-          {my_address: 0x2347c348, value: APPLICATION_MIME},
-          {my_address: 0x2347c370, value: FONT_MIME},
-          {my_address: 0x2347c398, value: MULTIPART_MIME},
-          {my_address: 0x2347c3c0, value: AUDIO_MIME},
-          {my_address: 0x2347c3e8, value: VIDEO_MIME},
-          {my_address: 0x2347c410, value: IMAGE_MIME}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23475d80,
-      0x23479fc0
-    ]
-  "terminal_chars":[
-      0x2347c570,
-      0x2347cf30,
-      0x2347daa0,
-      0x2347dd40,
-      0x2347df80,
-      0x2347e270,
-      0x2347e5d0
-    ]
-},MULTIPART_MIME: {
-  "concept_name": "MULTIPART_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "MULTIPART_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347dd40",
-        "content": [
-          {my_address: 0x2347d810, value: multipart/form-data}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347d810, value: multipart/form-data}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347dd40
-    ]
-},NUMBER: {
-  "concept_name": "NUMBER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "NUMBER_0",
-        "type": "SEQUENCE",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347b0f0",
-        "content": [
-          {my_address: 0x2347af70, value: DIGIT}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347af70, value: DIGIT}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23472fd0,
-      0x234755b0,
-      0x234759d0,
-      0x23478b40,
-      0x23478ef0,
-      0x2347c860,
-      0x2347eb70,
-      0x2347ed90
-    ]
-  "terminal_chars":[
-      0x23481300
-    ]
-},PATH: {
-  "concept_name": "PATH"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "PATH_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347b680",
-        "content": /
-        "next": [
-          0x2347b750
-        ]
-        items": [
-          {my_address: 0x2347b1e0, value: /}
-        ]
-      },
-      {
-        "position": "PATH_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347b750",
-        "content": [
-          {my_address: 0x2347af40, value: PATH_CHAR}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347af40, value: PATH_CHAR}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234719f0,
-      0x23476160,
-      0x23476540,
-      0x2347a600
-    ]
-  "terminal_chars":[
-      0x2347b680
-    ]
-},PATH_CHAR: {
-  "concept_name": "PATH_CHAR"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "PATH_CHAR_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347ba20",
-        "content": [
-          {my_address: 0x2347bbc0, value: LETTER},
-          {my_address: 0x2347bbe8, value: DIGIT},
-          {my_address: 0x2347bc10, value: /},
-          {my_address: 0x2347bc38, value: .},
-          {my_address: 0x2347bc60, value: _},
-          {my_address: 0x2347bc88, value: *},
-          {my_address: 0x2347bcb0, value: -}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347bbc0, value: LETTER},
-          {my_address: 0x2347bbe8, value: DIGIT},
-          {my_address: 0x2347bc10, value: /},
-          {my_address: 0x2347bc38, value: .},
-          {my_address: 0x2347bc60, value: _},
-          {my_address: 0x2347bc88, value: *},
-          {my_address: 0x2347bcb0, value: -}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347b750
-    ]
-  "terminal_chars":[
-      0x2347ba20,
-      0x23480110,
-      0x234807b0,
-      0x23481300
-    ]
-},SIZE: {
-  "concept_name": "SIZE"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "SIZE_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347ed90",
-        "content": NUMBER
-        "next": [
-          0x2347ee60
-        ]
-        items": [
-          {my_address: 0x2347c9c0, value: NUMBER}
-        ]
-      },
-      {
-        "position": "SIZE_0",
-        "type": "GROUP",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347ee60",
-        "content": [
-          {my_address: 0x2347e360, value: k},
-          {my_address: 0x2347e388, value: m}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347e360, value: k},
-          {my_address: 0x2347e388, value: m}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23479180
-    ]
-  "terminal_chars":[
-      0x23481300
-    ]
-},SPACE: {
-  "concept_name": "SPACE"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "SPACE_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23481b30",
-        "content":  
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23481990, value:  }
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23470ba0,
-      0x234712f0,
-      0x23471920,
-      0x23471f00,
-      0x23472eb0,
-      0x234732b0,
-      0x23473760,
-      0x234766a0,
-      0x23479050,
-      0x2347f840,
-      0x2347fb30
-    ]
-  "terminal_chars":[
-      0x23481b30
-    ]
-},STRING: {
-  "concept_name": "STRING"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "STRING_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347f340",
-        "content": "
-        "next": [
-          0x2347f410
-        ]
-        items": [
-          {my_address: 0x2347cbf0, value: "}
-        ]
-      },
-      {
-        "position": "STRING_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347f410",
-        "content": [
-          {my_address: 0x2347cb60, value: STRING_CHAR}
-        ]
-        "next": [
-          0x2347f530
-        ]
-        items": [
-          {my_address: 0x2347cb60, value: STRING_CHAR}
-        ]
-      },
-      {
-        "position": "STRING_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347f530",
-        "content": "
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347f600, value: "}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23477f20
-    ]
-  "terminal_chars":[
-      0x2347f340
-    ]
-},STRING_CHAR: {
-  "concept_name": "STRING_CHAR"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "STRING_CHAR_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347f840",
-        "content": [
-          {my_address: 0x2347f9e0, value: LETTER},
-          {my_address: 0x2347fa08, value: DIGIT},
-          {my_address: 0x2347fa30, value: SPACE},
-          {my_address: 0x2347fa58, value: _},
-          {my_address: 0x2347fa80, value: .}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347f9e0, value: LETTER},
-          {my_address: 0x2347fa08, value: DIGIT},
-          {my_address: 0x2347fa30, value: SPACE},
-          {my_address: 0x2347fa58, value: _},
-          {my_address: 0x2347fa80, value: .}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347f410
-    ]
-  "terminal_chars":[
-      0x2347f840,
-      0x23480110,
-      0x234807b0,
-      0x23481300,
-      0x23481b30
-    ]
-},TAB: {
-  "concept_name": "TAB"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "TAB_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23481870",
-        "content": 	
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347f6c0, value: 	}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347fb30
-    ]
-  "terminal_chars":[
-      0x23481870
-    ]
-},TAB_SPACE: {
-  "concept_name": "TAB_SPACE"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "TAB_SPACE_0",
-        "type": "SEQUENCE",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347fb30",
-        "content": [
-          {my_address: 0x2347fdd0, value: SPACE},
-          {my_address: 0x2347fdf8, value: TAB}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347fdd0, value: SPACE},
-          {my_address: 0x2347fdf8, value: TAB}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23472700,
-      0x23473f40,
-      0x234748a0,
-      0x23474c70,
-      0x23475080,
-      0x23475490,
-      0x234758e0,
-      0x23475cb0,
-      0x23476060,
-      0x23476440,
-      0x23476b60,
-      0x23476fd0,
-      0x234779d0,
-      0x23477e20,
-      0x23478230,
-      0x23478610,
-      0x23478a40,
-      0x23478e20,
-      0x23479480,
-      0x23479ed0,
-      0x2347a4e0
-    ]
-  "terminal_chars":[
-      0x23481870,
-      0x23481b30
-    ]
-},TEXT_MIME: {
-  "concept_name": "TEXT_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "TEXT_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347c570",
-        "content": [
-          {my_address: 0x2347c710, value: text/html},
-          {my_address: 0x2347c738, value: text/plain},
-          {my_address: 0x2347c760, value: text/css},
-          {my_address: 0x2347c788, value: text/csv},
-          {my_address: 0x2347c7b0, value: text/xml}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347c710, value: text/html},
-          {my_address: 0x2347c738, value: text/plain},
-          {my_address: 0x2347c760, value: text/css},
-          {my_address: 0x2347c788, value: text/csv},
-          {my_address: 0x2347c7b0, value: text/xml}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347c570
-    ]
-},UPCASE_LETTER: {
-  "concept_name": "UPCASE_LETTER"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "UPCASE_LETTER_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23480110",
-        "content": [
-          {my_address: 0x23480200, value: A},
-          {my_address: 0x23480228, value: B},
-          {my_address: 0x23480250, value: C},
-          {my_address: 0x23480278, value: D},
-          {my_address: 0x234802a0, value: E},
-          {my_address: 0x234802c8, value: F},
-          {my_address: 0x234802f0, value: G},
-          {my_address: 0x23480318, value: H},
-          {my_address: 0x23480340, value: I},
-          {my_address: 0x23480368, value: J},
-          {my_address: 0x23480390, value: K},
-          {my_address: 0x234803b8, value: L},
-          {my_address: 0x234803e0, value: M},
-          {my_address: 0x23480408, value: N},
-          {my_address: 0x23480430, value: O},
-          {my_address: 0x23480458, value: P},
-          {my_address: 0x23480480, value: Q},
-          {my_address: 0x234804a8, value: R},
-          {my_address: 0x234804d0, value: S},
-          {my_address: 0x234804f8, value: T},
-          {my_address: 0x23480520, value: U},
-          {my_address: 0x23480548, value: V},
-          {my_address: 0x23480570, value: W},
-          {my_address: 0x23480598, value: X},
-          {my_address: 0x234805c0, value: Y},
-          {my_address: 0x234805e8, value: Z}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23480200, value: A},
-          {my_address: 0x23480228, value: B},
-          {my_address: 0x23480250, value: C},
-          {my_address: 0x23480278, value: D},
-          {my_address: 0x234802a0, value: E},
-          {my_address: 0x234802c8, value: F},
-          {my_address: 0x234802f0, value: G},
-          {my_address: 0x23480318, value: H},
-          {my_address: 0x23480340, value: I},
-          {my_address: 0x23480368, value: J},
-          {my_address: 0x23480390, value: K},
-          {my_address: 0x234803b8, value: L},
-          {my_address: 0x234803e0, value: M},
-          {my_address: 0x23480408, value: N},
-          {my_address: 0x23480430, value: O},
-          {my_address: 0x23480458, value: P},
-          {my_address: 0x23480480, value: Q},
-          {my_address: 0x234804a8, value: R},
-          {my_address: 0x234804d0, value: S},
-          {my_address: 0x234804f8, value: T},
-          {my_address: 0x23480520, value: U},
-          {my_address: 0x23480548, value: V},
-          {my_address: 0x23480570, value: W},
-          {my_address: 0x23480598, value: X},
-          {my_address: 0x234805c0, value: Y},
-          {my_address: 0x234805e8, value: Z}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347fcc0
-    ]
-  "terminal_chars":[
-      0x23480110
-    ]
-},VERSION: {
-  "concept_name": "VERSION"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "VERSION_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347c860",
-        "content": NUMBER
-        "next": [
-          0x2347eaa0
-        ]
-        items": [
-          {my_address: 0x2347d980, value: NUMBER}
-        ]
-      },
-      {
-        "position": "VERSION_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347eaa0",
-        "content": .
-        "next": [
-          0x2347eb70
-        ]
-        items": [
-          {my_address: 0x2347d7e0, value: .}
-        ]
-      },
-      {
-        "position": "VERSION_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347eb70",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347d790, value: NUMBER}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234795a0
-    ]
-  "terminal_chars":[
-      0x23481300
-    ]
-},VIDEO_MIME: {
-  "concept_name": "VIDEO_MIME"
-  "is_terminal_concept": true
-  "definitions":[
-    [
-      {
-        "position": "VIDEO_MIME_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347e270",
-        "content": [
-          {my_address: 0x2347b490, value: video/mp4},
-          {my_address: 0x2347b4b8, value: video/webm}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347b490, value: video/mp4},
-          {my_address: 0x2347b4b8, value: video/webm}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2347c160
-    ]
-  "terminal_chars":[
-      0x2347e270
-    ]
-},basic_http_stmt: {
-  "concept_name": "basic_http_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "basic_http_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234747b0",
-        "content": sendfile
-        "next": [
-          0x234748a0
-        ]
-        items": [
-          {my_address: 0x234744b0, value: sendfile}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x234748a0",
-        "content": TAB_SPACE
-        "next": [
-          0x23474990
-        ]
-        items": [
-          {my_address: 0x234745e0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474990",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23474a60, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474ba0",
-        "content": tcp_nopush
-        "next": [
-          0x23474c70
-        ]
-        items": [
-          {my_address: 0x23474af0, value: tcp_nopush}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_1",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474c70",
-        "content": TAB_SPACE
-        "next": [
-          0x23474d70
-        ]
-        items": [
-          {my_address: 0x23474b20, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_1",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474d70",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23474e40, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_2",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474fb0",
-        "content": tcp_nodelay
-        "next": [
-          0x23475080
-        ]
-        items": [
-          {my_address: 0x23474f00, value: tcp_nodelay}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_2",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475080",
-        "content": TAB_SPACE
-        "next": [
-          0x23475180
-        ]
-        items": [
-          {my_address: 0x23474f30, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_2",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475180",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23475250, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_3",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234753c0",
-        "content": keepalive_timeout
-        "next": [
-          0x23475490
-        ]
-        items": [
-          {my_address: 0x234752e0, value: keepalive_timeout}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_3",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475490",
-        "content": TAB_SPACE
-        "next": [
-          0x234755b0
-        ]
-        items": [
-          {my_address: 0x23475340, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_3",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x234755b0",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23475680, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_4",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475810",
-        "content": types_hash_max_size
-        "next": [
-          0x234758e0
-        ]
-        items": [
-          {my_address: 0x23474ed0, value: types_hash_max_size}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_4",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x234758e0",
-        "content": TAB_SPACE
-        "next": [
-          0x234759d0
-        ]
-        items": [
-          {my_address: 0x23475710, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_4",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x234759d0",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23475aa0, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_5",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475be0",
-        "content": default_type
-        "next": [
-          0x23475cb0
-        ]
-        items": [
-          {my_address: 0x23475310, value: default_type}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_5",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475cb0",
-        "content": TAB_SPACE
-        "next": [
-          0x23475d80
-        ]
-        items": [
-          {my_address: 0x23475b30, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_5",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475d80",
-        "content": MIME
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23475e50, value: MIME}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_6",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23475f90",
-        "content": access_log
-        "next": [
-          0x23476060
-        ]
-        items": [
-          {my_address: 0x23475ee0, value: access_log}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_6",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476060",
-        "content": TAB_SPACE
-        "next": [
-          0x23476160
-        ]
-        items": [
-          {my_address: 0x23475f10, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_6",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476160",
-        "content": PATH
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23476230, value: PATH}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476370",
-        "content": error_log
-        "next": [
-          0x23476440
-        ]
-        items": [
-          {my_address: 0x234762c0, value: error_log}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476440",
-        "content": TAB_SPACE
-        "next": [
-          0x23476540
-        ]
-        items": [
-          {my_address: 0x234762f0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476540",
-        "content": PATH
-        "next": [
-          0x234766a0
-        ]
-        items": [
-          {my_address: 0x23476610, value: PATH}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x234766a0",
-        "content": SPACE
-        "next": [
-          0x234767d0
-        ]
-        items": [
-          {my_address: 0x23476770, value: SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_7",
-        "type": "SYMBOL",
-        "index": 4,
-        "is_required_in_json": {
-},
-        "ptr": "0x234767d0",
-        "content": LOG_LEVEL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234768a0, value: LOG_LEVEL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_8",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476a90",
-        "content": server_tokens
-        "next": [
-          0x23476b60
-        ]
-        items": [
-          {my_address: 0x23476670, value: server_tokens}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_8",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476b60",
-        "content": TAB_SPACE
-        "next": [
-          0x23476c60
-        ]
-        items": [
-          {my_address: 0x23476900, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_8",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476c60",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23476d30, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "basic_http_stmt_9",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476f00",
-        "content": gzip
-        "next": [
-          0x23476fd0
-        ]
-        items": [
-          {my_address: 0x23476dc0, value: gzip}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_9",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23476fd0",
-        "content": TAB_SPACE
-        "next": [
-          0x234770d0
-        ]
-        items": [
-          {my_address: 0x23476df0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_9",
-        "type": "GROUP",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x234770d0",
-        "content": [
-          {my_address: 0x23470680, value: BOOL},
-          {my_address: 0x234706a8, value: btp}
-        ]
-        "next": [
-          0x23477220
-        ]
-        items": [
-          {my_address: 0x23470680, value: BOOL},
-          {my_address: 0x234706a8, value: btp}
-        ]
-      },
-      {
-        "position": "basic_http_stmt_9",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477220",
-        "content": btp
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234772f0, value: btp}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23474030
-    ]
-  "terminal_chars":[
-      0x234747b0,
-      0x23474ba0,
-      0x23474fb0,
-      0x234753c0,
-      0x23475810,
-      0x23475be0,
-      0x23475f90,
-      0x23476370,
-      0x23476a90,
-      0x23476f00
-    ]
-},btp: {
-  "concept_name": "btp"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "btp_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477560",
-        "content": BOOL
-        "next": [
-          0x23477630
-        ]
-        items": [
-          {my_address: 0x23477350, value: BOOL}
-        ]
-      },
-      {
-        "position": "btp_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477630",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23477380, value: BOOL}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234770d0,
-      0x23477220,
-      0x23477af0
-    ]
-  "terminal_chars":[
-      0x2347b3a0
-    ]
-},event_rule: {
-  "concept_name": "event_rule"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "event_rule_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472dc0",
-        "content": worker_connections
-        "next": [
-          0x23472eb0
-        ]
-        items": [
-          {my_address: 0x23472bc0, value: worker_connections}
-        ]
-      },
-      {
-        "position": "event_rule_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472eb0",
-        "content": SPACE
-        "next": [
-          0x23472fd0
-        ]
-        items": [
-          {my_address: 0x23472d20, value: SPACE}
-        ]
-      },
-      {
-        "position": "event_rule_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472fd0",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234730a0, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "event_rule_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234731e0",
-        "content": multi_accept
-        "next": [
-          0x234732b0
-        ]
-        items": [
-          {my_address: 0x23472bf0, value: multi_accept}
-        ]
-      },
-      {
-        "position": "event_rule_1",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x234732b0",
-        "content": SPACE
-        "next": [
-          0x23473380
-        ]
-        items": [
-          {my_address: 0x23473130, value: SPACE}
-        ]
-      },
-      {
-        "position": "event_rule_1",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473380",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23473450, value: BOOL}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234727f0
-    ]
-  "terminal_chars":[
-      0x23472dc0,
-      0x234731e0
-    ]
-},event_stmt: {
-  "concept_name": "event_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "event_stmt_0",
-        "type": "OPTION",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472700",
-        "content": [
-          {my_address: 0x23472500, value: TAB_SPACE}
-        ]
-        "next": [
-          0x234727f0
-        ]
-        items": [
-          {my_address: 0x23472500, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "event_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x234727f0",
-        "content": event_rule
-        "next": [
-          0x23472910
-        ]
-        items": [
-          {my_address: 0x23472530, value: event_rule}
-        ]
-      },
-      {
-        "position": "event_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472910",
-        "content": ;
-        "next": [
-          0x23472a70
-        ]
-        items": [
-          {my_address: 0x234729e0, value: ;}
-        ]
-      },
-      {
-        "position": "event_stmt_0",
-        "type": "OPTION",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472a70",
-        "content": [
-          {my_address: 0x23472b60, value: LINE_JUMP}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23472b60, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234722d0
-    ]
-  "terminal_chars":[
-      0x23481870,
-      0x23481b30
-    ]
-},events_block: {
-  "concept_name": "events_block"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471e30",
-        "content": events
-        "next": [
-          0x23471f00
-        ]
-        items": [
-          {my_address: 0x23471c80, value: events}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "OPTION",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471f00",
-        "content": [
-          {my_address: 0x23471cb0, value: SPACE}
-        ]
-        "next": [
-          0x23472040
-        ]
-        items": [
-          {my_address: 0x23471cb0, value: SPACE}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472040",
-        "content": {
-        "next": [
-          0x234721a0
-        ]
-        items": [
-          {my_address: 0x23472110, value: {}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x234721a0",
-        "content": LINE_JUMP
-        "next": [
-          0x234722d0
-        ]
-        items": [
-          {my_address: 0x23472270, value: LINE_JUMP}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SEQUENCE",
-        "index": 4,
-        "is_required_in_json": {
-},
-        "ptr": "0x234722d0",
-        "content": [
-          {my_address: 0x234723a0, value: event_stmt}
-        ]
-        "next": [
-          0x23472400
-        ]
-        items": [
-          {my_address: 0x234723a0, value: event_stmt}
-        ]
-      },
-      {
-        "position": "events_block_0",
-        "type": "SYMBOL",
-        "index": 5,
-        "is_required_in_json": {
-},
-        "ptr": "0x23472400",
-        "content": }
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23472170, value: }}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2346ab40
-    ]
-  "terminal_chars":[
-      0x23471e30
-    ]
-},gzip_mines: {
-  "concept_name": "gzip_mines"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "gzip_mines_0",
-        "type": "OPTION",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479ed0",
-        "content": [
-          {my_address: 0x23479d20, value: TAB_SPACE}
-        ]
-        "next": [
-          0x23479fc0
-        ]
-        items": [
-          {my_address: 0x23479d20, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_mines_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479fc0",
-        "content": MIME
-        "next": [
-          0x2347a0e0
-        ]
-        items": [
-          {my_address: 0x23479d50, value: MIME}
-        ]
-      },
-      {
-        "position": "gzip_mines_0",
-        "type": "OPTION",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347a0e0",
-        "content": [
-          {my_address: 0x2347a1d0, value: LINE_JUMP}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347a1d0, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23479bc0
-    ]
-  "terminal_chars":[
-      0x23481870,
-      0x23481b30
-    ]
-},gzip_stmt: {
-  "concept_name": "gzip_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "gzip_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234778e0",
-        "content": gzip
-        "next": [
-          0x234779d0
-        ]
-        items": [
-          {my_address: 0x23477760, value: gzip}
-        ]
-      },
-      {
-        "position": "gzip_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x234779d0",
-        "content": TAB_SPACE
-        "next": [
-          0x23477af0
-        ]
-        items": [
-          {my_address: 0x23477730, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_0",
-        "type": "GROUP",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477af0",
-        "content": [
-          {my_address: 0x234773b0, value: BOOL},
-          {my_address: 0x234773d8, value: btp}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234773b0, value: BOOL},
-          {my_address: 0x234773d8, value: btp}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477d50",
-        "content": gzip_disable
-        "next": [
-          0x23477e20
-        ]
-        items": [
-          {my_address: 0x23477c40, value: gzip_disable}
-        ]
-      },
-      {
-        "position": "gzip_stmt_1",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477e20",
-        "content": TAB_SPACE
-        "next": [
-          0x23477f20
-        ]
-        items": [
-          {my_address: 0x23477c70, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_1",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23477f20",
-        "content": STRING
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23477ff0, value: STRING}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_2",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478160",
-        "content": gzip_vary
-        "next": [
-          0x23478230
-        ]
-        items": [
-          {my_address: 0x234780b0, value: gzip_vary}
-        ]
-      },
-      {
-        "position": "gzip_stmt_2",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478230",
-        "content": TAB_SPACE
-        "next": [
-          0x23478330
-        ]
-        items": [
-          {my_address: 0x234780e0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_2",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478330",
-        "content": BOOL
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23478400, value: BOOL}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_3",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478540",
-        "content": gzip_proxied
-        "next": [
-          0x23478610
-        ]
-        items": [
-          {my_address: 0x23478490, value: gzip_proxied}
-        ]
-      },
-      {
-        "position": "gzip_stmt_3",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478610",
-        "content": TAB_SPACE
-        "next": [
-          0x23478710
-        ]
-        items": [
-          {my_address: 0x234784c0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_3",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478710",
-        "content": IDENT
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234787e0, value: IDENT}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_4",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478970",
-        "content": gzip_comp_level
-        "next": [
-          0x23478a40
-        ]
-        items": [
-          {my_address: 0x23478080, value: gzip_comp_level}
-        ]
-      },
-      {
-        "position": "gzip_stmt_4",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478a40",
-        "content": TAB_SPACE
-        "next": [
-          0x23478b40
-        ]
-        items": [
-          {my_address: 0x234788a0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_4",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478b40",
-        "content": NUMBER
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23478c10, value: NUMBER}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478d50",
-        "content": gzip_buffers
-        "next": [
-          0x23478e20
-        ]
-        items": [
-          {my_address: 0x23478870, value: gzip_buffers}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478e20",
-        "content": TAB_SPACE
-        "next": [
-          0x23478ef0
-        ]
-        items": [
-          {my_address: 0x23478ca0, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23478ef0",
-        "content": NUMBER
-        "next": [
-          0x23479050
-        ]
-        items": [
-          {my_address: 0x23478fc0, value: NUMBER}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479050",
-        "content": SPACE
-        "next": [
-          0x23479180
-        ]
-        items": [
-          {my_address: 0x23479120, value: SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_5",
-        "type": "SYMBOL",
-        "index": 4,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479180",
-        "content": SIZE
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23479250, value: SIZE}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_6",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234793b0",
-        "content": gzip_http_version
-        "next": [
-          0x23479480
-        ]
-        items": [
-          {my_address: 0x23479020, value: gzip_http_version}
-        ]
-      },
-      {
-        "position": "gzip_stmt_6",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479480",
-        "content": TAB_SPACE
-        "next": [
-          0x234795a0
-        ]
-        items": [
-          {my_address: 0x23479330, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "gzip_stmt_6",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x234795a0",
-        "content": VERSION
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23479670, value: VERSION}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "gzip_stmt_7",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479760",
-        "content": gzip_types
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23479700, value: gzip_types}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23474030
-    ]
-  "terminal_chars":[
-      0x234778e0,
-      0x23477d50,
-      0x23478160,
-      0x23478540,
-      0x23478970,
-      0x23478d50,
-      0x234793b0,
-      0x23479a00
-    ]
-},gzip_types: {
-  "concept_name": "gzip_types"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "gzip_types_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479a00",
-        "content": gzip_types
-        "next": [
-          0x23479ad0
-        ]
-        items": [
-          {my_address: 0x234792b0, value: gzip_types}
-        ]
-      },
-      {
-        "position": "gzip_types_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479ad0",
-        "content": LINE_JUMP
-        "next": [
-          0x23479bc0
-        ]
-        items": [
-          {my_address: 0x23479830, value: LINE_JUMP}
-        ]
-      },
-      {
-        "position": "gzip_types_0",
-        "type": "SEQUENCE",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23479bc0",
-        "content": [
-          {my_address: 0x23479c90, value: gzip_mines}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23479c90, value: gzip_mines}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23479760,
-      0x23479a00
-    ]
-  "terminal_chars":[
-      0x23479a00
-    ]
-},http_block: {
-  "concept_name": "http_block"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473690",
-        "content": http
-        "next": [
-          0x23473760
-        ]
-        items": [
-          {my_address: 0x234734e0, value: http}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "OPTION",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473760",
-        "content": [
-          {my_address: 0x23473510, value: SPACE}
-        ]
-        "next": [
-          0x23473880
-        ]
-        items": [
-          {my_address: 0x23473510, value: SPACE}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473880",
-        "content": {
-        "next": [
-          0x234739e0
-        ]
-        items": [
-          {my_address: 0x23473950, value: {}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x234739e0",
-        "content": LINE_JUMP
-        "next": [
-          0x23473b10
-        ]
-        items": [
-          {my_address: 0x23473ab0, value: LINE_JUMP}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SEQUENCE",
-        "index": 4,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473b10",
-        "content": [
-          {my_address: 0x23473be0, value: http_stmt}
-        ]
-        "next": [
-          0x23473c40
-        ]
-        items": [
-          {my_address: 0x23473be0, value: http_stmt}
-        ]
-      },
-      {
-        "position": "http_block_0",
-        "type": "SYMBOL",
-        "index": 5,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473c40",
-        "content": }
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234739b0, value: }}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2346ab40
-    ]
-  "terminal_chars":[
-      0x23473690
-    ]
-},http_stmt: {
-  "concept_name": "http_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "http_stmt_0",
-        "type": "OPTION",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23473f40",
-        "content": [
-          {my_address: 0x23473d40, value: TAB_SPACE}
-        ]
-        "next": [
-          0x23474030
-        ]
-        items": [
-          {my_address: 0x23473d40, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "http_stmt_0",
-        "type": "GROUP",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474030",
-        "content": [
-          {my_address: 0x23474120, value: basic_http_stmt},
-          {my_address: 0x23474148, value: gzip_stmt},
-          {my_address: 0x23474170, value: include_stmt}
-        ]
-        "next": [
-          0x234741f0
-        ]
-        items": [
-          {my_address: 0x23474120, value: basic_http_stmt},
-          {my_address: 0x23474148, value: gzip_stmt},
-          {my_address: 0x23474170, value: include_stmt}
-        ]
-      },
-      {
-        "position": "http_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x234741f0",
-        "content": ;
-        "next": [
-          0x23474350
-        ]
-        items": [
-          {my_address: 0x234742c0, value: ;}
-        ]
-      },
-      {
-        "position": "http_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23474350",
-        "content": LINE_JUMP
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23474420, value: LINE_JUMP}
-        ]
-      }
-    ],
-    [
-      {
-        "position": "http_stmt_1",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x234744e0",
-        "content": LINE_JUMP
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23474480, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23473b10
-    ]
-  "terminal_chars":[
-      0x23481870,
-      0x23481b30,
-      0x23481dc0
-    ]
-},include_stmt: {
-  "concept_name": "include_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "include_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347a410",
-        "content": include
-        "next": [
-          0x2347a4e0
-        ]
-        items": [
-          {my_address: 0x2347a260, value: include}
-        ]
-      },
-      {
-        "position": "include_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347a4e0",
-        "content": TAB_SPACE
-        "next": [
-          0x2347a600
-        ]
-        items": [
-          {my_address: 0x2347a290, value: TAB_SPACE}
-        ]
-      },
-      {
-        "position": "include_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347a600",
-        "content": PATH
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347a6d0, value: PATH}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23474030
-    ]
-  "terminal_chars":[
-      0x2347a410
-    ]
-},pid_stmt: {
-  "concept_name": "pid_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471850",
-        "content": pid
-        "next": [
-          0x23471920
-        ]
-        items": [
-          {my_address: 0x23470fe0, value: pid}
-        ]
-      },
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471920",
-        "content": SPACE
-        "next": [
-          0x234719f0
-        ]
-        items": [
-          {my_address: 0x234716a0, value: SPACE}
-        ]
-      },
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x234719f0",
-        "content": PATH
-        "next": [
-          0x23471b50
-        ]
-        items": [
-          {my_address: 0x23471ac0, value: PATH}
-        ]
-      },
-      {
-        "position": "pid_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471b50",
-        "content": ;
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23471c20, value: ;}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2346ab40
-    ]
-  "terminal_chars":[
-      0x23471850
-    ]
-},statement: {
-  "concept_name": "statement"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "statement_0",
-        "type": "GROUP",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2346ab40",
-        "content": [
-          {my_address: 0x234707e0, value: user_stmt},
-          {my_address: 0x23470808, value: worker_stmt},
-          {my_address: 0x23470830, value: pid_stmt},
-          {my_address: 0x23470858, value: events_block},
-          {my_address: 0x23470880, value: http_block}
-        ]
-        "next": [
-          0x23470930
-        ]
-        items": [
-          {my_address: 0x234707e0, value: user_stmt},
-          {my_address: 0x23470808, value: worker_stmt},
-          {my_address: 0x23470830, value: pid_stmt},
-          {my_address: 0x23470858, value: events_block},
-          {my_address: 0x23470880, value: http_block}
-        ]
-      },
-      {
-        "position": "statement_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23470930",
-        "content": [
-          {my_address: 0x234694e0, value: LINE_JUMP}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x234694e0, value: LINE_JUMP}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x234704b0
-    ]
-  "terminal_chars":[
-      0x23470a00,
-      0x23471200,
-      0x23471850,
-      0x23471e30,
-      0x23473690
-    ]
-},user_name: {
-  "concept_name": "user_name"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "user_name_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347a910",
-        "content": LOCASE_LETTER
-        "next": [
-          0x2347a9e0
-        ]
-        items": [
-          {my_address: 0x2347a760, value: LOCASE_LETTER}
-        ]
-      },
-      {
-        "position": "user_name_0",
-        "type": "SEQUENCE",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x2347a9e0",
-        "content": [
-          {my_address: 0x2347aab0, value: LOCASE_LETTER},
-          {my_address: 0x2347aad8, value: DIGIT},
-          {my_address: 0x2347ab00, value: _},
-          {my_address: 0x2347ab28, value: -}
-        ]
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x2347aab0, value: LOCASE_LETTER},
-          {my_address: 0x2347aad8, value: DIGIT},
-          {my_address: 0x2347ab00, value: _},
-          {my_address: 0x2347ab28, value: -}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x23470cf0
-    ]
-  "terminal_chars":[
-      0x234807b0
-    ]
-},user_stmt: {
-  "concept_name": "user_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23470a00",
-        "content": user
-        "next": [
-          0x23470ba0
-        ]
-        items": [
-          {my_address: 0x23470b70, value: user}
-        ]
-      },
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x23470ba0",
-        "content": SPACE
-        "next": [
-          0x23470cf0
-        ]
-        items": [
-          {my_address: 0x23470c70, value: SPACE}
-        ]
-      },
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-          "97": 
-            [
-              user_name
-            ]
-},
-        "ptr": "0x23470cf0",
-        "content": user_name
-        "next": [
-          0x23470e80
-        ]
-        items": [
-          {my_address: 0x23470dc0, value: user_name}
-        ]
-      },
-      {
-        "position": "user_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23470e80",
-        "content": ;
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23470f50, value: ;}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2346ab40
-    ]
-  "terminal_chars":[
-      0x23470a00
-    ]
-},worker_stmt: {
-  "concept_name": "worker_stmt"
-  "is_terminal_concept": false
-  "definitions":[
-    [
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 0,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471200",
-        "content": worker_processes
-        "next": [
-          0x234712f0
-        ]
-        items": [
-          {my_address: 0x23470fb0, value: worker_processes}
-        ]
-      },
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 1,
-        "is_required_in_json": {
-},
-        "ptr": "0x234712f0",
-        "content": SPACE
-        "next": [
-          0x23471410
-        ]
-        items": [
-          {my_address: 0x23471160, value: SPACE}
-        ]
-      },
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 2,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471410",
-        "content": IDENT
-        "next": [
-          0x23471570
-        ]
-        items": [
-          {my_address: 0x234714e0, value: IDENT}
-        ]
-      },
-      {
-        "position": "worker_stmt_0",
-        "type": "SYMBOL",
-        "index": 3,
-        "is_required_in_json": {
-},
-        "ptr": "0x23471570",
-        "content": ;
-        "next": [
-
-        ]
-        items": [
-          {my_address: 0x23471640, value: ;}
-        ]
-      }
-    ]
-  ]
-  "parents":[
-      0x2346ab40
-    ]
-  "terminal_chars":[
-      0x23471200
-    ]
-}}
-
-Parsing complete ✅
+]
+[
+  'include',
+  TAB_SPACE,
+  PATH
+]
+[
+  LOCASE_LETTER,
+  {,
+  LOCASE_LETTER,
+  |,
+  DIGIT,
+  |,
+  '_',
+  |,
+  '-',
+  }
+]
+[
+  LETTER,
+  {,
+  LETTER,
+  }
+]
+[
+  {,
+  DIGIT,
+  }
+]
+[
+  (,
+  'on',
+  |,
+  'off',
+  )
+]
+[
+  '/',
+  {,
+  PATH_CHAR,
+  }
+]
+[
+  (,
+  LETTER,
+  |,
+  DIGIT,
+  |,
+  '/',
+  |,
+  '.',
+  |,
+  '_',
+  |,
+  '*',
+  |,
+  '-',
+  )
+]
+[
+  (,
+  TEXT_MIME,
+  |,
+  APPLICATION_MIME,
+  |,
+  FONT_MIME,
+  |,
+  MULTIPART_MIME,
+  |,
+  AUDIO_MIME,
+  |,
+  VIDEO_MIME,
+  |,
+  IMAGE_MIME,
+  )
+]
+[
+  (,
+  'text/html',
+  |,
+  'text/plain',
+  |,
+  'text/css',
+  |,
+  'text/csv',
+  |,
+  'text/xml',
+  )
+]
+[
+  (,
+  'application/json',
+  |,
+  'application/javascript',
+  |,
+  'application/vnd.ms-fontobject',
+  |,
+  'application/pdf',
+  |,
+  'application/xml',
+  |,
+  'application/zip',
+  |,
+  'application/x-www-form-urlencoded',
+  |,
+  'application/x-yaml',
+  |,
+  'application/toml',
+  |,
+  'application/rtf',
+  |,
+  'application/octet-stream',
+  )
+]
+[
+  (,
+  'font/woff',
+  |,
+  'font/woff2',
+  |,
+  'font/ttf',
+  |,
+  'font/otf',
+  )
+]
+[
+  (,
+  'multipart/form-data',
+  )
+]
+[
+  (,
+  'audio/mpeg',
+  |,
+  'audio/wav',
+  |,
+  'audio/flac',
+  )
+]
+[
+  (,
+  'video/mp4',
+  |,
+  'video/webm',
+  )
+]
+[
+  (,
+  'image/png',
+  |,
+  'image/jpeg',
+  |,
+  'image/webp',
+  |,
+  'image/gif',
+  |,
+  'image/svg+xml',
+  |,
+  'image/avif',
+  |,
+  'image/heic',
+  |,
+  'image/icns',
+  |,
+  'image/bmp',
+  |,
+  'image/tiff',
+  |,
+  'image/x-icon',
+  )
+]
+[
+  NUMBER,
+  '.',
+  NUMBER
+]
+[
+  NUMBER,
+  (,
+  'k',
+  |,
+  'm',
+  )
+]
+[
+  (,
+  'debug',
+  |,
+  'info',
+  |,
+  'notice',
+  |,
+  'warn',
+  |,
+  'error',
+  |,
+  'crit',
+  )
+]
+[
+  '"',
+  {,
+  STRING_CHAR,
+  },
+  '"'
+]
+[
+  (,
+  LETTER,
+  |,
+  DIGIT,
+  |,
+  SPACE,
+  |,
+  '_',
+  |,
+  '.',
+  )
+]
+[
+  (,
+  UPCASE_LETTER,
+  |,
+  LOCASE_LETTER,
+  )
+]
+[
+  (,
+  'a',
+  |,
+  'b',
+  |,
+  'c',
+  |,
+  'd',
+  |,
+  'e',
+  |,
+  'f',
+  |,
+  'g',
+  |,
+  'h',
+  |,
+  'i',
+  |,
+  'j',
+  |,
+  'k',
+  |,
+  'l',
+  |,
+  'm',
+  |,
+  'n',
+  |,
+  'o',
+  |,
+  'p',
+  |,
+  'q',
+  |,
+  'r',
+  |,
+  's',
+  |,
+  't',
+  |,
+  'u',
+  |,
+  'v',
+  |,
+  'w',
+  |,
+  'x',
+  |,
+  'y',
+  |,
+  'z',
+  )
+]
+[
+  (,
+  'A',
+  |,
+  'B',
+  |,
+  'C',
+  |,
+  'D',
+  |,
+  'E',
+  |,
+  'F',
+  |,
+  'G',
+  |,
+  'H',
+  |,
+  'I',
+  |,
+  'J',
+  |,
+  'K',
+  |,
+  'L',
+  |,
+  'M',
+  |,
+  'N',
+  |,
+  'O',
+  |,
+  'P',
+  |,
+  'Q',
+  |,
+  'R',
+  |,
+  'S',
+  |,
+  'T',
+  |,
+  'U',
+  |,
+  'V',
+  |,
+  'W',
+  |,
+  'X',
+  |,
+  'Y',
+  |,
+  'Z',
+  )
+]
+[
+  (,
+  '0',
+  |,
+  '1',
+  |,
+  '2',
+  |,
+  '3',
+  |,
+  '4',
+  |,
+  '5',
+  |,
+  '6',
+  |,
+  '7',
+  |,
+  '8',
+  |,
+  '9',
+  )
+]
+[
+  {,
+  SPACE,
+  |,
+  TAB,
+  }
+]
+[
+  '	'
+]
+[
+  ' '
+]
+[
+  '
+'
+]

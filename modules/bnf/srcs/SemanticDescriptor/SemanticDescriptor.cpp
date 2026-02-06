@@ -287,7 +287,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	cpt->pushDef(conceptDef);
 
 	const Vec<std::string> words = splitwords(m_content.substr(cursor));
-	Logger::log(words);
+	// Logger::log(words);
 
 	std::string word;
 	ARule	   *arule	   = NULL;

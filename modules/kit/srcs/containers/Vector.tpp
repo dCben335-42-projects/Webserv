@@ -166,7 +166,7 @@ class VecBase
 		 * @return The index of the value if found, -1 otherwise.
 		 *
 		 */
-		size_t indexOf(const V &value) const
+		int indexOf(const V &value) const
 		{
 			const Derived &derived = static_cast<const Derived &>(*this);
 			for (size_t i = 0; i < derived.size(); ++i)
@@ -174,7 +174,7 @@ class VecBase
 				if (derived[i] == value)
 					return i;
 			}
-			return static_cast<size_t>(-1);
+			return -1;
 		}
 
 

@@ -1,4 +1,5 @@
-<head>			::= { statement }
+<head>			::= { statement | 'evnt' }
+			
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
