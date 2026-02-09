@@ -14,7 +14,7 @@ class Config
 		std::string	   m_ip;
 		unsigned short m_port;
 		std::string	   m_domain;
-
+		time_t		   m_keepAliveTimeout;
 
 		Location			 *m_defaultLocation;
 		Map<const Location *> m_locations;
@@ -32,6 +32,7 @@ class Config
 		void setIp(const std::string &ip);
 		void setPort(unsigned short port);
 		void setDomain(const std::string &domain);
+		void setKeepAliveTimeout(const time_t timeout);
 
 		const std::string			&getIp() const;
 		unsigned short				 getPort() const;
@@ -39,8 +40,9 @@ class Config
 		const Location				*getDefaultLocation() const;
 		const Map<const Location *> &getLocations() const;
 
-		bool hasIndexFile(const std::string &locationPath) const;
+		time_t getKeepAliveTimeout() const;
 
+		bool			  hasIndexFile(const std::string &locationPath) const;
 		const std::string getIndexFile(const std::string &locationPath) const;
 };
 

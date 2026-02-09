@@ -27,6 +27,8 @@ class CgiPipe : public Pollable
 		void onPollOut();
 		void onPollErr();
 		void onPollHangUp();
+
+		bool isTimedOut(const time_t currentTime) const;
 };
 
 

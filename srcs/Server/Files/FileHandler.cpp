@@ -243,8 +243,8 @@ bool FileHandler::hasReadPermission(const std::string &path)
  */
 std::string FileHandler::readFile(const std::string &path)
 {
-	if (!fileExists(path))
-		throw FileHandler::FileDoesNotExistException(path);
+	// if (!fileExists(path))
+	// 	throw FileHandler::FileDoesNotExistException(path);
 	if (!hasReadPermission(path))
 		throw FileHandler::FilePermissionException(path);
 	int fd = open(path.c_str(), O_RDONLY);

@@ -4,6 +4,7 @@
 #include "HttpMethod.hpp"
 #include "httpHeaders.hpp"
 #include "Map.hpp"
+#include "Vec.hpp"
 
 class AHttpMessage
 {
@@ -14,8 +15,11 @@ class AHttpMessage
 		unsigned short	 m_statusCode;
 
 		static const Map<unsigned short, std::string> m_statusReasonMap;
+		static const Vec<unsigned short>			  m_closeStatus;
 
 		static Map<unsigned short, std::string> initStatusReasonMap();
+		static Vec<unsigned short>				initCloseStatus();
+
 
 		std::string buildHead() const;
 		std::string build();
@@ -35,6 +39,8 @@ class AHttpMessage
 
 		void appendBody(const std::string &data);
 		void appendBody(const char *buffer, size_t size);
+
+		bool isCloseStatus(unsigned short statusCode) const;
 };
 
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message);

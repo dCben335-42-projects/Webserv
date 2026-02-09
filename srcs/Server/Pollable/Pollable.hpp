@@ -47,6 +47,8 @@ class Pollable
 		{
 			(void) 0;
 		}
+
+		virtual bool isTimedOut(const time_t currentTime) const = 0;
 };
 
 #endif

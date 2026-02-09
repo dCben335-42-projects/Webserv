@@ -118,16 +118,22 @@ bool VirtualServer::setupSocket(const std::string &ip, unsigned short port)
 
 Client *VirtualServer::createClient(int clientFd)
 {
-	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
-	{
-		std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
-		close(clientFd);
-		return NULL;
-	}
+	// if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
+	// {
+	// 	std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
+	// 	close(clientFd);
+	// 	return NULL;
+	// }
 	Client *client = new Client(clientFd, m_config);
 	return client;
 }
 
+
+bool VirtualServer::isTimedOut(const time_t currentTime) const
+{
+	(void) currentTime;
+	return false;
+}
 
 
 /**

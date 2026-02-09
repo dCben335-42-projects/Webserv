@@ -10,6 +10,7 @@ class HttpResponse : public AHttpMessage
 		size_t		m_sentBytes;
 
 
+
 	public:
 		HttpResponse();
 		~HttpResponse();
@@ -24,8 +25,9 @@ class HttpResponse : public AHttpMessage
 
 		bool sendOnce(int socket);
 
-		void build();
-		void reset();
+		HttpResponse &build();
+		HttpResponse &reset();
+		HttpResponse &fill(bool shouldClose);
 };
 
 #endif

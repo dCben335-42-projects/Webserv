@@ -5,6 +5,7 @@
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include "Config.hpp"
+#include <ctime>
 
 class VirtualServer;
 
@@ -14,6 +15,9 @@ class Client : public Pollable
 		const Config &m_serverConfig;
 		HttpRequest	  m_req;
 		HttpResponse  m_res;
+		time_t		  m_keepAlive;
+		bool		  m_idle;
+		bool		  m_shouldClose;
 
 		void handleGetRequest(std::string ressourcePath);
 		void handlePostRequest();
@@ -34,8 +38,11 @@ class Client : public Pollable
 
 		void setEvents(const short events);
 
+		bool			   determineKeepAlive(unsigned short statusCode);
 		const HttpRequest &getRequest() const;
 		HttpResponse	  &getResponse();
+
+		bool isTimedOut(const time_t currentTime) const;
 };
 
 

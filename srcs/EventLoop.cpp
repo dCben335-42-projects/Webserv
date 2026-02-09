@@ -96,14 +96,14 @@ void EventLoop::run()
 			if (handler)
 			{
 				handler->setRevents(m_pollFds[i].revents);
-				if (m_pollFds[i].revents & POLLIN)
-					handler->onPollIn();
-				if (m_pollFds[i].revents & POLLOUT)
-					handler->onPollOut();
-				if (m_pollFds[i].revents & POLLERR)
-					handler->onPollErr();
 				if (m_pollFds[i].revents & POLLHUP)
 					handler->onPollHangUp();
+				else if (m_pollFds[i].revents & POLLERR)
+					handler->onPollErr();
+				else if (m_pollFds[i].revents & POLLIN)
+					handler->onPollIn();
+				else if (m_pollFds[i].revents & POLLOUT)
+					handler->onPollOut();
 				if (handler->getConnectionClosed())
 				{
 					deletePollable(fd, i);
@@ -181,11 +181,21 @@ void EventLoop::deletePollable(const int fd, const size_t &index)
  */
 void EventLoop::updatePollStatus()
 {
+	const time_t currentTime = std::time(0);
 	for (size_t i = 0; i < m_pollFds.size(); i++)
 	{
 		Pollable *handler = getHandler(m_pollFds[i].fd);
 		if (handler)
+		{
 			m_pollFds[i].events = handler->getEvents();
+			if (handler->isTimedOut(currentTime))
+			{
+				Logger::info("Connection timed out on fd " + Logger::get(m_pollFds[i].fd));
+				handler->setConnectionClosed(true);
+				deletePollable(m_pollFds[i].fd, i);
+				i--;
+			}
+		}
 	}
 }
 

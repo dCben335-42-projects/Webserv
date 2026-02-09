@@ -137,7 +137,6 @@ ssize_t HttpRequest::readOnce(int socketFd)
 
 	if (bytesRead < 0)
 		return -1;
-
 	m_rawStr.append(buffer, bytesRead);
 	return bytesRead;
 }

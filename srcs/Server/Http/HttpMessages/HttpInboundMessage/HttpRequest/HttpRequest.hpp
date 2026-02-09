@@ -51,7 +51,6 @@ class HttpRequest : public AHttpInboundMessage
 		bool		matchAccept(const std::string &contentType) const;
 
 		bool getConnectionKeepAlive() const;
-
 		bool isComplete();
 };
 

@@ -18,6 +18,7 @@
 #include "Http404Exception.hpp"
 #include "Http405Exception.hpp"
 #include "Http406Exception.hpp"
+#include "Http408Exception.hpp"
 #include "Http409Exception.hpp"
 #include "Http500Exception.hpp"
 #include "Http501Exception.hpp"

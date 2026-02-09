@@ -12,9 +12,11 @@
 
 Client::Client(int fd, const Config &config) :
 	Pollable(fd),
-	m_serverConfig(config)
+	m_serverConfig(config),
+	m_keepAlive(std::time(0)),
+	m_idle(true)
 {
-	m_events = POLLIN;
+	m_events = POLLIN | POLLRDHUP;
 	EventLoop::addHandler(this);
 }
 
@@ -248,6 +250,15 @@ bool Client::prepareResponse()
 
 
 
+bool Client::isTimedOut(const time_t currentTime) const
+{
+	const time_t timeoutTime = m_keepAlive + m_serverConfig.getKeepAliveTimeout();
+
+	if (m_idle && currentTime > timeoutTime)
+		return true;
+	return false;
+}
+
 /**
  *
  * @brief Handles reading data from the client socket.
@@ -263,13 +274,25 @@ bool Client::prepareResponse()
  */
 void Client::onPollIn()
 {
-	if (m_req.readOnce(m_fd) == -1)
-	{
-		m_events = 0;
-		return;
-	}
+	const time_t timeoutTime = m_keepAlive + m_serverConfig.getKeepAliveTimeout();
+	const time_t currentTime = std::time(0);
+
 	try
 	{
+
+		if (m_idle && currentTime > timeoutTime)
+			throw Http408Exception();
+		const ssize_t bytesRead = m_req.readOnce(m_fd);
+		if (bytesRead == -1)
+		{
+			m_events		   = 0;
+			m_connectionClosed = true;
+			return;
+		}
+		if (bytesRead == 0)
+			return;
+		m_idle		= false;
+		m_keepAlive = currentTime;
 		if (!m_req.isComplete())
 			return;
 		m_req.parse(m_serverConfig);
@@ -283,14 +306,17 @@ void Client::onPollIn()
 		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 		m_res.setBody(e.getPage());
 	}
-	const std::string date = Date::getCurrentHttpDate();
-	if (!date.empty())
-		m_res.setHeader(HEADER_DATE, date);
-	m_res.setHeader(HEADER_CONNECTION, m_req.getConnectionKeepAlive() ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
-	m_res.build();
+	m_res.fill(!m_req.getConnectionKeepAlive()).build();
+	determineKeepAlive(m_res.getStatusCode());
 	m_events = POLLOUT;
 }
 
+
+bool Client::determineKeepAlive(unsigned short statusCode)
+{
+	m_shouldClose = !m_req.getConnectionKeepAlive() && !m_res.isCloseStatus(statusCode);
+	return !m_shouldClose;
+}
 
 /**
  *
@@ -305,14 +331,27 @@ void Client::onPollIn()
  */
 void Client::onPollOut()
 {
-	if (m_res.sendOnce(m_fd))
+	bool hasFullySent = false;
+	try
 	{
-		if (!m_req.getConnectionKeepAlive())
+		hasFullySent = m_res.sendOnce(m_fd);
+	}
+	catch (const std::exception &e)
+	{
+		m_events		   = 0;
+		m_connectionClosed = true;
+		return;
+	}
+	if (hasFullySent)
+	{
+		if (m_shouldClose)
 		{
 			m_connectionClosed = true;
 			m_events		   = 0;
 			return;
 		}
+		m_idle		= true;
+		m_keepAlive = std::time(0);
 		m_req.reset();
 		m_res.reset();
 		m_events = POLLIN;
@@ -323,14 +362,15 @@ void Client::onPollOut()
 
 void Client::onPollErr()
 {
-	Logger::error("Poll error on client socket.");
+	Logger::error("Poll error on client socket fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
 
 void Client::onPollHangUp()
 {
-	Logger::info("Client disconnected.");
-	m_connectionClosed = true;
+
+	Logger::info("client disconnected on fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
 	m_events		   = 0;
+	m_connectionClosed = true;
 }

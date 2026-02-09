@@ -101,6 +101,14 @@ void CgiPipe::onPollErr()
 	onError();
 }
 
+
+
+bool CgiPipe::isTimedOut(const time_t currentTime) const
+{
+	(void) currentTime;
+	return false;
+}
+
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
