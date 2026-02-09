@@ -54,18 +54,17 @@ void CgiSpawner::spawn()
 
 void CgiSpawner::setupPipes()
 {
-	// TODO maybe need to throw ?
 	if (pipe(m_stdinPipe) == -1)
 	{
-		std::cerr << "Pipe creation failed" << std::endl;
 		m_stdinPipe[0] = -1;
 		m_stdinPipe[1] = -1;
+		throw Http500Exception();
 	}
 	if (pipe(m_stdoutPipe) == -1)
 	{
-		std::cerr << "Pipe creation failed" << std::endl;
 		m_stdoutPipe[0] = -1;
 		m_stdoutPipe[1] = -1;
+		throw Http500Exception();
 	}
 }
 
