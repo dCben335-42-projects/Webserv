@@ -48,6 +48,21 @@ const AJson *JsonObject::get(const std::string &key) const
 
 /**
  *
+ * @brief Gets the value associated with the given key in the JSON object.
+ *
+ * @param key The key of the pair to be retrieved.
+ *
+ * @return The value associated with the given key,
+ * or NULL if the key does not exist in the JSON object.
+ *
+ * */
+AJson *JsonObject::get(const std::string &key)
+{
+	return m_members.has(key) ? m_members.get(key) : NULL;
+}
+
+/**
+ *
  * @brief Sets the value for the given key in the JSON object.
  * If the key does not exist, it is inserted.
  *

@@ -198,6 +198,11 @@ void ARule::addRequiredInJson(size_t index, const std::string &val)
 	m_requiredInJson.get(index).push(val);
 }
 
+bool ARule::isEnd() const
+{
+	return m_nextRules.empty();
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << "{\n";

@@ -37,20 +37,20 @@ class AJson
 		JsonArray		*asArray();
 		const JsonArray *asArray() const;
 
-		JsonObject *asObject();
+		JsonObject		 *asObject();
 		const JsonObject *asObject() const;
-		
-		JsonString *asString();
+
+		JsonString		 *asString();
 		const JsonString *asString() const;
 
-		JsonNumber *asNumber();
+		JsonNumber		 *asNumber();
 		const JsonNumber *asNumber() const;
 
-		JsonBool   *asBool();
-		const JsonBool   *asBool() const;
+		JsonBool	   *asBool();
+		const JsonBool *asBool() const;
 
-		JsonNull   *asNull();
-		const JsonNull   *asNull() const;
+		JsonNull	   *asNull();
+		const JsonNull *asNull() const;
 
 		static JsonArray  *createArray();
 		static JsonArray  *createArray(const Vec<AJson *> &elements);

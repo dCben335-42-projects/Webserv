@@ -262,13 +262,16 @@ class VecBase
 		{
 			Derived		   result;
 			const Derived &derived = static_cast<const Derived &>(*this);
-			for (size_t i = 0; i < n && i < derived.size(); ++i)
-			{
+			if (n > derived.size())
+				n = derived.size();
+			result.reserve(n);
+			for (size_t i = 0; i < n; ++i)
 				result.push_back(derived[i]);
-			}
 			return result;
 		}
 };
+
+// #include <utility>
 
 template <typename V>
 class Vec
@@ -286,9 +289,12 @@ class Vec
 		}
 		Vec &operator=(const Vec &other)
 		{
-			base::operator=(other);
+			if (this != &other)
+				base::operator=(other);
 			return *this;
 		}
+
+
 		bool operator==(const Vec &other) const
 		{
 			if (this->size() != other.size())

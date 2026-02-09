@@ -45,6 +45,19 @@ AJson *JsonArray::get(size_t index) const
 	return m_elements.has(index) ? m_elements.get(index) : NULL;
 }
 
+
+/**
+ *
+ * @brief Gets the last value in the array.
+ *
+ * @return The last value in the array, or NULL if the array is empty.
+ *
+ */
+AJson *JsonArray::getLast() const
+{
+	return m_elements.size() > 0 ? m_elements.get(m_elements.size() - 1) : NULL;
+}
+
 /**
  *
  * @brief Checks if the array contains a value at the given index.
@@ -96,6 +109,20 @@ bool JsonArray::contains(AJson *value) const
 {
 	return m_elements.contains(value);
 }
+
+/**
+ *
+ * @brief Returns the number of elements in the array.
+ *
+ * @return The size of the array.
+ *
+ */
+size_t JsonArray::size() const
+{
+	return m_elements.size();
+}
+
+
 
 
 /**
@@ -165,6 +192,8 @@ void JsonArray::create(const Map<std::string, AJson *> &object)
 {
 	m_elements.push(createObject(object));
 }
+
+
 
 
 std::ostream &operator<<(std::ostream &os, const JsonArray &arr)

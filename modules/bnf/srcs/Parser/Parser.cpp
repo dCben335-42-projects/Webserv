@@ -3,6 +3,7 @@
 #include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
 #include "Json.hpp"
+#include "../BNFPath/BNFPath.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -302,80 +303,6 @@ void Parser::completePath()
 	m_originelRules.clear();
 }
 
-bool compare(const ARulePath &a, const ARulePath &b)
-{
-	if (a.size() != b.size())
-		return false;
-	for (size_t i = 0; i < a.size(); ++i)
-	{
-		if (a[i] != b[i])
-			return false;
-	}
-	return true;
-}
-
-class BNFPath
-{
-	public:
-		BNFPath(const ARulePath &p) : rulePath(p), prev(NULL), isInvalidedPath(false)
-		{
-		}
-		BNFPath(const ARulePath &p, BNFPath *pr) : rulePath(p), prev(pr), isInvalidedPath(false)
-		{
-		}
-		~BNFPath()
-		{
-		}
-		const ARulePath &rulePath;
-		BNFPath			*prev;
-		Vec<BNFPath>	 next;
-		bool			 isInvalidedPath;
-
-		BNFPath operator=(const BNFPath &other)
-		{
-			return BNFPath(other.rulePath, other.prev);
-		}
-
-		bool operator==(const BNFPath &other) const
-		{
-			return compare(rulePath, other.rulePath);
-		}
-
-		void setNext(const ARulePath &p)
-		{
-			next.push(BNFPath(p, this));
-		}
-
-		void deleteBranch()
-		{
-			BNFPath *current = this;
-			BNFPath *parent	 = current->prev;
-
-			while (parent)
-			{
-				if (parent->next.size() > 1)
-				{
-					current->isInvalidedPath = true;
-					return;
-				}
-				current = parent;
-				parent	= parent->prev;
-			}
-		}
-
-		const BNFPath *getHead() const
-		{
-			const BNFPath *head = this;
-
-			while (head->prev)
-			{
-				head = head->prev;
-				Logger::log(LoggerJson::get(head->rulePath, true));
-			}
-			return head;
-		}
-};
-
 std::ostream &operator<<(std::ostream &os, const BNFPath &data)
 {
 	os << data.next.size();
@@ -383,17 +310,254 @@ std::ostream &operator<<(std::ostream &os, const BNFPath &data)
 }
 
 
-// void generateJson(Vec<BNFPath *> pathsTop)
+// struct JsonMapKey
 // {
-// 	Logger::log(LoggerJson::get(pathsTop[0]->rulePath));
-// }
+// 		size_t	   index;
+// 		ARulePath path;
+// };
+
+bool same_prec(ARulePath path, ARulePath pathNext, size_t n)
+{
+	// Logger::log("compare : " + LoggerJson::get(path) + " with " + LoggerJson::get(pathNext) + " with n = " + LoggerJson::get(n));
+	if (path.size() < n || pathNext.size() < n)
+		return false;
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		// Logger::log("compare : " + LoggerJson::get(path[i]) + " with " + LoggerJson::get(pathNext[i]));
+		if (path[i] != pathNext[i])
+			return false;
+	}
+
+	return true;
+}
+
+
+void recurseJson(
+	ARulePath				path,
+	Vec<ARulePath>			pathNexts,
+	size_t					index_rule,
+	AJson				  **json,
+	size_t				   *index,
+	Vec<std::string>	   &line,
+	std::string			   &buffer,
+	Map<size_t, AJson *>   &mapIndexToJson,
+	Vec<const ARule *>	   &collectStr,
+	bool					hasCollectStr,
+	bool				   &continueBuffer,
+	Map<size_t, ARulePath> &pathStack)
+{
+
+	AJson		*ptr  = NULL;
+	const ARule *rule = path[index_rule];
+
+
+	Logger::log("parent_cpt: " + LoggerJson::get(rule->getConceptName()));
+	// Logger::log("parent_cpt: " + LoggerJson::get(rule));
+	Logger::log("hasCollectStr: " + LoggerJson::get(hasCollectStr));
+
+	bool tempHasCollectStr = hasCollectStr;
+	(void) tempHasCollectStr;
+
+
+
+	if (!hasCollectStr && rule->getConceptPtr()->isTerminalConcept())
+	{
+		collectStr	  = path.slice(index_rule);
+		hasCollectStr = true;
+		Logger::log("Ok8888");
+	}
+
+	if (path.size() - 1 == index_rule)
+	{
+		size_t lineSize = line[0].size();
+		buffer.append(line[0]);
+		line.remove(0);
+		(*index) += lineSize;
+		Logger::log(buffer);
+
+		if (*index < pathNexts.size() && ((hasCollectStr && !path[index_rule - 1]->isSequence() && same_prec(path, pathNexts[*index], index_rule)) || same_prec(path, pathNexts[*index], index_rule + 1)))
+		{
+			continueBuffer = true;
+			Logger::log("Ok333");
+		}
+		if (*index < pathNexts.size() && !same_prec(path, pathNexts[*index], index_rule))
+		{
+			Logger::log("Ok4");
+			if (!hasCollectStr)
+			{
+				Logger::log("Ok18");
+
+				*json = AJson::createString(buffer);
+				buffer.clear();
+			}
+		}
+		if (index_rule == 0)
+		{
+			Logger::log("Ok555");
+			*json = AJson::createString(buffer);
+			buffer.clear();
+		}
+		return;
+	}
+
+	Logger::log("OkSKIP");
+
+
+	recurseJson(path, pathNexts, index_rule + 1, &ptr, index, line, buffer, mapIndexToJson, collectStr, hasCollectStr, continueBuffer, pathStack);
+	Logger::log("----<UP>----");
+
+	if (!ptr)
+	{
+
+		if (hasCollectStr && !continueBuffer)
+		{
+			if (*index < pathNexts.size() && same_prec(path, pathNexts[*index], index_rule))
+			{
+				continueBuffer = true;
+			}
+		}
+
+		if (!continueBuffer && !hasCollectStr)
+		{
+			Logger::log("->1");
+			if (index_rule + 1 < path.size())
+			{
+				Logger::log("->2");
+				Logger::log("concept: " + LoggerJson::get(path[index_rule + 1]->getConceptName()));
+
+				if (!path[index_rule + 1]->getConceptPtr()->isTerminalConcept())
+				{
+					Logger::log("->3");
+
+					if (pathStack.has(index_rule + 1))
+					{
+						if (pathStack.get(index_rule + 1) != path.slice(index_rule + 1))
+						{
+							Logger::log("get");
+							AJson *currentJson2 = mapIndexToJson.get(index_rule + 1);
+							mapIndexToJson.get(index_rule)->asArray()->push(currentJson2);
+							mapIndexToJson.remove(index_rule + 1);
+						}
+					}
+
+					const std::string key = path[index_rule + 1]->getConceptName();
+					if (!mapIndexToJson.has(index_rule + 1))
+					{
+						Logger::log("create_object");
+
+						pathStack.set(index_rule + 1, path.slice(index_rule + 1));
+						mapIndexToJson.set(index_rule + 1, AJson::createObject());
+						mapIndexToJson.get(index_rule + 1)->asObject()->set(key, AJson::createArray());
+
+						Logger::log("Object created: " + LoggerJson::get(mapIndexToJson.get(index_rule + 1)));
+					}
+
+					if (!buffer.empty())
+					{
+						if (path[index_rule + 1]->isSequence())
+						{
+							AJson	  *currentJson	 = mapIndexToJson.get(index_rule + 1);
+							JsonArray *currentObject = currentJson->asObject()->get(path[index_rule + 1]->getConceptName())->asArray();
+							AJson	  *lastElement	 = currentObject->getLast();
+							if (!lastElement || lastElement->getType() != AJson::ARRAY)
+								currentObject->push(AJson::createArray());
+							currentObject->getLast()->asArray()->push(AJson::createString(buffer));
+						}
+						else
+						{
+							mapIndexToJson.get(index_rule + 1)->asObject()->get(key)->asArray()->push(AJson::createString(buffer));
+
+							if (path[index_rule]->isSequence() && path[index_rule + 1]->isEnd())
+							{
+								const std::string key2			= path[index_rule]->getConceptName();
+								JsonArray		 *currentObject = mapIndexToJson.get(index_rule)->asObject()->get(key2)->asArray();
+
+								AJson *lastElement = currentObject->getLast();
+								if (!lastElement || lastElement->getType() != AJson::ARRAY)
+								{
+									currentObject->push(AJson::createArray());
+									lastElement = currentObject->getLast()->asArray();
+								}
+								lastElement->asArray()->push(mapIndexToJson.get(index_rule + 1));
+								mapIndexToJson.remove(index_rule + 1);
+								pathStack.remove(index_rule + 1);
+							}
+						}
+						buffer.clear();
+					}
+
+					if (*index >= pathNexts.size() || (!same_prec(path, pathNexts[*index], index_rule + 1)))
+					{
+						Logger::log("Ok56");
+						AJson *currentJson2 = mapIndexToJson.get(index_rule + 1);
+						if (index_rule == 0)
+							mapIndexToJson.get(index_rule)->asArray()->push(currentJson2);
+						else
+						{
+							mapIndexToJson.get(index_rule)->asObject()->get(path[index_rule]->getConceptName())->asArray()->push(currentJson2);
+						}
+						Logger::log("Ok50");
+						mapIndexToJson.remove(index_rule + 1);
+						pathStack.remove(index_rule + 1);
+					}
+
+					Logger::log("Ok97");
+
+
+					return;
+				}
+			}
+		}
+
+		// if (!hasCollectStr && !rule->getConceptPtr()->isTerminalConcept())
+		// {
+		// 	*json = AJson::createObject();
+		// }
+
+		if (!continueBuffer && index_rule == 0)
+		{
+			Logger::log("Ok99995");
+			*json = AJson::createString(buffer);
+			return;
+		}
+		Logger::log("Ok59");
+
+		return;
+	}
+	else
+	{
+		Logger::log("Ok6");
+
+		Logger::log("string : " + LoggerJson::get(buffer));
+		// Si TerminalConcept on doit ajouter des string au create string
+		if (path[index_rule]->isSequence())
+		{
+			if (!mapIndexToJson.has(index_rule))
+				mapIndexToJson.set(index_rule, AJson::createArray());
+		}
+		else
+		{
+			if (!mapIndexToJson.has(index_rule))
+				mapIndexToJson.set(index_rule, AJson::createArray());
+		}
+
+		AJson *currentJson = mapIndexToJson.get(index_rule);
+		if (currentJson->getType() == AJson::ARRAY)
+		{
+			currentJson->asArray()->push(ptr);
+		}
+		if (!same_prec(path, pathNexts[*index], index_rule - 1))
+		{
+			*json = currentJson;
+			return;
+		}
+	}
+}
 
 void generateJson(const BNFPath *cursor, const std::string &stringToParsed)
 {
 	// clang-format off
-
-	Logger::log("--------------------------------------------------");
-
 
 	// START VARS
 
@@ -404,27 +568,25 @@ void generateJson(const BNFPath *cursor, const std::string &stringToParsed)
 
 	Vec<ARulePath> pathStack;
 	pathStack.push_back(cursor->rulePath);
-	size_t count = 0;
 
-	while (cursor->next.size() > 0)
+	size_t inc = 0;
+	while (cursor && cursor->next.size() > 0)
 	{
 		for (size_t i = 0; i < cursor->next.size(); ++i)
 		{
 			if (!cursor->next[i].isInvalidedPath)
 			{
 				cursor = &cursor->next[i];
+				inc++;
+				break;
 			}
 		}
-		count++;
-
-
 		pathStack.push_back(cursor->rulePath);
 	}
 
 	// [....][.....]
 	// [..][..][...]
-	Logger::log(LoggerJson::get(pathStack, true));
-
+	// Logger::log(LoggerJson::get(pathStack, true));
 
 	Vec<std::string> line;
 	std::string str = "";
@@ -435,18 +597,14 @@ void generateJson(const BNFPath *cursor, const std::string &stringToParsed)
 
 		for (size_t i = 1; i < pathStack.size(); ++i)
 		{
-			if (pathStack[i - 1].back() == pathStack[i].back())
+			if (pathStack[i - 1] == pathStack[i])
 			{
-
 				str.push_back(stringToParsed[i]);  // char
 			}
 			else
 			{
 				line.push_back(str);
-				Logger::log(pathStack[i - 1].back());
-				Logger::log(pathStack[i].back());
 				Logger::log(LoggerJson::get(str));
-				Logger::log("--------------------------------------------------");
 				str = "";
 				str.push_back(stringToParsed[i]);
 			}
@@ -455,112 +613,44 @@ void generateJson(const BNFPath *cursor, const std::string &stringToParsed)
 		line.push_back(str);
 	}
 
-	// Bug ici devrai aboir meme nombre
-	Logger::log(count);
-	Logger::log(stringToParsed.length());
+	Vec<AJson *> elements;
+	AJson *json = NULL;
+	std::string buffer;
+	size_t index = 0;
 
 
-	// Logger::log(LoggerJson::get(line[2]));
+	Map<size_t, AJson *> mapIndexToJson;
+	bool continueBuffer = false;
+	Vec<const ARule *> collectStr;
 
-	// for (size_t i = 0; i < line.size(); ++i)
-	// {
-	// 	Logger::log(LoggerJson::get(line[i]));
-	// }
+	Map<size_t, ARulePath> pathsAll;
 
+	AJson *arr = AJson::createArray();
+	mapIndexToJson.set(0, arr);
 
-
-
-
-	// pathStack[0].back();
-	// index0 => firstIndex of line
-	// index1 => lastindex of line
-	// line = [ 0, 0 ]
-
-
-
-
-
-		// Logger::log(pathStack[0][1]);
-
-
-
-
-
-		// std::string str	  = "";
-
-		// for (int i = cursor->rulePath.size() - 1; i >= 0; --i)
-
-		// for (int i = cursor->rulePath.size() - 1; i >= 0; --i)
-		// {
-		// 	if ()
-		// }
-
-
-
-
-
-		// bool lastIsSequence = false;
-
-
-
-
-		// for (size_t i = 0; i < cursor->rulePath.size(); ++i)
-		// {
-		// 	if (cursor->rulePath[i]->isSequence())
-		// 	{
-		// 		AJson *newArray = AJson::createArray();
-		// 		line->push(newArray);
-		// 		ptr = newArray;
-		// 	}
-		// }
-
-
-
-
-
-		// 	// path.push_back(cursor->rulePath[i]);
-		// }
-
-		// if ()
-
-		// line->createString("test");
-
-		// for (size_t i = 0; i < pathsTop[0]->rulePath.size(); ++i)
-		// {
-		// 	line->push(LoggerJson::get(pathsTop[0]->rulePath[i]->getItems()));
-		// }
-
-		(void) cursor;
-	(void) stringToParsed;
-
-
-
-
-	// Vec<ConceptDef *> defs      = pathsTop[0]->rulePath[0]->getConceptPtr()->getDefinitions();
-	// for (size_t i = 0; i < defs.size(); ++i)
-	// {
-	//     // JsonArray *cptdef = new JsonArray();
-	//     // for (size_t j = 0; j < defs[i]->size(); ++j)
-	//     // {
-
-
-	//     //     cptdef->push()
-	//     // }
-
-	//     pathsTop[0]->rulePath[1]->
-
-	//         cptdefs->push(cptdef);
-	// }
-
-
-	// for ()
-
-
-	// pathsTop[0]->rulePath
-
-
-	// pathsTop[0]->prev = NULL;
+	while (index < pathStack.size())
+	{
+		Logger::log("=======");
+		recurseJson(pathStack[index], pathStack, 0, &json, &index, line, buffer, mapIndexToJson, collectStr, false, continueBuffer, pathsAll);
+		Logger::log("json : " + LoggerJson::get(json));
+		if (!continueBuffer)
+		{
+			buffer.clear();
+		}
+		continueBuffer = false;
+		if (json)
+		{
+			mapIndexToJson.get(0)->asArray()->push(json);
+			json = NULL;
+		}
+		if (mapIndexToJson.has(0))
+			Logger::log("arr : " + LoggerJson::get(mapIndexToJson.get(0), false));
+	}
+	// Logger::log(line2);
 }
+
+
+
 
 void Parser::resolvePath(const std::string &stringToParsed)
 {
@@ -571,7 +661,7 @@ void Parser::resolvePath(const std::string &stringToParsed)
 	typedef Map<ARulePath, Vec<ARulePath> >::const_iterator MapIt;
 	for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
 	{
-		basePaths.push_once(new BNFPath(it->first));
+		basePaths.push_once(new BNFPath(it->first, 0));
 	}
 	pathsTop	 = basePaths;
 	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
@@ -596,7 +686,7 @@ void Parser::resolvePath(const std::string &stringToParsed)
 					bool found		 = false;
 					const ARulePath &vecKeyValue = *vecKey[j];
 
-					if (!compare(vecValue, vecKeyValue))
+					if (!BNFPath::compare(vecValue, vecKeyValue))
 						continue;
 					
 					for (size_t l = 0; l < pathsTop.size(); ++l)
@@ -605,7 +695,7 @@ void Parser::resolvePath(const std::string &stringToParsed)
 						{
 							if (found)
 								throw std::runtime_error("Ambiguous path resolution.");
-							pathsTop[l]->setNext(vecKeyValue);
+							pathsTop[l]->setNext(vecKeyValue, k);
 							found = true;
 						}
 					}
@@ -631,15 +721,16 @@ void Parser::resolvePath(const std::string &stringToParsed)
 			for (size_t j = 1; j < size; ++j)
 				bufferTemp.push_once(&(current.next[j]));
 		}
+
+		if (pathsTop.size() < 1)
+			throw std::runtime_error("All paths have been invalidated. The input string does not conform to the grammar.");
+
 		pathsTop.concat(bufferTemp);
 		mapPrev = mapCurrent;
 	}
-	// Logger::log(LoggerJson::get(pathStack, true));
 	
-	const BNFPath *nextbnf = pathsTop[0]->getHead();
-	// Logger::log(nextbnf->rulePath);
-	// cursor->rulePath
 	(void) stringToParsed;
+	const BNFPath *nextbnf = pathsTop[0]->getHead();
 	generateJson(nextbnf, stringToParsed);
 }
 
@@ -670,9 +761,9 @@ void Parser::parse(const std::string &stringToParsed)
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
+		completePath();
 		if (i == stringToParsed.size() - 1)
 			break;
-		completePath();
 
 		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();

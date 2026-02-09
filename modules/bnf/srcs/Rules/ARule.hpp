@@ -49,6 +49,7 @@ class ARule
 		virtual std::string				   getPrintableValue() const		  = 0;
 		static BnfMap					   getMap(const std::string &opener);
 		static bool						   isKeyWord(const std::string &word, bool onlyClose);
+		bool							   isEnd() const;
 
 		const std::string getConceptName() const;
 		size_t			  getConceptDefIndex() const;
