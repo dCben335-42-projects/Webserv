@@ -4,13 +4,15 @@
 #include "Pollable.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
+#include "HttpCookie.hpp"
 
 class VirtualServer : public Pollable
 {
 	private:
-		const Config  &m_config;
-		std::string	   m_bindIp;
-		unsigned short m_bindPort;
+		const Config	 &m_config;
+		std::string		  m_bindIp;
+		unsigned short	  m_bindPort;
+		Vec<HttpCookie *> m_cookies;
 
 		bool setupSocket(const std::string &ip, unsigned short port);
 
