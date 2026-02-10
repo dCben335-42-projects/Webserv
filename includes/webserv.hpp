@@ -37,4 +37,16 @@
 #define CYAN "\033[36m"
 #define MAGENTA "\033[35m"
 
+// Fowler-Noll-Vo magic constants
+#define FNV_PRIME_32 16777619
+#define FNV_OFFSET_BASIS_32 2166136261
+
+// MurmurHash constant (that happens to work well apparently)
+#define MURMUR_HASH 1540483477
+#define MURMUR_FIRST_SHIFT 13
+#define MURMUR_LAST_SHIFT 15
+
+// Cookie Duration in seconds
+#define COOKIE_EXPIRE_DURATION 3600
+
 #endif

@@ -11,6 +11,9 @@ class Number
 
 	public:
 		static std::string toString(const int number);
+		static std::string toString(const unsigned int number);
+		static std::string toString(const size_t number);
+
 		static int		   fromString(const std::string &str);
 		static bool		   isNumber(const std::string &str);
 		static size_t	   toSizeT(const std::string &str);
