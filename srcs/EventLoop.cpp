@@ -27,7 +27,7 @@ void EventLoop::init()
 	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
 	Config::Location *loc8			  = new Config::Location("/cgi-bin", "", "files/www/usr/bin", "", true, NULL);
 	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", "", true, NULL);
-	Config::Location *loc10			  = new Config::Location("/api", "", "files/www/api", "", true, NULL);
+	Config::Location *loc10			  = new Config::Location("/auth", "", "files/www/auth", "", true, NULL);
 	loc9->setUpload("files/www/uploads/");
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);

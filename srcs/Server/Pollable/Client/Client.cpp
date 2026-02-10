@@ -9,6 +9,7 @@
 #include "Logger.hpp"
 #include "EventLoop.hpp"
 #include "webserv.hpp"
+#include "HttpAuth.hpp"
 
 Client::Client(int fd, const Config &config) :
 	Pollable(fd),
@@ -107,13 +108,21 @@ void Client::setEvents(const short events)
  */
 void Client::handlePostRequest()
 {
+	const std::string &target = m_req.getTarget();
+	if (target == "/auth/register" || target == "/auth/login")
+	{
+		HttpAuth auth;
+		auth.parse(m_req.getBody());
+		throw Http401Exception();
+		return;
+	}
 	FileUpload file(m_req);
 
 	if (!m_req.hasUpload())
 		throw Http403Exception();
 	if (!file.isUploadValid())
 		throw Http400Exception();
-	m_req.setBody("File uploaded successfully.");
+	m_res.setBody("File uploaded successfully.");
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	m_res.setStatusCode(201);
 }

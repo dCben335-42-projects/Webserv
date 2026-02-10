@@ -13,8 +13,10 @@ HttpCookie::HttpCookie(
 	m_serverName(serverName),
 	m_serverPort(serverPort)
 {
-	m_hashInt = computeHash(m_uname + m_serverName + Number::toString(m_serverPort));
-	m_hashStr = Number::toString(m_hashInt);
+	m_creationDate	 = std::time(0);
+	m_expirationDate = m_creationDate + COOKIE_EXPIRE_DURATION;
+	m_hashInt		 = computeHash(m_uname + m_serverName + Number::toString(m_serverPort) + Number::toString(m_creationDate));
+	m_hashStr		 = Number::toString(m_hashInt);
 }
 
 HttpCookie::~HttpCookie()
