@@ -22,5 +22,17 @@ void HttpAuth::parse(const std::string &body)
 			throw Http400Exception();
 		m_urlEncoded.set(fieldSplit[0], fieldSplit[1]);
 	}
-	Logger::log(m_urlEncoded);
+	checkField(AUTH_NAME_KEY);
+	checkField(AUTH_PSWD_KEY);
+	checkField(AUTH_CONFIRM_KEY);
+	if (m_urlEncoded.get(AUTH_PSWD_KEY) != m_urlEncoded.get(AUTH_CONFIRM_KEY))
+		throw Http400Exception();
+}
+
+void HttpAuth::checkField(const std::string field)
+{
+	if (!m_urlEncoded.has(field))
+		throw Http400Exception();
+	if (m_urlEncoded.get(field).empty())
+		throw Http400Exception();
 }
