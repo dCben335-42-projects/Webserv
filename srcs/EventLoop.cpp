@@ -4,6 +4,7 @@
 #include "CgiParams.hpp"
 #include "Signals.hpp"
 #include "Logger.hpp"
+#include "webserv.hpp"
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
@@ -78,8 +79,8 @@ void EventLoop::destroy()
  */
 void EventLoop::run()
 {
-	const int POLL_TIMEOUT = 1000;
-	int		  ready;
+	int ready;
+
 	while (true)
 	{
 		updatePollStatus();
@@ -184,14 +185,14 @@ void EventLoop::updatePollStatus()
 	const time_t currentTime = std::time(0);
 	for (size_t i = 0; i < m_pollFds.size(); i++)
 	{
-		Pollable *handler = getHandler(m_pollFds[i].fd);
-		if (handler)
+		Pollable *handler	= getHandler(m_pollFds[i].fd);
+		m_pollFds[i].events = handler->getEvents();
+		if (handler->isTimedOut(currentTime))
 		{
-			m_pollFds[i].events = handler->getEvents();
-			if (handler->isTimedOut(currentTime))
+			Logger::info("Timeout occurred on fd " + Logger::get(m_pollFds[i].fd));
+			handler->onTimeOut();
+			if (handler->getConnectionClosed())
 			{
-				Logger::info("Connection timed out on fd " + Logger::get(m_pollFds[i].fd));
-				handler->setConnectionClosed(true);
 				deletePollable(m_pollFds[i].fd, i);
 				i--;
 			}

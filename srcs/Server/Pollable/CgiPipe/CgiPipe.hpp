@@ -29,6 +29,7 @@ class CgiPipe : public Pollable
 		void onPollHangUp();
 
 		bool isTimedOut(const time_t currentTime) const;
+		void onTimeOut();
 };
 
 

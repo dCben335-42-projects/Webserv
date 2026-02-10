@@ -27,7 +27,7 @@ class HttpResponse : public AHttpMessage
 
 		HttpResponse &build();
 		HttpResponse &reset();
-		HttpResponse &fill(bool shouldClose);
+		HttpResponse &fill(bool shouldClose, const time_t keepAliveTimeout);
 };
 
 #endif

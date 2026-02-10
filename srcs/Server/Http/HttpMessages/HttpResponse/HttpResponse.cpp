@@ -154,7 +154,7 @@ HttpResponse &HttpResponse::build()
 }
 
 
-HttpResponse &HttpResponse::fill(bool shouldClose)
+HttpResponse &HttpResponse::fill(bool shouldClose, const time_t keepAliveTimeout)
 {
 	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
 	m_headers[HEADER_DATE]			 = Date::getCurrentHttpDate();
@@ -163,6 +163,9 @@ HttpResponse &HttpResponse::fill(bool shouldClose)
 	if (shouldClose || isCLoseStatus)
 		m_headers[HEADER_CONNECTION] = HEADER_CONNECTION_CLOSE;
 	else
+	{
 		m_headers[HEADER_CONNECTION] = HEADER_CONNECTION_KEEP_ALIVE;
+		m_headers[HEADER_KEEP_ALIVE] = "timeout=" + Number::toString(keepAliveTimeout);
+	}
 	return *this;
 }

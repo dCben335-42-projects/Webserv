@@ -12,10 +12,12 @@ Config::Config(
 	m_ip(ip),
 	m_port(port),
 	m_domain(domain),
-	m_keepAliveTimeout(FALLBACK_KEEP_ALIVE_TIMEOUT),
 	m_defaultLocation(defaultLoc),
 	m_locations(locs)
 {
+	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
+	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
+	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 }
 
 Config::~Config()
@@ -146,9 +148,33 @@ bool Config::hasIndexFile(const std::string &locationPath) const
  * @return The keep-alive timeout in seconds.
  *
  */
-time_t Config::getKeepAliveTimeout() const
+const time_t &Config::getKeepAliveTimeout() const
 {
 	return m_keepAliveTimeout;
+}
+
+/**
+ *
+ * @brief Gets the header timeout for the virtual server.
+ *
+ * @return The header timeout in seconds.
+ *
+ */
+const time_t &Config::getHeaderTimeout() const
+{
+	return m_headerTimeout;
+}
+
+/**
+ *
+ * @brief Gets the body timeout for the virtual server.
+ *
+ * @return The body timeout in seconds.
+ *
+ */
+const time_t &Config::getBodyTimeout() const
+{
+	return m_bodyTimeout;
 }
 
 /**

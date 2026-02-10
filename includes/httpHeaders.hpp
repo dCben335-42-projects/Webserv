@@ -26,6 +26,7 @@
 #define HEADER_EXPIRES "Expires"
 #define HEADER_ETAG "ETag"
 #define HEADER_CONNECTION "Connection"
+#define HEADER_KEEP_ALIVE "Keep-Alive"
 #define HEADER_HOST "Host"
 #define HEADER_USER_AGENT "User-Agent"
 #define HEADER_ACCEPT "Accept"

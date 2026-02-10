@@ -150,22 +150,36 @@ ssize_t HttpRequest::readOnce(int socketFd)
  *
  * @return A reference to the current HttpRequest object.
  *
- * @throws std::invalid_argument if the request is malformed or missing required fields.
+ * @throws Http400Exception if the request is malformed or has invalid headers.
  *
  */
 HttpRequest &HttpRequest::parse(const Config &serverConfig)
 {
-	const size_t lineEndSize = std::strlen(HEADER_LINE_ENDING);
+	try
+	{
+		const size_t lineEndSize = std::strlen(HEADER_LINE_ENDING);
 
-	size_t pos = m_firstLineEndPos + lineEndSize;
-	AHttpInboundMessage::parse(m_rawStr, pos);
+		size_t pos = m_firstLineEndPos + lineEndSize;
+		AHttpInboundMessage::parse(m_rawStr, pos);
 
-	if (getHeader(HEADER_HOST).empty())
-		throw std::invalid_argument("Missing Host Header Field");
-	parseActiveLocations(serverConfig);
-	parseAccepts(getHeader(HEADER_ACCEPT));
-	std::cout << *this << std::endl;
-	m_connectionKeepAlive = determineConnectionKeepAlive();
+		if (getHeader(HEADER_HOST).empty())
+			throw std::invalid_argument("Missing Host Header Field");
+		parseActiveLocations(serverConfig);
+		parseAccepts(getHeader(HEADER_ACCEPT));
+		if (m_headers.has(HEADER_CONTENT_LENGTH))
+		{
+			const size_t contentLength = readContentLength(m_rawStr);
+			if (contentLength != m_body.size())
+				throw std::invalid_argument("Content-Length exceeds server body timeout limit");
+		}
+		std::cout << *this << std::endl;
+		m_connectionKeepAlive = determineConnectionKeepAlive();
+	}
+	catch (const std::invalid_argument &e)
+	{
+		std::cerr << e.what() << '\n';
+		throw Http400Exception();
+	}
 	return *this;
 }
 
@@ -542,6 +556,19 @@ bool HttpRequest::isComplete()
 	const ssize_t contentLength = readContentLength(m_rawStr);
 	m_totalLen					= m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
 	return m_rawStr.size() >= m_totalLen;
+}
+
+
+/**
+ *
+ * @brief Checks if the end of the HTTP headers has been reached in the raw request string.
+ *
+ * @return true if the headers are complete, false otherwise.
+ *
+ */
+bool HttpRequest::isHeadersEndPos() const
+{
+	return m_headersEndPos != 0;
 }
 
 

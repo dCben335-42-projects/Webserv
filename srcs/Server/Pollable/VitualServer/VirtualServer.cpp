@@ -169,3 +169,8 @@ void VirtualServer::onPollErr()
 void VirtualServer::onPollHangUp()
 {
 }
+
+void VirtualServer::onTimeOut()
+{
+	
+}

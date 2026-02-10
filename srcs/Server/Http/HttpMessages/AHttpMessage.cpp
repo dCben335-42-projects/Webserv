@@ -11,16 +11,20 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 	map[200] = HTTP_200_MSG;
 	map[201] = HTTP_201_MSG;
 	map[204] = HTTP_204_MSG;
+
 	map[400] = HTTP_400_MSG;
 	map[401] = HTTP_401_MSG;
 	map[403] = HTTP_403_MSG;
 	map[404] = HTTP_404_MSG;
-	map[406] = HTTP_406_MSG;
-	map[406] = HTTP_408_MSG;
-	map[409] = HTTP_409_MSG;
 	map[405] = HTTP_405_MSG;
+	map[406] = HTTP_406_MSG;
+	map[408] = HTTP_408_MSG;
+	map[409] = HTTP_409_MSG;
+	map[413] = HTTP_413_MSG;
+
 	map[500] = HTTP_500_MSG;
 	map[501] = HTTP_501_MSG;
+	map[504] = HTTP_504_MSG;
 	return (map);
 }
 
@@ -29,12 +33,8 @@ Vec<unsigned short> AHttpMessage::initCloseStatus()
 	Vec<unsigned short> vec;
 
 	vec.push(400);
-	vec.push(401);
-	vec.push(403);
-	vec.push(404);
 	vec.push(408);
-	vec.push(500);
-	vec.push(501);
+	vec.push(413);
 	return (vec);
 }
 
