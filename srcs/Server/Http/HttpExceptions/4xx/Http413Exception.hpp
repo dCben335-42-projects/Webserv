@@ -11,6 +11,10 @@ class Http413Exception : public AHttpException
 		Http413Exception() : AHttpException(HTTP_413_MSG, 413)
 		{
 		}
+		Http413Exception(const std::string &extraMsg) : AHttpException(HTTP_413_MSG, 413)
+		{
+			m_extraMessage = extraMsg;
+		}
 };
 
 #endif

@@ -16,6 +16,7 @@ class String
 		static std::string toUpper(const std::string &str);
 		static std::string toLower(const std::string &str);
 
+		static bool		   isNotTrimmed(const std::string &str);
 		static std::string trim(const std::string &str);
 		static std::string trimBegin(const std::string &str);
 
@@ -38,6 +39,9 @@ class String
 		static Vec<std::string> splitPattern(const std::string &str, const std::string &pattern);
 
 		static bool match(const std::string &pattern, const std::string &str);
+
+		static bool	  equalsIgnoreCase(char a, char b);
+		static size_t findIC(const std::string &str, const std::string &substr);
 };
 
 #endif

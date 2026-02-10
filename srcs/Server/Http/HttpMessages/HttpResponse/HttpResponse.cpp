@@ -36,8 +36,8 @@ HttpResponse &HttpResponse::reset()
 	m_fullResponse.clear();
 	m_headers.clear();
 	m_body.clear();
-	m_method				 = HttpMethod();
-	m_headers[HEADER_SERVER] = SERVER_FULL_NAME;
+	m_method = HttpMethod();
+	setHeader(HEADER_SERVER, SERVER_FULL_NAME);
 	return *this;
 }
 
@@ -156,16 +156,16 @@ HttpResponse &HttpResponse::build()
 
 HttpResponse &HttpResponse::fill(bool shouldClose, const time_t keepAliveTimeout)
 {
-	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
-	m_headers[HEADER_DATE]			 = Date::getCurrentHttpDate();
+	setHeader(HEADER_CONTENT_LENGTH, Number::toString(m_body.size()));
+	setHeader(HEADER_DATE, Date::getCurrentHttpDate());
 
 	bool isCLoseStatus = AHttpMessage::isCloseStatus(m_statusCode);
 	if (shouldClose || isCLoseStatus)
-		m_headers[HEADER_CONNECTION] = HEADER_CONNECTION_CLOSE;
+		setHeader(HEADER_CONNECTION, HEADER_CONNECTION_CLOSE);
 	else
 	{
-		m_headers[HEADER_CONNECTION] = HEADER_CONNECTION_KEEP_ALIVE;
-		m_headers[HEADER_KEEP_ALIVE] = "timeout=" + Number::toString(keepAliveTimeout);
+		setHeader(HEADER_CONNECTION, HEADER_CONNECTION_KEEP_ALIVE);
+		setHeader(HEADER_KEEP_ALIVE, "timeout=" + Number::toString(keepAliveTimeout));
 	}
 	return *this;
 }

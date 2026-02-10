@@ -75,6 +75,19 @@ std::string String::trimBegin(const std::string &str)
 }
 
 
+bool String::isNotTrimmed(const std::string &str)
+{
+	if (str.empty())
+		return false;
+	if (std::isspace(static_cast<unsigned char>(str[0])))
+		return true;
+	if (std::isspace(static_cast<unsigned char>(str[str.size() - 1])))
+		return true;
+	return false;
+}
+
+
+
 /**
  *
  * @brief Escapes special HTML characters in a string.
@@ -352,4 +365,54 @@ bool String::match(
 	while (pIdx < pLen && pattern[pIdx] == '*')
 		++pIdx;
 	return pIdx == pLen;
+}
+
+
+
+/**
+ *
+ * @brief Compares two characters for equality, ignoring case.
+ *
+ * @param a The first character to compare.
+ * @param b The second character to compare.
+ *
+ * @return true if the characters are equal when case is ignored, false otherwise.
+ *
+ */
+bool String::equalsIgnoreCase(char a, char b)
+{
+	return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b));
+}
+
+/**
+ *
+ * @brief Finds the position of a substring in a string, ignoring case.
+ *
+ * @param str The input string to search within.
+ * @param substr The substring to find.
+ *
+ * @return The index of the first occurrence of the substring in the input string,
+ *         ignoring case. Returns std::string::npos if the substring is not found.
+ *
+ */
+size_t String::findIC(const std::string &str, const std::string &substr)
+{
+	const size_t strLen	   = str.size();
+	const size_t substrLen = substr.size();
+
+	if (substrLen == 0)
+		return 0;
+	if (substrLen > strLen)
+		return std::string::npos;
+
+	for (size_t i = 0; i <= strLen - substrLen; ++i)
+	{
+		size_t j = 0;
+		while (j < substrLen && equalsIgnoreCase(str[i + j], substr[j]))
+			++j;
+
+		if (j == substrLen)
+			return i;
+	}
+	return std::string::npos;
 }

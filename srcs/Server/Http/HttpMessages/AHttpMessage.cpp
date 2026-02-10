@@ -82,8 +82,9 @@ const Map<std::string> &AHttpMessage::getHeaders() const
  */
 std::string AHttpMessage::getHeader(const std::string &key) const
 {
-	if (m_headers.has(key))
-		return m_headers.get(key);
+	std::string lowerKey = String::toLower(key);
+	if (m_headers.has(lowerKey))
+		return m_headers.get(lowerKey);
 	return "";
 }
 
@@ -114,6 +115,21 @@ std::string AHttpMessage::getBody() const
 
 
 
+/**
+ *
+ * @brief Checks if a specific HTTP header is present in the message.
+ *
+ * @param key The key of the header to check.
+ *
+ * @return true if the header is present, false otherwise.
+ *
+ */
+bool AHttpMessage::hasHeader(const std::string &key) const
+{
+	return m_headers.has(String::toLower(key));
+}
+
+
 
 /**
  *
@@ -125,7 +141,7 @@ std::string AHttpMessage::getBody() const
  */
 void AHttpMessage::setHeader(const std::string &key, const std::string &value)
 {
-	m_headers.set(key, value);
+	m_headers.set(String::toLower(key), value);
 }
 /**
  *
@@ -136,35 +152,8 @@ void AHttpMessage::setHeader(const std::string &key, const std::string &value)
  */
 void AHttpMessage::setBody(const std::string &body)
 {
-	m_body							 = body;
-	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(body.size());
-}
-
-/**
- *
- * @brief Appends data to the body of the HTTP message.
- *
- * @param data The data to be appended to the body.
- *
- */
-void AHttpMessage::appendBody(const std::string &data)
-{
-	m_body += data;
-	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
-}
-
-/**
- *
- * @brief Appends data to the body of the HTTP message.
- *
- * @param buffer The buffer containing data to be appended.
- * @param size The size of the data to be appended.
- *
- */
-void AHttpMessage::appendBody(const char *buffer, size_t size)
-{
-	m_body.append(buffer, size);
-	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
+	m_body = body;
+	setHeader(HEADER_CONTENT_LENGTH, Number::toString(body.size()));
 }
 
 

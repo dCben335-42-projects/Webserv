@@ -27,7 +27,7 @@ class HttpRequest : public AHttpInboundMessage
 		void   parseAccepts(const std::string &headerValue);
 		bool   determineConnectionKeepAlive() const;
 
-		ssize_t		readContentLength(const std::string &request);
+		size_t		readContentLength(const std::string &request) const;
 		std::string readMethodString(const std::string &currentRawStr) const;
 
 
@@ -42,6 +42,7 @@ class HttpRequest : public AHttpInboundMessage
 		bool								 getActiveAutoIndex() const;
 		bool								 getConnectionKeepAlive() const;
 
+		bool isHeadersEndPos() const;
 
 		bool		hasUpload() const;
 		std::string getUploadPath() const;
@@ -56,8 +57,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		matchAccept(const std::string &contentType) const;
 
-		bool isComplete();
-		bool isHeadersEndPos() const;
+		bool isComplete(const size_t maxBodySize);
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

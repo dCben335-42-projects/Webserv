@@ -262,7 +262,7 @@ IndexOf &IndexOf::generate()
  *
  * @brief Gets the generated index page.
  *
-* @return std::string The generated index page.
+ * @return std::string The generated index page.
  *
  */
 std::string IndexOf::getPage() const

@@ -33,12 +33,11 @@ class AHttpMessage
 		const HttpMethod	   &getMethod() const;
 		std::string				getBody() const;
 
+		bool hasHeader(const std::string &key) const;
+
 		void setHeader(const std::string &key, const std::string &value);
 		void setMethod(const HttpMethod &method);
 		void setBody(const std::string &body);
-
-		void appendBody(const std::string &data);
-		void appendBody(const char *buffer, size_t size);
 
 		bool isCloseStatus(unsigned short statusCode) const;
 };

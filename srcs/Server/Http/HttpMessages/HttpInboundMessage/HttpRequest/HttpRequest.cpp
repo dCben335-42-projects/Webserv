@@ -157,28 +157,28 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 {
 	try
 	{
+		Logger::log("Parsing HTTP Request:\n" + m_rawStr);
 		const size_t lineEndSize = std::strlen(HEADER_LINE_ENDING);
 
 		size_t pos = m_firstLineEndPos + lineEndSize;
 		AHttpInboundMessage::parse(m_rawStr, pos);
 
-		if (getHeader(HEADER_HOST).empty())
+		if (!hasHeader(HEADER_HOST))
 			throw std::invalid_argument("Missing Host Header Field");
 		parseActiveLocations(serverConfig);
 		parseAccepts(getHeader(HEADER_ACCEPT));
-		if (m_headers.has(HEADER_CONTENT_LENGTH))
+		if (hasHeader(HEADER_CONTENT_LENGTH))
 		{
 			const size_t contentLength = readContentLength(m_rawStr);
 			if (contentLength != m_body.size())
-				throw std::invalid_argument("Content-Length exceeds server body timeout limit");
+				throw std::invalid_argument("Content-Length header value does not match the actual body size");
 		}
 		std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
 	}
 	catch (const std::invalid_argument &e)
 	{
-		std::cerr << e.what() << '\n';
-		throw Http400Exception();
+		throw Http400Exception(e.what());
 	}
 	return *this;
 }
@@ -263,7 +263,8 @@ void HttpRequest::parseActiveLocations(const Config &config)
  *
  * @return The position of the end of the first line.
  *
- * @throws AHttpException if the request line is invalid or has unsupported HTTP version.
+ * @throws std::invalid_argument if the request line is malformed or contains an unsupported HTTP version.
+ * @throws Http501Exception if the HTTP method is not supported.
  *
  */
 size_t HttpRequest::parseFirstLine()
@@ -310,21 +311,17 @@ size_t HttpRequest::parseFirstLine()
  * @return The value of the Content-Length header, or 0 if not present or invalid.
  *
  */
-ssize_t HttpRequest::readContentLength(const std::string &headers)
+size_t HttpRequest::readContentLength(const std::string &headers) const
 {
+	const char *toFind = HEADER_LINE_ENDING HEADER_CONTENT_LENGTH;
+
 	const size_t len   = headers.size();
-	size_t		 clPos = headers.find(HEADER_CONTENT_LENGTH);
+	size_t		 clPos = String::findIC(headers, toFind);
 	if (clPos == std::string::npos)
-		throw Http400Exception();
-
-
-	clPos += std::strlen(HEADER_CONTENT_LENGTH);
-	while (clPos < len && std::isspace(static_cast<unsigned char>(headers[clPos])))
-		++clPos;
+		throw Http400Exception("Missing Content-Length Header");
+	clPos += std::strlen(toFind);
 	if (headers[clPos] != ':')
-		throw Http400Exception();
-
-
+		throw Http400Exception("Expected ':' after Content-Length header");
 	++clPos;
 	while (clPos < len && std::isspace(static_cast<unsigned char>(headers[clPos])))
 		++clPos;
@@ -332,9 +329,8 @@ ssize_t HttpRequest::readContentLength(const std::string &headers)
 	while (endPos < len && std::isdigit(static_cast<unsigned char>(headers[endPos])))
 		++endPos;
 
-
 	if (endPos <= clPos)
-		throw Http400Exception();
+		throw Http400Exception("Invalid Content-Length value: No digits found");
 	return Number::toSizeT(headers.substr(clPos, endPos - clPos));
 }
 
@@ -463,6 +459,8 @@ std::string HttpRequest::getUploadPath() const
 
 bool HttpRequest::matchAccept(const std::string &contentType) const
 {
+	if (m_accepts.empty())
+		return true;
 	for (Vec<Accept>::const_iterator it = m_accepts.begin(); it != m_accepts.end(); ++it)
 	{
 		const std::string &acceptType = it->getMediaType();
@@ -535,7 +533,7 @@ bool HttpRequest::isAllowedMethod() const
  * @return true if the request is complete, false otherwise.
  *
  */
-bool HttpRequest::isComplete()
+bool HttpRequest::isComplete(const size_t maxBodySize)
 {
 	if (m_totalLen)
 		return m_rawStr.size() >= m_totalLen;
@@ -544,8 +542,15 @@ bool HttpRequest::isComplete()
 		size_t headersEnd = m_rawStr.find(HEADER_ENDING);
 		if (headersEnd == std::string::npos)
 			return false;
-		m_headersEndPos		= headersEnd;
-		m_firstLineEndPos	= parseFirstLine();
+		m_headersEndPos = headersEnd;
+		try
+		{
+			m_firstLineEndPos = parseFirstLine();
+		}
+		catch (const std::invalid_argument &e)
+		{
+			throw Http400Exception(e.what());
+		}
 		m_isFirstLineParsed = true;
 	}
 	const HttpMethod::Type methodType = m_method.getType();
@@ -553,8 +558,10 @@ bool HttpRequest::isComplete()
 		methodType != HttpMethod::PUT &&
 		methodType != HttpMethod::PATCH)
 		return true;
-	const ssize_t contentLength = readContentLength(m_rawStr);
-	m_totalLen					= m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
+	const size_t contentLength = readContentLength(m_rawStr);
+	if (contentLength > maxBodySize)
+		throw Http413Exception("The request body size exceeds the server's configured maximum of " + Number::toString(maxBodySize) + " bytes");
+	m_totalLen = m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
 	return m_rawStr.size() >= m_totalLen;
 }
 

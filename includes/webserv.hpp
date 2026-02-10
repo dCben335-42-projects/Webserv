@@ -22,6 +22,11 @@
 #define READ_CGI_BUFFER_SIZE 8192
 #define WRITE_CGI_BUFFER_SIZE 8192
 
+#define KB 1024
+#define MB (1024 * KB)
+#define GB (1024 * MB)
+#define MAX_BODY_SIZE (1 * MB)
+
 #define FALLBACK_INDEX "index.html"
 #define FALLBACK_KEEP_ALIVE_TIMEOUT 50
 #define FALLBACK_HEADER_TIMEOUT 5

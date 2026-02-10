@@ -22,6 +22,8 @@ class Config
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
 
+		size_t m_maxBodySize;
+
 	public:
 		Config(const std::string		   &ip,
 			   unsigned short				port,
@@ -36,6 +38,9 @@ class Config
 		void setPort(unsigned short port);
 		void setDomain(const std::string &domain);
 		void setKeepAliveTimeout(const time_t timeout);
+		void setHeaderTimeout(const time_t timeout);
+		void setBodyTimeout(const time_t timeout);
+		void setMaxBodySize(const size_t maxBodySize);
 
 		const std::string			&getIp() const;
 		unsigned short				 getPort() const;
@@ -46,6 +51,8 @@ class Config
 		const time_t &getKeepAliveTimeout() const;
 		const time_t &getHeaderTimeout() const;
 		const time_t &getBodyTimeout() const;
+
+		size_t getMaxBodySize() const;
 
 		bool			  hasIndexFile(const std::string &locationPath) const;
 		const std::string getIndexFile(const std::string &locationPath) const;

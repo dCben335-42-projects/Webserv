@@ -11,6 +11,10 @@ class Http400Exception : public AHttpException
 		Http400Exception() : AHttpException(HTTP_400_MSG, 400)
 		{
 		}
+		Http400Exception(const std::string &extraMsg) : AHttpException(HTTP_400_MSG, 400)
+		{
+			m_extraMessage = extraMsg;
+		}
 };
 
 #endif

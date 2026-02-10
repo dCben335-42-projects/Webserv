@@ -297,7 +297,7 @@ void Client::onPollIn()
 		if (bytesRead == 0)
 			return;
 		m_time = currentTime;
-		if (!m_req.isComplete())
+		if (!m_req.isComplete(m_serverConfig.getMaxBodySize()))
 		{
 			m_timeoutState = m_req.isHeadersEndPos() ? BODY_TIMEOUT : HEADER_TIMEOUT;
 			return;

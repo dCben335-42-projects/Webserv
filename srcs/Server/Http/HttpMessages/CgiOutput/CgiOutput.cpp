@@ -70,9 +70,9 @@ bool CgiOutput::parseFirstOutputLine(const size_t endOfLineIndex)
 
 void CgiOutput::completeOutput(bool keepAlive)
 {
-	if (!m_headers.has(HEADER_CONTENT_TYPE))
+	if (!hasHeader(HEADER_CONTENT_TYPE))
 		setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-	if (!m_headers.has(HEADER_CONTENT_LENGTH))
+	if (!hasHeader(HEADER_CONTENT_LENGTH))
 		setHeader(HEADER_CONTENT_LENGTH, Number::toString(m_body.size()));
 	setHeader(HEADER_CONNECTION, keepAlive ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 }

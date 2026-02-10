@@ -76,9 +76,19 @@ size_t AHttpInboundMessage::parseHeaderLine(const std::string &rawRequest, const
 		throw std::invalid_argument("Malformed Header Line");
 
 	const std::string headerName  = rawRequest.substr(pos, colon - pos);
-	const std::string headerValue = rawRequest.substr(colon + HEADER_SEPARATOR_SIZE, nextLine - colon - HEADER_SEPARATOR_SIZE);
+	const std::string headerValue = rawRequest.substr(
+		colon + HEADER_SEPARATOR_SIZE, nextLine - colon - HEADER_SEPARATOR_SIZE);
 
-	setHeader(String::trim(headerName), String::trim(headerValue));
+	if (headerName.empty())
+		throw std::invalid_argument("Empty Header Name");
+	if (String::isNotTrimmed(headerName))
+		throw std::invalid_argument("Header Name contains leading or trailing whitespace: '" + headerName + "'");
+	const std::string trimmedHeaderValue = String::trim(headerValue);
+	if (trimmedHeaderValue.empty())
+		throw std::invalid_argument("Empty Header Value for header: '" + headerName + "'");
+	if (hasHeader(headerName))
+		throw std::invalid_argument("Duplicate Header: '" + headerName + "'");
+	setHeader(headerName, trimmedHeaderValue);
 	return nextLine + std::strlen(HEADER_LINE_ENDING);
 }
 
@@ -100,7 +110,7 @@ AHttpInboundMessage &AHttpInboundMessage::parse(std::string &rawRequest, size_t 
 	const size_t headersEnd	   = rawRequest.find(HEADER_ENDING, pos);
 
 	if (headersEnd == std::string::npos)
-		throw std::invalid_argument("Invalid Headers");
+		throw std::invalid_argument("Headers missing or not properly terminated");
 	while (pos < headersEnd)
 		pos = parseHeaderLine(rawRequest, pos);
 	const size_t bodyStart = headersEnd + headerEndSize;

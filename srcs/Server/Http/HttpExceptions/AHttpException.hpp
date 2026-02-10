@@ -13,10 +13,12 @@ class AHttpException : public std::runtime_error
 		static const std::string HTML_TEMPLATE;
 
 	protected:
-		int m_statusCode;
+		int			m_statusCode;
+		std::string m_extraMessage;
 
 	public:
 		AHttpException(const std::string &message, int code);
+		virtual ~AHttpException() throw();
 		int			getStatusCode() const;
 		std::string getPage() const;
 };

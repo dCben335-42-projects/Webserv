@@ -18,6 +18,7 @@ Config::Config(
 	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
+	m_maxBodySize	   = MAX_BODY_SIZE;
 }
 
 Config::~Config()
@@ -111,6 +112,42 @@ void Config::setKeepAliveTimeout(const time_t timeout)
 	m_keepAliveTimeout = timeout;
 }
 
+/**
+ *
+ * @brief Sets the header timeout for the virtual server.
+ *
+ * @param timeout The header timeout to be set (in seconds).
+ *
+ */
+void Config::setHeaderTimeout(const time_t timeout)
+{
+	m_headerTimeout = timeout;
+}
+
+/**
+ *
+ * @brief Sets the body timeout for the virtual server.
+ *
+ * @param timeout The body timeout to be set (in seconds).
+ *
+ */
+void Config::setBodyTimeout(const time_t timeout)
+{
+	m_bodyTimeout = timeout;
+}
+
+/**
+ *
+ * @brief Sets the maximum body size for the virtual server.
+ *
+ * @param maxBodySize The maximum body size to be set (in bytes).
+ *
+ */
+void Config::setMaxBodySize(const size_t maxBodySize)
+{
+	m_maxBodySize = maxBodySize;
+}
+
 
 /**
  *
@@ -130,6 +167,16 @@ const std::string Config::getIndexFile(const std::string &locationPath) const
 	return "";
 }
 
+
+/**
+ *
+ * @brief Checks if the specified location path has an index file configured.
+ *
+ * @param locationPath The path of the location to check.
+ *
+ * @return true if the location has an index file configured, false otherwise.
+ *
+ */
 bool Config::hasIndexFile(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
@@ -138,7 +185,6 @@ bool Config::hasIndexFile(const std::string &locationPath) const
 		return m_defaultLocation->hasIndexFile();
 	return false;
 }
-
 
 
 /**
@@ -175,6 +221,19 @@ const time_t &Config::getHeaderTimeout() const
 const time_t &Config::getBodyTimeout() const
 {
 	return m_bodyTimeout;
+}
+
+
+/**
+ *
+ * @brief Gets the maximum body size for the virtual server.
+ *
+ * @return The maximum body size in bytes.
+ *
+ */
+size_t Config::getMaxBodySize() const
+{
+	return m_maxBodySize;
 }
 
 /**
