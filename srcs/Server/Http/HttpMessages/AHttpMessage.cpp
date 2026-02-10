@@ -11,21 +11,38 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 	map[200] = HTTP_200_MSG;
 	map[201] = HTTP_201_MSG;
 	map[204] = HTTP_204_MSG;
+
 	map[400] = HTTP_400_MSG;
 	map[401] = HTTP_401_MSG;
 	map[403] = HTTP_403_MSG;
 	map[404] = HTTP_404_MSG;
-	map[406] = HTTP_406_MSG;
-	map[409] = HTTP_409_MSG;
 	map[405] = HTTP_405_MSG;
+	map[406] = HTTP_406_MSG;
+	map[408] = HTTP_408_MSG;
+	map[409] = HTTP_409_MSG;
+	map[413] = HTTP_413_MSG;
+
 	map[500] = HTTP_500_MSG;
 	map[501] = HTTP_501_MSG;
+	map[504] = HTTP_504_MSG;
 	return (map);
+}
+
+Vec<unsigned short> AHttpMessage::initCloseStatus()
+{
+	Vec<unsigned short> vec;
+
+	vec.push(400);
+	vec.push(408);
+	vec.push(413);
+	return (vec);
 }
 
 const Map<unsigned short, std::string> AHttpMessage::m_statusReasonMap =
 	AHttpMessage::initStatusReasonMap();
 
+const Vec<unsigned short> AHttpMessage::m_closeStatus =
+	AHttpMessage::initCloseStatus();
 
 
 AHttpMessage::AHttpMessage() :
@@ -65,8 +82,9 @@ const Map<std::string> &AHttpMessage::getHeaders() const
  */
 std::string AHttpMessage::getHeader(const std::string &key) const
 {
-	std::string value;
-	return m_headers.try_get(key, value) ? value : "";
+	if (m_headers.has(key))
+		return m_headers.get(key);
+	return "";
 }
 
 
@@ -164,13 +182,18 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 }
 
 
-
-
-std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
+/**
+ *
+ * @brief Checks if the current HTTP status code is one that should result in a connection close.
+ *
+ * @return true if the status code is in the list of close status codes, false otherwise.
+ *
+ */
+bool AHttpMessage::isCloseStatus(unsigned short statusCode) const
 {
-	Logger::log(message.getHeaders());
-	return o;
+	return m_closeStatus.contains(statusCode);
 }
+
 
 /**
  *
@@ -213,4 +236,13 @@ std::string AHttpMessage::build()
 	responseStream << HEADER_LINE_ENDING;
 	responseStream << m_body;
 	return responseStream.str();
+}
+
+
+
+
+std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
+{
+	Logger::log(message.getHeaders());
+	return o;
 }

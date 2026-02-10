@@ -3,12 +3,12 @@
 
 #include "AHttpException.hpp"
 
-#define HTTP_400_ERROR_MSG "Bad Request"
+#define HTTP_400_MSG "Bad Request"
 
 class Http400Exception : public AHttpException
 {
 	public:
-		Http400Exception() : AHttpException(HTTP_400_ERROR_MSG, 400)
+		Http400Exception() : AHttpException(HTTP_400_MSG, 400)
 		{
 		}
 };

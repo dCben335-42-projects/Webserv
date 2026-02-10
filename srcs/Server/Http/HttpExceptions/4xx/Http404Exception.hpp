@@ -3,12 +3,12 @@
 
 #include "AHttpException.hpp"
 
-#define HTTP_404_ERROR_MSG "Not Found"
+#define HTTP_404_MSG "Not Found"
 
 class Http404Exception : public AHttpException
 {
 	public:
-		Http404Exception() : AHttpException(HTTP_404_ERROR_MSG, 404)
+		Http404Exception() : AHttpException(HTTP_404_MSG, 404)
 		{
 		}
 };

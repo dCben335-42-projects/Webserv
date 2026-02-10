@@ -14,7 +14,8 @@ Client::Client(int fd, const Config &config) :
 	Pollable(fd),
 	m_serverConfig(config)
 {
-	m_events = POLLIN;
+	m_count = 0;
+	reset();
 	EventLoop::addHandler(this);
 }
 
@@ -22,6 +23,27 @@ Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
+}
+
+/**
+ *
+ * @brief Resets the client's state.
+ *
+ * This function clears the HTTP request and response objects,
+ * resets the timeout state, and prepares the client for a new request.
+ *
+ * It is typically called after a response has been fully sent
+ * and the client is ready to handle a new request.
+ *
+ */
+void Client::reset()
+{
+	m_req.reset();
+	m_res.reset();
+	m_timeoutState = KEEP_ALIVE_TIMEOUT;
+	m_shouldClose  = false;
+	m_events	   = POLLIN;
+	m_time		   = std::time(0);
 }
 
 /**
@@ -247,7 +269,6 @@ bool Client::prepareResponse()
 }
 
 
-
 /**
  *
  * @brief Handles reading data from the client socket.
@@ -263,15 +284,25 @@ bool Client::prepareResponse()
  */
 void Client::onPollIn()
 {
-	if (m_req.readOnce(m_fd) == -1)
-	{
-		m_events = 0;
-		return;
-	}
+	const time_t currentTime = std::time(0);
 	try
 	{
-		if (!m_req.isComplete())
+		const ssize_t bytesRead = m_req.readOnce(m_fd);
+		if (bytesRead == -1)
+		{
+			m_events		   = 0;
+			m_connectionClosed = true;
 			return;
+		}
+		if (bytesRead == 0)
+			return;
+		m_time = currentTime;
+		if (!m_req.isComplete())
+		{
+			m_timeoutState = m_req.isHeadersEndPos() ? BODY_TIMEOUT : HEADER_TIMEOUT;
+			return;
+		}
+		m_timeoutState = KEEP_ALIVE_TIMEOUT;
 		m_req.parse(m_serverConfig);
 		if (!prepareResponse())
 			return;
@@ -283,14 +314,17 @@ void Client::onPollIn()
 		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 		m_res.setBody(e.getPage());
 	}
-	const std::string date = Date::getCurrentHttpDate();
-	if (!date.empty())
-		m_res.setHeader(HEADER_DATE, date);
-	m_res.setHeader(HEADER_CONNECTION, m_req.getConnectionKeepAlive() ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
-	m_res.build();
+	m_res.fill(!m_req.getConnectionKeepAlive(), m_serverConfig.getKeepAliveTimeout()).build();
+	determineKeepAlive(m_res.getStatusCode());
 	m_events = POLLOUT;
 }
 
+
+bool Client::determineKeepAlive(unsigned short statusCode)
+{
+	m_shouldClose = !m_req.getConnectionKeepAlive() && !m_res.isCloseStatus(statusCode);
+	return !m_shouldClose;
+}
 
 /**
  *
@@ -305,17 +339,27 @@ void Client::onPollIn()
  */
 void Client::onPollOut()
 {
-	if (m_res.sendOnce(m_fd))
+	bool hasFullySent = false;
+	try
 	{
-		if (!m_req.getConnectionKeepAlive())
+		hasFullySent = m_res.sendOnce(m_fd);
+	}
+	catch (const std::exception &e)
+	{
+		m_events		   = 0;
+		m_connectionClosed = true;
+		return;
+	}
+	if (hasFullySent)
+	{
+		if (m_shouldClose)
 		{
 			m_connectionClosed = true;
 			m_events		   = 0;
 			return;
 		}
-		m_req.reset();
-		m_res.reset();
-		m_events = POLLIN;
+		reset();
+		m_count++;
 		return;
 	}
 	m_events = POLLOUT;
@@ -323,14 +367,46 @@ void Client::onPollOut()
 
 void Client::onPollErr()
 {
-	Logger::error("Poll error on client socket.");
+	Logger::error("Poll error on client socket fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
 
 void Client::onPollHangUp()
 {
-	Logger::info("Client disconnected.");
+
+	Logger::info("client disconnected on fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
+	m_events		   = 0;
+	m_connectionClosed = true;
+}
+
+
+bool Client::isTimedOut(const time_t currentTime) const
+{
+	time_t timeoutTime = m_time;
+
+	if (m_timeoutState == KEEP_ALIVE_TIMEOUT)
+		timeoutTime += m_serverConfig.getKeepAliveTimeout();
+	if (m_timeoutState == HEADER_TIMEOUT)
+		timeoutTime += m_serverConfig.getHeaderTimeout();
+	if (m_timeoutState == BODY_TIMEOUT)
+		timeoutTime += m_serverConfig.getBodyTimeout();
+	return currentTime > timeoutTime;
+}
+
+void Client::onTimeOut()
+{
+	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)
+	{
+		m_res.reset();
+		m_res.setStatusCode(408);
+		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+		m_res.setBody(Http408Exception().getPage());
+		m_res.fill(true, 0).build();
+		determineKeepAlive(m_res.getStatusCode());
+		m_events = POLLOUT;
+		return;
+	}
 	m_connectionClosed = true;
 	m_events		   = 0;
 }

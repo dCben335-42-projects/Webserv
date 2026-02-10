@@ -276,7 +276,7 @@ Vec<std::string> String::split(const std::string &str, const char *delimiters)
 		end	  = str.find_first_of(delimiters, start);
 		token = str.substr(start, end - start);
 		if (!token.empty())
-			result.push_back(token);
+			result.push(token);
 		start = (end == std::string::npos) ? end : end + 1;
 	}
 	return result;
@@ -295,7 +295,7 @@ Vec<std::string> String::splitPattern(const std::string &str, const std::string 
 		end	  = str.find(pattern, start);
 		token = str.substr(start, end - start);
 		if (!token.empty())
-			result.push_back(token);
+			result.push(token);
 		start = end + boundaryLen;
 	}
 	return result;

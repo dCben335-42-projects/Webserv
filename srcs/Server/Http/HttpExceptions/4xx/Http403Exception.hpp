@@ -3,12 +3,12 @@
 
 #include "AHttpException.hpp"
 
-#define HTTP_403_ERROR_MSG "Forbidden"
+#define HTTP_403_MSG "Forbidden"
 
 class Http403Exception : public AHttpException
 {
 	public:
-		Http403Exception() : AHttpException(HTTP_403_ERROR_MSG, 403)
+		Http403Exception() : AHttpException(HTTP_403_MSG, 403)
 		{
 		}
 };

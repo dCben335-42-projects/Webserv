@@ -1,6 +1,7 @@
 #include "Config.hpp"
 #include "Location.hpp"
 #include "CgiParams.hpp"
+#include "webserv.hpp"
 
 Config::Config(
 	const std::string			&ip,
@@ -14,6 +15,9 @@ Config::Config(
 	m_defaultLocation(defaultLoc),
 	m_locations(locs)
 {
+	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
+	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
+	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 }
 
 Config::~Config()
@@ -95,6 +99,18 @@ void Config::setDomain(const std::string &domain)
 	m_domain = domain;
 }
 
+/**
+ *
+ * @brief Sets the keep-alive timeout for the virtual server.
+ *
+ * @param timeout The keep-alive timeout to be set (in seconds).
+ *
+ */
+void Config::setKeepAliveTimeout(const time_t timeout)
+{
+	m_keepAliveTimeout = timeout;
+}
+
 
 /**
  *
@@ -124,16 +140,66 @@ bool Config::hasIndexFile(const std::string &locationPath) const
 }
 
 
+
+/**
+ *
+ * @brief Gets the keep-alive timeout for the virtual server.
+ *
+ * @return The keep-alive timeout in seconds.
+ *
+ */
+const time_t &Config::getKeepAliveTimeout() const
+{
+	return m_keepAliveTimeout;
+}
+
+/**
+ *
+ * @brief Gets the header timeout for the virtual server.
+ *
+ * @return The header timeout in seconds.
+ *
+ */
+const time_t &Config::getHeaderTimeout() const
+{
+	return m_headerTimeout;
+}
+
+/**
+ *
+ * @brief Gets the body timeout for the virtual server.
+ *
+ * @return The body timeout in seconds.
+ *
+ */
+const time_t &Config::getBodyTimeout() const
+{
+	return m_bodyTimeout;
+}
+
+/**
+ *
+ * @brief Gets the default Location object for the virtual server.
+ *
+ * @return A pointer to the default Location object.
+ *
+ */
 Config::Location const *Config::getDefaultLocation() const
 {
 	return m_defaultLocation;
 }
 
+/**
+ *
+ * @brief Gets the map of location paths to their corresponding Location objects.
+ *
+ * @return A constant reference to the map of locations.
+ *
+ */
 const Map<const Config::Location *> &Config::getLocations() const
 {
 	return m_locations;
 }
-
 
 
 

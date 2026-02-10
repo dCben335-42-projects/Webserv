@@ -4,7 +4,7 @@
 #include <sstream>
 #include <sys/socket.h>
 #include "httpExceptions.hpp"
-
+#include "Date.hpp"
 
 HttpResponse::HttpResponse() :
 	AHttpMessage()
@@ -23,17 +23,22 @@ HttpResponse::~HttpResponse()
  * @brief Resets the HttpResponse object to its initial state,
  * clearing all data and setting default values.
  *
+ * This function is useful for reusing the HttpResponse object for multiple requests,
+ * avoiding the need to create a new instance each time.
+ *
+ * @return A reference to the current HttpResponse object after resetting.
+ *
  */
-void HttpResponse::reset()
+HttpResponse &HttpResponse::reset()
 {
 	m_statusCode = 0;
 	m_sentBytes	 = 0;
 	m_fullResponse.clear();
 	m_headers.clear();
 	m_body.clear();
-	m_method = HttpMethod();
-
+	m_method				 = HttpMethod();
 	m_headers[HEADER_SERVER] = SERVER_FULL_NAME;
+	return *this;
 }
 
 
@@ -116,20 +121,51 @@ size_t HttpResponse::getSentBytes() const
  */
 bool HttpResponse::sendOnce(int socket)
 {
-	if (m_sentBytes >= m_fullResponse.size())
+	const size_t totalSize = m_fullResponse.size();
+	if (m_sentBytes >= totalSize)
 		return true;
 	const char	 *buf		= m_fullResponse.c_str();
-	const size_t  remaining = m_fullResponse.size() - m_sentBytes;
+	const size_t  remaining = totalSize - m_sentBytes;
 	const size_t  to_send	= remaining < WRITE_BUFFER_SIZE ? remaining : WRITE_BUFFER_SIZE;
 	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, MSG_NOSIGNAL);
 
 	if (n < 0)
-		throw std::runtime_error("send() failed");
+		throw std::runtime_error("Failed to send response: " + std::string(strerror(errno)));
 	m_sentBytes += n;
-	return (m_sentBytes >= m_fullResponse.size());
+	return (m_sentBytes >= totalSize);
 }
 
-void HttpResponse::build()
+
+/**
+ *
+ * @brief Builds the full HTTP response string,
+ * including the status line, headers, and body.
+ *
+ * @note This function constructs the complete HTTP response
+ *       and stores it in the m_fullResponse member variable.
+ *
+ * @return A reference to the current HttpResponse object after building the response.
+ *
+ */
+HttpResponse &HttpResponse::build()
 {
 	m_fullResponse = AHttpMessage::build();
+	return *this;
+}
+
+
+HttpResponse &HttpResponse::fill(bool shouldClose, const time_t keepAliveTimeout)
+{
+	m_headers[HEADER_CONTENT_LENGTH] = Number::toString(m_body.size());
+	m_headers[HEADER_DATE]			 = Date::getCurrentHttpDate();
+
+	bool isCLoseStatus = AHttpMessage::isCloseStatus(m_statusCode);
+	if (shouldClose || isCLoseStatus)
+		m_headers[HEADER_CONNECTION] = HEADER_CONNECTION_CLOSE;
+	else
+	{
+		m_headers[HEADER_CONNECTION] = HEADER_CONNECTION_KEEP_ALIVE;
+		m_headers[HEADER_KEEP_ALIVE] = "timeout=" + Number::toString(keepAliveTimeout);
+	}
+	return *this;
 }

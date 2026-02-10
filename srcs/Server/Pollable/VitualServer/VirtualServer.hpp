@@ -24,11 +24,13 @@ class VirtualServer : public Pollable
 		std::string	   getBindIp() const;
 		unsigned short getBindPort() const;
 
-
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
 		void onPollHangUp();
+
+		bool isTimedOut(const time_t currentTime) const;
+		void onTimeOut();
 };
 
 #endif

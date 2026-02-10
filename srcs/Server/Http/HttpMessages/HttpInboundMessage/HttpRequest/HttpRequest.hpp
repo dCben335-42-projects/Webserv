@@ -27,6 +27,10 @@ class HttpRequest : public AHttpInboundMessage
 		void   parseAccepts(const std::string &headerValue);
 		bool   determineConnectionKeepAlive() const;
 
+		ssize_t		readContentLength(const std::string &request);
+		std::string readMethodString(const std::string &currentRawStr) const;
+
+
 	public:
 		HttpRequest();
 
@@ -35,24 +39,25 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<std::string>				&getSegments() const;
 		const Vec<const Config::Location *> &getActiveLocations() const;
 		const Vec<Accept>					&getAccepts() const;
+		bool								 getActiveAutoIndex() const;
+		bool								 getConnectionKeepAlive() const;
+
+
+		bool		hasUpload() const;
+		std::string getUploadPath() const;
+
+		bool isAllowedMethod() const;
 
 		HttpRequest &parse(const Config &serverConfig);
 		HttpRequest &reset();
 
-		ssize_t		readOnce(int socketFd);
-		ssize_t		readContentLength(const std::string &request);
-		std::string readMethodString(const std::string &currentRawStr) const;
+		ssize_t readOnce(int socketFd);
 
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
-		bool		getActiveAutoIndex() const;
-		bool		isAllowedMethod() const;
-		bool		hasUpload() const;
-		std::string getUploadPath() const;
 		bool		matchAccept(const std::string &contentType) const;
 
-		bool getConnectionKeepAlive() const;
-
 		bool isComplete();
+		bool isHeadersEndPos() const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

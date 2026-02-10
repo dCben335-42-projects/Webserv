@@ -101,6 +101,10 @@ void CgiPipe::onPollErr()
 	onError();
 }
 
+
+
+
+
 #include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
@@ -123,6 +127,29 @@ void CgiPipe::onPollHangUp()
 	HttpResponse &res = m_client->getResponse();
 	res.setFullResponse(m_cgiOutput.getRes());
 	m_events = 0;
+	m_client->setEvents(POLLOUT);
+	m_connectionClosed = true;
+}
+
+
+
+
+
+bool CgiPipe::isTimedOut(const time_t currentTime) const
+{
+	(void) currentTime;
+	return false;
+}
+
+
+void CgiPipe::onTimeOut()
+{
+	HttpResponse &res = m_client->getResponse();
+	res.reset();
+	res.setStatusCode(504);
+	res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+	res.setBody("<h1>CGI Script Timeout</h1>");
+	res.fill(true, 0).build();
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
 }

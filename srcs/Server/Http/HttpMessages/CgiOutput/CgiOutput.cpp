@@ -74,6 +74,5 @@ void CgiOutput::completeOutput(bool keepAlive)
 		setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 	if (!m_headers.has(HEADER_CONTENT_LENGTH))
 		setHeader(HEADER_CONTENT_LENGTH, Number::toString(m_body.size()));
-	if (!m_headers.has(HEADER_CONNECTION))
-		setHeader(HEADER_CONNECTION, keepAlive ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
+	setHeader(HEADER_CONNECTION, keepAlive ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);
 }
