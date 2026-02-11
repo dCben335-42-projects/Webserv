@@ -15,31 +15,33 @@
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
-#include "../Exception/Parser/InvalidEntryException.hpp"
-#include "../Exception/Parser/FileNotFinishedException.hpp"
 #include "../BNFPath/BNFPath.hpp"
 #include "Json.hpp"
 
 class DataCollector
 {
+	private:
+		std::string			   m_buffer;
+		size_t				   m_cidx;
+		Vec<ARulePath>		   m_pathNexts;
+		ARulePath			   m_path;
+		Map<size_t, ARulePath> m_pathStack;
+		Map<size_t, AJson *>   m_mapIndexToJson;
+		bool				   m_continueBuffer;
+		Vec<std::string>	   m_lines;
+		Vec<const ARule *>	   m_collectStr;
+
 	public:
 		DataCollector();
 		~DataCollector();
 
 		void generateJson(const BNFPath *cursor, const std::string &stringToParsed);
 		void recurseJson(
-			ARulePath				path,
-			Vec<ARulePath>			pathNexts,
-			size_t					index_rule,
-			AJson				  **json,
-			size_t				   *index,
-			Vec<std::string>	   &line,
-			std::string			   &buffer,
-			Map<size_t, AJson *>   &mapIndexToJson,
-			Vec<const ARule *>	   &collectStr,
-			bool					hasCollectStr,
-			bool				   &continueBuffer,
-			Map<size_t, ARulePath> &pathStack);
+			size_t	index_rule,
+			AJson **json,
+			bool	hasCollectStr);
+
+		bool same_prec(const ARulePath &path, const ARulePath &pathNext, const size_t n) const;
 };
 
 

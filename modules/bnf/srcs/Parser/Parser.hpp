@@ -16,6 +16,7 @@
 
 #include "../Exception/Parser/InvalidEntryException.hpp"
 #include "../Exception/Parser/FileNotFinishedException.hpp"
+#include "../BNFPath/BNFPath.hpp"
 
 // typedef Vec<ARulePath> ARulePathsOk;
 
@@ -39,15 +40,15 @@ class Parser
 
 		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path);
 
-		void resolvePath(const std::string &stringToParsed);
-		void completePath();
-		bool word(
-			TerminalCharInfo  *data,
-			const char		   c,
-			const ARule *const rule,
-			ARulePathInfo	  *pathInfo,
-			const ARuleMap	  &mapPathCurrent,
-			ARuleMap		  &mapPathNext);
+		const BNFPath *resolvePath();
+		void		   completePath();
+		bool		   word(
+					  TerminalCharInfo	*data,
+					  const char		 c,
+					  const ARule *const rule,
+					  ARulePathInfo		*pathInfo,
+					  const ARuleMap	&mapPathCurrent,
+					  ARuleMap			&mapPathNext);
 
 	public:
 		~Parser();
