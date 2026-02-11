@@ -49,4 +49,14 @@
 // Cookie Duration in seconds
 #define COOKIE_EXPIRE_DURATION 36000
 
+// Usefuls Cookies defines
+#define COOKIE_FIELD_SEP "; "
+#define COOKIE_KEY_TOKEN "token"
+#define COOKIE_KEY_PATH "path"
+#define COOKIE_KEY_EXPIRES "expires"
+#define COOKIE_VALUE_PATH "/"
+#define COOKIE_KEY_HTTPONLY "HttpOnly"
+#define COOKIE_VALUE_SEP "="
+
+#define FORM_FIELD_SEP "&"
 #endif

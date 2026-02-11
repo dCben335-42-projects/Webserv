@@ -76,24 +76,26 @@ unsigned int HttpCookie::computeHash(const std::string str)
 	return hash;
 }
 
-#include "Logger.hpp"
 void HttpCookie::parse(std::string rawCookie)
 {
-	Vec<std::string> keyValues = String::splitPattern(rawCookie, "; ");
+	Vec<std::string> keyValues = String::splitPattern(rawCookie, COOKIE_FIELD_SEP);
 	Map<std::string> fields;
 	for (Vec<std::string>::iterator it = keyValues.begin(); it != keyValues.end(); it++)
 	{
-		size_t equalIndex = it->find("=");
+		size_t equalIndex = it->find(COOKIE_VALUE_SEP);
 		if (equalIndex == std::string::npos)
 			throw Http401Exception();
 		fields.set(it->substr(0, equalIndex), it->substr(equalIndex + 1));
 	}
-	if (!fields.has("token"))
+	if (!fields.has(COOKIE_KEY_TOKEN))
 		throw Http401Exception();
-	m_hashStr = fields.get("token");
+	m_hashStr = fields.get(COOKIE_KEY_TOKEN);
 }
 
 void HttpCookie::stringifyCookie()
 {
-	m_stringifiedCookie = "token=" + m_hashStr + "; " + "path=/; " + "expires=" + Date::toHttpDateFormat(gmtime(&m_expirationDate)) + "; " + "HttpOnly";
+	m_stringifiedCookie = COOKIE_KEY_TOKEN									 COOKIE_VALUE_SEP + m_hashStr;
+	m_stringifiedCookie += COOKIE_FIELD_SEP COOKIE_KEY_PATH COOKIE_VALUE_SEP COOKIE_VALUE_PATH;
+	m_stringifiedCookie += COOKIE_FIELD_SEP COOKIE_KEY_EXPIRES				 COOKIE_VALUE_SEP + Date::toHttpDateFormat(gmtime(&m_expirationDate));
+	m_stringifiedCookie += COOKIE_FIELD_SEP									 COOKIE_KEY_HTTPONLY;
 }

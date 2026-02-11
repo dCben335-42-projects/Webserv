@@ -2,6 +2,7 @@
 #include "String.hpp"
 #include "httpExceptions.hpp"
 #include "Logger.hpp"
+#include "webserv.hpp"
 
 HttpAuth::HttpAuth()
 {
@@ -13,11 +14,11 @@ HttpAuth::~HttpAuth()
 
 void HttpAuth::parse(const std::string &body, AuthMode mode)
 {
-	Vec<std::string> bodySplit = String::split(body, "&");
+	Vec<std::string> bodySplit = String::split(body, FORM_FIELD_SEP);
 
 	for (Vec<std::string>::iterator it = bodySplit.begin(); it != bodySplit.end(); it++)
 	{
-		Vec<std::string> fieldSplit = String::split((*it), "=");
+		Vec<std::string> fieldSplit = String::split((*it), COOKIE_VALUE_SEP);
 		if (fieldSplit.size() != 2)
 			throw Http400Exception();
 		m_urlEncoded.set(fieldSplit[0], String::urlDecode(fieldSplit[1]));
