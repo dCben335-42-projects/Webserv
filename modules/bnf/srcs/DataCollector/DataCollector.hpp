@@ -41,7 +41,11 @@ class DataCollector
 			AJson **json,
 			bool	hasCollectStr);
 
-		bool same_prec(const ARulePath &path, const ARulePath &pathNext, const size_t n) const;
+		bool same_prec(const size_t n) const;
+		bool isEndOfPath() const;
+		bool hasParentSequence(size_t idx) const;
+		bool isLastRule(size_t idx_rule) const;
+		bool isTerminalConcept(size_t idx_rule) const;
 };
 
 
