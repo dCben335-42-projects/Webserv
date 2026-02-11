@@ -199,12 +199,12 @@ void HttpRequest::parseTargetQuery(const std::string &path)
 
 	if (queryPos != std::string::npos)
 	{
-		m_target	  = String::urlDecode(path.substr(0, queryPos));
+		m_target	  = String::urlDecode(String::normalizePath(path.substr(0, queryPos)));
 		m_segments	  = String::split(m_target, "/");
 		m_queryString = path.substr(queryPos + 1);
 		return;
 	}
-	m_target   = String::urlDecode(path);
+	m_target   = String::urlDecode(String::normalizePath(path));
 	m_segments = String::split(m_target, "/");
 }
 

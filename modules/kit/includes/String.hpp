@@ -19,8 +19,8 @@ class String
 		static bool		   isNotTrimmed(const std::string &str);
 		static std::string trim(const std::string &str);
 		static std::string trimBegin(const std::string &str);
+		static std::string trimEnd(const std::string &str);
 
-		static std::string htmlEscape(const std::string &input);
 
 		static void replaceAll(
 			std::string		  &str,
@@ -42,6 +42,13 @@ class String
 
 		static bool	  equalsIgnoreCase(char a, char b);
 		static size_t findIC(const std::string &str, const std::string &substr);
+		static size_t rfindIC(const std::string &str, const std::string &substr);
+
+
+		static std::string htmlEscape(const std::string &input);
+		static std::string htmlUnescape(const std::string &input);
+
+		static std::string normalizePath(const std::string &path);
 };
 
 #endif

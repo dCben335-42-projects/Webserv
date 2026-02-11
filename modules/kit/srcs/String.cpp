@@ -66,6 +66,19 @@ std::string String::trim(const std::string &str)
 	return str.substr(start, end - start);
 }
 
+
+/**
+ *
+ * @brief Trims leading whitespace from a string.
+ *
+ * @param str The input string to be trimmed.
+ *
+ * @note Whitespace characters are determined using std::isspace, so
+ * it includes spaces, tabs, newlines, and other standard whitespace characters.
+ *
+ * @return A new string with leading whitespace removed.
+ *
+ */
 std::string String::trimBegin(const std::string &str)
 {
 	size_t start = 0;
@@ -74,7 +87,40 @@ std::string String::trimBegin(const std::string &str)
 	return str.substr(start);
 }
 
+/*
+ *
+ * @brief Trims trailing whitespace from a string.
+ *
+ * @param str The input string to be trimmed.
+ *
+ * @note Whitespace characters are determined using std::isspace, so
+ * it includes spaces, tabs, newlines, and other standard whitespace characters.
+ *
+ * @return A new string with trailing whitespace removed.
+ *
+ */
+std::string String::trimEnd(const std::string &str)
+{
+	size_t end = str.size();
+	while (end > 0 && std::isspace(static_cast<unsigned char>(str[end - 1])))
+		--end;
+	return str.substr(0, end);
+}
 
+
+
+/**
+ *
+ * @brief Trims trailing whitespace from a string.
+ *
+ * @param str The input string to be trimmed.
+ *
+ * @note Whitespace characters are determined using std::isspace, so
+ * it includes spaces, tabs, newlines, and other standard whitespace characters.
+ *
+ * @return A new string with trailing whitespace removed.
+ *
+ */
 bool String::isNotTrimmed(const std::string &str)
 {
 	if (str.empty())
@@ -88,59 +134,7 @@ bool String::isNotTrimmed(const std::string &str)
 
 
 
-/**
- *
- * @brief Escapes special HTML characters in a string.
- *
- * @param input The input string to be escaped.
- *
- * @note This function replaces the following characters:
- *       & -> &amp;
- *       < -> &lt;
- *       > -> &gt;
- *       " -> &quot;
- *       ' -> &#39;
- * 	 	\n -> <br/>
- *
- * @note This is useful for preventing HTML injection
- *
- * @return A new string with special HTML characters replaced
- * by their corresponding HTML entities.
- */
-std::string String::htmlEscape(const std::string &input)
-{
-	std::string result;
-	result.reserve(input.size() * 1.1);
-	for (std::string::size_type i = 0; i < input.size(); ++i)
-	{
-		char c = input[i];
-		switch (c)
-		{
-			case '&':
-				result += "&amp;";
-				break;
-			case '<':
-				result += "&lt;";
-				break;
-			case '>':
-				result += "&gt;";
-				break;
-			case '"':
-				result += "&quot;";
-				break;
-			case '\'':
-				result += "&#39;";
-				break;
-			case '\n':
-				result += "<br/>";
-				break;
-			default:
-				result += c;
-				break;
-		}
-	}
-	return result;
-}
+
 
 /**
  *
@@ -415,4 +409,219 @@ size_t String::findIC(const std::string &str, const std::string &substr)
 			return i;
 	}
 	return std::string::npos;
+}
+
+/**
+ *
+ * @brief Finds the last position of a substring in a string, ignoring case.
+ *
+ * @param str The input string to search within.
+ * @param substr The substring to find.
+ *
+ * @return The index of the last occurrence of the substring in the input string,
+ *         ignoring case. Returns std::string::npos if the substring is not found.
+ *
+ */
+size_t String::rfindIC(const std::string &str, const std::string &substr)
+{
+	const size_t strLen	   = str.size();
+	const size_t substrLen = substr.size();
+
+	if (substrLen == 0)
+		return strLen;
+	if (substrLen > strLen)
+		return std::string::npos;
+
+	for (size_t i = strLen - substrLen + 1; i-- > 0;)
+	{
+		size_t j = 0;
+		while (j < substrLen && equalsIgnoreCase(str[i + j], substr[j]))
+			++j;
+
+		if (j == substrLen)
+			return i;
+	}
+	return std::string::npos;
+}
+
+
+
+
+/**
+ *
+ * @brief Escapes special HTML characters in a string.
+ *
+ * @param input The input string to be escaped.
+ *
+ * @note This function replaces the following characters:
+ *       & -> &amp;
+ *       < -> &lt;
+ *       > -> &gt;
+ *       " -> &quot;
+ *       ' -> &#39;
+ * 	 	\n -> <br/>
+ *
+ * @note This is useful for preventing HTML injection
+ *
+ * @return A new string with special HTML characters replaced
+ * by their corresponding HTML entities.
+ */
+std::string String::htmlEscape(const std::string &input)
+{
+	std::string result;
+	result.reserve(input.size() * 1.1);
+	for (std::string::size_type i = 0; i < input.size(); ++i)
+	{
+		char c = input[i];
+		switch (c)
+		{
+			case '&':
+				result += "&amp;";
+				break;
+			case '<':
+				result += "&lt;";
+				break;
+			case '>':
+				result += "&gt;";
+				break;
+			case '"':
+				result += "&quot;";
+				break;
+			case '\'':
+				result += "&#39;";
+				break;
+			case '\n':
+				result += "<br/>";
+				break;
+			default:
+				result += c;
+				break;
+		}
+	}
+	return result;
+}
+
+
+/**
+ *
+ * @brief Unescapes HTML entities in a string back to their original characters.
+ *
+ * @param input The input string containing HTML entities to be unescaped.
+ *
+ * @note This function replaces the following HTML entities:
+ *       &amp; -> &
+ *       &lt; -> <
+ *       &gt; -> >
+ *       &quot; -> "
+ *       &#39; -> '
+ * 	 	<br/> -> \n
+ *
+ * @return A new string with HTML entities replaced by their corresponding characters.
+ */
+std::string String::htmlUnescape(const std::string &input)
+{
+	std::string result;
+	result.reserve(input.size() * 0.9);
+	for (std::string::size_type i = 0; i < input.size(); ++i)
+	{
+		if (input[i] == '&')
+		{
+			if (input.compare(i, 5, "&amp;") == 0)
+			{
+				result += '&';
+				i += 4;
+			}
+			else if (input.compare(i, 4, "&lt;") == 0)
+			{
+				result += '<';
+				i += 3;
+			}
+			else if (input.compare(i, 4, "&gt;") == 0)
+			{
+				result += '>';
+				i += 3;
+			}
+			else if (input.compare(i, 6, "&quot;") == 0)
+			{
+				result += '"';
+				i += 5;
+			}
+			else if (input.compare(i, 5, "&#39;") == 0)
+			{
+				result += '\'';
+				i += 4;
+			}
+			else if (input.compare(i, 5, "<br/>") == 0)
+			{
+				result += '\n';
+				i += 4;
+			}
+			else
+			{
+				result += '&';
+			}
+		}
+		else
+		{
+			result += input[i];
+		}
+	}
+	return result;
+}
+
+
+
+
+
+/**
+ *
+ * @brief Normalizes a file path by removing duplicate slashes and resolving '.' and '..' segments.
+ *
+ * @param path The input file path to be normalized.
+ *
+ * @return A new string representing the normalized file path.
+ *
+ * @note This function performs the following transformations:
+ *       - Removes duplicate slashes (e.g., "///" becomes "/").
+ *       - Resolves "." segments (current directory) by removing them.
+ *       - Resolves ".." segments (parent directory) by removing the preceding segment, if any.
+ *
+ * @note The resulting path will not have any trailing slashes unless it is the root ("/").
+ */
+std::string String::normalizePath(const std::string &path)
+{
+	std::string result;
+	result.reserve(path.size());
+
+	const Vec<std::string> segments = split(removeDuplicateSlashes(path), "/");
+	Vec<std::string>	   stack;
+
+	for (size_t i = 0; i < segments.size(); ++i)
+	{
+		if (segments[i] == ".")
+		{
+			continue;
+		}
+		else if (segments[i] == "..")
+		{
+			if (!stack.empty())
+			{
+				stack.pop_back();
+			}
+		}
+		else
+		{
+			stack.push_back(segments[i]);
+		}
+	}
+	for (size_t i = 0; i < stack.size(); ++i)
+	{
+		result += "/";
+		result += stack[i];
+	}
+	if (result.empty())
+	{
+		result = "/";
+	}
+	return result;
 }
