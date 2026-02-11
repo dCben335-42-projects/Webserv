@@ -30,6 +30,7 @@ class DataCollector
 		bool				   m_continueBuffer;
 		Vec<std::string>	   m_lines;
 		Vec<const ARule *>	   m_collectStr;
+		int					   m_collectStrIdx;
 
 	public:
 		DataCollector();
@@ -41,16 +42,20 @@ class DataCollector
 			AJson **json,
 			bool	hasCollectStr);
 
-		bool			   same_prec(const size_t n) const;
+		bool			   samePrec(const size_t n) const;
 		bool			   isEndOfPath() const;
-		bool			   isSequence(size_t idx) const;
-		bool			   isLastRule(size_t idx_rule) const;
-		bool			   isTerminalConcept(size_t idx_rule) const;
-		AJson			  *getJson(size_t idx);
-		const std::string &getKey(size_t idx) const;
+		bool			   isSequence(const size_t idx) const;
+		bool			   isLastRule(const size_t idx_rule) const;
+		bool			   isTerminalConcept(const size_t idx_rule) const;
+		AJson			  *getJson(const size_t idx);
+		const std::string &getKey(const size_t idx) const;
 		void			   delJson(const size_t idx);
 		void			   movJson(AJson *json, const size_t idx);
 		void			   addArrayIfNotExist(JsonArray *currentObject);
+		void			   createNewObject(const size_t idx, const std::string &key);
+		bool			   hasRegisteredPath(const size_t idx) const;
+		void			   appendBuffer();
+		JsonArray		  *getObjectArray(const size_t idx, const std::string &key);
 };
 
 

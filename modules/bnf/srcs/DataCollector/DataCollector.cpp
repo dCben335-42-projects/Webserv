@@ -8,7 +8,7 @@ DataCollector::~DataCollector()
 {
 }
 
-bool DataCollector::same_prec(const size_t n) const
+bool DataCollector::samePrec(const size_t n) const
 {
 	if (m_path.size() < n || m_pathNexts[m_cidx].size() < n)
 		return false;
@@ -25,27 +25,27 @@ bool DataCollector::isEndOfPath() const
 	return m_cidx >= m_pathNexts.size();
 }
 
-bool DataCollector::isSequence(size_t idx) const
+bool DataCollector::isSequence(const size_t idx) const
 {
 	return m_path[idx]->isSequence();
 }
 
-bool DataCollector::isLastRule(size_t idx_rule) const
+bool DataCollector::isLastRule(const size_t idx_rule) const
 {
 	return m_path.size() - 1 == idx_rule;
 }
 
-bool DataCollector::isTerminalConcept(size_t idx_rule) const
+bool DataCollector::isTerminalConcept(const size_t idx_rule) const
 {
 	return m_path[idx_rule]->getConceptPtr()->isTerminalConcept();
 }
 
-AJson *DataCollector::getJson(size_t idx)
+AJson *DataCollector::getJson(const size_t idx)
 {
 	return m_mapJson.get(idx);
 }
 
-const std::string &DataCollector::getKey(size_t idx) const
+const std::string &DataCollector::getKey(const size_t idx) const
 {
 	return m_path[idx]->getConceptName();
 }
@@ -69,131 +69,134 @@ void DataCollector::addArrayIfNotExist(JsonArray *currentObject)
 		currentObject->push(AJson::createArray());
 }
 
+void DataCollector::createNewObject(const size_t idx, const std::string &key)
+{
+	if (!m_mapJson.has(idx))
+	{
+		m_pathStack.set(idx, m_path.slice(idx));
+		m_mapJson.set(idx, AJson::createObject());
+		getJson(idx)->asObject()->set(key, AJson::createArray());
+	}
+}
+
+bool DataCollector::hasRegisteredPath(const size_t idx) const
+{
+	return m_pathStack.has(idx) && m_pathStack.get(idx) != m_path.slice(idx);
+}
+
+void DataCollector::appendBuffer()
+{
+	m_cidx += m_lines[0].size();
+	m_buffer.append(m_lines[0]);
+	m_lines.remove(0);
+	Logger::log(m_buffer);
+}
+
+JsonArray *DataCollector::getObjectArray(const size_t idx, const std::string &key)
+{
+	return getJson(idx)->asObject()->get(key)->asArray();
+}
+
+
 
 
 
 void DataCollector::recurseJson(
-	size_t	idx_rule,
+	size_t	idxRule,
 	AJson **json,
 	bool	hasCollectStr)
 {
-	AJson *ptr		  = NULL;
-	hasCollectStr	  = hasCollectStr ? true : isTerminalConcept(idx_rule);
-	size_t idx_rule_c = idx_rule + 1;
-
-	if (isLastRule(idx_rule))
+	AJson *ptr = NULL;
+	if (!hasCollectStr)
 	{
-		m_cidx += m_lines[0].size();
-		m_buffer.append(m_lines[0]);
-		m_lines.remove(0);
-		Logger::log(m_buffer);
+		hasCollectStr = isTerminalConcept(idxRule);
+		if (hasCollectStr)
+			m_collectStrIdx = idxRule;
+	}
 
-		if (!isEndOfPath() && ((hasCollectStr && !isSequence(idx_rule - 1) && same_prec(idx_rule)) || same_prec(idx_rule_c)))
+
+
+	// hasCollectStr	= hasCollectStr ? true : isTerminalConcept(idxRule);
+	size_t			   idxRuleC = idxRule + 1;
+	const std::string &keyC		= getKey(idxRuleC);
+	const std::string &key		= getKey(idxRule);
+
+	if (isLastRule(idxRule))
+	{
+		appendBuffer();
+
+		//	Tous ce qui est sous un hasCollectStr doit sappend ensemble mais on doit differencier 2 repetition dune meme classe dans une sequence
+		//	Pour ce faire nous devons utiliser isEnd() sur tout element en dessous de la sequence (sil y en a une) dont lelement constitue le TerminalConcept
+		//
+		//
+		//
+		//
+		//
+		//
+
+		// Si index correspond encore a un index de char et que soit:
+		// - on est dans un TerminalConcept, que il n'y a pas de sequence sur le parent et que le parent on est toujours sur le meme noeud parent pour le prochain index
+
+		if (!isEndOfPath() && ((hasCollectStr && !isSequence(idxRule - 1) && samePrec(idxRule)) || samePrec(idxRuleC)))
 			m_continueBuffer = true;
-		else if (idx_rule == 0 || (!isEndOfPath() && !same_prec(idx_rule) && !hasCollectStr))
+		else if (idxRule == 0 || (!isEndOfPath() && !samePrec(idxRule) && !hasCollectStr))
 		{
 			*json = AJson::createString(m_buffer);
 			m_buffer.clear();
 		}
 		return;
 	}
-	recurseJson(idx_rule_c, &ptr, hasCollectStr);
+	recurseJson(idxRuleC, &ptr, hasCollectStr);
 	Logger::log("----<UP>----");
 
-	if (!ptr)
+	if (ptr)
 	{
-		if (hasCollectStr && !m_continueBuffer)
-		{
-			if (!isEndOfPath() && same_prec(idx_rule))
-				m_continueBuffer = true;
-		}
+		createNewObject(idxRuleC, keyC);
+		getObjectArray(idxRuleC, keyC)->push(ptr);
+		movJson(getJson(idxRule)->asObject()->get(key), idxRuleC);
+		return;
+	}
 
-		if (!m_continueBuffer && !hasCollectStr)
-		{
-			Logger::log("->1");
-			if (idx_rule_c < m_path.size())
-			{
-				Logger::log("->2");
-				Logger::log("concept: " + LoggerJson::get(m_path[idx_rule_c]->getConceptName()));
+	if (!m_continueBuffer && hasCollectStr && !isEndOfPath() && samePrec(idxRule))
+		m_continueBuffer = true;
 
-				if (!isTerminalConcept(idx_rule_c))
-				{
-					Logger::log("->3");
-
-					if (m_pathStack.has(idx_rule_c))
-					{
-						if (m_pathStack.get(idx_rule_c) != m_path.slice(idx_rule_c))
-							movJson(getJson(idx_rule), idx_rule_c);
-					}
-
-					const std::string &key = getKey(idx_rule_c);
-					if (!m_mapJson.has(idx_rule_c))
-					{
-						m_pathStack.set(idx_rule_c, m_path.slice(idx_rule_c));
-						m_mapJson.set(idx_rule_c, AJson::createObject());
-						getJson(idx_rule_c)->asObject()->set(key, AJson::createArray());
-					}
-
-					if (!m_buffer.empty())
-					{
-						if (isSequence(idx_rule_c))
-						{
-							JsonArray *currentArray = getJson(idx_rule_c)->asObject()->get(key)->asArray();
-							addArrayIfNotExist(currentArray);
-							currentArray->getLast()->asArray()->create(m_buffer);
-						}
-						else
-						{
-							getJson(idx_rule_c)->asObject()->get(key)->asArray()->create(m_buffer);
-							if (isSequence(idx_rule) && m_path[idx_rule_c]->isEnd())
-							{
-								JsonArray *currentArray = getJson(idx_rule)->asObject()->get(getKey(idx_rule))->asArray();
-								addArrayIfNotExist(currentArray);
-								movJson(currentArray->getLast(), idx_rule_c);
-							}
-						}
-						m_buffer.clear();
-					}
-
-					if (isEndOfPath() || (!same_prec(idx_rule_c)))
-					{
-						AJson *currentJson = getJson(idx_rule);
-						if (idx_rule == 0)
-							movJson(currentJson, idx_rule_c);
-						else
-							movJson(currentJson->asObject()->get(getKey(idx_rule)), idx_rule_c);
-					}
-					return;
-				}
-			}
-		}
-
-		if (!m_continueBuffer && idx_rule == 0)
+	if (!(!m_continueBuffer && !hasCollectStr && idxRuleC < m_path.size() && !isTerminalConcept(idxRuleC)))
+	{
+		if (!m_continueBuffer && idxRule == 0)
 			*json = AJson::createString(m_buffer);
 		return;
 	}
-	else
+	if (hasRegisteredPath(idxRuleC))
+		movJson(getJson(idxRule), idxRuleC);
+
+	createNewObject(idxRuleC, keyC);
+
+	if (!m_buffer.empty())
 	{
-		// Si TerminalConcept on doit ajouter des string au create string
-		if (m_path[idx_rule]->isSequence())
+		JsonArray *currentArray = getObjectArray(idxRuleC, keyC);
+		if (isSequence(idxRuleC))
 		{
-			if (!m_mapJson.has(idx_rule))
-				m_mapJson.set(idx_rule, AJson::createArray());
+			addArrayIfNotExist(currentArray);
+			currentArray->getLast()->asArray()->create(m_buffer);
 		}
 		else
 		{
-			if (!m_mapJson.has(idx_rule))
-				m_mapJson.set(idx_rule, AJson::createArray());
+			currentArray->create(m_buffer);
+			if (isSequence(idxRule) && m_path[idxRuleC]->isEnd())
+			{
+				currentArray = getObjectArray(idxRule, key);
+				addArrayIfNotExist(currentArray);
+				movJson(currentArray->getLast(), idxRuleC);
+			}
 		}
+		m_buffer.clear();
+	}
 
-		AJson *currentJson = m_mapJson.get(idx_rule);
-		if (currentJson->getType() == AJson::ARRAY)
-			currentJson->asArray()->push(ptr);
-		if (!same_prec(idx_rule - 1))
-		{
-			*json = currentJson;
-			return;
-		}
+	if (isEndOfPath() || !samePrec(idxRuleC))
+	{
+		AJson *currentJson = getJson(idxRule);
+		AJson *target	   = !idxRule ? currentJson : currentJson->asObject()->get(key);
+		movJson(target, idxRuleC);
 	}
 }
 
@@ -230,6 +233,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strin
 		{
 			if (pathStack[i - 1] == pathStack[i])
 			{
+                // Logger::log(pathStack[i].back());
 				str.push_back(stringToParsed[i]);  // char
 			}
 			else
@@ -244,6 +248,8 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strin
 		line.push_back(str);
 	}
 
+	// line = 
+
 	Vec<AJson *> elements;
 	AJson *json = NULL;
 
@@ -257,6 +263,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strin
 
 	while (m_cidx < pathStack.size())
 	{
+		m_collectStrIdx = -1;
         m_path = pathStack[m_cidx];
 		Logger::log("=======");
 		recurseJson(0, &json, false);

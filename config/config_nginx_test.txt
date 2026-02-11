@@ -1,4 +1,4 @@
-<head>		    ::= 'event' TEST username SPACE username
+<head>		    ::= 'event' TEST username
 
 
 TEST            ::= SPACE BOOL SPACE
@@ -13,6 +13,8 @@ username        ::= WWW name '-' family
 name            ::= { LOCASE_LETTER | UPCASE_LETTER | family }
 
 family          ::= DIGIT
+
+tiret           ::= '_' '8' '5'
 
 WWW             ::= 'www' DTM '-'
 

@@ -1,2 +1,525 @@
 [0;33m[WEBSERV] Generating bnf module library...[0m
-[0;32m[BNF] Compiling libbnf.a: [##                                                ] 1/17[0m[0;32m[BNF] Compiling libbnf.a: [#####                                             ] 2/17[0m[0;32m[BNF] Compiling libbnf.a: [########                                          ] 3/17[0m[0;32m[BNF] Compiling libbnf.a: [###########                                       ] 4/17[0m[0;32m[BNF] Compiling libbnf.a: [##############                                    ] 5/17[0m[0;32m[BNF] Compiling libbnf.a: [#################                                 ] 6/17[0m[0;32m[BNF] Compiling libbnf.a: [####################                              ] 7/17[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating log module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating kit module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating json module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;32m[WEBSERV] Running webserv...[0m
+--------------------------
+
+Parsing complete ✅
+event
+ 
+o
+n
+ 
+www
+-
+d
+a
+t
+a
+-
+p
+o
+4
+_
+8
+2
+a
+-
+4
+_
+8
+=======
+event
+json : event
+arr : [
+  event
+]
+=======
+ 
+----<UP>----
+concept: SPACE
+----<UP>----
+concept: TEST
+json : null
+arr : [
+  event
+]
+=======
+ o
+----<UP>----
+concept: BOOL
+----<UP>----
+concept: TEST
+json : null
+arr : [
+  event
+]
+=======
+ on
+----<UP>----
+concept: BOOL
+----<UP>----
+concept: TEST
+json : null
+arr : [
+  event
+]
+=======
+ on 
+----<UP>----
+concept: SPACE
+----<UP>----
+concept: TEST
+->1
+->2
+concept: TEST
+json :  on 
+arr : [
+  event,
+   on 
+]
+=======
+www
+----<UP>----
+concept: WWW
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+www-
+----<UP>----
+concept: DTM
+----<UP>----
+concept: WWW
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+www-d
+----<UP>----
+concept: DTM
+----<UP>----
+concept: WWW
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+www-da
+----<UP>----
+concept: DTM
+----<UP>----
+concept: WWW
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+www-dat
+----<UP>----
+concept: DTM
+----<UP>----
+concept: WWW
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+www-data
+----<UP>----
+concept: DTM
+----<UP>----
+concept: WWW
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+www-data-
+----<UP>----
+concept: WWW
+->1
+->2
+concept: WWW
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+p
+----<UP>----
+concept: LOCASE_LETTER
+----<UP>----
+concept: name
+----<UP>----
+concept: username
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+po
+----<UP>----
+concept: LOCASE_LETTER
+->1
+->2
+concept: LOCASE_LETTER
+----<UP>----
+concept: name
+->1
+->2
+concept: name
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+4
+----<UP>----
+concept: DIGIT
+->1
+->2
+concept: DIGIT
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: name
+->1
+->2
+concept: name
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+_
+----<UP>----
+concept: tiret
+->1
+->2
+concept: tiret
+->3
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: name
+->1
+->2
+concept: name
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+8
+----<UP>----
+concept: tiret
+[1;31m[ERROR] ptr : 8[0m
+{
+  "tiret": 
+    [
+      _,
+      8
+    ]
+}
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: name
+->1
+->2
+concept: name
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+2
+----<UP>----
+concept: DIGIT
+->1
+->2
+concept: DIGIT
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: name
+->1
+->2
+concept: name
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+a
+----<UP>----
+concept: LOCASE_LETTER
+->1
+->2
+concept: LOCASE_LETTER
+----<UP>----
+concept: name
+->1
+->2
+concept: name
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+-
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+4
+----<UP>----
+concept: DIGIT
+->1
+->2
+concept: DIGIT
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+_
+----<UP>----
+concept: tiret
+->1
+->2
+concept: tiret
+->3
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+8
+----<UP>----
+concept: tiret
+[1;31m[ERROR] ptr : 8[0m
+{
+  "tiret": 
+    [
+      _,
+      8
+    ]
+}
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on 
+]
+=======
+2
+----<UP>----
+concept: DIGIT
+->1
+->2
+concept: DIGIT
+----<UP>----
+concept: family
+->1
+->2
+concept: family
+->3
+----<UP>----
+concept: username
+->1
+->2
+concept: username
+->3
+json : null
+arr : [
+  event,
+   on ,
+  {
+    "username": 
+      [
+        www-data-,
+        {
+          "name": 
+            [
+              [
+                po,
+                {
+                  "family": 
+                    [
+                      4,
+                      {
+                        "tiret": 
+                          [
+                            _,
+                            8
+                          ]
+                      },
+                      2
+                    ]
+                },
+                a
+              ]
+            ]
+        },
+        -,
+        {
+          "family": 
+            [
+              4,
+              {
+                "tiret": 
+                  [
+                    _,
+                    8
+                  ]
+              },
+              2
+            ]
+        }
+      ]
+  }
+]
