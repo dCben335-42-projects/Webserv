@@ -120,7 +120,7 @@ ConceptDef *ARule::getConceptDefPtr()
 	return m_conceptDefPtr;
 }
 
-const std::string ARule::getConceptName() const
+const std::string &ARule::getConceptName() const
 {
 	return m_conceptName;
 }

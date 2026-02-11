@@ -26,7 +26,7 @@ class DataCollector
 		Vec<ARulePath>		   m_pathNexts;
 		ARulePath			   m_path;
 		Map<size_t, ARulePath> m_pathStack;
-		Map<size_t, AJson *>   m_mapIndexToJson;
+		Map<size_t, AJson *>   m_mapJson;
 		bool				   m_continueBuffer;
 		Vec<std::string>	   m_lines;
 		Vec<const ARule *>	   m_collectStr;
@@ -41,11 +41,16 @@ class DataCollector
 			AJson **json,
 			bool	hasCollectStr);
 
-		bool same_prec(const size_t n) const;
-		bool isEndOfPath() const;
-		bool hasParentSequence(size_t idx) const;
-		bool isLastRule(size_t idx_rule) const;
-		bool isTerminalConcept(size_t idx_rule) const;
+		bool			   same_prec(const size_t n) const;
+		bool			   isEndOfPath() const;
+		bool			   isSequence(size_t idx) const;
+		bool			   isLastRule(size_t idx_rule) const;
+		bool			   isTerminalConcept(size_t idx_rule) const;
+		AJson			  *getJson(size_t idx);
+		const std::string &getKey(size_t idx) const;
+		void			   delJson(const size_t idx);
+		void			   movJson(AJson *json, const size_t idx);
+		void			   addArrayIfNotExist(JsonArray *currentObject);
 };
 
 

@@ -51,7 +51,7 @@ class ARule
 		static bool						   isKeyWord(const std::string &word, bool onlyClose);
 		bool							   isEnd() const;
 
-		const std::string getConceptName() const;
+		const std::string &getConceptName() const;
 		size_t			  getConceptDefIndex() const;
 		size_t			  getRuleIndex() const;
 		ARulePath		  getNextRules(ARulePath supRuleParent) const;
