@@ -5,6 +5,7 @@
 #include "Signals.hpp"
 #include "Logger.hpp"
 #include "webserv.hpp"
+#include <ctime>
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
@@ -22,18 +23,20 @@ void EventLoop::init()
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
 
-	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", "index.htm", true, param2);
-	Config::Location *loc1			  = new Config::Location("/assets", "", "", "", true, NULL);
-	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
-	Config::Location *loc8			  = new Config::Location("/cgi-bin", "", "files/www/usr/bin", "", true, NULL);
-	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", "", true, NULL);
+	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", true, param2);
+	Config::Location *loc1			  = new Config::Location("/assets", "", "", true, NULL);
+	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", NULL);
+	Config::Location *loc8			  = new Config::Location("/cgi-bin", "", "files/www/usr/bin", true, NULL);
+	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", true, NULL);
+
+	defaultLocation->addIndexFile("index.htms");
 	loc9->setUpload("files/www/uploads/");
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
-	Config *config1 = new Config("0.0.0.0", 8080, "localhost", defaultLocation, locations);
+	Config *config1 = new Config("127.0.0.0", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 	Signals::catchSigs();
 }
@@ -60,6 +63,7 @@ void EventLoop::destroy()
 	}
 	m_pollFds.clear();
 	m_handlers.clear();
+	Logger::closeFiles();
 }
 
 

@@ -158,13 +158,11 @@ void Config::setMaxBodySize(const size_t maxBodySize)
  * @return The index file as a constant reference to a string.
  *
  */
-const std::string Config::getIndexFile(const std::string &locationPath) const
+const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath)->getIndexFile();
-	if (locationPath == "/")
-		return m_defaultLocation->getIndexFile();
-	return "";
+		return m_locations.get(locationPath)->getIndexFiles();
+	return m_defaultLocation->getIndexFiles();
 }
 
 
@@ -177,7 +175,7 @@ const std::string Config::getIndexFile(const std::string &locationPath) const
  * @return true if the location has an index file configured, false otherwise.
  *
  */
-bool Config::hasIndexFile(const std::string &locationPath) const
+bool Config::hasIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
 		return m_locations.get(locationPath)->hasIndexFile();

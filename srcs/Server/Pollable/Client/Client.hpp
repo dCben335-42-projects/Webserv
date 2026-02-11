@@ -30,30 +30,28 @@ class Client : public Pollable
 
 		void reset();
 
-		void handleGetRequest(std::string ressourcePath);
-		void handlePostRequest();
-		void handleDeleteRequest(const std::string &ressourcePath);
-		void handlePutRequest(const std::string &ressourcePath);
-		void handlePatchRequest(const std::string &ressourcePath);
-		void checkFilePerms(const char *fullPath) const;
-		bool prepareResponse();
+		void handleGet(std::string ressourcePath);
+		void handlePost();
+		void handleDelete(const std::string &ressourcePath);
+		void handlePutPatch(const std::string &ressourcePath);
 
-		bool hasRequestTimeout(const time_t &currentTime) const;
+		bool prepareResponse();
 
 	public:
 		Client(int fd, const Config &config);
 		~Client();
 
+		const HttpRequest &getRequest() const;
+		HttpResponse	  &getResponse();
+
+		void setEvents(const short events);
+
+		bool determineKeepAlive(unsigned short statusCode);
+
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
 		void onPollHangUp();
-
-		void setEvents(const short events);
-
-		bool			   determineKeepAlive(unsigned short statusCode);
-		const HttpRequest &getRequest() const;
-		HttpResponse	  &getResponse();
 
 		bool isTimedOut(const time_t currentTime) const;
 		void onTimeOut();

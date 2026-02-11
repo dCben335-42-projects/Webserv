@@ -105,7 +105,7 @@ void Client::setEvents(const short events)
  * @throws AHttpException if there are issues with processing the POST data.
  *
  */
-void Client::handlePostRequest()
+void Client::handlePost()
 {
 	FileUpload file(m_req);
 
@@ -118,46 +118,62 @@ void Client::handlePostRequest()
 	m_res.setStatusCode(201);
 }
 
-void Client::checkFilePerms(const char *fullPath) const
+
+/**
+ *
+ * @brief Handles HTTP PUT and PATCH requests.
+ *
+ * This function processes the PUT or PATCH request,
+ * checks for the existence and permissions of the target resource,
+ * and updates the file with the provided data.
+ *
+ * @param ressourcePath The path to the resource being updated.
+ *
+ * @throws AHttpException if there are issues with accessing or modifying the resource.
+ *
+ */
+void Client::handlePutPatch(const std::string &ressourcePath)
 {
+	const char *fullPath = ressourcePath.c_str();
 	if (access(fullPath, F_OK) == -1)
 		throw Http404Exception();
 	if (access(fullPath, R_OK | W_OK) == -1)
 		throw Http403Exception();
-}
-
-void Client::handlePatchRequest(const std::string &ressourcePath)
-{
-	checkFilePerms(ressourcePath.c_str());
 	FileUpload file(m_req);
 	file.createDiskFile(ressourcePath, m_req.getBody());
 	m_res.setStatusCode(204);
 	m_res.setBody("File edited with a lot of success");
+	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 }
 
-void Client::handlePutRequest(const std::string &ressourcePath)
-{
-	const char *fullPath = ressourcePath.c_str();
-	checkFilePerms(fullPath);
-	std::remove(fullPath);
-	FileUpload file(m_req);
-	file.createDiskFile(ressourcePath, m_req.getBody());
-	m_res.setStatusCode(204);
-	m_res.setBody("File edited with a lot of success");
-}
 
-void Client::handleDeleteRequest(const std::string &ressourcePath)
+
+/**
+ *
+ * @brief Handles HTTP DELETE requests.
+ *
+ * This function processes the DELETE request,
+ * checks for the existence and permissions of the target resource,
+ * and deletes the file if allowed.
+ *
+ * @param ressourcePath The path to the resource being deleted.
+ *
+ * @throws AHttpException if there are issues with accessing or deleting the resource.
+ *
+ */
+void Client::handleDelete(const std::string &ressourcePath)
 {
 	const char *fullPath = ressourcePath.c_str();
 	if (access(fullPath, F_OK) == -1)
 		throw Http404Exception();
-	if (access(fullPath, W_OK) == -1)
-		throw Http403Exception();
 	if (FileHandler::folderExists(fullPath))
+		throw Http403Exception();
+	if (access(fullPath, W_OK) == -1)
 		throw Http403Exception();
 	std::remove(fullPath);
 	m_res.setStatusCode(204);
 	m_res.setBody("File deleted successfully.");
+	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 }
 
 
@@ -173,27 +189,40 @@ void Client::handleDeleteRequest(const std::string &ressourcePath)
  * or if there are permission issues.
  *
  */
-void Client::handleGetRequest(std::string ressourcePath)
+void Client::handleGet(std::string ressourcePath)
 {
-	const std::string target		  = m_req.getTarget();
-	const size_t	  targetLen		  = target.length();
-	bool			  isFolderRequest = targetLen && target[targetLen - 1] == '/';
+	const std::string target	= m_req.getTarget();
+	const size_t	  targetLen = target.length();
+
 
 	try
 	{
-		if (isFolderRequest && FileHandler::folderExists(ressourcePath))
+		if (FileHandler::folderExists(ressourcePath))
 		{
+			const bool isFolderRequest = targetLen && target[targetLen - 1] == '/';
+
+			if (!isFolderRequest)
+				throw Http404Exception();
+			bool			  foundIndex   = false;
 			const std::string fallbackPath = ressourcePath + "/" + FALLBACK_INDEX;
-			if (m_serverConfig.hasIndexFile(target))
+			if (m_serverConfig.hasIndexFiles(target))
 			{
-				const std::string indexPath = ressourcePath + "/" + m_serverConfig.getIndexFile(target);
-				if (!FileHandler::fileExists(indexPath))
-					throw Http403Exception();
-				ressourcePath = indexPath;
+				const Vec<std::string> indexFiles = m_serverConfig.getIndexFiles(target);
+
+				for (size_t i = 0; i < indexFiles.size(); ++i)
+				{
+					const std::string indexPath = String::removeDuplicateSlashes(ressourcePath + "/" + indexFiles[i]);
+					if (FileHandler::fileExists(indexPath))
+					{
+						ressourcePath = indexPath;
+						foundIndex	  = true;
+						break;
+					}
+				}
 			}
-			else if (FileHandler::fileExists(fallbackPath))
+			if (!foundIndex && FileHandler::fileExists(fallbackPath))
 				ressourcePath = fallbackPath;
-			else if (m_req.getActiveAutoIndex())
+			else if (!foundIndex && m_req.getActiveAutoIndex())
 			{
 				if (!m_req.matchAccept(MIME_HTML))
 					throw Http406Exception();
@@ -254,20 +283,39 @@ bool Client::prepareResponse()
 	const std::string	   ressourcePath = m_req.buildResourcePath(segmentSize - 1);
 	const HttpMethod::Type method		 = m_req.getMethod().getType();
 	if (method == HttpMethod::GET)
-		handleGetRequest(ressourcePath);
+		handleGet(ressourcePath);
 	else if (method == HttpMethod::POST)
-		handlePostRequest();
+		handlePost();
 	else if (method == HttpMethod::DELETE)
-		handleDeleteRequest(ressourcePath);
-	else if (method == HttpMethod::PUT)
-		handlePutRequest(ressourcePath);
-	else if (method == HttpMethod::PATCH)
-		handlePatchRequest(ressourcePath);
+		handleDelete(ressourcePath);
+	else if (method == HttpMethod::PUT || method == HttpMethod::PATCH)
+		handlePutPatch(ressourcePath);
 	else
 		throw Http405Exception(m_req.getMethod().getStrType());
 	return true;
 }
 
+
+/**
+ *
+ * @brief Determines if the connection should be kept alive.
+ *
+ * This function checks the client's request headers and the response status code
+ * to decide whether to keep the connection alive for further requests or to close it.
+ *
+ * @param statusCode The HTTP status code of the response.
+ *
+ * @note It stores the result in the m_shouldClose member variable to then be used in
+ * the onPollOut() method to decide whether to close the connection after sending the response.
+ *
+ * @return true if the connection should be kept alive, false if it should be closed.
+ *
+ */
+bool Client::determineKeepAlive(unsigned short statusCode)
+{
+	m_shouldClose = !m_req.getConnectionKeepAlive() && !m_res.isCloseStatus(statusCode);
+	return !m_shouldClose;
+}
 
 /**
  *
@@ -320,11 +368,7 @@ void Client::onPollIn()
 }
 
 
-bool Client::determineKeepAlive(unsigned short statusCode)
-{
-	m_shouldClose = !m_req.getConnectionKeepAlive() && !m_res.isCloseStatus(statusCode);
-	return !m_shouldClose;
-}
+
 
 /**
  *
@@ -365,6 +409,17 @@ void Client::onPollOut()
 	m_events = POLLOUT;
 }
 
+
+/**
+ *
+ * @brief Handles errors that occur during polling of the client socket.
+ *
+ * This function is called when an error event is detected on the client socket.
+ * It logs the error details and updates the client state to indicate that the connection is closed.
+ *
+ * @note This function is called when a POLLERR event is detected on the client socket.
+ *
+ */
 void Client::onPollErr()
 {
 	Logger::error("Poll error on client socket fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
@@ -372,6 +427,18 @@ void Client::onPollErr()
 	m_connectionClosed = true;
 }
 
+
+/**
+ *
+ * @brief Handles the hang-up event on the client socket.
+ *
+ * This function is called when a POLLHUP event is detected on the client socket,
+ * indicating that the client has disconnected. It logs the disconnection details
+ * and updates the client state to indicate that the connection is closed.
+ *
+ * @note This function is called when a POLLHUP event is detected on the client socket.
+ *
+ */
 void Client::onPollHangUp()
 {
 
@@ -381,6 +448,20 @@ void Client::onPollHangUp()
 }
 
 
+
+/**
+ *
+ * @brief Checks if the client connection has timed out.
+ *
+ * This function calculates the timeout based on the client's current timeout state
+ * (keep-alive, header, or body) and the server's configured timeouts.
+ * It compares the current time with the calculated timeout time to determine if the connection has timed out.
+ *
+ * @param currentTime The current time to compare against the timeout time.
+ *
+ * @return true if the connection has timed out, false otherwise.
+ *
+ */
 bool Client::isTimedOut(const time_t currentTime) const
 {
 	time_t timeoutTime = m_time;

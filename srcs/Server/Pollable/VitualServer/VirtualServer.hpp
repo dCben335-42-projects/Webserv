@@ -2,11 +2,68 @@
 #define VIRTUAL_SERVER_HPP
 
 #include "Pollable.hpp"
-#include "Client.hpp"
 #include "Config.hpp"
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+class Client;
 
 class VirtualServer : public Pollable
 {
+	private:
+		class ServerException : public std::exception
+		{
+			protected:
+				std::string m_message;
+
+			public:
+				ServerException(const std::string &msg) : m_message(msg)
+				{
+				}
+
+				virtual ~ServerException() throw()
+				{
+				}
+
+				virtual const char *what() const throw()
+				{
+					return m_message.c_str();
+				}
+		};
+
+		class SocketCreationException : public ServerException
+		{
+			public:
+				SocketCreationException() : ServerException("Socket creation failed")
+				{
+				}
+		};
+
+		class SocketOptionException : public ServerException
+		{
+			public:
+				SocketOptionException() : ServerException("setsockopt failed")
+				{
+				}
+		};
+
+		class BindException : public ServerException
+		{
+			public:
+				BindException() : ServerException("Bind failed")
+				{
+				}
+		};
+
+		class ListenException : public ServerException
+		{
+			public:
+				ListenException() : ServerException("Listen failed")
+				{
+				}
+		};
+
+
 	private:
 		const Config  &m_config;
 		std::string	   m_bindIp;
@@ -14,11 +71,17 @@ class VirtualServer : public Pollable
 
 		bool setupSocket(const std::string &ip, unsigned short port);
 
+		uint32_t		convertIPv4(const std::string &ip);
+		struct in6_addr convertIPv6(const std::string &ip);
+
+		void setReusable(int sockFd);
+		void bindAndListen(int sockFd, const std::string &ip, unsigned short port);
+
+		void createClient(int clientFd);
+
 	public:
 		VirtualServer(const Config &config);
 		~VirtualServer();
-
-		Client *createClient(int clientFd);
 
 		const Config  &getConfig() const;
 		std::string	   getBindIp() const;

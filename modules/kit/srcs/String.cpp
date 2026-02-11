@@ -571,8 +571,6 @@ std::string String::htmlUnescape(const std::string &input)
 
 
 
-
-
 /**
  *
  * @brief Normalizes a file path by removing duplicate slashes and resolving '.' and '..' segments.
@@ -590,8 +588,14 @@ std::string String::htmlUnescape(const std::string &input)
  */
 std::string String::normalizePath(const std::string &path)
 {
+	if (path.empty())
+		return "/";
+
+	const size_t pathSize		  = path.size();
+	const bool	 hasTrailingSlash = (!path.empty() && path.at(pathSize - 1) == '/');
+
 	std::string result;
-	result.reserve(path.size());
+	result.reserve(pathSize);
 
 	const Vec<std::string> segments = split(removeDuplicateSlashes(path), "/");
 	Vec<std::string>	   stack;
@@ -599,29 +603,18 @@ std::string String::normalizePath(const std::string &path)
 	for (size_t i = 0; i < segments.size(); ++i)
 	{
 		if (segments[i] == ".")
-		{
 			continue;
-		}
 		else if (segments[i] == "..")
 		{
 			if (!stack.empty())
-			{
 				stack.pop_back();
-			}
 		}
-		else
-		{
-			stack.push_back(segments[i]);
-		}
+		else if (!segments[i].empty())
+			stack.push(segments[i]);
 	}
 	for (size_t i = 0; i < stack.size(); ++i)
-	{
+		result += "/" + stack[i];
+	if (result.empty() || hasTrailingSlash)
 		result += "/";
-		result += stack[i];
-	}
-	if (result.empty())
-	{
-		result = "/";
-	}
 	return result;
 }

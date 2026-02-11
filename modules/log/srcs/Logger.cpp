@@ -1,9 +1,13 @@
 #include "../includes/Logger.hpp"
 
-size_t		   Logger::m_indent = 0;
-Logger::Target Logger::m_target = Logger::Stdout;
-std::ofstream  Logger::m_file;
-Logger::Format Logger::m_format = Logger::Json;
+size_t		   Logger::m_indent	  = 0;
+Logger::Target Logger::m_target	  = Logger::Stdout;
+Logger::Format Logger::m_format	  = Logger::Json;
+Logger		   Logger::m_instance = Logger();
+
+
+std::ofstream					 *Logger::m_file = NULL;
+Map<std::string, std::ofstream *> Logger::m_openFiles;
 
 std::string Logger::m_customPrefix = "";
 std::string Logger::m_customColor  = "";
@@ -13,20 +17,20 @@ const std::string Logger::LOG_WARN_PREFIX  = LOG_DEFAULT_WARN_PREFIX;
 const std::string Logger::LOG_ERROR_PREFIX = LOG_DEFAULT_ERROR_PREFIX;
 const std::string Logger::LOG_DEBUG_PREFIX = LOG_DEFAULT_DEBUG_PREFIX;
 
-/**
- *
- * @brief Returns the singleton instance of the Logger class.
- *
- * @note It is used internally to ensure a single instance of Logger.
- *
- * @return A reference to the Logger instance.
- *
- */
-Logger &Logger::instance()
-{
-	static Logger instance;
-	return instance;
-}
+// /**
+//  *
+//  * @brief Returns the singleton instance of the Logger class.
+//  *
+//  * @note It is used internally to ensure a single instance of Logger.
+//  *
+//  * @return A reference to the Logger instance.
+//  *
+//  */
+// Logger &Logger::m_instance
+// {
+// 	static Logger instance;
+// 	return instance;
+// }
 
 /**
  *
@@ -42,7 +46,7 @@ std::ostream &Logger::stream()
 		case Stderr:
 			return std::cerr;
 		case File:
-			return m_file;
+			return *m_file;
 		default:
 			return std::cout;
 	}
@@ -62,7 +66,7 @@ std::ostream &Logger::stream()
 Logger &Logger::setCustomPrefix(const std::string &prefix)
 {
 	m_customPrefix = prefix;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -74,7 +78,7 @@ Logger &Logger::setCustomPrefix(const std::string &prefix)
 Logger &Logger::setCustomColor(const std::string &colorCode)
 {
 	m_customColor = colorCode;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -86,7 +90,7 @@ Logger &Logger::setCustomColor(const std::string &colorCode)
 Logger &Logger::setFormat(const Format format)
 {
 	m_format = format;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -98,28 +102,51 @@ Logger &Logger::setFormat(const Format format)
 Logger &Logger::setTarget(Target t)
 {
 	m_target = t;
-	return instance();
+	return m_instance;
 }
 /**
  *
  * @brief Sets the log file path and mode.
  *
  * @param path The file path to log to.
- * @param mode The file mode (Append or Truncate).
+ * @param mode An optional file mode to specify how the file should be opened (default is Append).
+ * 				- Append: Opens the file for appending, preserving existing content.
+ * 				- Truncate: Opens the file for writing, truncating existing content.
+ * @param key An optional key to identify the file stream (default is path).
  *
- * @note If a file is already open, it will be closed before opening the new file.
+ * @note If a file is already open, it will still be kept open and stored in the m_openFiles map.
+ * This allows for multiple log files to be used simultaneously by providing different keys.
  *
  */
-Logger &Logger::setFile(const std::string &path, const FileMode mode)
+Logger &Logger::setFile(
+	const std::string &path,
+	const FileMode	   mode,
+	const std::string &key)
 {
-	if (m_target == File)
-		closeFile();
+	const std::string &fileKey = key.empty() ? path : key;
+
+	if (m_openFiles.has(fileKey))
+	{
+		m_file	 = m_openFiles[fileKey];
+		m_target = File;
+		return m_instance;
+	}
+
+	std::ofstream *newFile = new std::ofstream();
+	m_openFiles.set(fileKey, newFile);
 	if (mode == Truncate)
-		m_file.open(path.c_str(), std::ofstream::out | std::ofstream::trunc);
+		newFile->open(path.c_str(), std::ofstream::out | std::ofstream::trunc);
 	else if (mode == Append)
-		m_file.open(path.c_str(), std::ofstream::out | std::ofstream::app);
-	m_target = File;
-	return instance();
+		newFile->open(path.c_str(), std::ofstream::out | std::ofstream::app);
+	if (!newFile->is_open())
+	{
+		delete newFile;
+		m_openFiles.remove(fileKey);
+		return m_instance;
+	}
+
+	m_file = newFile;
+	return m_instance;
 }
 
 
@@ -176,18 +203,48 @@ std::string Logger::getCustomColor()
  *
  * @brief Closes the log file if it is open.
  *
- * @note This function is called when changing the log target.
+ * @note This is meant to be used when you want to stop logging to a specific file but keep other files open.
  *
- * @note It should also be called before the program exits to ensure all data is flushed.
+ * @note If the current target is the file being closed, it will switch back to Stdout.
  *
  */
-Logger &Logger::closeFile()
+Logger &Logger::closeFile(const std::string &key)
 {
-	if (m_file.is_open())
-		m_file.close();
-	return instance();
+	if (key.empty() || !m_openFiles.has(key))
+		return m_instance;
+	std::ofstream *file = m_openFiles[key];
+	if (m_file == file)
+	{
+		m_file = NULL;
+		if (m_target == File)
+			m_target = Stdout;
+	}
+	file->close();
+	delete file;
+	m_openFiles.remove(key);
+	return m_instance;
 }
 
+
+/**
+ *
+ * @brief Closes all open log files.
+ *
+ * @note This function is called when changing the log target or before the program exits to ensure all data is flushed.
+ *
+ */
+Logger &Logger::closeFiles()
+{
+	if (m_target == File)
+		m_target = Stdout;
+	for (FileIt it = m_openFiles.begin(); it != m_openFiles.end(); ++it)
+	{
+		it->second->close();
+		delete it->second;
+	}
+	m_openFiles.clear();
+	return m_instance;
+}
 
 
 
@@ -201,7 +258,7 @@ Logger &Logger::closeFile()
 Logger &Logger::incrementIndent()
 {
 	++m_indent;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -214,7 +271,7 @@ Logger &Logger::decrementIndent()
 {
 	if (m_indent > 0)
 		--m_indent;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -253,7 +310,7 @@ std::string Logger::indent()
 Logger &Logger::log(const std::string &str)
 {
 	stream() << indent() << str << std::endl;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -265,7 +322,7 @@ Logger &Logger::log(const std::string &str)
 Logger &Logger::log(const char *cstr)
 {
 	stream() << indent() << cstr << std::endl;
-	return instance();
+	return m_instance;
 }
 /**
  *
@@ -277,7 +334,7 @@ Logger &Logger::log(const char *cstr)
 Logger &Logger::log(char c)
 {
 	stream() << indent() << c << std::endl;
-	return instance();
+	return m_instance;
 }
 
 

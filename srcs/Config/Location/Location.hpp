@@ -8,11 +8,12 @@
 class Config::Location
 {
 	private:
-		std::string m_path;
-		std::string m_root;
-		std::string m_alias;
-		std::string m_indexFile;
-		std::string m_upload;
+		std::string		 m_path;
+		std::string		 m_root;
+		std::string		 m_alias;
+		Vec<std::string> m_indexFiles;
+		std::string		 m_indexFile;
+		std::string		 m_upload;
 
 
 		const Config::CgiParams *m_cgi;
@@ -29,14 +30,12 @@ class Config::Location
 			const std::string		 path,
 			const std::string		 root,
 			const std::string		 alias,
-			const std::string		 indexFile,
 			const bool				 autoIndex,
 			const Config::CgiParams *cgi);
 		Location(
 			const std::string		 path,
 			const std::string		 root,
 			const std::string		 alias,
-			const std::string		 indexFile,
 			const Config::CgiParams *cgi);
 		~Location();
 
@@ -44,7 +43,7 @@ class Config::Location
 
 		const std::string		&getPath() const;
 		const std::string		&getRoot() const;
-		const std::string		&getIndexFile() const;
+		const Vec<std::string>	&getIndexFiles() const;
 		const std::string		&getAlias() const;
 		bool					 getAutoIndex() const;
 		const Config::CgiParams *getCgiParams() const;
@@ -68,6 +67,9 @@ class Config::Location
 		void setCgiParams(const Config::CgiParams *cgi);
 		void setMethods(const Set<HttpMethod> &methods);
 		void setUpload(const std::string &upload);
+
+		void setIndexFiles(const Vec<std::string> &indexFiles);
+		void addIndexFile(const std::string &indexFile);
 };
 
 std::ostream &operator<<(std::ostream &os, const Config::Location &location);

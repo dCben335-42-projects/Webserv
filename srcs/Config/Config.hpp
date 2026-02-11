@@ -22,6 +22,7 @@ class Config
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
 
+
 		size_t m_maxBodySize;
 
 	public:
@@ -54,8 +55,8 @@ class Config
 
 		size_t getMaxBodySize() const;
 
-		bool			  hasIndexFile(const std::string &locationPath) const;
-		const std::string getIndexFile(const std::string &locationPath) const;
+		bool					hasIndexFiles(const std::string &locationPath) const;
+		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;
 };
 
 

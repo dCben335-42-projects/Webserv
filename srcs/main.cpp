@@ -9,7 +9,6 @@ int main()
 		Logger::setFormat(Logger::Json);
 		EventLoop::init();
 		EventLoop::run();
-		EventLoop::destroy();
 		return 0;
 	}
 	catch (const std::exception &e)

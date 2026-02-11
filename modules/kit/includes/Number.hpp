@@ -16,6 +16,8 @@ class Number
 		static size_t	   toSizeT(const std::string &str);
 		static int		   toInt(const std::string &str);
 		static std::string bytesToHumanSize(const size_t bytes);
+
+		static int hexToInt(char c);
 };
 
 #endif

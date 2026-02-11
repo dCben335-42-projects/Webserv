@@ -65,3 +65,12 @@ std::string Number::bytesToHumanSize(const size_t bytes)
 	oss << std::fixed << std::setprecision(2) << size << " " << sizes[order];
 	return oss.str();
 }
+
+int Number::hexToInt(char c)
+{
+	if (c <= '9')
+		return c - '0';
+	if (c <= 'F')
+		return c - 'A' + 10;
+	return c - 'a' + 10;
+}

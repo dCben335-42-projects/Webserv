@@ -8,7 +8,6 @@
  * @param path The path of the location.
  * @param root The root directory of the location.
  * @param alias The alias of the location.
- * @param indexFile The index file of the location.
  * @param autoIndex A boolean indicating whether auto-indexing is enabled.
  * @param cgi A pointer to the CgiParams object for CGI settings.
  *
@@ -19,13 +18,12 @@ Config::Location::Location(
 	const std::string		 path,
 	const std::string		 root,
 	const std::string		 alias,
-	const std::string		 indexFile,
 	const bool				 autoIndex,
 	const Config::CgiParams *cgi) :
 	m_path(path),
 	m_root(root),
 	m_alias(alias),
-	m_indexFile(indexFile),
+	m_indexFiles(),
 	m_upload(""),
 	m_cgi(cgi),
 	m_hasMethods(false),
@@ -53,12 +51,11 @@ Config::Location::Location(
 	const std::string		 path,
 	const std::string		 root,
 	const std::string		 alias,
-	const std::string		 indexFile,
 	const Config::CgiParams *cgi) :
 	m_path(path),
 	m_root(root),
 	m_alias(alias),
-	m_indexFile(indexFile),
+	m_indexFiles(),
 	m_upload(""),
 	m_cgi(cgi),
 	m_hasMethods(false),
@@ -125,9 +122,9 @@ const std::string &Config::Location::getRoot() const
  * @return The index file as a constant reference to a string.
  *
  */
-const std::string &Config::Location::getIndexFile() const
+const Vec<std::string> &Config::Location::getIndexFiles() const
 {
-	return m_indexFile;
+	return m_indexFiles;
 }
 /**
  *
@@ -222,7 +219,7 @@ bool Config::Location::hasCgiParams() const
  */
 bool Config::Location::hasIndexFile() const
 {
-	return !m_indexFile.empty();
+	return !m_indexFiles.empty();
 }
 /**
  *
@@ -308,17 +305,21 @@ void Config::Location::setRoot(const std::string &root)
 {
 	m_root = root;
 }
+
+
 /**
  *
- * @brief Sets the index file of the location.
+ * @brief Sets the alias for the location.
  *
- * @param indexFile The index file to be set.
+ * @param alias The alias to be set.
  *
  */
-void Config::Location::setIndexFile(const std::string &indexFile)
+void Config::Location::setAlias(const std::string &alias)
 {
-	m_indexFile = indexFile;
+	m_alias = alias;
 }
+
+
 /**
  *
  * @brief Sets whether auto-indexing is enabled for the location.
@@ -342,6 +343,7 @@ void Config::Location::setCgiParams(const Config::CgiParams *cgi)
 {
 	m_cgi = cgi;
 }
+
 
 /**
  *
@@ -370,13 +372,40 @@ void Config::Location::setUpload(const std::string &upload)
 }
 
 
+/**
+ *
+ * @brief Sets the list of index files for the location.
+ *
+ * @param indexFiles A vector of strings representing the index files to be set.
+ *
+ */
+void Config::Location::setIndexFiles(const Vec<std::string> &indexFiles)
+{
+	m_indexFiles = indexFiles;
+}
+
+/**
+ *
+ * @brief Adds an index file to the location's list of index files.
+ *
+ * @param indexFile The index file to be added.
+ *
+ */
+void Config::Location::addIndexFile(const std::string &indexFile)
+{
+	m_indexFiles.push(indexFile);
+}
+
+
+#include "Logger.hpp"
+
 
 std::ostream &operator<<(std::ostream &os, const Config::Location &location)
 {
 	os << "Location(path: " << location.getPath();
 	os << ", root: " << location.getRoot();
 	os << ", alias: " << location.getAlias();
-	os << ", indexFile: " << location.getIndexFile();
+	os << ", indexFiles: " << Logger::get(location.getIndexFiles());
 	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
 	os << ")";
 	return os;

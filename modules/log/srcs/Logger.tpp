@@ -55,7 +55,7 @@ template <typename V>
 Logger &Logger::log(const V &v)
 {
 	stream() << indent() << Logger::get(v) << std::endl;
-	return instance();
+	return m_instance;
 }
 
 
@@ -75,7 +75,7 @@ Logger &Logger::log(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
-	return instance();
+	return m_instance;
 }
 
 
@@ -108,7 +108,7 @@ Logger &Logger::info(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
-	return instance();
+	return m_instance;
 }
 
 
@@ -142,7 +142,7 @@ Logger &Logger::error(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
-	return instance();
+	return m_instance;
 }
 
 
@@ -175,7 +175,7 @@ Logger &Logger::warn(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
-	return instance();
+	return m_instance;
 }
 
 /**
@@ -206,7 +206,7 @@ Logger &Logger::debug(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
-	return instance();
+	return m_instance;
 }
 
 
@@ -239,7 +239,7 @@ Logger &Logger::custom(V *ptr)
 	}
 	else
 		stream() << indent() << "null" << std::endl;
-	return instance();
+	return m_instance;
 }
 
 #endif

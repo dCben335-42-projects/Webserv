@@ -66,21 +66,27 @@ class Logger
 		const static std::string LOG_ERROR_PREFIX;
 		const static std::string LOG_DEBUG_PREFIX;
 
-		static size_t		 m_indent;
-		static Target		 m_target;
-		static std::ofstream m_file;
-		static Format		 m_format;
+		static size_t m_indent;
+		static Target m_target;
+		static Format m_format;
+		static Logger m_instance;
 
-		static Logger		&instance();
+
+		static std::ofstream					*m_file;
+		static Map<std::string, std::ofstream *> m_openFiles;
+
+		typedef Map<std::string, std::ofstream *>::iterator FileIt;
+
 		static std::ostream &stream();
 
 	public:
 		static Logger &setTarget(Target t);
-		static Logger &setFile(const std::string &path, const FileMode mode = Append);
+		static Logger &setFile(const std::string &path, const FileMode mode = Append, const std::string &key = "");
 		static Logger &setFormat(const Format format);
 		static Logger &setCustomPrefix(const std::string &prefix);
 		static Logger &setCustomColor(const std::string &colorCode);
-		static Logger &closeFile();
+		static Logger &closeFile(const std::string &key);
+		static Logger &closeFiles();
 
 		static Format	   getFormat();
 		static Target	   getTarget();
