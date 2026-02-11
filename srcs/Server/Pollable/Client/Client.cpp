@@ -10,10 +10,12 @@
 #include "EventLoop.hpp"
 #include "webserv.hpp"
 #include "HttpAuth.hpp"
+#include "httpHeaders.hpp"
 
-Client::Client(int fd, const Config &config) :
+Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
-	m_serverConfig(config)
+	m_serverConfig(config),
+	m_server(server)
 {
 	m_count = 0;
 	reset();
@@ -112,8 +114,22 @@ void Client::handlePostRequest()
 	if (target == "/auth/register" || target == "/auth/login")
 	{
 		HttpAuth auth;
-		auth.parse(m_req.getBody());
-		throw Http401Exception();
+		if (target == "/auth/register")
+		{
+			auth.parse(m_req.getBody(), HttpAuth::REGISTER);
+			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
+			m_res.setBody("Register Successful !");
+			m_res.setHeader(HEADER_SET_COOKIE, m_server.createCookie(urlEncoded.get(AUTH_NAME_KEY), urlEncoded.get(AUTH_PSWD_KEY)));
+			m_res.setStatusCode(201);
+		}
+		else if (target == "/auth/login")
+		{
+			auth.parse(m_req.getBody(), HttpAuth::LOGIN);
+			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
+			m_res.setBody("Login Successful !");
+			m_res.setHeader(HEADER_SET_COOKIE, m_server.findCookie(urlEncoded.get(AUTH_NAME_KEY), urlEncoded.get(AUTH_PSWD_KEY)));
+			m_res.setStatusCode(200);
+		}
 		return;
 	}
 	FileUpload file(m_req);
@@ -188,6 +204,15 @@ void Client::handleGetRequest(std::string ressourcePath)
 	const size_t	  targetLen		  = target.length();
 	bool			  isFolderRequest = targetLen && target[targetLen - 1] == '/';
 
+	if (target == "/cgi-bin/")
+	{
+		if (m_req.getHeader(HEADER_COOKIE).empty())
+			throw Http401Exception();
+		HttpCookie temp;
+		temp.parse(m_req.getHeader(HEADER_COOKIE));
+		if (!m_server.hasCookie(temp))
+			throw Http401Exception();
+	}
 	try
 	{
 		if (isFolderRequest && FileHandler::folderExists(ressourcePath))

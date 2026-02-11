@@ -9,16 +9,23 @@
 
 class HttpAuth
 {
+	public:
+		enum AuthMode
+		{
+			REGISTER,
+			LOGIN
+		};
+
 	private:
 		Map<std::string> m_urlEncoded;
-
-		void checkField(const std::string field);
+		void			 checkField(const std::string field);
 
 	public:
 		HttpAuth();
 		~HttpAuth();
 
-		void parse(const std::string &body);
+		void					parse(const std::string &body, AuthMode mode);
+		const Map<std::string> &getUrlEncoded() const;
 };
 
 #endif

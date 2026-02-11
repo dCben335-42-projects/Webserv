@@ -6,6 +6,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <arpa/inet.h>
+#include "httpExceptions.hpp"
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
@@ -124,7 +125,7 @@ Client *VirtualServer::createClient(int clientFd)
 	// 	close(clientFd);
 	// 	return NULL;
 	// }
-	Client *client = new Client(clientFd, m_config);
+	Client *client = new Client(clientFd, m_config, (*this));
 	return client;
 }
 
@@ -172,5 +173,33 @@ void VirtualServer::onPollHangUp()
 
 void VirtualServer::onTimeOut()
 {
-	
+}
+
+const std::string VirtualServer::createCookie(const std::string name, const std::string pswd)
+{
+	// Check if domain is the right string
+	for (Vec<HttpCookie>::iterator it = m_cookies.begin(); it != m_cookies.end(); it++)
+	{
+		if (name == it->getName())
+			throw Http409Exception();
+	}
+	HttpCookie newCookie(name, pswd, m_config.getDomain(), m_config.getPort());
+	newCookie.stringifyCookie();
+	m_cookies.push(newCookie);
+	return newCookie.getStringifiedCookie();
+}
+
+bool VirtualServer::hasCookie(const HttpCookie &cookie) const
+{
+	return m_cookies.contains(cookie);
+}
+
+const std::string &VirtualServer::findCookie(const std::string &name, const std::string &pswd) const
+{
+	for (Vec<HttpCookie>::const_iterator it = m_cookies.begin(); it != m_cookies.end(); it++)
+	{
+		if (it->getName() == name && it->getPswd() == pswd)
+			return it->getStringifiedCookie();
+	}
+	throw Http401Exception();
 }

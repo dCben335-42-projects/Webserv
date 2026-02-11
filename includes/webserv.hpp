@@ -47,6 +47,6 @@
 #define MURMUR_LAST_SHIFT 15
 
 // Cookie Duration in seconds
-#define COOKIE_EXPIRE_DURATION 3600
+#define COOKIE_EXPIRE_DURATION 36000
 
 #endif

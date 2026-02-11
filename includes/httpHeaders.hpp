@@ -34,6 +34,7 @@
 #define HEADER_ACCEPT_ENCODING "Accept-Encoding"
 #define HEADER_ACCEPT_CHARSET "Accept-Charset"
 #define HEADER_COOKIE "Cookie"
+#define HEADER_SET_COOKIE "Set-Cookie"
 #define HEADER_REFERER "Referer"
 #define HEADER_REMOTE_ADRESS "Remote Adress"
 #define HEADER_REMOTE_HOST "Remote Host"

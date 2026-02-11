@@ -17,7 +17,6 @@ void EventLoop::init()
 	// allowedMethods1.insert(HttpMethod::GET);
 	// allowedMethods1.insert(HttpMethod::POST);
 	// allowedMethods1.insert(HttpMethod::DELETE);
-	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
@@ -27,7 +26,8 @@ void EventLoop::init()
 	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", "", NULL);
 	Config::Location *loc8			  = new Config::Location("/cgi-bin", "", "files/www/usr/bin", "", true, NULL);
 	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", "", true, NULL);
-	Config::Location *loc10			  = new Config::Location("/auth", "", "files/www/auth", "", true, NULL);
+	Config::Location *loc10			  = new Config::Location("/auth/register", "", "files/www/auth/register.html", "", true, NULL);
+	Config::Location *loc11			  = new Config::Location("/auth/login", "", "files/www/auth/login.html", "", true, NULL);
 	loc9->setUpload("files/www/uploads/");
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
@@ -35,6 +35,7 @@ void EventLoop::init()
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
 	locations.set(loc10->getPath(), loc10);
+	locations.set(loc11->getPath(), loc11);
 	Config *config1 = new Config("0.0.0.0", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 	Signals::catchSigs();
