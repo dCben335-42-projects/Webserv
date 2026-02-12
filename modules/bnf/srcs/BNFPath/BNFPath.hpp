@@ -7,10 +7,10 @@
 class BNFPath
 {
 	public:
-		BNFPath(const ARulePath &p, size_t idx) : rulePath(p), prev(NULL), isInvalidedPath(false), index(idx)
+		BNFPath(const ARulePath &p, size_t idx, Vec<ARulePath> wordStartPath) : rulePath(p), prev(NULL), isInvalidedPath(false), index(idx), wordStartPath(wordStartPath)
 		{
 		}
-		BNFPath(const ARulePath &p, BNFPath *pr, size_t idx) : rulePath(p), prev(pr), isInvalidedPath(false), index(idx)
+		BNFPath(const ARulePath &p, BNFPath *pr, size_t idx, Vec<ARulePath> wordStartPath) : rulePath(p), prev(pr), isInvalidedPath(false), index(idx), wordStartPath(wordStartPath)
 		{
 		}
 		~BNFPath()
@@ -21,8 +21,8 @@ class BNFPath
 		Vec<BNFPath>	 next;
 		bool			 isInvalidedPath;
 		size_t			 index;
-
-		static bool compare(const ARulePath &a, const ARulePath &b)
+		Vec<ARulePath>	 wordStartPath;
+		static bool		 compare(const ARulePath &a, const ARulePath &b)
 		{
 			if (a.size() != b.size())
 				return false;
@@ -36,7 +36,7 @@ class BNFPath
 
 		BNFPath operator=(const BNFPath &other)
 		{
-			return BNFPath(other.rulePath, other.prev, other.index);
+			return BNFPath(other.rulePath, other.prev, other.index, other.wordStartPath);
 		}
 
 		bool operator==(const BNFPath &other) const
@@ -44,9 +44,9 @@ class BNFPath
 			return compare(rulePath, other.rulePath);
 		}
 
-		void setNext(const ARulePath &p, size_t idx)
+		void setNext(const ARulePath &p, size_t idx, Vec<ARulePath> wordStartPath)
 		{
-			next.push(BNFPath(p, this, idx));
+			next.push(BNFPath(p, this, idx, wordStartPath)); // next.push(BNFPath(p, this, idx));
 		}
 
 		bool hasAllNextInvalided()
@@ -81,10 +81,28 @@ class BNFPath
 
 		const BNFPath *getHead() const
 		{
-			const BNFPath *head = this;
+			const BNFPath *head	 = this;
+			size_t		   count = 1;
+
+			Logger::log("index: " + LoggerJson::get(head->index));
+
 
 			while (head->prev)
+			{
 				head = head->prev;
+				for (size_t i = 0; i < head->next.size(); ++i)
+				{
+					Logger::log("index: " + LoggerJson::get(head->index));
+					head->next[i].isInvalidedPath ? Logger::log("- invalided path") : Logger::log("- valid path");
+					// Logger::log("next index: " + LoggerJson::get(head->next[i].index));
+					// Logger::log("next rulePath: " + LoggerJson::get(head->next[i].rulePath));
+				}
+				// Logger::log();
+				count++;
+			}
+			// Logger::log("index: " + LoggerJson::get(head->index));
+
+			Logger::log("Path length: " + LoggerJson::get(count));
 			return head;
 		}
 };

@@ -1,9 +1,7 @@
-<head>		    ::= { A }
-
-A               ::= ('a' | 'b) 
+<head>		    ::= 'A' ba
 
 ba               ::= ( 'B' ) 'ba' YES
 
-YES             ::= 'YES'  { BOOL } 'off' BOOL
+YES             ::= 'YES'  { BOOL } BOOL
 
 BOOL            ::= ('on' | 'off')

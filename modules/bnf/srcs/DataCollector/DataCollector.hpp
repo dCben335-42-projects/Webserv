@@ -36,7 +36,7 @@ class DataCollector
 		DataCollector();
 		~DataCollector();
 
-		void generateJson(const BNFPath *cursor, Vec<std::string> lines);
+		void generateJson(const BNFPath *cursor, const std::string &strToParsed, Vec<std::string> lines);
 		void recurseJson(
 			size_t	index_rule,
 			AJson **json,

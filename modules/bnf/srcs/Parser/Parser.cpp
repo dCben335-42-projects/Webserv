@@ -39,8 +39,8 @@ void Parser::addPathPossibility(
 				mapPath.set(rule, ARulePaths());
 			ARulePath newPath = ARulePath::concat(prefix, path);
 			mapPath.get(rule).push_once(ARulePathInfo(newPath));
-			if (m_originelRules.has(*currentRule))
-				m_originelRules.get(*currentRule).push_once(newPath);
+			if (m_originelRules.has(*m_currentRule))
+				m_originelRules.get(*m_currentRule).push_once(newPath);
 		}
 	}
 
@@ -53,8 +53,8 @@ void Parser::addPathPossibility(
 				mapPath.set(rule, ARulePaths());
 			ARulePath newPath = ARulePath::concat(prefix, path);
 			mapPath.get(rule).push_once(ARulePathInfo(newPath));
-			if (m_originelRules.has(*currentRule))
-				m_originelRules.get(*currentRule).push_once(newPath);
+			if (m_originelRules.has(*m_currentRule))
+				m_originelRules.get(*m_currentRule).push_once(newPath);
 		}
 	}
 }
@@ -72,8 +72,8 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 					if (!mapPathNext.has(path[i]))
 						mapPathNext.set(path[i], ARulePaths());
 					mapPathNext.get(path[i]).push_once(ARulePathInfo(path.slice(i + 1)));
-					if (m_originelRules.has(*currentRule))
-						m_originelRules.get(*currentRule).push_once(path.slice(i + 1));
+					if (m_originelRules.has(*m_currentRule))
+						m_originelRules.get(*m_currentRule).push_once(path.slice(i + 1));
 				}
 				else
 					getPathsTerminalChars(path.slice(i + 1), terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
@@ -127,8 +127,8 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 			if (!mapPathNext.has(lastRule))
 				mapPathNext.set(lastRule, ARulePaths());
 			mapPathNext.get(lastRule).push_once(ARulePathInfo(nextRule));
-			if (m_originelRules.has(*currentRule))
-				m_originelRules.get(*currentRule).push_once(nextRule);
+			if (m_originelRules.has(*m_currentRule))
+				m_originelRules.get(*m_currentRule).push_once(nextRule);
 		}
 		else
 		{
@@ -140,6 +140,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 bool Parser::word(
 	TerminalCharInfo  *data,
 	const char		   c,
+	size_t			   idx,
 	const ARule *const rule,
 	ARulePathInfo	  *pathInfo,
 	const ARuleMap	  &mapPathCurrent,
@@ -155,9 +156,16 @@ bool Parser::word(
 		{
 			if (!m_originelRules.has(pathInfo->path))
 				m_originelRules.set(pathInfo->path, Vec<ARulePath>());
-			currentRule = &pathInfo->path;
-			Logger::log("Matched path: " + LoggerJson::get(data->terminal->getValue()));
-			m_lines.push_back(data->terminal->getValue());
+			m_currentRule = &pathInfo->path;
+			// Logger::log("Matched path: " + LoggerJson::get(data->terminal->getValue()));
+			// m_lines.push_back(data->terminal->getValue());
+
+			if ((int) idx - (int) data->position - 1 >= 0)
+			{
+				// Logger::log(idx - data->position - 1);
+				m_rules[idx - data->position - 1].push(pathInfo->path);
+			}
+
 			addNextPaths(mapPathCurrent, mapPathNext, pathInfo->path, rule);
 		}
 		else
@@ -190,7 +198,7 @@ bool Parser::word(
 	return false;
 }
 
-bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
+bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t idx)
 {
 	bool isValidWithCurrentPath = false;
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
@@ -216,7 +224,7 @@ bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARul
 					data = paths[pathIndex].terminalCharsInfo.at(indexElementTerminalChar);
 				}
 
-				if (word(&data, c, rule, &paths[pathIndex], mapPathCurrent, mapPathNext))
+				if (word(&data, c, idx, rule, &paths[pathIndex], mapPathCurrent, mapPathNext))
 					isValidWithCurrentPath = true;
 				indexElementTerminalChar++;
 			}
@@ -318,10 +326,12 @@ const BNFPath *Parser::resolvePath()
 	Vec<BNFPath *> basePaths;
 	Vec<BNFPath *> pathsTop;
 	Map<ARulePath, Vec<ARulePath> > *mapPrev = &m_indexedPaths[0];
+
+	Logger::log("size" + Logger::get(m_indexedPaths.size()));
 	typedef Map<ARulePath, Vec<ARulePath> >::const_iterator MapIt;
 	for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
 	{
-		basePaths.push_once(new BNFPath(it->first, 0));
+		basePaths.push_once(new BNFPath(it->first, 0, m_rules[0]));
 	}
 	pathsTop	 = basePaths;
 	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
@@ -355,7 +365,7 @@ const BNFPath *Parser::resolvePath()
 						{
 							if (found)
 								throw std::runtime_error("Ambiguous path resolution.");
-							pathsTop[l]->setNext(vecKeyValue, k);
+							pathsTop[l]->setNext(vecKeyValue, k, m_rules[k]);
 							found = true;
 						}
 					}
@@ -389,6 +399,8 @@ const BNFPath *Parser::resolvePath()
 		mapPrev = mapCurrent;
 	}
 
+	
+
 	return pathsTop[0]->getHead();
 }
 
@@ -411,13 +423,15 @@ void Parser::parse(const std::string &stringToParsed)
 	ARuleMap mapPathNext;
 	char	 c;
 
-	currentRule = NULL;
+	m_rules.resize(stringToParsed.size());
+
+	m_currentRule = NULL;
 	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
 		c = stringToParsed[i];
-		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
+		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext, i))
 			throw InvalidEntryException(std::string("Invalid character '") + c);
 		completePath();
 		if (i == stringToParsed.size() - 1)
@@ -432,5 +446,5 @@ void Parser::parse(const std::string &stringToParsed)
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 	DataCollector dataCollector;
-	dataCollector.generateJson(resolvePath(), m_lines);
+	dataCollector.generateJson(resolvePath(), stringToParsed, m_lines);
 }

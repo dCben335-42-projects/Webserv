@@ -278,6 +278,17 @@ int DataCollector::getFirstSequence(ARulePath path, size_t max_bottom) const
 	return -1;
 }
 
+bool hasWordStartPath(Vec<ARulePath> wordStartPath, ARulePath tempRulePath)
+{
+	for (size_t k = 0; k < wordStartPath.size(); ++k)
+	{
+		if (tempRulePath == wordStartPath[k])
+			return true;
+	}
+	return false;
+}
+
+
 bool DataCollector::findCharPos(
 	const std::vector<std::string> &lines,
 	size_t							globalIndex,
@@ -307,16 +318,52 @@ Vec<std::string> nlines;
 std::string		 str = "";
 
 // clang-format off
-void DataCollector::generateJson(const BNFPath *cursor, Vec<std::string> lines)
+void DataCollector::generateJson(const BNFPath *cursor, const std::string &strToParsed, Vec<std::string> lines)
 {
+	std::string str = "";
+	str += strToParsed[0];
+	lines.clear();
+	size_t l = 0;
+	Logger::log("val: " + LoggerJson::get(strToParsed[l]));
+
+
 	m_pathNexts.push_back(cursor->rulePath);
 	while (cursor && cursor->next.size() > 0)
 	{
+		l++;
+
+		Logger::log("------------");
+		// Logger::log(str);
 		for (size_t i = 0; i < cursor->next.size(); ++i)
+		{
 			if (!cursor->next[i].isInvalidedPath)
+			{
 				cursor = &cursor->next[i];
+				break;
+			}
+		}
 		m_pathNexts.push_back(cursor->rulePath);
+		ARulePath tempRulePath = cursor->rulePath;
+		Vec<ARulePath> wordStartPath = cursor->prev->wordStartPath;
+
+		if (hasWordStartPath(wordStartPath, tempRulePath))
+		{
+			// Logger::log(str);
+			lines.push_back(str); str = "";
+		}
+
+		// Vec<ARulePath> wordStartPath = cursor->wordStartPath;
+		Logger::log(cursor->index);
+		Logger::log("val2: " + LoggerJson::get(strToParsed[cursor->index]));
+
+		str += strToParsed[cursor->index];
 	}
+	lines.push_back(str); str = "";
+
+	Logger::log(lines);
+	(void)lines;
+
+
 	size_t i = 0;
 
 	// for (size_t i = 0; i < m_pathNexts.size(); ++i)

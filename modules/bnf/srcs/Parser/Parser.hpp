@@ -25,7 +25,7 @@ class Parser
 	private:
 		const SemanticDescriptor &m_semantic;
 
-		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t idx);
 
 		bool isFullyOptional(const ARule &rule) const;
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
@@ -45,6 +45,7 @@ class Parser
 		bool		   word(
 					  TerminalCharInfo	*data,
 					  const char		 c,
+					  size_t			 idx,
 					  const ARule *const rule,
 					  ARulePathInfo		*pathInfo,
 					  const ARuleMap	&mapPathCurrent,
@@ -63,11 +64,12 @@ class Parser
 
 		// clang-format off
 		Map<ARulePath, Vec<ARulePath> > m_originelRules;
-		ARulePath						  *currentRule;
+		ARulePath						  *m_currentRule;
 		// clang-format off
 		Vec<ARulePath >		  m_startingPaths;
 
 		Vec<std::string> m_lines;
+		Vec<Vec<ARulePath> > m_rules;
 		// Vec<const ARule const *> validatedRules;
 };
 
