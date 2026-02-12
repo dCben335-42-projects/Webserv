@@ -377,6 +377,8 @@ const BNFPath *Parser::resolvePath()
 		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
 		{
 			BNFPath &current = *pathsTop[i];
+			if (k == 16)
+				Logger::log("current path: " + LoggerJson::get(current.rulePath));
 
 			if (current.next.empty())
 			{
@@ -399,7 +401,7 @@ const BNFPath *Parser::resolvePath()
 		mapPrev = mapCurrent;
 	}
 
-	
+
 
 	return pathsTop[0]->getHead();
 }

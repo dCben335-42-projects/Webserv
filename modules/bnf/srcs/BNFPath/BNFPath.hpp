@@ -84,16 +84,19 @@ class BNFPath
 			const BNFPath *head	 = this;
 			size_t		   count = 1;
 
-			Logger::log("index: " + LoggerJson::get(head->index));
+			// Logger::log("index: " + LoggerJson::get(head->index));
 
 
 			while (head->prev)
 			{
-				head = head->prev;
+				head			  = head->prev;
+				size_t validPaths = 0;
 				for (size_t i = 0; i < head->next.size(); ++i)
 				{
-					Logger::log("index: " + LoggerJson::get(head->index));
-					head->next[i].isInvalidedPath ? Logger::log("- invalided path") : Logger::log("- valid path");
+					// Logger::log("index: " + LoggerJson::get(head->index));
+					validPaths += !head->next[i].isInvalidedPath;
+					if (validPaths > 1)
+						throw std::runtime_error("Ambiguous path resolution.");
 					// Logger::log("next index: " + LoggerJson::get(head->next[i].index));
 					// Logger::log("next rulePath: " + LoggerJson::get(head->next[i].rulePath));
 				}

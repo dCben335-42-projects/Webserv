@@ -2,6 +2,6 @@
 
 ba               ::= ( 'B' ) 'ba' YES
 
-YES             ::= 'YES'  { BOOL } BOOL
+YES             ::= 'YES' BOOL { BOOL }
 
 BOOL            ::= ('on' | 'off')

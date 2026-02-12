@@ -21,7 +21,7 @@ SemanticDescriptor::~SemanticDescriptor()
 	delete tree;
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
-		Vec<ConceptDef *> defs = (*it).second->getDefinitions();
+		Vec<ConceptDef *> &defs = (*it).second->getDefinitions();
 		for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
 			delete *conceptIt;
 		delete (*it).second;

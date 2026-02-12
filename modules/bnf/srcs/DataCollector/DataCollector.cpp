@@ -480,32 +480,32 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 
 
 
-	// AJson *json = NULL;
-	// m_continueBuffer = false;
-	// AJson *arr = AJson::createArray();
-	// m_mapJson.set(0, arr);
-    // m_cidx = 0;
-	// m_lines = lines;
+	AJson *json = NULL;
+	m_continueBuffer = false;
+	AJson *arr = AJson::createArray();
+	m_mapJson.set(0, arr);
+    m_cidx = 0;
+	m_lines = lines;
 
-	// while (m_cidx < m_pathNexts.size())
-	// {
-	// 	m_collectStrIdx = -1;
-    //     m_path = m_pathNexts[m_cidx];
-	// 	Logger::log("=======");
-	// 	recurseJson(0, &json, false);
-	// 	Logger::log("json : " + LoggerJson::get(json));
-	// 	if (!m_continueBuffer)
-	// 	{
-	// 		m_buffer.clear();
-	// 	}
-	// 	m_continueBuffer = false;
-	// 	if (json)
-	// 	{
-	// 		m_mapJson.get(0)->asArray()->push(json);
-	// 		json = NULL;
-	// 	}
-	// 	if (m_mapJson.has(0))
-	// 		Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
-	// }
+	while (m_cidx < m_pathNexts.size())
+	{
+		m_collectStrIdx = -1;
+        m_path = m_pathNexts[m_cidx];
+		Logger::log("=======");
+		recurseJson(0, &json, false);
+		Logger::log("json : " + LoggerJson::get(json));
+		if (!m_continueBuffer)
+		{
+			m_buffer.clear();
+		}
+		m_continueBuffer = false;
+		if (json)
+		{
+			m_mapJson.get(0)->asArray()->push(json);
+			json = NULL;
+		}
+		if (m_mapJson.has(0))
+			Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
+	}
 }
 
