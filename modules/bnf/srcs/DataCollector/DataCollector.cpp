@@ -34,14 +34,9 @@ bool DataCollector::isEnd(size_t idx) const
 {
 	for (size_t i = idx; i < m_path.size(); ++i)
 	{
-		Logger::log(m_path[i]->getConceptName());
 		if (!m_path[i]->isEnd())
-		{
-			Logger::log("not end : " + m_path[i]->getConceptName());
 			return false;
-		}
 	}
-	Logger::log("end");
 	return true;
 }
 
@@ -134,7 +129,7 @@ void DataCollector::appendBuffer()
 	m_cidx += m_lines[0].size();
 	m_buffer.append(m_lines[0]);
 	m_lines.remove(0);
-	Logger::log(m_buffer);
+	// Logger::log(m_buffer);
 }
 
 JsonArray *DataCollector::getObjectArray(const size_t idx, const std::string &key)
@@ -146,22 +141,9 @@ JsonArray *DataCollector::getObjectArray(const size_t idx, const std::string &ke
 
 
 
-void DataCollector::recurseJson(
-	size_t	idxRule,
-	AJson **json,
-	bool	hasCollectStr)
+void DataCollector::recurseJson(size_t idxRule, AJson **json)
 {
-	AJson *ptr = NULL;
-	if (!hasCollectStr)
-	{
-		hasCollectStr = isTerminalConcept(idxRule);
-		if (hasCollectStr)
-			m_collectStrIdx = idxRule;
-	}
-
-
-
-	// hasCollectStr	= hasCollectStr ? true : isTerminalConcept(idxRule);
+	AJson			  *ptr		= NULL;
 	size_t			   idxRuleC = idxRule + 1;
 	const std::string &keyC		= getKey(idxRuleC);
 	const std::string &key		= getKey(idxRule);
@@ -169,39 +151,6 @@ void DataCollector::recurseJson(
 	if (isLastRule(idxRule))
 	{
 		appendBuffer();
-
-		// if (!isEndOfPath() && hasCollectStr && !isEnd(m_collectStrIdx))
-		// {
-		// 	m_continueBuffer = true;
-		// 	Logger::log("continue buffer");
-		// }
-
-		// Logger::log("continue buffer");
-
-
-
-
-
-		//	Tous ce qui est sous un hasCollectStr doit sappend ensemble mais on doit differencier 2 repetition dune meme classe dans une sequence
-		//	Pour ce faire nous devons utiliser isEnd() sur tout element en dessous de la sequence (sil y en a une) dont lelement constitue le TerminalConcept
-		//
-		//
-		//
-		//
-		//
-		//
-
-		// Si index correspond encore a un index de char et que soit:
-		// - on est dans un TerminalConcept, que il n'y a pas de sequence sur le parent et que le parent on est toujours sur le meme noeud parent pour le prochain index
-
-		// if (!isEndOfPath() && ((hasCollectStr && !isSequence(idxRule - 1) && samePrec(idxRule)) || samePrec(idxRuleC)))
-		// 	m_continueBuffer = true;
-		// if (idxRule == 0 || (!isEndOfPath() && !samePrec(idxRule) && !hasCollectStr))
-		// {
-		// 	Logger::log("otheer");
-		// 	*json = AJson::createString(m_buffer);
-		// 	m_buffer.clear();
-		// }
 		if (idxRule == 0)
 		{
 			*json = AJson::createString(m_buffer);
@@ -209,8 +158,8 @@ void DataCollector::recurseJson(
 		}
 		return;
 	}
-	recurseJson(idxRuleC, &ptr, hasCollectStr);
-	Logger::log("----<UP>----");
+	recurseJson(idxRuleC, &ptr);
+	// Logger::log("----<UP>----");
 
 	if (ptr)
 	{
@@ -220,12 +169,9 @@ void DataCollector::recurseJson(
 		return;
 	}
 
-	if (!m_continueBuffer && hasCollectStr && !isEndOfPath() && samePrec(idxRule) && !isEnd(idxRule))
-		m_continueBuffer = true;
-
-	if (!(!m_continueBuffer && !hasCollectStr && idxRuleC < m_path.size() && !isTerminalConcept(idxRuleC)))
+	if (!(idxRuleC < m_path.size() && !isTerminalConcept(idxRuleC)))
 	{
-		if (!m_continueBuffer && idxRule == 0)
+		if (idxRule == 0)
 			*json = AJson::createString(m_buffer);
 		return;
 	}
@@ -356,8 +302,8 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	}
 	lines.push_back(str); str = "";
 
-	Logger::log(lines);
-	(void)lines;
+	// Logger::log(lines);
+	// (void)lines;
 
 	size_t i = 0;
 
@@ -411,11 +357,10 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 			}
 		}
 	}
-	Logger::log("----------------");
-	Logger::log(nlines);
+	// Logger::log("----------------");
+	// Logger::log(nlines);
 
 	AJson *json = NULL;
-	m_continueBuffer = false;
 	AJson *arr = AJson::createArray();
 	m_mapJson.set(0, arr);
     m_cidx = 0;
@@ -425,21 +370,17 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	{
 		m_collectStrIdx = -1;
         m_path = m_pathNexts[m_cidx];
-		Logger::log("=======");
-		recurseJson(0, &json, false);
-		Logger::log("json : " + LoggerJson::get(json));
-		if (!m_continueBuffer)
-		{
-			m_buffer.clear();
-		}
-		m_continueBuffer = false;
+		recurseJson(0, &json);
+		m_buffer.clear();
 		if (json)
 		{
 			m_mapJson.get(0)->asArray()->push(json);
 			json = NULL;
 		}
-		if (m_mapJson.has(0))
-			Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
+		// if (m_mapJson.has(0))
+		// 	Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
 	}
+	if (m_mapJson.has(0))
+		Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
 }
 

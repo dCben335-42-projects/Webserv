@@ -1,7 +1,28 @@
-<head>		    ::= 'A' ba
+<head>		    ::= 'event' TEST username
 
-ba               ::= ( 'B' ) 'ba' YES
 
-YES             ::= 'YES' BOOL { BOOL }
+TEST            ::= SPACE BOOL SPACE
 
-BOOL            ::= ('on' | 'off')
+SPACE           ::= ' '
+BOOL 			::= ( 'on' | 'off' )
+
+
+
+username        ::= WWW name '-' family
+
+name            ::= { LOCASE_LETTER | UPCASE_LETTER | family }
+
+family          ::= DIGIT
+
+tiret           ::= '_' '8' '5'
+
+WWW             ::= 'www' DTM '-'
+
+DTM             ::= '-' 'data'
+
+LOCASE_LETTER   ::= ( 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' )
+UPCASE_LETTER 	::= ( 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' )
+
+
+
+DIGIT			::= ( '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )

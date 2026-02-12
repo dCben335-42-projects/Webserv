@@ -27,7 +27,6 @@ class DataCollector
 		ARulePath			   m_path;
 		Map<size_t, ARulePath> m_pathStack;
 		Map<size_t, AJson *>   m_mapJson;
-		bool				   m_continueBuffer;
 		Vec<std::string>	   m_lines;
 		Vec<const ARule *>	   m_collectStr;
 		int					   m_collectStrIdx;
@@ -39,8 +38,7 @@ class DataCollector
 		void generateJson(const BNFPath *cursor, const std::string &strToParsed, Vec<std::string> lines);
 		void recurseJson(
 			size_t	index_rule,
-			AJson **json,
-			bool	hasCollectStr);
+			AJson **json);
 
 		bool			   samePrec(const size_t n) const;
 		bool			   isEndOfPath() const;

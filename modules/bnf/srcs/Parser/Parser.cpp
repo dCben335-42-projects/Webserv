@@ -327,7 +327,6 @@ const BNFPath *Parser::resolvePath()
 	Vec<BNFPath *> pathsTop;
 	Map<ARulePath, Vec<ARulePath> > *mapPrev = &m_indexedPaths[0];
 
-	Logger::log("size" + Logger::get(m_indexedPaths.size()));
 	typedef Map<ARulePath, Vec<ARulePath> >::const_iterator MapIt;
 	for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
 	{
@@ -377,8 +376,6 @@ const BNFPath *Parser::resolvePath()
 		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
 		{
 			BNFPath &current = *pathsTop[i];
-			if (k == 16)
-				Logger::log("current path: " + LoggerJson::get(current.rulePath));
 
 			if (current.next.empty())
 			{
