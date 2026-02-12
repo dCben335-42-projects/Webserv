@@ -1,7 +1,6 @@
 print("""HTTP/1.1 200 OK\r
 Content-Type: text/html\r
 \r
-\r
 <html>
 <head>
 <title>CGI Script</title>

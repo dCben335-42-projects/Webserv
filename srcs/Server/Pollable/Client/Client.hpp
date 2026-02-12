@@ -20,13 +20,14 @@ class Client : public Pollable
 		};
 
 	private:
-		const Config &m_serverConfig;
-		HttpRequest	  m_req;
-		HttpResponse  m_res;
-		time_t		  m_time;
-		TimeoutState  m_timeoutState;
-		bool		  m_shouldClose;
-		size_t		  m_count;
+		const Config  &m_serverConfig;
+		VirtualServer &m_server;
+		HttpRequest	   m_req;
+		HttpResponse   m_res;
+		time_t		   m_time;
+		TimeoutState   m_timeoutState;
+		bool		   m_shouldClose;
+		size_t		   m_count;
 
 		void reset();
 
@@ -43,7 +44,7 @@ class Client : public Pollable
 		bool prepareResponse();
 
 	public:
-		Client(int fd, const Config &config);
+		Client(int fd, const Config &config, VirtualServer &server);
 		~Client();
 
 		const HttpRequest &getRequest() const;

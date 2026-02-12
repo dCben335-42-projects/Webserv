@@ -2,10 +2,14 @@
 #include "EventLoop.hpp"
 #include <fcntl.h>
 #include "Number.hpp"
-#include "Client.hpp"
 #include <unistd.h>
 #include "Logger.hpp"
+#include <arpa/inet.h>
+#include "httpExceptions.hpp"
+#include "Date.hpp"
 
+#include "Client.hpp"
+#include "HttpUser.hpp"
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
@@ -281,16 +285,14 @@ void VirtualServer::createClient(int clientFd)
 		std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
 		close(clientFd);
 	}
-	new Client(clientFd, m_config);
+	new Client(clientFd, m_config, *this);
 }
-
 
 bool VirtualServer::isTimedOut(const time_t currentTime) const
 {
 	(void) currentTime;
 	return false;
 }
-
 
 /**
  *
@@ -328,4 +330,47 @@ void VirtualServer::onPollHangUp()
 
 void VirtualServer::onTimeOut()
 {
+}
+
+const std::string VirtualServer::createCookie(const std::string name, const std::string pswd)
+{
+	// Check if domain is the right string
+	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
+	{
+		if (name == it->getName())
+			throw Http409Exception();
+	}
+	HttpUser newUser(name, pswd, m_config.getDomain(), m_config.getPort());
+	newUser.stringifyCookie();
+	m_users.push(newUser);
+	return newUser.getStringifiedCookie();
+}
+
+bool VirtualServer::hasUser(const std::string &hash) const
+{
+	AuthToken token(hash);
+	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
+	{
+		if (token == it->getToken() && it->hasValidToken())
+			return true;
+	}
+	return false;
+}
+
+#include "Logger.hpp"
+const std::string &VirtualServer::findCookie(const std::string &name, const std::string &pswd)
+{
+	for (UserIt it = m_users.begin(); it != m_users.end(); it++)
+	{
+		if (it->getName() == name && it->getPswd() == Number::toString(AuthToken::computeHash(pswd + it->getSalt())))
+		{
+			if (!it->hasValidToken())
+			{
+				it->refreshToken();
+				Logger::error("Expired Cookie, created a new one");
+			}
+			return it->getStringifiedCookie();
+		}
+	}
+	throw Http401Exception();
 }

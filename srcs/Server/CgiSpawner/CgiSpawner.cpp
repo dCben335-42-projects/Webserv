@@ -54,18 +54,17 @@ void CgiSpawner::spawn()
 
 void CgiSpawner::setupPipes()
 {
-	// TODO maybe need to throw ?
 	if (pipe(m_stdinPipe) == -1)
 	{
-		std::cerr << "Pipe creation failed" << std::endl;
 		m_stdinPipe[0] = -1;
 		m_stdinPipe[1] = -1;
+		throw Http500Exception();
 	}
 	if (pipe(m_stdoutPipe) == -1)
 	{
-		std::cerr << "Pipe creation failed" << std::endl;
 		m_stdoutPipe[0] = -1;
 		m_stdoutPipe[1] = -1;
+		throw Http500Exception();
 	}
 }
 
@@ -149,7 +148,6 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 		if (!m_activeBinMap.has(fileExtension))
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
-		// TODO access() binary in parsing
 		if (access(m_binPath.c_str(), X_OK) == -1)
 			throw Http500Exception();
 		m_scriptPath = m_req.buildResourcePath(i);

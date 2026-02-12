@@ -18,6 +18,27 @@ std::string Number::toString(const int number)
 	return oss.str();
 }
 
+std::string Number::toString(const unsigned int number)
+{
+	std::ostringstream oss;
+	oss << number;
+	return oss.str();
+}
+
+std::string Number::toString(const size_t number)
+{
+	std::ostringstream oss;
+	oss << number;
+	return oss.str();
+}
+
+std::string Number::toString(const long number)
+{
+	std::ostringstream oss;
+	oss << number;
+	return oss.str();
+}
+
 int Number::fromString(const std::string &str)
 {
 	return std::atoi(str.c_str());

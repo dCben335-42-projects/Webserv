@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 
 class Client;
+class HttpUser;
 
 class VirtualServer : public Pollable
 {
@@ -68,6 +69,7 @@ class VirtualServer : public Pollable
 		const Config  &m_config;
 		std::string	   m_bindIp;
 		unsigned short m_bindPort;
+		Vec<HttpUser>  m_users;
 
 		bool setupSocket(const std::string &ip, unsigned short port);
 
@@ -77,7 +79,9 @@ class VirtualServer : public Pollable
 		void setReusable(int sockFd);
 		void bindAndListen(int sockFd, const std::string &ip, unsigned short port);
 
-		void createClient(int clientFd);
+		void								  createClient(int clientFd);
+		typedef Vec<HttpUser>::iterator		  UserIt;
+		typedef Vec<HttpUser>::const_iterator UserCIt;
 
 	public:
 		VirtualServer(const Config &config);
@@ -94,6 +98,10 @@ class VirtualServer : public Pollable
 
 		bool isTimedOut(const time_t currentTime) const;
 		void onTimeOut();
+
+		const std::string  createCookie(const std::string name, const std::string pswd);
+		bool			   hasUser(const std::string &hash) const;
+		const std::string &findCookie(const std::string &name, const std::string &pswd);
 };
 
 #endif

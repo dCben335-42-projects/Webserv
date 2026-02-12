@@ -141,7 +141,17 @@ ssize_t HttpRequest::readOnce(int socketFd)
 	return bytesRead;
 }
 
+std::string HttpRequest::getCookieValue(const std::string &key) const
+{
+	if (!m_cookieValues.has(key))
+		return "";
+	return m_cookieValues.get(key);
+}
 
+bool HttpRequest::hasCookieValue(const std::string &key) const
+{
+	return m_cookieValues.has(key);
+}
 
 /**
  *
@@ -174,10 +184,27 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 		}
 		// std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
+		parseCookie();
 	}
 	catch (const std::invalid_argument &e)
 	{
 		throw Http400Exception(e.what());
+	}
+	return *this;
+}
+
+
+HttpRequest &HttpRequest::parseCookie()
+{
+	if (!m_headers.has(HEADER_COOKIE))
+		return *this;
+	const Vec<std::string> keyValues = String::splitPattern(getHeader(HEADER_COOKIE), COOKIE_FIELD_SEP);
+	for (Vec<std::string>::const_iterator it = keyValues.begin(); it != keyValues.end(); it++)
+	{
+		const size_t equalIndex = it->find(COOKIE_VALUE_SEP);
+		if (equalIndex == std::string::npos)
+			throw std::invalid_argument("Malformed Cookie");
+		m_cookieValues.set(it->substr(0, equalIndex), it->substr(equalIndex + 1));
 	}
 	return *this;
 }
@@ -356,9 +383,6 @@ std::string HttpRequest::readMethodString(const std::string &currentRawStr) cons
 		return requestLine.substr(0, methodEnd);
 	return "";
 }
-
-
-
 
 
 /**

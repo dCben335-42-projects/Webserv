@@ -18,7 +18,6 @@ void EventLoop::init()
 	// allowedMethods1.insert(HttpMethod::GET);
 	// allowedMethods1.insert(HttpMethod::POST);
 	// allowedMethods1.insert(HttpMethod::DELETE);
-	// binmap1.set(".bla", "/home/tlutz/Documents/School/M5/Webserv/files/www/website/cgi_tester");
 	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
@@ -30,12 +29,16 @@ void EventLoop::init()
 	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", true, NULL);
 
 	defaultLocation->addIndexFile("index.htms");
+	Config::Location *loc10 = new Config::Location("/auth/register", "", "files/www/auth/register.html", true, NULL);
+	Config::Location *loc11 = new Config::Location("/auth/login", "", "files/www/auth/login.html", true, NULL);
 	loc9->setUpload("files/www/uploads/");
 	Map<const Config::Location *> locations;
 	locations.set(loc1->getPath(), loc1);
 	locations.set(loc2->getPath(), loc2);
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
+	locations.set(loc10->getPath(), loc10);
+	locations.set(loc11->getPath(), loc11);
 	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 	Signals::catchSigs();
@@ -85,6 +88,7 @@ void EventLoop::run()
 {
 	int ready;
 
+	std::srand(std::time(0));
 	while (true)
 	{
 		updatePollStatus();
