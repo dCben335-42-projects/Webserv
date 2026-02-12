@@ -58,7 +58,7 @@ class DataCollector
 		int				   getLastSequence(Vec<ARulePath> pathStack, size_t idx) const;
 		bool			   isEndP(ARulePath path, size_t idx) const;
 		int				   getFirstTerminalConcept(ARulePath path) const;
-		bool			   samePrecP(ARulePath path1, ARulePath path2, const size_t n) const;
+		bool			   samePrecP(const ARulePath &path1, const ARulePath &path2, const size_t n) const;
 		int				   getFirstSequence(ARulePath path, size_t max_bottom) const;
 		bool			   findCharPos(
 						  const std::vector<std::string> &lines,

@@ -1,7 +1,7 @@
-<head>		    ::= 'event' TEST username
+<head>		    ::= 'server' TEST username
 
 
-TEST            ::= SPACE BOOL SPACE
+TEST            ::= SPACE ( BOOL SPACE ) tiret
 
 SPACE           ::= ' '
 BOOL 			::= ( 'on' | 'off' )
@@ -14,7 +14,7 @@ name            ::= { LOCASE_LETTER | UPCASE_LETTER | family }
 
 family          ::= DIGIT
 
-tiret           ::= '_' '8' '5'
+tiret           ::= ( '_' '8' '5' ) [ 'O' ]
 
 WWW             ::= 'www' DTM '-'
 

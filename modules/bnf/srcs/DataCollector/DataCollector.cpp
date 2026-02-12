@@ -19,14 +19,16 @@ bool DataCollector::samePrec(const size_t n) const
 	return true;
 }
 
-bool DataCollector::samePrecP(ARulePath path1, ARulePath path2, const size_t n) const
+bool DataCollector::samePrecP(const ARulePath &path1, const ARulePath &path2, const size_t n) const
 {
 	if (path1.size() < n || path2.size() < n)
 		return false;
-
 	for (size_t i = 0; i < n; ++i)
+	{
+		Logger::log(path2[i]);
 		if (path1[i] != path2[i])
 			return false;
+	}
 	return true;
 }
 
@@ -159,7 +161,6 @@ void DataCollector::recurseJson(size_t idxRule, AJson **json)
 		return;
 	}
 	recurseJson(idxRuleC, &ptr);
-	// Logger::log("----<UP>----");
 
 	if (ptr)
 	{
@@ -208,6 +209,10 @@ void DataCollector::recurseJson(size_t idxRule, AJson **json)
 		movJson(target, idxRuleC);
 	}
 }
+
+
+
+
 
 int DataCollector::getFirstTerminalConcept(ARulePath path) const
 {
@@ -302,7 +307,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	}
 	lines.push_back(str); str = "";
 
-	// Logger::log(lines);
+	Logger::log(lines);
 	// (void)lines;
 
 	size_t i = 0;
@@ -317,15 +322,19 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 			size_t size = lines[line].size();
 			str.append(lines[line]);
 			size_t tempI = i + size;
-			if (getFirstTerminalConcept(m_pathNexts[i]) < 0)
+			if (tempI >= m_pathNexts.size() || getFirstTerminalConcept(m_pathNexts[i]) < 0)
 			{
 				i = tempI;
-				nlines.push_back(str); str = "";
+				nlines.push_back(str); 
+				str = "";
 				continue;
 			}
 			else
 			{
 				size_t index = getFirstTerminalConcept(m_pathNexts[i]);
+				Logger::error(m_pathNexts[tempI]);
+		
+
 				if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
 				{
 					if (index - 1 < 0)
@@ -362,6 +371,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 
 	AJson *json = NULL;
 	AJson *arr = AJson::createArray();
+	// BUG pas de tableau creer si repetition sur la <head> line
 	m_mapJson.set(0, arr);
     m_cidx = 0;
 	m_lines = nlines;

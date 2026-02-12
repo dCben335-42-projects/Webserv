@@ -431,7 +431,7 @@ void Parser::parse(const std::string &stringToParsed)
 	{
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext, i))
-			throw InvalidEntryException(std::string("Invalid character '") + c);
+			throw InvalidEntryException(std::string("Invalid character '") + c + "' at position " + Logger::get(i) + ".");
 		completePath();
 		if (i == stringToParsed.size() - 1)
 			break;

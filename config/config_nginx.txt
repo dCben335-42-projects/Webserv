@@ -1,7 +1,7 @@
 <head>			::= { statement | 'evnt' }
 			
 
-statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
+statement 		::= ( 0>user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
 user_stmt		::= 'user' SPACE 97>user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
