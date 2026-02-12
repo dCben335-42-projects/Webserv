@@ -84,6 +84,7 @@ void EventLoop::run()
 {
 	int ready;
 
+	std::srand(std::time(0));
 	while (true)
 	{
 		updatePollStatus();

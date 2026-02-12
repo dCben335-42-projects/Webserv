@@ -1,9 +1,11 @@
-#include "HttpCookie.hpp"
+#include "HttpUser.hpp"
 #include "Number.hpp"
 #include "webserv.hpp"
 #include "String.hpp"
 #include "httpExceptions.hpp"
 #include "Date.hpp"
+#include <cstdlib>
+#include "Logger.hpp"
 
 HttpCookie::HttpCookie(
 	const std::string name,
@@ -14,12 +16,15 @@ HttpCookie::HttpCookie(
 	m_pswd(pswd),
 	m_serverName(serverName),
 	m_serverPort(serverPort),
-	m_stringifiedCookie("")
+	m_stringifiedCookie(""),
+	m_salt("")
 {
 	m_creationDate	 = std::time(0);
 	m_expirationDate = m_creationDate + COOKIE_EXPIRE_DURATION;
-	m_hashInt		 = computeHash(m_uname + m_serverName + Number::toString(m_serverPort) + Number::toString(m_creationDate));
-	m_hashStr		 = Number::toString(m_hashInt);
+	generateEncryptedPassword();
+	m_hashInt = computeHash(m_uname + m_serverName + Number::toString(m_serverPort) + Number::toString(m_creationDate));
+	m_hashStr = Number::toString(m_hashInt);
+	Logger::error(m_pswd);
 }
 
 HttpCookie::HttpCookie() :
@@ -29,7 +34,8 @@ HttpCookie::HttpCookie() :
 	m_serverPort(0),
 	m_stringifiedCookie(""),
 	m_hashStr(""),
-	m_hashInt(0)
+	m_hashInt(0),
+	m_salt("")
 {
 	m_creationDate	 = std::time(0);
 	m_expirationDate = m_creationDate + COOKIE_EXPIRE_DURATION;
@@ -54,21 +60,29 @@ const std::string &HttpCookie::getPswd() const
 	return m_pswd;
 }
 
-bool HttpCookie::operator==(const HttpCookie &obj) const
+const std::string &HttpCookie::getSalt() const
 {
-	if (m_hashStr == obj.m_hashStr)
-		return true;
-	return false;
+	return m_salt;
 }
 
-unsigned int HttpCookie::computeHash(const std::string str)
+const time_t &HttpCookie::getExpDate() const
 {
-	unsigned int hash = FNV_OFFSET_BASIS_32;
+	return m_expirationDate;
+}
+
+bool HttpCookie::operator==(const HttpCookie &obj) const
+{
+	return m_hashStr == obj.m_hashStr;
+}
+
+uint64_t HttpCookie::computeHash(const std::string str) const
+{
+	uint64_t hash = FNV_OFFSET_BASIS_64;
 
 	for (std::string::size_type i = 0; i < str.size(); i++)
 	{
 		hash ^= static_cast<unsigned char>(str[i]);
-		hash *= FNV_PRIME_32;
+		hash *= FNV_PRIME_64;
 	}
 	hash ^= (hash >> MURMUR_FIRST_SHIFT);
 	hash *= MURMUR_HASH;
@@ -98,4 +112,13 @@ void HttpCookie::stringifyCookie()
 	m_stringifiedCookie += COOKIE_FIELD_SEP COOKIE_KEY_PATH COOKIE_VALUE_SEP COOKIE_VALUE_PATH;
 	m_stringifiedCookie += COOKIE_FIELD_SEP COOKIE_KEY_EXPIRES				 COOKIE_VALUE_SEP + Date::toHttpDateFormat(gmtime(&m_expirationDate));
 	m_stringifiedCookie += COOKIE_FIELD_SEP									 COOKIE_KEY_HTTPONLY;
+}
+
+void HttpCookie::generateEncryptedPassword()
+{
+	uint32_t salt		= std::rand();
+	uint32_t secondSalt = std::rand();
+
+	m_salt = Number::toString(salt) + Number::toString(secondSalt);
+	m_pswd = Number::toString(computeHash(m_pswd + m_salt));
 }

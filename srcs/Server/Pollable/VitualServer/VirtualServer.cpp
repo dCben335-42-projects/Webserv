@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 #include "httpExceptions.hpp"
+#include "Date.hpp"
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
@@ -63,8 +64,6 @@ const Config &VirtualServer::getConfig() const
 	return m_config;
 }
 
-
-
 /**
  *
  * @brief Sets up the server socket for the virtual server.
@@ -115,27 +114,23 @@ bool VirtualServer::setupSocket(const std::string &ip, unsigned short port)
 	return true;
 }
 
-
-
 Client *VirtualServer::createClient(int clientFd)
 {
-	// if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
-	// {
-	// 	std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
-	// 	close(clientFd);
-	// 	return NULL;
-	// }
+	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
+	{
+		std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
+		close(clientFd);
+		return NULL;
+	}
 	Client *client = new Client(clientFd, m_config, (*this));
 	return client;
 }
-
 
 bool VirtualServer::isTimedOut(const time_t currentTime) const
 {
 	(void) currentTime;
 	return false;
 }
-
 
 /**
  *
@@ -198,7 +193,7 @@ const std::string &VirtualServer::findCookie(const std::string &name, const std:
 {
 	for (Vec<HttpCookie>::const_iterator it = m_cookies.begin(); it != m_cookies.end(); it++)
 	{
-		if (it->getName() == name && it->getPswd() == pswd)
+		if (it->getName() == name && it->getPswd() == Number::toString(it->computeHash(pswd + it->getSalt())))
 			return it->getStringifiedCookie();
 	}
 	throw Http401Exception();

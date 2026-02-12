@@ -1,10 +1,11 @@
-#ifndef HTTPCOOKIE_HPP
-#define HTTPCOOKIE_HPP
+#ifndef HTTPUSER_HPP
+#define HTTPUSER_HPP
 
 #include <string>
 #include <ctime>
 
 #include "Map.hpp"
+#include <stdint.h>
 
 class HttpCookie
 {
@@ -17,9 +18,9 @@ class HttpCookie
 		time_t		   m_expirationDate;
 		std::string	   m_stringifiedCookie;
 
-		std::string	 m_hashStr;
-		unsigned int m_hashInt;
-		unsigned int computeHash(const std::string str);
+		std::string m_hashStr;
+		uint64_t	m_hashInt;
+		std::string m_salt;
 
 	public:
 		HttpCookie(const std::string name, const std::string pswd, const std::string serverName, unsigned short serverPort);
@@ -31,7 +32,11 @@ class HttpCookie
 		const std::string &getStringifiedCookie() const;
 		const std::string &getName() const;
 		const std::string &getPswd() const;
+		const std::string &getSalt() const;
+		const time_t	  &getExpDate() const;
 
+		void	 generateEncryptedPassword();
+		uint64_t computeHash(const std::string str) const;
 
 		bool operator==(const HttpCookie &obj) const;
 };

@@ -148,7 +148,6 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 		if (!m_activeBinMap.has(fileExtension))
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
-		// TODO access() binary in parsing
 		if (access(m_binPath.c_str(), X_OK) == -1)
 			throw Http500Exception();
 		m_scriptPath = m_req.buildResourcePath(i);

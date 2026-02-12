@@ -4,7 +4,7 @@
 #include "Pollable.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
-#include "HttpCookie.hpp"
+#include "HttpUser.hpp"
 
 class VirtualServer : public Pollable
 {

@@ -17,16 +17,16 @@
 #define PROTOCOL "HTTP/1.1"
 #define GATEWAY_INTERFACE "CGI/1.1"
 
-#define READ_BUFFER_SIZE 8192
-#define WRITE_BUFFER_SIZE 8192
-#define READ_CGI_BUFFER_SIZE 8192
-#define WRITE_CGI_BUFFER_SIZE 8192
+#define READ_BUFFER_SIZE 8192u
+#define WRITE_BUFFER_SIZE 8192u
+#define READ_CGI_BUFFER_SIZE 8192u
+#define WRITE_CGI_BUFFER_SIZE 8192u
 
 #define FALLBACK_INDEX "index.html"
-#define FALLBACK_KEEP_ALIVE_TIMEOUT 50
-#define FALLBACK_HEADER_TIMEOUT 5
-#define FALLBACK_BODY_TIMEOUT 5
-#define POLL_TIMEOUT 500
+#define FALLBACK_KEEP_ALIVE_TIMEOUT 50u
+#define FALLBACK_HEADER_TIMEOUT 5u
+#define FALLBACK_BODY_TIMEOUT 5u
+#define POLL_TIMEOUT 500u
 
 // ANCHOR   Std Colors
 #define RED "\033[31m"
@@ -38,16 +38,19 @@
 #define MAGENTA "\033[35m"
 
 // Fowler-Noll-Vo magic constants
-#define FNV_PRIME_32 16777619
-#define FNV_OFFSET_BASIS_32 2166136261
+#define FNV_PRIME_32 16777619u
+#define FNV_OFFSET_BASIS_32 2166136261u
+// Same but for 64bit encryption
+#define FNV_OFFSET_BASIS_64 14695981039346656037ul
+#define FNV_PRIME_64 1099511628211ul
 
 // MurmurHash constant (that happens to work well apparently)
-#define MURMUR_HASH 1540483477
-#define MURMUR_FIRST_SHIFT 13
-#define MURMUR_LAST_SHIFT 15
+#define MURMUR_HASH 1540483477u
+#define MURMUR_FIRST_SHIFT 13u
+#define MURMUR_LAST_SHIFT 15u
 
 // Cookie Duration in seconds
-#define COOKIE_EXPIRE_DURATION 36000
+#define COOKIE_EXPIRE_DURATION 3600u
 
 // Usefuls Cookies defines
 #define COOKIE_FIELD_SEP "; "
