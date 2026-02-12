@@ -106,7 +106,7 @@ Logger &Logger::setTarget(Target t)
 }
 /**
  *
- * @brief Sets the log file path and mode.
+ * @brief Opens a log file and sets it as the current logging target.
  *
  * @param path The file path to log to.
  * @param mode An optional file mode to specify how the file should be opened (default is Append).
@@ -118,10 +118,10 @@ Logger &Logger::setTarget(Target t)
  * This allows for multiple log files to be used simultaneously by providing different keys.
  *
  */
-Logger &Logger::setFile(
+Logger &Logger::openFile(
 	const std::string &path,
 	const FileMode	   mode,
-	const std::string &key)
+	const std::string  key)
 {
 	const std::string &fileKey = key.empty() ? path : key;
 
@@ -144,8 +144,46 @@ Logger &Logger::setFile(
 		m_openFiles.remove(fileKey);
 		return m_instance;
 	}
+	m_target = File;
+	m_file	 = newFile;
+	return m_instance;
+}
 
-	m_file = newFile;
+
+/**
+ *
+ * @brief Opens a log file and sets it as the current logging target.
+ *
+ * @param path The file path to log to.
+ * @param key An optional key to identify the file stream (default is path).
+ * @param mode An optional file mode to specify how the file should be opened (default is Append).
+ * 				- Append: Opens the file for appending, preserving existing content.
+ * 				- Truncate: Opens the file for writing, truncating existing content.
+ *
+ * @note If a file is already open, it will still be kept open and stored in the m_openFiles map.
+ * This allows for multiple log files to be used simultaneously by providing different keys.
+ *
+ */
+Logger &Logger::openFile(const std::string &path, const std::string key, const FileMode mode)
+{
+	return openFile(path, mode, key);
+}
+
+/**
+ *
+ * @brief Sets the log file using a key from the m_openFiles map.
+ *
+ * @param key The key corresponding to an already opened file stream in the m_openFiles map.
+ *
+ * @note This allows switching between multiple open log files by using their associated keys.
+ *
+ */
+Logger &Logger::setFile(const std::string &key)
+{
+	if (!m_openFiles.has(key))
+		return m_instance;
+	m_file	 = m_openFiles[key];
+	m_target = File;
 	return m_instance;
 }
 

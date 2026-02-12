@@ -2,7 +2,7 @@
 
 #include "Date.hpp"
 #include "Number.hpp"
-#include "FileHandler.hpp"
+#include "FileManager.hpp"
 #include "unistd.h"
 #include "sys/stat.h"
 
@@ -11,10 +11,9 @@ File::File(
 	const std::string &ressourcePath,
 	const std::string &location)
 {
-	if (access(ressourcePath.c_str(), F_OK) == -1)
-		throw FileHandler::FileDoesNotExistException(ressourcePath);
-	if (stat(ressourcePath.c_str(), &m_stat) != 0)
-		throw FileHandler::FileDoesNotExistException(ressourcePath);
+	if (!FileManager::exists(ressourcePath))
+		throw FileManager::FileDoesNotExistException(ressourcePath);
+	m_stat = FileManager::getStat(ressourcePath);
 
 	m_name				= name;
 	m_mode				= m_stat.st_mode;
@@ -28,8 +27,8 @@ File::File(
 
 	m_extension = determineExtension(name, &m_extensionPos);
 	m_sizeHuman = Number::bytesToHumanSize(m_size);
-	m_icon		= FileHandler::getIcon(*this);
-	m_mime		= FileHandler::getContentType(*this);
+	m_icon		= FileManager::getIcon(*this);
+	m_mime		= FileManager::getMime(*this);
 	m_isHidden	= (name[0] == '.');
 }
 
@@ -249,7 +248,7 @@ const std::string &File::getContent() const
  */
 File &File::read()
 {
-	m_content = FileHandler::readFile(m_fullPath);
+	m_content = FileManager::readFile(m_fullPath);
 	return *this;
 }
 

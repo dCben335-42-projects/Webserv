@@ -30,10 +30,15 @@ class Client : public Pollable
 
 		void reset();
 
+		void serveFile(const std::string &filePath, const std::string &target, const bool matchAccept);
+		void serveIndexOf(const std::string &ressourcePath, const std::string &target);
+		bool findIndexFile(std::string &ressourcePath, const std::string &target);
+
 		void handleGet(std::string ressourcePath);
 		void handlePost();
 		void handleDelete(const std::string &ressourcePath);
 		void handlePutPatch(const std::string &ressourcePath);
+
 
 		bool prepareResponse();
 

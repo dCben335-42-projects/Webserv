@@ -2,7 +2,7 @@
 #include "httpExceptions.hpp"
 #include "CgiSpawner.hpp"
 #include "httpMimes.hpp"
-#include "FileHandler.hpp"
+#include "FileManager.hpp"
 #include "FileUpload.hpp"
 #include "Date.hpp"
 #include "IndexOf.hpp"
@@ -108,11 +108,10 @@ void Client::setEvents(const short events)
 void Client::handlePost()
 {
 	FileUpload file(m_req);
-
 	if (!m_req.hasUpload())
 		throw Http403Exception();
 	if (!file.isUploadValid())
-		throw Http400Exception();
+		throw Http400Exception("Invalid file upload data");
 	m_req.setBody("File uploaded successfully.");
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	m_res.setStatusCode(201);
@@ -135,9 +134,9 @@ void Client::handlePost()
 void Client::handlePutPatch(const std::string &ressourcePath)
 {
 	const char *fullPath = ressourcePath.c_str();
-	if (access(fullPath, F_OK) == -1)
+	if (!FileManager::exists(fullPath))
 		throw Http404Exception();
-	if (access(fullPath, R_OK | W_OK) == -1)
+	if (!FileManager::hasRWPerm(fullPath))
 		throw Http403Exception();
 	FileUpload file(m_req);
 	file.createDiskFile(ressourcePath, m_req.getBody());
@@ -164,16 +163,103 @@ void Client::handlePutPatch(const std::string &ressourcePath)
 void Client::handleDelete(const std::string &ressourcePath)
 {
 	const char *fullPath = ressourcePath.c_str();
-	if (access(fullPath, F_OK) == -1)
+	if (!FileManager::exists(fullPath))
 		throw Http404Exception();
-	if (FileHandler::folderExists(fullPath))
+	if (FileManager::isFolder(fullPath))
 		throw Http403Exception();
-	if (access(fullPath, W_OK) == -1)
+	if (!FileManager::hasRWPerm(fullPath))
 		throw Http403Exception();
 	std::remove(fullPath);
 	m_res.setStatusCode(204);
 	m_res.setBody("File deleted successfully.");
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
+}
+
+
+/**
+ * @brief Serves a file to the client.
+ *
+ * This function reads the specified file, checks if it is a directory, validates the MIME type against the client's Accept header,
+ * and prepares the HTTP response with the file content and appropriate headers.
+ *
+ * @param filePath The path to the file being served.
+ * @param target The target URL requested by the client.
+ * @param matchAccept A flag indicating whether to check the MIME type against the Accept header.
+ *
+ * @throws AHttpException if there are issues with accessing or reading the file,
+ * or if the MIME type does not match the client's Accept header.
+ *
+ */
+void Client::serveFile(
+	const std::string &filePath,
+	const std::string &target,
+	const bool		   matchAccept)
+{
+	File file(filePath, target);
+	if (file.getIsDirectory())
+	{
+		const size_t	  pos			   = String::rfindIC(filePath, target);
+		const std::string redirectedTarget = filePath.substr(pos) + "/";
+		Logger::info("Redirecting to " + redirectedTarget);
+		throw Http301Exception(String::removeDuplicateSlashes(redirectedTarget));
+	}
+	const std::string &mime = file.getMime();
+	if (matchAccept && !m_req.matchAccept(mime))
+		throw Http406Exception();
+	file.read();
+	m_res.setBody(file.getContent());
+	m_res.setHeader(HEADER_CONTENT_TYPE, mime);
+	m_res.setHeader(HEADER_LAST_MODIFIED, file.getLastModified());
+	m_res.setStatusCode(200);
+}
+
+
+void Client::serveIndexOf(const std::string &ressourcePath, const std::string &target)
+{
+	IndexOf index(ressourcePath, target);
+	m_res.setBody(index.getPage());
+	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+	m_res.setStatusCode(200);
+}
+
+/**
+ *
+ * @brief Finds an index file in the specified resource path.
+ *
+ * This function checks if the server configuration has defined index files for the target location.
+ * If so, it iterates through the list of index files and checks if any of them exist in the resource path.
+ *
+ * If an index file is found, it updates the resource path to point to that file and returns true.
+ * If no index file is found, it checks for a fallback index file and updates the resource path accordingly if it exists.
+ *
+ * @param ressourcePath The path to the resource being checked for index files. It may be modified to point to the found index file.
+ * @param target The target URL requested by the client, used to determine the applicable index files from the server configuration.
+ *
+ * @return true if an index file was found and the resource path was updated, false otherwise.
+ *
+ */
+bool Client::findIndexFile(std::string &ressourcePath, const std::string &target)
+{
+	if (m_serverConfig.hasIndexFiles(target))
+	{
+		const Vec<std::string> indexFiles = m_serverConfig.getIndexFiles(target);
+		for (size_t i = 0; i < indexFiles.size(); ++i)
+		{
+			const std::string indexPath = String::removeDuplicateSlashes(ressourcePath + "/" + indexFiles[i]);
+			if (FileManager::exists(indexPath))
+			{
+				ressourcePath = indexPath;
+				return true;
+			}
+		}
+	}
+	const std::string fallbackPath = ressourcePath + "/" + FALLBACK_INDEX;
+	if (FileManager::exists(fallbackPath))
+	{
+		ressourcePath = fallbackPath;
+		return true;
+	}
+	return false;
 }
 
 
@@ -191,59 +277,29 @@ void Client::handleDelete(const std::string &ressourcePath)
  */
 void Client::handleGet(std::string ressourcePath)
 {
-	const std::string target	= m_req.getTarget();
-	const size_t	  targetLen = target.length();
-
-
+	const std::string target	  = m_req.getTarget();
+	bool			  isIndexFile = false;
 	try
 	{
-		if (FileHandler::folderExists(ressourcePath))
+		if (!FileManager::exists(ressourcePath))
+			throw Http404Exception();
+		if (FileManager::isFolder(ressourcePath))
 		{
-			const bool isFolderRequest = targetLen && target[targetLen - 1] == '/';
+			const size_t targetLen		 = target.length();
+			const bool	 isFolderRequest = targetLen && target[targetLen - 1] == '/';
 
 			if (!isFolderRequest)
-				throw Http404Exception();
-			bool			  foundIndex   = false;
-			const std::string fallbackPath = ressourcePath + "/" + FALLBACK_INDEX;
-			if (m_serverConfig.hasIndexFiles(target))
+				throw Http301Exception(target + "/");
+			isIndexFile = findIndexFile(ressourcePath, target);
+			if (!isIndexFile && m_req.getActiveAutoIndex())
 			{
-				const Vec<std::string> indexFiles = m_serverConfig.getIndexFiles(target);
-
-				for (size_t i = 0; i < indexFiles.size(); ++i)
-				{
-					const std::string indexPath = String::removeDuplicateSlashes(ressourcePath + "/" + indexFiles[i]);
-					if (FileHandler::fileExists(indexPath))
-					{
-						ressourcePath = indexPath;
-						foundIndex	  = true;
-						break;
-					}
-				}
-			}
-			if (!foundIndex && FileHandler::fileExists(fallbackPath))
-				ressourcePath = fallbackPath;
-			else if (!foundIndex && m_req.getActiveAutoIndex())
-			{
-				if (!m_req.matchAccept(MIME_HTML))
-					throw Http406Exception();
-				IndexOf index(ressourcePath, target);
-				m_res.setBody(index.getPage());
-				m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-				m_res.setStatusCode(200);
+				serveIndexOf(ressourcePath, target);
 				return;
 			}
 		}
-		File file(ressourcePath, target);
-		if (file.getIsDirectory())
-			throw Http404Exception();
-		if (!m_req.matchAccept(file.getMime()))
-			throw Http406Exception();
-		m_res.setBody(file.read().getContent());
-		m_res.setHeader(HEADER_CONTENT_TYPE, file.getMime());
-		m_res.setHeader(HEADER_LAST_MODIFIED, file.getLastModified());
-		m_res.setStatusCode(200);
+		serveFile(ressourcePath, target, !isIndexFile);
 	}
-	catch (const FileHandler::FileHandlerException &e)
+	catch (const FileManager::FileException &e)
 	{
 		std::cerr << e.what() << '\n';
 		throw e.getHttpException();
@@ -279,19 +335,28 @@ bool Client::prepareResponse()
 		return false;
 	}
 
-	const size_t		   segmentSize	 = m_req.getSegmentSize();
-	const std::string	   ressourcePath = m_req.buildResourcePath(segmentSize - 1);
-	const HttpMethod::Type method		 = m_req.getMethod().getType();
-	if (method == HttpMethod::GET)
-		handleGet(ressourcePath);
-	else if (method == HttpMethod::POST)
-		handlePost();
-	else if (method == HttpMethod::DELETE)
-		handleDelete(ressourcePath);
-	else if (method == HttpMethod::PUT || method == HttpMethod::PATCH)
-		handlePutPatch(ressourcePath);
-	else
-		throw Http405Exception(m_req.getMethod().getStrType());
+	const size_t	  segmentSize	= m_req.getSegmentSize();
+	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
+	const HttpMethod &method		= m_req.getMethod();
+
+	switch (method.getType())
+	{
+		case HttpMethod::GET:
+			handleGet(ressourcePath);
+			break;
+		case HttpMethod::POST:
+			handlePost();
+			break;
+		case HttpMethod::DELETE:
+			handleDelete(ressourcePath);
+			break;
+		case HttpMethod::PUT:
+		case HttpMethod::PATCH:
+			handlePutPatch(ressourcePath);
+			break;
+		default:
+			throw Http405Exception(method.getStrType());
+	}
 	return true;
 }
 
@@ -332,20 +397,18 @@ bool Client::determineKeepAlive(unsigned short statusCode)
  */
 void Client::onPollIn()
 {
-	const time_t currentTime = std::time(0);
+	const ssize_t bytesRead = m_req.readOnce(m_fd);
+
+	if (bytesRead == -1)
+		return onPollErr();
+	if (bytesRead == 0)
+		return onPollHangUp();
+	m_time						= std::time(0);
+	const size_t maxBodySize	= m_serverConfig.getMaxBodySize();
+	const size_t maxHeadersSize = m_serverConfig.getMaxHeadersSize();
 	try
 	{
-		const ssize_t bytesRead = m_req.readOnce(m_fd);
-		if (bytesRead == -1)
-		{
-			m_events		   = 0;
-			m_connectionClosed = true;
-			return;
-		}
-		if (bytesRead == 0)
-			return;
-		m_time = currentTime;
-		if (!m_req.isComplete(m_serverConfig.getMaxBodySize()))
+		if (!m_req.isComplete(maxBodySize, maxHeadersSize))
 		{
 			m_timeoutState = m_req.isHeadersEndPos() ? BODY_TIMEOUT : HEADER_TIMEOUT;
 			return;
@@ -359,8 +422,13 @@ void Client::onPollIn()
 	{
 		m_res.reset();
 		m_res.setStatusCode(e.getStatusCode());
-		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-		m_res.setBody(e.getPage());
+		if (!e.isRedirection())
+		{
+			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+			m_res.setBody(e.getPage());
+		}
+		else
+			m_res.setHeader(HEADER_LOCATION, e.getRedirectionUrl());
 	}
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_serverConfig.getKeepAliveTimeout()).build();
 	determineKeepAlive(m_res.getStatusCode());

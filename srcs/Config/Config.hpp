@@ -22,8 +22,8 @@ class Config
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
 
-
 		size_t m_maxBodySize;
+		size_t m_maxHeadersSize;
 
 	public:
 		Config(const std::string		   &ip,
@@ -42,6 +42,7 @@ class Config
 		void setHeaderTimeout(const time_t timeout);
 		void setBodyTimeout(const time_t timeout);
 		void setMaxBodySize(const size_t maxBodySize);
+		void setMaxHeadersSize(const size_t maxHeadersSize);
 
 		const std::string			&getIp() const;
 		unsigned short				 getPort() const;
@@ -49,11 +50,12 @@ class Config
 		const Location				*getDefaultLocation() const;
 		const Map<const Location *> &getLocations() const;
 
-		const time_t &getKeepAliveTimeout() const;
-		const time_t &getHeaderTimeout() const;
-		const time_t &getBodyTimeout() const;
+		time_t getKeepAliveTimeout() const;
+		time_t getHeaderTimeout() const;
+		time_t getBodyTimeout() const;
 
 		size_t getMaxBodySize() const;
+		size_t getMaxHeadersSize() const;
 
 		bool					hasIndexFiles(const std::string &locationPath) const;
 		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;

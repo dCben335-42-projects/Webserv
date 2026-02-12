@@ -36,7 +36,7 @@ void EventLoop::init()
 	locations.set(loc2->getPath(), loc2);
 	locations.set(loc8->getPath(), loc8);
 	locations.set(loc9->getPath(), loc9);
-	Config *config1 = new Config("127.0.0.0", 8080, "localhost", defaultLocation, locations);
+	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 	Signals::catchSigs();
 }
@@ -193,7 +193,6 @@ void EventLoop::updatePollStatus()
 		m_pollFds[i].events = handler->getEvents();
 		if (handler->isTimedOut(currentTime))
 		{
-			Logger::info("Timeout occurred on fd " + Logger::get(m_pollFds[i].fd));
 			handler->onTimeOut();
 			if (handler->getConnectionClosed())
 			{

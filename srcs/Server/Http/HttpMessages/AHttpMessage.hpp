@@ -20,7 +20,6 @@ class AHttpMessage
 		static Map<unsigned short, std::string> initStatusReasonMap();
 		static Vec<unsigned short>				initCloseStatus();
 
-
 		std::string buildHead() const;
 		std::string build();
 
@@ -31,13 +30,14 @@ class AHttpMessage
 		const Map<std::string> &getHeaders() const;
 		std::string				getHeader(const std::string &key) const;
 		const HttpMethod	   &getMethod() const;
-		std::string				getBody() const;
+		const std::string	   &getBody() const;
 
-		bool hasHeader(const std::string &key) const;
-
-		void setHeader(const std::string &key, const std::string &value);
 		void setMethod(const HttpMethod &method);
 		void setBody(const std::string &body);
+
+		bool hasHeader(const std::string &key) const;
+		void setHeader(const std::string &key, const std::string &value);
+		void deleteHeader(const std::string &key);
 
 		bool isCloseStatus(unsigned short statusCode) const;
 };

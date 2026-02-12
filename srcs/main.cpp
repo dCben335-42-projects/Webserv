@@ -1,12 +1,13 @@
 #include "Lexer.hpp"
 #include "EventLoop.hpp"
 #include "String.hpp"
+#include "Logger.hpp"
 
 int main()
 {
 	try
 	{
-		Logger::setFormat(Logger::Json);
+		Logger::log("Starting web server...").openFile("logs/server.log", Logger::Append);
 		EventLoop::init();
 		EventLoop::run();
 		return 0;

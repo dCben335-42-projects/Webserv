@@ -19,6 +19,7 @@ Config::Config(
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 	m_maxBodySize	   = MAX_BODY_SIZE;
+	m_maxHeadersSize   = MAX_HEADERS_SIZE;
 }
 
 Config::~Config()
@@ -148,6 +149,18 @@ void Config::setMaxBodySize(const size_t maxBodySize)
 	m_maxBodySize = maxBodySize;
 }
 
+/**
+ *
+ * @brief Sets the maximum headers size for the virtual server.
+ *
+ * @param maxHeadersSize The maximum headers size to be set (in bytes).
+ *
+ */
+void Config::setMaxHeadersSize(const size_t maxHeadersSize)
+{
+	m_maxHeadersSize = maxHeadersSize;
+}
+
 
 /**
  *
@@ -192,7 +205,7 @@ bool Config::hasIndexFiles(const std::string &locationPath) const
  * @return The keep-alive timeout in seconds.
  *
  */
-const time_t &Config::getKeepAliveTimeout() const
+time_t Config::getKeepAliveTimeout() const
 {
 	return m_keepAliveTimeout;
 }
@@ -204,7 +217,7 @@ const time_t &Config::getKeepAliveTimeout() const
  * @return The header timeout in seconds.
  *
  */
-const time_t &Config::getHeaderTimeout() const
+time_t Config::getHeaderTimeout() const
 {
 	return m_headerTimeout;
 }
@@ -216,7 +229,7 @@ const time_t &Config::getHeaderTimeout() const
  * @return The body timeout in seconds.
  *
  */
-const time_t &Config::getBodyTimeout() const
+time_t Config::getBodyTimeout() const
 {
 	return m_bodyTimeout;
 }
@@ -232,6 +245,18 @@ const time_t &Config::getBodyTimeout() const
 size_t Config::getMaxBodySize() const
 {
 	return m_maxBodySize;
+}
+
+/**
+ *
+ * @brief Gets the maximum headers size for the virtual server.
+ *
+ * @return The maximum headers size in bytes.
+ *
+ */
+size_t Config::getMaxHeadersSize() const
+{
+	return m_maxHeadersSize;
 }
 
 /**

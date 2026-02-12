@@ -157,7 +157,6 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 {
 	try
 	{
-		Logger::log("Parsing HTTP Request:\n" + m_rawStr);
 		const size_t lineEndSize = std::strlen(HEADER_LINE_ENDING);
 
 		size_t pos = m_firstLineEndPos + lineEndSize;
@@ -173,7 +172,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 			if (contentLength != m_body.size())
 				throw std::invalid_argument("Content-Length header value does not match the actual body size");
 		}
-		std::cout << *this << std::endl;
+		// std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
 	}
 	catch (const std::invalid_argument &e)
@@ -533,7 +532,7 @@ bool HttpRequest::isAllowedMethod() const
  * @return true if the request is complete, false otherwise.
  *
  */
-bool HttpRequest::isComplete(const size_t maxBodySize)
+bool HttpRequest::isComplete(const size_t maxBodySize, const size_t maxHeadersSize)
 {
 	if (m_totalLen)
 		return m_rawStr.size() >= m_totalLen;
@@ -541,8 +540,14 @@ bool HttpRequest::isComplete(const size_t maxBodySize)
 	{
 		size_t headersEnd = m_rawStr.find(HEADER_ENDING);
 		if (headersEnd == std::string::npos)
+		{
+			if (m_rawStr.size() > maxHeadersSize)
+				throw Http413Exception("The request headers size exceeds the server's configured maximum of " + Number::toString(maxHeadersSize) + " bytes");
 			return false;
+		}
 		m_headersEndPos = headersEnd;
+		if (m_headersEndPos > maxHeadersSize)
+			throw Http413Exception("The request headers size exceeds the server's configured maximum of " + Number::toString(maxHeadersSize) + " bytes");
 		try
 		{
 			m_firstLineEndPos = parseFirstLine();

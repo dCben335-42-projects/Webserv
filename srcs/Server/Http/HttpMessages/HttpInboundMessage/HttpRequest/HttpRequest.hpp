@@ -57,7 +57,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		matchAccept(const std::string &contentType) const;
 
-		bool isComplete(const size_t maxBodySize);
+		bool isComplete(const size_t maxBodySize, const size_t maxHeadersSize);
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

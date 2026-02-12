@@ -16,11 +16,19 @@ class AHttpException : public std::runtime_error
 		int			m_statusCode;
 		std::string m_extraMessage;
 
+		bool		m_isRedirection;
+		std::string m_redirectionUrl;
+
 	public:
 		AHttpException(const std::string &message, int code);
 		virtual ~AHttpException() throw();
-		int			getStatusCode() const;
-		std::string getPage() const;
+
+		int				   getStatusCode() const;
+		const std::string  getPage() const;
+		const std::string &getExtraMessage() const;
+
+		bool			   isRedirection() const;
+		const std::string &getRedirectionUrl() const;
 };
 
 

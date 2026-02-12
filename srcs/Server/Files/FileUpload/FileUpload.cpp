@@ -22,7 +22,7 @@ void FileUpload::fetchBoundaries(size_t boundaryPos, std::string contentType)
 	m_lastBoundaryStr = m_boundaryStr + "--";
 
 	if (m_boundaryStr.size() < 3)
-		throw Http400Exception();
+		throw Http400Exception("Invalid boundary in Content-Type header");
 }
 
 
@@ -47,9 +47,9 @@ void FileUpload::parseSubTypes()
 	size_t			   subTypesSize = subTypes.size();
 
 	if (subTypesSize == 0)
-		throw Http400Exception();
+		throw Http400Exception("No subtypes found in multipart/form-data body");
 	if (subTypes[(subTypes.size()) - 1] != "--\r\n")
-		throw Http400Exception();
+		throw Http400Exception("Invalid multipart/form-data ending");
 	subTypes.remove(subTypesSize - 1);
 	fillSubRequests(subTypes);
 }

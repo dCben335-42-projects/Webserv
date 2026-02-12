@@ -8,6 +8,8 @@
 #define HTTP_301_MSG "Moved Permanently"
 #define HTTP_302_MSG "Found"
 
+#include "Http300Exception.hpp"
+#include "Http301Exception.hpp"
 #include "Http400Exception.hpp"
 #include "Http401Exception.hpp"
 #include "Http403Exception.hpp"

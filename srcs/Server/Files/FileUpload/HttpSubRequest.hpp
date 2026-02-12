@@ -10,7 +10,7 @@ class HttpSubRequest : public AHttpInboundMessage
 		std::string m_name;
 
 		std::string extractValue(const std::string &token, const std::string &pattern) const;
-		void		parseNameAndFileName(Map<std::string> &headersMap);
+		void		parseNameAndFileName();
 
 	public:
 		HttpSubRequest(const std::string &rawStr);

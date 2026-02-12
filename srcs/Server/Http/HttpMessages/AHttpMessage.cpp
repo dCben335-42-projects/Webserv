@@ -12,6 +12,9 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 	map[201] = HTTP_201_MSG;
 	map[204] = HTTP_204_MSG;
 
+	map[300] = HTTP_300_MSG;
+	map[301] = HTTP_301_MSG;
+
 	map[400] = HTTP_400_MSG;
 	map[401] = HTTP_401_MSG;
 	map[403] = HTTP_403_MSG;
@@ -62,7 +65,7 @@ AHttpMessage::~AHttpMessage()
  *
  * @brief Gets all HTTP headers of the message.
  *
- * @return A map containing all HTTP headers.
+ * @return A reference to a map containing all HTTP headers.
  *
  */
 const Map<std::string> &AHttpMessage::getHeaders() const
@@ -77,7 +80,8 @@ const Map<std::string> &AHttpMessage::getHeaders() const
  *
  * @param key The key of the header to retrieve.
  *
- * @return The value of the specified header.
+ * @return The value of the specified header or an empty string
+ * if the header is not present in the message.
  *
  */
 std::string AHttpMessage::getHeader(const std::string &key) const
@@ -94,7 +98,7 @@ std::string AHttpMessage::getHeader(const std::string &key) const
  *
  * @brief Gets the HTTP method of the message.
  *
- * @return The HTTP method as a string.
+ * @return A reference to the HTTP method of the message.
  *
  */
 const HttpMethod &AHttpMessage::getMethod() const
@@ -108,7 +112,7 @@ const HttpMethod &AHttpMessage::getMethod() const
  * @return The body of the HTTP message.
  *
  */
-std::string AHttpMessage::getBody() const
+const std::string &AHttpMessage::getBody() const
 {
 	return m_body;
 }
@@ -143,6 +147,20 @@ void AHttpMessage::setHeader(const std::string &key, const std::string &value)
 {
 	m_headers.set(String::toLower(key), value);
 }
+
+
+/**
+ *
+ * @brief Deletes a specific HTTP header from the message.
+ *
+ * @param key The key of the header to delete.
+ *
+ */
+void AHttpMessage::deleteHeader(const std::string &key)
+{
+	m_headers.remove(String::toLower(key));
+}
+
 /**
  *
  * @brief Sets the body of the HTTP message.

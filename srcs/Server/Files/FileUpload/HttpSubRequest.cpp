@@ -9,7 +9,7 @@ HttpSubRequest::HttpSubRequest(const std::string &rawStr)
 	m_rawStr = String::trimBegin(rawStr);
 	size_t i = 0;
 	parse(m_rawStr, i);
-	m_headers.remove(HEADER_CONTENT_TYPE);
+	deleteHeader(HEADER_CONTENT_TYPE);
 }
 
 HttpSubRequest::~HttpSubRequest()
@@ -29,21 +29,21 @@ const std::string &HttpSubRequest::getName() const
 std::string HttpSubRequest::extractValue(const std::string &token, const std::string &pattern) const
 {
 	if (token.size() <= pattern.size())
-		throw Http400Exception();
+		throw Http400Exception("Invalid token: " + token);
 	size_t			   firstQuote = token.find_first_of("\"");
 	size_t			   lastQuote  = token.find_last_of("\"");
 	const std::string &result	  = token.substr(firstQuote + 1, lastQuote - (firstQuote + 1));
 	return (result);
 }
 
-void HttpSubRequest::parseNameAndFileName(Map<std::string> &headersMap)
+void HttpSubRequest::parseNameAndFileName()
 {
-	if (headersMap.get(HEADER_SUB_CONTENT_DISPOSITION).find("form-data;") == std::string::npos)
-		throw Http400Exception();
-	if (headersMap.get(HEADER_SUB_CONTENT_DISPOSITION).find("name=") == std::string::npos)
-		throw Http400Exception();
+	if (getHeader(HEADER_SUB_CONTENT_DISPOSITION).find("form-data;") == std::string::npos)
+		throw Http400Exception("Invalid Content-Disposition header: missing 'form-data;' token");
+	if (getHeader(HEADER_SUB_CONTENT_DISPOSITION).find("name=") == std::string::npos)
+		throw Http400Exception("Invalid Content-Disposition header: missing 'name=' token");
 
-	Vec<std::string> contentDispositionValues = String::split(headersMap.get(HEADER_SUB_CONTENT_DISPOSITION), ";");
+	Vec<std::string> contentDispositionValues = String::split(getHeader(HEADER_SUB_CONTENT_DISPOSITION), ";");
 	for (Vec<std::string>::const_iterator it = contentDispositionValues.begin(); it != contentDispositionValues.end(); it++)
 	{
 		std::string token = String::trim((*it));
@@ -60,12 +60,12 @@ void HttpSubRequest::parseNameAndFileName(Map<std::string> &headersMap)
 
 void HttpSubRequest::parseSubRequest()
 {
-	Map<std::string> headersMap = this->getHeaders();
+	const Map<std::string> &headersMap = getHeaders();
 	if (headersMap.size() > 2)
-		throw Http400Exception();
-	if (headersMap.has(HEADER_SUB_CONTENT_DISPOSITION) == false)
-		throw Http400Exception();
+		throw Http400Exception("Too many headers in sub-request");
+	if (!hasHeader(HEADER_SUB_CONTENT_DISPOSITION))
+		throw Http400Exception("Missing Content-Disposition header in sub-request");
 	// if (headersMap.has(HEADER_CONTENT_TYPE) == false)
 	// 	headersMap.set(HEADER_CONTENT_TYPE, MIME_PLAIN);
-	parseNameAndFileName(headersMap);
+	parseNameAndFileName();
 }

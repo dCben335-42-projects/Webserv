@@ -1,7 +1,7 @@
 #include "CgiSpawner.hpp"
 
 #include "webserv.hpp"
-#include "FileHandler.hpp"
+#include "FileManager.hpp"
 #include "EventLoop.hpp"
 #include "CgiPipe.hpp"
 
@@ -207,11 +207,14 @@ bool CgiSpawner::isCgi()
 
 		while (scriptIndex != -1 && scriptIndex < size)
 		{
-			if (!FileHandler::folderExists(m_scriptPath))
+			struct stat st = FileManager::getStat(m_scriptPath);
+
+			if (FileManager::exists(m_scriptPath) && !FileManager::isFolder(st))
 			{
-				if (!FileHandler::fileExists(m_scriptPath))
+				struct stat st = FileManager::getStat(m_scriptPath);
+				if (!FileManager::isFile(st))
 					throw Http404Exception();
-				if (!FileHandler::hasReadPermission(m_scriptPath))
+				if (!FileManager::hasRPerm(m_scriptPath))
 					throw Http403Exception();
 				break;
 			}
@@ -222,7 +225,7 @@ bool CgiSpawner::isCgi()
 		buildPathInfo(urlSegments, scriptIndex);
 		buildScriptName(urlSegments, scriptIndex);
 	}
-	catch (const FileHandler::FileHandlerException &e)
+	catch (const FileManager::FileException &e)
 	{
 		std::cerr << e.what() << '\n';
 		throw e.getHttpException();

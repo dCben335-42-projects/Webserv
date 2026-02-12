@@ -58,20 +58,103 @@ const std::string AHttpException::HTML_TEMPLATE =
 AHttpException::AHttpException(const std::string &message, int code) :
 	std::runtime_error(message),
 	m_statusCode(code),
-	m_extraMessage()
+	m_extraMessage(),
+	m_isRedirection(false)
 {
 }
+
 
 AHttpException::~AHttpException() throw()
 {
 }
 
+
+
+/**
+ *
+ * @brief Retrieves the HTTP status code associated with the exception.
+ *
+ * This function returns the HTTP status code that corresponds to the specific error represented by the exception.
+ * The status code is set during the construction of the exception and can be used to determine the type of error
+ * that occurred (e.g., 404 for Not Found, 500 for Internal Server Error).
+ *
+ * @return An integer representing the HTTP status code of the error.
+ *
+ */
 int AHttpException::getStatusCode() const
 {
 	return m_statusCode;
 }
 
-std::string AHttpException::getPage() const
+
+/**
+ *
+ * @brief Retrieves any additional message associated with the exception.
+ *
+ * This function returns an extra message that provides more details about the error. This message can be set
+ * when constructing the exception or through other means, and it is intended to give more context to the user
+ * about what went wrong. If no extra message is provided, this function will return an empty string.
+ *
+ * @return A constant reference to a string containing the extra message associated
+ * with the exception, or an empty string if no extra message is set.
+ *
+ */
+const std::string &AHttpException::getExtraMessage() const
+{
+	return m_extraMessage;
+}
+
+
+/**
+ *
+ * @brief Checks if the exception represents a redirection error.
+ *
+ * This function returns a boolean value indicating whether the exception corresponds
+ * to an HTTP redirection status code (3xx).
+ * If the exception is a redirection, it means that the client should be redirected
+ * to a different URL, which can be obtained using the getRedirectionUrl() method.
+ *
+ * @return true if the exception represents a redirection error, false otherwise.
+ *
+ */
+bool AHttpException::isRedirection() const
+{
+	return m_isRedirection;
+}
+
+
+/**
+ *
+ * @brief Retrieves the URL for redirection if the exception represents a redirection error.
+ *
+ * This function returns the URL to which the client should be redirected
+ * if the exception corresponds to an HTTP redirection status code (3xx).
+ * If the exception is not a redirection, this function will return an empty string.
+ *
+ * @return A constant reference to a string containing the redirection URL
+ * if the exception is a redirection error, or an empty string otherwise.
+ *
+ */
+const std::string &AHttpException::getRedirectionUrl() const
+{
+	return m_redirectionUrl;
+}
+
+/**
+ *
+ * @brief Generates an HTML page representing the HTTP error.
+ * This function constructs an HTML page using predefined templates and the error information
+ * contained in the exception.
+ * It replaces placeholders in the templates with the actual error message, status code,
+ * and any additional information provided.
+ * The resulting HTML page is designed to be visually appealing and informative for the user.
+ *
+ * @note If no extra message is provided, the details section will be hidden in the generated HTML page.
+ *
+ * @return A string containing the complete HTML page to be sent as the response body for the HTTP error.
+ *
+ */
+const std::string AHttpException::getPage() const
 {
 	const std::string title	 = String::htmlEscape(what());
 	const std::string code	 = Number::toString(m_statusCode);
