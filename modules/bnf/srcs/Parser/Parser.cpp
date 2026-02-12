@@ -156,6 +156,8 @@ bool Parser::word(
 			if (!m_originelRules.has(pathInfo->path))
 				m_originelRules.set(pathInfo->path, Vec<ARulePath>());
 			currentRule = &pathInfo->path;
+			Logger::log("Matched path: " + LoggerJson::get(data->terminal->getValue()));
+			m_lines.push_back(data->terminal->getValue());
 			addNextPaths(mapPathCurrent, mapPathNext, pathInfo->path, rule);
 		}
 		else
@@ -430,5 +432,5 @@ void Parser::parse(const std::string &stringToParsed)
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 	DataCollector dataCollector;
-	dataCollector.generateJson(resolvePath(), stringToParsed);
+	dataCollector.generateJson(resolvePath(), m_lines);
 }

@@ -66,6 +66,8 @@ class Parser
 		ARulePath						  *currentRule;
 		// clang-format off
 		Vec<ARulePath >		  m_startingPaths;
+
+		Vec<std::string> m_lines;
 		// Vec<const ARule const *> validatedRules;
 };
 

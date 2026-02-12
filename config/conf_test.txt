@@ -37,6 +37,7 @@ basic_http_stmt	::= !0'sendfile' TAB_SPACE !BOOL
 				|= !0'access_log' TAB_SPACE !PATH
 				|= !0'error_log' TAB_!SPACE PATH SPACE LOG_LEVEL
 				|= !0'server_tokens' TAB_SPACE BOOL
+				|= !0'test' TAB_SPACE BOOL
 
 gzip_stmt		::= !0'gzip' TAB_SPACE BOOL
 				|= !0'gzip' TAB_SPACE BOOL BOOL

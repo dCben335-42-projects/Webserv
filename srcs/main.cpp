@@ -36,6 +36,9 @@ int main()
 	{
 		Lexer lexer("config/config_nginx_test.txt");
 		lexer.parseConfigFile("config/soso.txt");
+		// Lexer lexer("config/config_nginx.txt");
+		// lexer.parseConfigFile("config/test.txt");
+
 		return 0;
 	}
 	catch (const std::exception &e)

@@ -19,6 +19,51 @@ bool DataCollector::samePrec(const size_t n) const
 	return true;
 }
 
+bool DataCollector::samePrecP(ARulePath path1, ARulePath path2, const size_t n) const
+{
+	if (path1.size() < n || path2.size() < n)
+		return false;
+
+	for (size_t i = 0; i < n; ++i)
+		if (path1[i] != path2[i])
+			return false;
+	return true;
+}
+
+bool DataCollector::isEnd(size_t idx) const
+{
+	for (size_t i = idx; i < m_path.size(); ++i)
+	{
+		Logger::log(m_path[i]->getConceptName());
+		if (!m_path[i]->isEnd())
+		{
+			Logger::log("not end : " + m_path[i]->getConceptName());
+			return false;
+		}
+	}
+	Logger::log("end");
+	return true;
+}
+
+bool DataCollector::isEndP(ARulePath path, size_t idx) const
+{
+	for (size_t i = idx; i < path.size(); ++i)
+		if (!path[i]->isEnd())
+			return false;
+	return true;
+}
+
+int DataCollector::getLastSequence(Vec<ARulePath> pathStack, size_t idx) const
+{
+	int size = pathStack[idx].size();
+
+	for (int i = size - 1; i >= 0; --i)
+	{
+		if (pathStack[idx][i]->isSequence())
+			return i;
+	}
+	return -1;
+}
 
 bool DataCollector::isEndOfPath() const
 {
@@ -125,6 +170,18 @@ void DataCollector::recurseJson(
 	{
 		appendBuffer();
 
+		if (!isEndOfPath() && hasCollectStr && !isEnd(m_collectStrIdx))
+		{
+			m_continueBuffer = true;
+			Logger::log("continue buffer");
+		}
+
+		// Logger::log("continue buffer");
+
+
+
+
+
 		//	Tous ce qui est sous un hasCollectStr doit sappend ensemble mais on doit differencier 2 repetition dune meme classe dans une sequence
 		//	Pour ce faire nous devons utiliser isEnd() sur tout element en dessous de la sequence (sil y en a une) dont lelement constitue le TerminalConcept
 		//
@@ -137,10 +194,11 @@ void DataCollector::recurseJson(
 		// Si index correspond encore a un index de char et que soit:
 		// - on est dans un TerminalConcept, que il n'y a pas de sequence sur le parent et que le parent on est toujours sur le meme noeud parent pour le prochain index
 
-		if (!isEndOfPath() && ((hasCollectStr && !isSequence(idxRule - 1) && samePrec(idxRule)) || samePrec(idxRuleC)))
-			m_continueBuffer = true;
+		// if (!isEndOfPath() && ((hasCollectStr && !isSequence(idxRule - 1) && samePrec(idxRule)) || samePrec(idxRuleC)))
+		// 	m_continueBuffer = true;
 		else if (idxRule == 0 || (!isEndOfPath() && !samePrec(idxRule) && !hasCollectStr))
 		{
+			Logger::log("otheer");
 			*json = AJson::createString(m_buffer);
 			m_buffer.clear();
 		}
@@ -157,7 +215,7 @@ void DataCollector::recurseJson(
 		return;
 	}
 
-	if (!m_continueBuffer && hasCollectStr && !isEndOfPath() && samePrec(idxRule))
+	if (!m_continueBuffer && hasCollectStr && !isEndOfPath() && samePrec(idxRule) && !isEnd(idxRule))
 		m_continueBuffer = true;
 
 	if (!(!m_continueBuffer && !hasCollectStr && idxRuleC < m_path.size() && !isTerminalConcept(idxRuleC)))
@@ -200,86 +258,207 @@ void DataCollector::recurseJson(
 	}
 }
 
-void DataCollector::generateJson(const BNFPath *cursor, const std::string &stringToParsed)
+int DataCollector::getFirstTerminalConcept(ARulePath path) const
 {
-	// clang-format off
+	for (size_t i = 0; i < path.size(); ++i)
+	{
+		if (path[i]->getConceptPtr()->isTerminalConcept())
+			return i;
+	}
+	return -1;
+}
 
-	Vec<ARulePath> pathStack;
-	pathStack.push_back(cursor->rulePath);
+int DataCollector::getFirstSequence(ARulePath path, size_t max_bottom) const
+{
+	for (int i = max_bottom; i >= 0; --i)
+	{
+		if (path[i]->isSequence())
+			return i;
+	}
+	return -1;
+}
 
-	size_t inc = 0;
+bool DataCollector::findCharPos(
+	const std::vector<std::string> &lines,
+	size_t							globalIndex,
+	size_t						   &lineIndex,
+	size_t						   &localIndex)
+{
+	size_t acc = 0;
+
+	for (size_t i = 0; i < lines.size(); ++i)
+	{
+		size_t len = lines[i].size();
+
+		if (globalIndex < acc + len)
+		{
+			lineIndex  = i;
+			localIndex = globalIndex - acc;
+			return true;
+		}
+
+		acc += len;
+	}
+
+	return false; // out of range
+}
+
+Vec<std::string> nlines;
+std::string		 str = "";
+
+// clang-format off
+void DataCollector::generateJson(const BNFPath *cursor, Vec<std::string> lines)
+{
+	m_pathNexts.push_back(cursor->rulePath);
 	while (cursor && cursor->next.size() > 0)
 	{
 		for (size_t i = 0; i < cursor->next.size(); ++i)
-		{
 			if (!cursor->next[i].isInvalidedPath)
-			{
 				cursor = &cursor->next[i];
-				inc++;
-				break;
-			}
-		}
-		pathStack.push_back(cursor->rulePath);
+		m_pathNexts.push_back(cursor->rulePath);
 	}
+	size_t i = 0;
 
-	Vec<std::string> line;
-	std::string str = "";
-
-	if (!pathStack.empty())
+	// for (size_t i = 0; i < m_pathNexts.size(); ++i)
+	while (i < m_pathNexts.size())
 	{
-		str.push_back(stringToParsed[0]);  // char
+		size_t line;
+		size_t col;
+		// Logger::log("path : " + LoggerJson::get(m_pathNexts[i]));
 
-		for (size_t i = 1; i < pathStack.size(); ++i)
+		if (findCharPos(lines, i, line, col))
 		{
-			if (pathStack[i - 1] == pathStack[i])
+
+			char c = lines[line][col];
+			Logger::log("char : '" + std::string(1, c) + "'");
+			size_t size = lines[line].size();
+			str.append(lines[line]);
+			size_t tempI = i + size;
+			Logger::log("tempI : " + LoggerJson::get(tempI));
+			if (getFirstTerminalConcept(m_pathNexts[i]) < 0)
 			{
-                // Logger::log(pathStack[i].back());
-				str.push_back(stringToParsed[i]);  // char
+				Logger::log("Ok55");
+				i = tempI;
+				nlines.push_back(str); str = "";
+				Logger::log("------------------");
+				continue;
 			}
 			else
 			{
-				line.push_back(str);
-				Logger::log(LoggerJson::get(str));
-				str = "";
-				str.push_back(stringToParsed[i]);
+				Logger::log("Ok56");
+				size_t index = getFirstTerminalConcept(m_pathNexts[i]);
+				Logger::log("Ok57");
+				Logger::log(index);
+				Logger::log(m_pathNexts[i][index]->getConceptName());
+				Logger::log(m_pathNexts[i][index - 1]->getConceptName());
+				if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
+				{
+					Logger::log("Ok58");
+
+					// sil y a une sequence au dessus il faut decouper si le isEnd() =true en dessous de la sequence
+
+
+					if (index - 1 < 0)
+					{
+						i = tempI;
+						continue;
+					}
+					
+					if (index - 1 >= 0)
+					{
+						int seqIndex = getFirstSequence(m_pathNexts[i], index - 1);
+						if (seqIndex == -1)
+						{
+							i = tempI;
+							continue;
+						}
+						else
+						{
+							if (!isEnd(seqIndex + 1))
+							{
+								i = tempI;
+								continue;
+							}
+						}
+					}
+				}
+				i = tempI;
+				nlines.push_back(str); str = "";
+				Logger::log("------------------");
+
 			}
 		}
-
-		line.push_back(str);
 	}
 
-	// line = 
+	Logger::log(nlines);
 
-	Vec<AJson *> elements;
-	AJson *json = NULL;
+	// Logger::log("----------------");
+	// i = 0;
 
-	m_continueBuffer = false;
+	// while (i < m_pathNexts.size())
+	// {
+	// 	size_t line;
+	// 	size_t col;
+	// 	// Logger::log("path : " + LoggerJson::get(m_pathNexts[i]));
 
-	AJson *arr = AJson::createArray();
-	m_mapJson.set(0, arr);
-    m_cidx = 0;
-    m_pathNexts = pathStack;
-	m_lines = line;
+	// 	if (findCharPos(lines, i, line, col))
+	// 	{
 
-	while (m_cidx < pathStack.size())
-	{
-		m_collectStrIdx = -1;
-        m_path = pathStack[m_cidx];
-		Logger::log("=======");
-		recurseJson(0, &json, false);
-		Logger::log("json : " + LoggerJson::get(json));
-		if (!m_continueBuffer)
-		{
-			m_buffer.clear();
-		}
-		m_continueBuffer = false;
-		if (json)
-		{
-			m_mapJson.get(0)->asArray()->push(json);
-			json = NULL;
-		}
-		if (m_mapJson.has(0))
-			Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
-	}
+	// 		char c = lines[line][col];
+	// 		Logger::log("char : " + std::string(1, c));
+	// 		i++;
+	// 		// size_t size = lines[line].size();
+	// 		str.append(lines[line]);
+	// 		// i = i + size + 1;
+	// 		// if (getFirstTerminalConcept(m_pathNexts[i]) < 0)
+	// 		// {
+	// 		// 	i = tempI;
+	// 		// 	nlines.push_back(str); str = "";
+	// 		// 	continue;
+	// 		// }
+	// 		// else
+	// 		// {
+	// 		// 	size_t index = getFirstTerminalConcept(m_pathNexts[i]);
+	// 		// 	if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
+	// 		// 	{
+	// 		// 		if (index - 1 < 0 || !isSequence(index - 1))
+	// 		// 		{
+	// 		// 			continue;
+	// 		// 		}
+	// 		// 	}
+	// 		// 	nlines.push_back(str); str = "";
+	// 		// }
+	// 	}
+	// }
+
+
+
+	// AJson *json = NULL;
+	// m_continueBuffer = false;
+	// AJson *arr = AJson::createArray();
+	// m_mapJson.set(0, arr);
+    // m_cidx = 0;
+	// m_lines = lines;
+
+	// while (m_cidx < m_pathNexts.size())
+	// {
+	// 	m_collectStrIdx = -1;
+    //     m_path = m_pathNexts[m_cidx];
+	// 	Logger::log("=======");
+	// 	recurseJson(0, &json, false);
+	// 	Logger::log("json : " + LoggerJson::get(json));
+	// 	if (!m_continueBuffer)
+	// 	{
+	// 		m_buffer.clear();
+	// 	}
+	// 	m_continueBuffer = false;
+	// 	if (json)
+	// 	{
+	// 		m_mapJson.get(0)->asArray()->push(json);
+	// 		json = NULL;
+	// 	}
+	// 	if (m_mapJson.has(0))
+	// 		Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
+	// }
 }
 

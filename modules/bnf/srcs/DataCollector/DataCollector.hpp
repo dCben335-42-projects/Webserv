@@ -36,7 +36,7 @@ class DataCollector
 		DataCollector();
 		~DataCollector();
 
-		void generateJson(const BNFPath *cursor, const std::string &stringToParsed);
+		void generateJson(const BNFPath *cursor, Vec<std::string> lines);
 		void recurseJson(
 			size_t	index_rule,
 			AJson **json,
@@ -56,6 +56,17 @@ class DataCollector
 		bool			   hasRegisteredPath(const size_t idx) const;
 		void			   appendBuffer();
 		JsonArray		  *getObjectArray(const size_t idx, const std::string &key);
+		bool			   isEnd(size_t idx) const;
+		int				   getLastSequence(Vec<ARulePath> pathStack, size_t idx) const;
+		bool			   isEndP(ARulePath path, size_t idx) const;
+		int				   getFirstTerminalConcept(ARulePath path) const;
+		bool			   samePrecP(ARulePath path1, ARulePath path2, const size_t n) const;
+		int				   getFirstSequence(ARulePath path, size_t max_bottom) const;
+		bool			   findCharPos(
+						  const std::vector<std::string> &lines,
+						  size_t						  globalIndex,
+						  size_t						 &lineIndex,
+						  size_t						 &localIndex);
 };
 
 
