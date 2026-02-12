@@ -170,11 +170,11 @@ void DataCollector::recurseJson(
 	{
 		appendBuffer();
 
-		if (!isEndOfPath() && hasCollectStr && !isEnd(m_collectStrIdx))
-		{
-			m_continueBuffer = true;
-			Logger::log("continue buffer");
-		}
+		// if (!isEndOfPath() && hasCollectStr && !isEnd(m_collectStrIdx))
+		// {
+		// 	m_continueBuffer = true;
+		// 	Logger::log("continue buffer");
+		// }
 
 		// Logger::log("continue buffer");
 
@@ -196,9 +196,14 @@ void DataCollector::recurseJson(
 
 		// if (!isEndOfPath() && ((hasCollectStr && !isSequence(idxRule - 1) && samePrec(idxRule)) || samePrec(idxRuleC)))
 		// 	m_continueBuffer = true;
-		else if (idxRule == 0 || (!isEndOfPath() && !samePrec(idxRule) && !hasCollectStr))
+		// if (idxRule == 0 || (!isEndOfPath() && !samePrec(idxRule) && !hasCollectStr))
+		// {
+		// 	Logger::log("otheer");
+		// 	*json = AJson::createString(m_buffer);
+		// 	m_buffer.clear();
+		// }
+		if (idxRule == 0)
 		{
-			Logger::log("otheer");
 			*json = AJson::createString(m_buffer);
 			m_buffer.clear();
 		}
@@ -324,16 +329,12 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	str += strToParsed[0];
 	lines.clear();
 	size_t l = 0;
-	Logger::log("val: " + LoggerJson::get(strToParsed[l]));
-
 
 	m_pathNexts.push_back(cursor->rulePath);
 	while (cursor && cursor->next.size() > 0)
 	{
 		l++;
 
-		Logger::log("------------");
-		// Logger::log(str);
 		for (size_t i = 0; i < cursor->next.size(); ++i)
 		{
 			if (!cursor->next[i].isInvalidedPath)
@@ -348,13 +349,8 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 
 		if (hasWordStartPath(wordStartPath, tempRulePath))
 		{
-			// Logger::log(str);
 			lines.push_back(str); str = "";
 		}
-
-		// Vec<ARulePath> wordStartPath = cursor->wordStartPath;
-		Logger::log(cursor->index);
-		Logger::log("val2: " + LoggerJson::get(strToParsed[cursor->index]));
 
 		str += strToParsed[cursor->index];
 	}
@@ -363,48 +359,29 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	Logger::log(lines);
 	(void)lines;
 
-
 	size_t i = 0;
 
-	// for (size_t i = 0; i < m_pathNexts.size(); ++i)
 	while (i < m_pathNexts.size())
 	{
 		size_t line;
 		size_t col;
-		// Logger::log("path : " + LoggerJson::get(m_pathNexts[i]));
 
 		if (findCharPos(lines, i, line, col))
 		{
-
-			char c = lines[line][col];
-			Logger::log("char : '" + std::string(1, c) + "'");
 			size_t size = lines[line].size();
 			str.append(lines[line]);
 			size_t tempI = i + size;
-			Logger::log("tempI : " + LoggerJson::get(tempI));
 			if (getFirstTerminalConcept(m_pathNexts[i]) < 0)
 			{
-				Logger::log("Ok55");
 				i = tempI;
 				nlines.push_back(str); str = "";
-				Logger::log("------------------");
 				continue;
 			}
 			else
 			{
-				Logger::log("Ok56");
 				size_t index = getFirstTerminalConcept(m_pathNexts[i]);
-				Logger::log("Ok57");
-				Logger::log(index);
-				Logger::log(m_pathNexts[i][index]->getConceptName());
-				Logger::log(m_pathNexts[i][index - 1]->getConceptName());
 				if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
 				{
-					Logger::log("Ok58");
-
-					// sil y a une sequence au dessus il faut decouper si le isEnd() =true en dessous de la sequence
-
-
 					if (index - 1 < 0)
 					{
 						i = tempI;
@@ -431,61 +408,18 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 				}
 				i = tempI;
 				nlines.push_back(str); str = "";
-				Logger::log("------------------");
-
 			}
 		}
 	}
-
+	Logger::log("----------------");
 	Logger::log(nlines);
-
-	// Logger::log("----------------");
-	// i = 0;
-
-	// while (i < m_pathNexts.size())
-	// {
-	// 	size_t line;
-	// 	size_t col;
-	// 	// Logger::log("path : " + LoggerJson::get(m_pathNexts[i]));
-
-	// 	if (findCharPos(lines, i, line, col))
-	// 	{
-
-	// 		char c = lines[line][col];
-	// 		Logger::log("char : " + std::string(1, c));
-	// 		i++;
-	// 		// size_t size = lines[line].size();
-	// 		str.append(lines[line]);
-	// 		// i = i + size + 1;
-	// 		// if (getFirstTerminalConcept(m_pathNexts[i]) < 0)
-	// 		// {
-	// 		// 	i = tempI;
-	// 		// 	nlines.push_back(str); str = "";
-	// 		// 	continue;
-	// 		// }
-	// 		// else
-	// 		// {
-	// 		// 	size_t index = getFirstTerminalConcept(m_pathNexts[i]);
-	// 		// 	if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
-	// 		// 	{
-	// 		// 		if (index - 1 < 0 || !isSequence(index - 1))
-	// 		// 		{
-	// 		// 			continue;
-	// 		// 		}
-	// 		// 	}
-	// 		// 	nlines.push_back(str); str = "";
-	// 		// }
-	// 	}
-	// }
-
-
 
 	AJson *json = NULL;
 	m_continueBuffer = false;
 	AJson *arr = AJson::createArray();
 	m_mapJson.set(0, arr);
     m_cidx = 0;
-	m_lines = lines;
+	m_lines = nlines;
 
 	while (m_cidx < m_pathNexts.size())
 	{
