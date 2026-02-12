@@ -15,6 +15,7 @@ class Date
 		static std::string toHttpDateFormat(const tm *timeInfo);
 		static bool		   compareHttpDates(const std::string &date1, const std::string &date2);
 		static std::string toHumanFormat(const tm *timeInfo);
+		static double	   getDiffTime(time_t &first, time_t &second);
 };
 
 #endif

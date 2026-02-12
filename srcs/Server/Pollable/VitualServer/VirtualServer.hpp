@@ -9,12 +9,15 @@
 class VirtualServer : public Pollable
 {
 	private:
-		const Config   &m_config;
-		std::string		m_bindIp;
-		unsigned short	m_bindPort;
-		Vec<HttpCookie> m_cookies;
+		const Config  &m_config;
+		std::string	   m_bindIp;
+		unsigned short m_bindPort;
+		Vec<HttpUser>  m_users;
 
 		bool setupSocket(const std::string &ip, unsigned short port);
+
+		typedef Vec<HttpUser>::iterator		  UserIt;
+		typedef Vec<HttpUser>::const_iterator UserCIt;
 
 	public:
 		VirtualServer(const Config &config);
@@ -35,8 +38,8 @@ class VirtualServer : public Pollable
 		void onTimeOut();
 
 		const std::string  createCookie(const std::string name, const std::string pswd);
-		bool			   hasCookie(const HttpCookie &cookie) const;
-		const std::string &findCookie(const std::string &name, const std::string &pswd) const;
+		bool			   hasUser(const std::string &hash) const;
+		const std::string &findCookie(const std::string &name, const std::string &pswd);
 };
 
 #endif

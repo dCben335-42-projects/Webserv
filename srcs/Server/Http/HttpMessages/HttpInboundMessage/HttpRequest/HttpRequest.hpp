@@ -15,6 +15,7 @@ class HttpRequest : public AHttpInboundMessage
 		Vec<const Config::Location *> m_activeLocations;
 		Vec<Accept>					  m_accepts;
 		bool						  m_connectionKeepAlive;
+		Map<std::string>			  m_cookieValues;
 
 		size_t m_firstLineEndPos;
 		size_t m_headersEndPos;
@@ -27,8 +28,9 @@ class HttpRequest : public AHttpInboundMessage
 		void   parseAccepts(const std::string &headerValue);
 		bool   determineConnectionKeepAlive() const;
 
-		ssize_t		readContentLength(const std::string &request);
-		std::string readMethodString(const std::string &currentRawStr) const;
+		ssize_t		 readContentLength(const std::string &request);
+		std::string	 readMethodString(const std::string &currentRawStr) const;
+		HttpRequest &parseCookie();
 
 
 	public:
@@ -51,7 +53,9 @@ class HttpRequest : public AHttpInboundMessage
 		HttpRequest &parse(const Config &serverConfig);
 		HttpRequest &reset();
 
-		ssize_t readOnce(int socketFd);
+		ssize_t		readOnce(int socketFd);
+		std::string getCookieValue(const std::string &key) const;
+		bool		hasCookieValue(const std::string &key) const;
 
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		matchAccept(const std::string &contentType) const;

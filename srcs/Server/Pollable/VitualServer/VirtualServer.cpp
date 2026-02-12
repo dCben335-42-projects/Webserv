@@ -173,28 +173,42 @@ void VirtualServer::onTimeOut()
 const std::string VirtualServer::createCookie(const std::string name, const std::string pswd)
 {
 	// Check if domain is the right string
-	for (Vec<HttpCookie>::iterator it = m_cookies.begin(); it != m_cookies.end(); it++)
+	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
 	{
 		if (name == it->getName())
 			throw Http409Exception();
 	}
-	HttpCookie newCookie(name, pswd, m_config.getDomain(), m_config.getPort());
-	newCookie.stringifyCookie();
-	m_cookies.push(newCookie);
-	return newCookie.getStringifiedCookie();
+	HttpUser newUser(name, pswd, m_config.getDomain(), m_config.getPort());
+	newUser.stringifyCookie();
+	m_users.push(newUser);
+	return newUser.getStringifiedCookie();
 }
 
-bool VirtualServer::hasCookie(const HttpCookie &cookie) const
+bool VirtualServer::hasUser(const std::string &hash) const
 {
-	return m_cookies.contains(cookie);
-}
-
-const std::string &VirtualServer::findCookie(const std::string &name, const std::string &pswd) const
-{
-	for (Vec<HttpCookie>::const_iterator it = m_cookies.begin(); it != m_cookies.end(); it++)
+	AuthToken token(hash);
+	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
 	{
-		if (it->getName() == name && it->getPswd() == Number::toString(it->computeHash(pswd + it->getSalt())))
+		if (token == it->getToken() && it->hasValidToken())
+			return true;
+	}
+	return false;
+}
+
+#include "Logger.hpp"
+const std::string &VirtualServer::findCookie(const std::string &name, const std::string &pswd)
+{
+	for (UserIt it = m_users.begin(); it != m_users.end(); it++)
+	{
+		if (it->getName() == name && it->getPswd() == Number::toString(AuthToken::computeHash(pswd + it->getSalt())))
+		{
+			if (!it->hasValidToken())
+			{
+				it->refreshToken();
+				Logger::error("Expired Cookie, created a new one");
+			}
 			return it->getStringifiedCookie();
+		}
 	}
 	throw Http401Exception();
 }

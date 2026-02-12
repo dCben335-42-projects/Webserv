@@ -19,6 +19,7 @@ SRC_FILES += Server/Http/HttpMessages/HttpInboundMessage/HttpRequest/Accept/Acce
 SRC_FILES += Server/Http/HttpMessages/HttpInboundMessage/HttpRequest/HttpRequest.cpp
 SRC_FILES += Server/Http/HttpMessages/HttpResponse/HttpResponse.cpp
 SRC_FILES += Server/Http/HttpMethod/HttpMethod.cpp
+SRC_FILES += Server/Http/HttpUser/AuthToken/AuthToken.cpp
 SRC_FILES += Server/Http/HttpUser/HttpUser.cpp
 SRC_FILES += Server/Pollable/CgiPipe/CgiPipe.cpp
 SRC_FILES += Server/Pollable/Client/Client.cpp

@@ -31,6 +31,7 @@ INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/HttpInboundMessage/HttpRequ
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/HttpInboundMessage/HttpRequest
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMessages/HttpResponse
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpMethod
+INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpUser/AuthToken
 INCLUDES_FLAGS += -I ./srcs/Server/Http/HttpUser
 INCLUDES_FLAGS += -I ./srcs/Server/Pollable/CgiPipe
 INCLUDES_FLAGS += -I ./srcs/Server/Pollable/Client

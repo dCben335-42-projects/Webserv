@@ -51,3 +51,8 @@ std::string Date::toHumanFormat(const tm *timeInfo)
 	strftime(buf, sizeof(buf), KIT_HUMAN_DATE_FORMAT, timeInfo);
 	return std::string(buf);
 }
+
+double Date::getDiffTime(time_t &first, time_t &second)
+{
+	return std::difftime(first, second);
+}

@@ -2,44 +2,44 @@
 #define HTTPUSER_HPP
 
 #include <string>
-#include <ctime>
 
 #include "Map.hpp"
-#include <stdint.h>
+#include "AuthToken.hpp"
 
-class HttpCookie
+class HttpUser
 {
 	private:
-		std::string	   m_uname;
-		std::string	   m_pswd;
+		std::string m_uname;
+		std::string m_pswd;
+		std::string m_salt;
+		time_t		m_creationDate;
+
 		std::string	   m_serverName;
 		unsigned short m_serverPort;
-		time_t		   m_creationDate;
-		time_t		   m_expirationDate;
-		std::string	   m_stringifiedCookie;
 
-		std::string m_hashStr;
-		uint64_t	m_hashInt;
-		std::string m_salt;
+		std::string m_stringifiedCookie;
+
+		AuthToken m_token;
 
 	public:
-		HttpCookie(const std::string name, const std::string pswd, const std::string serverName, unsigned short serverPort);
-		HttpCookie();
-		~HttpCookie();
+		HttpUser(const std::string name, const std::string pswd, const std::string serverName, unsigned short serverPort);
+		HttpUser();
+		~HttpUser();
 
-		void			   parse(std::string rawCookie);
-		void			   stringifyCookie();
+		void parse(std::string rawCookie);
+		void stringifyCookie();
+
+		bool hasValidToken() const;
+
 		const std::string &getStringifiedCookie() const;
 		const std::string &getName() const;
 		const std::string &getPswd() const;
 		const std::string &getSalt() const;
-		const time_t	  &getExpDate() const;
+		const AuthToken	  &getToken() const;
 
-		void	 generateEncryptedPassword();
-		uint64_t computeHash(const std::string str) const;
+		void refreshToken();
 
-		bool operator==(const HttpCookie &obj) const;
+		std::string generateEncryptedPassword(const std::string &pswd);
 };
-
 
 #endif

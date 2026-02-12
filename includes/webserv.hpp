@@ -50,7 +50,8 @@
 #define MURMUR_LAST_SHIFT 15u
 
 // Cookie Duration in seconds
-#define COOKIE_EXPIRE_DURATION 3600u
+#define COOKIE_EXPIRE_DURATION 120u
+#define COOKIE_SESSION_MIN 60u
 
 // Usefuls Cookies defines
 #define COOKIE_FIELD_SEP "; "

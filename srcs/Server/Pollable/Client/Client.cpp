@@ -206,11 +206,10 @@ void Client::handleGetRequest(std::string ressourcePath)
 
 	if (target == "/cgi-bin/")
 	{
-		if (m_req.getHeader(HEADER_COOKIE).empty())
+		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
 			throw Http401Exception();
-		HttpCookie temp;
-		temp.parse(m_req.getHeader(HEADER_COOKIE));
-		if (!m_server.hasCookie(temp))
+		const std::string token = m_req.getCookieValue(COOKIE_KEY_TOKEN);
+		if (!m_server.hasUser(token))
 			throw Http401Exception();
 	}
 	try
