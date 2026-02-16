@@ -17,21 +17,6 @@ const std::string Logger::LOG_WARN_PREFIX  = LOG_DEFAULT_WARN_PREFIX;
 const std::string Logger::LOG_ERROR_PREFIX = LOG_DEFAULT_ERROR_PREFIX;
 const std::string Logger::LOG_DEBUG_PREFIX = LOG_DEFAULT_DEBUG_PREFIX;
 
-// /**
-//  *
-//  * @brief Returns the singleton instance of the Logger class.
-//  *
-//  * @note It is used internally to ensure a single instance of Logger.
-//  *
-//  * @return A reference to the Logger instance.
-//  *
-//  */
-// Logger &Logger::m_instance
-// {
-// 	static Logger instance;
-// 	return instance;
-// }
-
 /**
  *
  * @brief Returns the appropriate output stream based on the current target.

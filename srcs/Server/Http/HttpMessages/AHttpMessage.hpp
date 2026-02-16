@@ -16,9 +16,11 @@ class AHttpMessage
 
 		static const Map<unsigned short, std::string> m_statusReasonMap;
 		static const Vec<unsigned short>			  m_closeStatus;
+		static const Vec<unsigned short>			  m_redirectionStatus;
 
 		static Map<unsigned short, std::string> initStatusReasonMap();
 		static Vec<unsigned short>				initCloseStatus();
+		static Vec<unsigned short>				initRedirectionStatus();
 
 		std::string buildHead() const;
 		std::string build();
@@ -40,6 +42,7 @@ class AHttpMessage
 		void deleteHeader(const std::string &key);
 
 		bool isCloseStatus(unsigned short statusCode) const;
+		bool isRedirectionStatus(unsigned short statusCode) const;
 };
 
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message);

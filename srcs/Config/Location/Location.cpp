@@ -6,63 +6,23 @@
  * @brief Constructs a Location object with auto-index setting.
  *
  * @param path The path of the location.
- * @param root The root directory of the location.
- * @param alias The alias of the location.
- * @param autoIndex A boolean indicating whether auto-indexing is enabled.
- * @param cgi A pointer to the CgiParams object for CGI settings.
  *
  * @note m_isAutoIndex is set to true in this constructor.
  *
  */
-Config::Location::Location(
-	const std::string		 path,
-	const std::string		 root,
-	const std::string		 alias,
-	const bool				 autoIndex,
-	const Config::CgiParams *cgi) :
-	m_path(path),
-	m_root(root),
-	m_alias(alias),
-	m_indexFiles(),
-	m_upload(""),
-	m_cgi(cgi),
-	m_hasMethods(false),
-	m_methods(),
-	m_hasAutoIndex(true),
-	m_autoIndex(autoIndex)
+Config::Location::Location(const std::string path)
 {
-}
+	m_path = path;
+	m_cgi  = NULL;
 
+	m_autoIndex = std::make_pair(false, false);
 
-/**
- *
- * @brief Constructs a Location object without auto-index setting.
- *
- * @param path The path of the location.
- * @param root The root directory of the location.
- * @param alias The alias of the location.
- * @param indexFile The index file of the location.
- * @param cgi A pointer to the CgiParams object for CGI settings.
- *
- * @note m_isAutoIndex is set to false in this constructor.
- *
- */
-Config::Location::Location(
-	const std::string		 path,
-	const std::string		 root,
-	const std::string		 alias,
-	const Config::CgiParams *cgi) :
-	m_path(path),
-	m_root(root),
-	m_alias(alias),
-	m_indexFiles(),
-	m_upload(""),
-	m_cgi(cgi),
-	m_hasMethods(false),
-	m_methods(),
-	m_hasAutoIndex(false),
-	m_autoIndex(false)
-{
+	m_root		= std::make_pair(false, std::string());
+	m_alias		= std::make_pair(false, std::string());
+	m_uploadDir = std::make_pair(false, std::string());
+
+	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
+	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
 }
 
 Config::Location::~Location()
@@ -113,7 +73,7 @@ const std::string &Config::Location::getPath() const
  */
 const std::string &Config::Location::getRoot() const
 {
-	return m_root;
+	return m_root.second;
 }
 /**
  *
@@ -124,7 +84,7 @@ const std::string &Config::Location::getRoot() const
  */
 const Vec<std::string> &Config::Location::getIndexFiles() const
 {
-	return m_indexFiles;
+	return m_indexFiles.second;
 }
 /**
  *
@@ -135,7 +95,7 @@ const Vec<std::string> &Config::Location::getIndexFiles() const
  */
 const std::string &Config::Location::getAlias() const
 {
-	return m_alias;
+	return m_alias.second;
 }
 /**
  *
@@ -146,7 +106,7 @@ const std::string &Config::Location::getAlias() const
  */
 bool Config::Location::getAutoIndex() const
 {
-	return m_autoIndex;
+	return m_autoIndex.second;
 }
 /**
  *
@@ -169,7 +129,7 @@ const Config::CgiParams *Config::Location::getCgiParams() const
  */
 const Set<HttpMethod> &Config::Location::getAllowedMethods() const
 {
-	return m_methods;
+	return m_allowedMethods.second;
 }
 
 /**
@@ -181,7 +141,19 @@ const Set<HttpMethod> &Config::Location::getAllowedMethods() const
  */
 const std::string &Config::Location::getUpload() const
 {
-	return m_upload;
+	return m_uploadDir.second;
+}
+
+/**
+ *
+ * @brief Gets the return value for the location.
+ *
+ * @return A constant reference to the LocationReturn object representing the return value.
+ *
+ */
+const LocationReturn &Config::Location::getReturn() const
+{
+	return m_return.second;
 }
 
 
@@ -197,7 +169,7 @@ const std::string &Config::Location::getUpload() const
  */
 bool Config::Location::hasAlias() const
 {
-	return !m_alias.empty();
+	return m_alias.first;
 }
 /**
  *
@@ -219,7 +191,7 @@ bool Config::Location::hasCgiParams() const
  */
 bool Config::Location::hasIndexFile() const
 {
-	return !m_indexFiles.empty();
+	return m_indexFiles.first;
 }
 /**
  *
@@ -230,7 +202,7 @@ bool Config::Location::hasIndexFile() const
  */
 bool Config::Location::hasRoot() const
 {
-	return !m_root.empty();
+	return m_root.first;
 }
 /**
  *
@@ -241,7 +213,7 @@ bool Config::Location::hasRoot() const
  */
 bool Config::Location::hasAutoIndexSet() const
 {
-	return m_hasAutoIndex;
+	return m_autoIndex.first;
 }
 
 /**
@@ -253,7 +225,7 @@ bool Config::Location::hasAutoIndexSet() const
  */
 bool Config::Location::hasMethods() const
 {
-	return m_hasMethods;
+	return m_allowedMethods.first;
 }
 
 /**
@@ -277,7 +249,19 @@ bool Config::Location::hasCgi() const
  */
 bool Config::Location::hasUpload() const
 {
-	return !m_upload.empty();
+	return m_uploadDir.first;
+}
+
+/**
+ *
+ * @brief Checks if the location has a return value set.
+ *
+ * @return true if a return value is set, false otherwise.
+ *
+ */
+bool Config::Location::hasReturn() const
+{
+	return m_return.first;
 }
 
 
@@ -303,7 +287,8 @@ void Config::Location::setPath(const std::string &path)
  */
 void Config::Location::setRoot(const std::string &root)
 {
-	m_root = root;
+	m_root.first  = true;
+	m_root.second = root;
 }
 
 
@@ -316,7 +301,8 @@ void Config::Location::setRoot(const std::string &root)
  */
 void Config::Location::setAlias(const std::string &alias)
 {
-	m_alias = alias;
+	m_alias.first  = true;
+	m_alias.second = alias;
 }
 
 
@@ -329,7 +315,8 @@ void Config::Location::setAlias(const std::string &alias)
  */
 void Config::Location::setAutoIndex(const bool autoIndex)
 {
-	m_autoIndex = autoIndex;
+	m_autoIndex.first  = true;
+	m_autoIndex.second = autoIndex;
 }
 /**
  *
@@ -354,8 +341,8 @@ void Config::Location::setCgiParams(const Config::CgiParams *cgi)
  */
 void Config::Location::setMethods(const Set<HttpMethod> &methods)
 {
-	m_methods	 = methods;
-	m_hasMethods = true;
+	m_allowedMethods.first	= true;
+	m_allowedMethods.second = methods;
 }
 
 
@@ -368,7 +355,21 @@ void Config::Location::setMethods(const Set<HttpMethod> &methods)
  */
 void Config::Location::setUpload(const std::string &upload)
 {
-	m_upload = upload;
+	m_uploadDir.first  = true;
+	m_uploadDir.second = upload;
+}
+
+/**
+ *
+ * @brief Sets the return value for the location.
+ *
+ * @param returnVal A LocationReturn object representing the return value to be set.
+ *
+ */
+void Config::Location::setReturn(const LocationReturn &returnVal)
+{
+	m_return.first	= true;
+	m_return.second = returnVal;
 }
 
 
@@ -381,7 +382,8 @@ void Config::Location::setUpload(const std::string &upload)
  */
 void Config::Location::setIndexFiles(const Vec<std::string> &indexFiles)
 {
-	m_indexFiles = indexFiles;
+	m_indexFiles.first	= true;
+	m_indexFiles.second = indexFiles;
 }
 
 /**
@@ -393,7 +395,8 @@ void Config::Location::setIndexFiles(const Vec<std::string> &indexFiles)
  */
 void Config::Location::addIndexFile(const std::string &indexFile)
 {
-	m_indexFiles.push(indexFile);
+	m_indexFiles.first = true;
+	m_indexFiles.second.push(indexFile);
 }
 
 

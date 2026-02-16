@@ -11,6 +11,7 @@
 #include "webserv.hpp"
 #include "HttpAuth.hpp"
 #include "httpHeaders.hpp"
+#include "Logger.hpp"
 
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
@@ -26,6 +27,36 @@ Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
+}
+
+const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> Client::m_methodHandler =
+	Client::initMethodHandler();
+
+const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> Client::initMethodHandler()
+{
+	Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> methodHandler;
+	methodHandler.set(HttpMethod::GET, &Client::handleGet);
+	methodHandler.set(HttpMethod::POST, &Client::handlePost);
+	methodHandler.set(HttpMethod::DELETE, &Client::handleDelete);
+	methodHandler.set(HttpMethod::PUT, &Client::handlePutPatch);
+	methodHandler.set(HttpMethod::PATCH, &Client::handlePutPatch);
+	return methodHandler;
+}
+
+const Set<HttpMethod> Client::handledMethods = Client::initHandledMethods();
+
+const Set<HttpMethod> Client::initHandledMethods()
+{
+	Set<HttpMethod> handledMethods;
+
+	Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)>::const_iterator end = Client::m_methodHandler.end();
+	Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)>::const_iterator it	= Client::m_methodHandler.begin();
+	while (it != end)
+	{
+		handledMethods.push(it->first);
+		++it;
+	}
+	return handledMethods;
 }
 
 /**
@@ -108,8 +139,9 @@ void Client::setEvents(const short events)
  * @throws AHttpException if there are issues with processing the POST data.
  *
  */
-void Client::handlePost()
+void Client::handlePost(const std::string &ressourcePath)
 {
+	(void) ressourcePath;
 	const std::string &target = m_req.getTarget();
 	if (target == "/auth/register" || target == "/auth/login")
 	{
@@ -225,7 +257,6 @@ void Client::serveFile(
 	{
 		const size_t	  pos			   = String::rfindIC(filePath, target);
 		const std::string redirectedTarget = filePath.substr(pos) + "/";
-		Logger::info("Redirecting to " + redirectedTarget);
 		throw Http301Exception(String::removeDuplicateSlashes(redirectedTarget));
 	}
 	const std::string &mime = file.getMime();
@@ -241,7 +272,8 @@ void Client::serveFile(
 
 void Client::serveIndexOf(const std::string &ressourcePath, const std::string &target)
 {
-	IndexOf index(ressourcePath, target);
+	IndexOf index(ressourcePath, target, m_req.getAllowedMethods());
+	index.scanDirectory().generate();
 	m_res.setBody(index.getPage());
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 	m_res.setStatusCode(200);
@@ -300,8 +332,9 @@ bool Client::findIndexFile(std::string &ressourcePath, const std::string &target
  * or if there are permission issues.
  *
  */
-void Client::handleGet(std::string ressourcePath)
+void Client::handleGet(const std::string &ressourcePath)
 {
+
 	bool			  isIndexFile = false;
 	const std::string target	  = m_req.getTarget();
 
@@ -315,6 +348,7 @@ void Client::handleGet(std::string ressourcePath)
 	}
 	try
 	{
+		std::string path = ressourcePath;
 		if (!FileManager::exists(ressourcePath))
 			throw Http404Exception();
 		if (FileManager::isFolder(ressourcePath))
@@ -324,14 +358,13 @@ void Client::handleGet(std::string ressourcePath)
 
 			if (!isFolderRequest)
 				throw Http301Exception(target + "/");
-			isIndexFile = findIndexFile(ressourcePath, target);
+			isIndexFile = findIndexFile(path, target);
 			if (!isIndexFile && m_req.getActiveAutoIndex())
-			{
-				serveIndexOf(ressourcePath, target);
-				return;
-			}
+				return serveIndexOf(ressourcePath, target);
+			if (!isIndexFile)
+				throw Http403Exception();
 		}
-		serveFile(ressourcePath, target, !isIndexFile);
+		serveFile(path, target, !isIndexFile);
 	}
 	catch (const FileManager::FileException &e)
 	{
@@ -360,6 +393,20 @@ bool Client::prepareResponse()
 {
 	CgiSpawner cgiHandler(m_req, m_serverConfig);
 
+	if (m_req.hasReturn())
+	{
+		const LocationReturn &locReturn	 = m_req.getReturn();
+		const unsigned short  statusCode = locReturn.getStatusCode();
+		m_res.setStatusCode(statusCode);
+		if (m_req.isRedirectionStatus(statusCode))
+			m_res.setHeader(HEADER_LOCATION, locReturn.getTarget());
+		else
+		{
+			m_res.setBody(locReturn.getTarget());
+			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
+		}
+		return true;
+	}
 	if (!m_req.isAllowedMethod())
 		throw Http403Exception();
 	if (cgiHandler.isCgi())
@@ -368,30 +415,46 @@ bool Client::prepareResponse()
 		m_events = 0;
 		return false;
 	}
-
 	const size_t	  segmentSize	= m_req.getSegmentSize();
 	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
 	const HttpMethod &method		= m_req.getMethod();
 
-	switch (method.getType())
-	{
-		case HttpMethod::GET:
-			handleGet(ressourcePath);
-			break;
-		case HttpMethod::POST:
-			handlePost();
-			break;
-		case HttpMethod::DELETE:
-			handleDelete(ressourcePath);
-			break;
-		case HttpMethod::PUT:
-		case HttpMethod::PATCH:
-			handlePutPatch(ressourcePath);
-			break;
-		default:
-			throw Http405Exception(method.getStrType());
-	}
+	if (!Client::m_methodHandler.has(method))
+		throw Http405Exception(method.getStrType());
+	(this->*Client::m_methodHandler.get(method))(ressourcePath);
 	return true;
+}
+
+
+/**
+ *
+ * @brief Handles HTTP exceptions and prepares the response accordingly.
+ *
+ * This function takes an AHttpException object, extracts the relevant information,
+ * and prepares the HTTP response with the appropriate status code, headers, and body.
+ *
+ * It is used to centralize the handling of HTTP errors and ensure consistent responses
+ * for different types of exceptions.
+ *
+ * @param e The AHttpException object containing details about the HTTP error.
+ *
+ */
+void Client::onHttpException(const AHttpException &e)
+{
+	m_res.reset();
+	m_res.setStatusCode(e.getStatusCode());
+	if (e.isRedirection())
+	{
+		m_res.setHeader(HEADER_LOCATION, e.getRedirectionUrl());
+		return;
+	}
+	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+	m_res.setBody(e.getPage());
+	if (e.getStatusCode() != 405)
+		return;
+	const Set<HttpMethod> *locMethods	  = m_req.getAllowedMethods();
+	const Set<HttpMethod>  allowedMethods = locMethods ? *locMethods : Client::handledMethods;
+	m_res.setHeader(HEADER_ALLOW, HttpMethod::toString(allowedMethods));
 }
 
 
@@ -454,15 +517,7 @@ void Client::onPollIn()
 	}
 	catch (const AHttpException &e)
 	{
-		m_res.reset();
-		m_res.setStatusCode(e.getStatusCode());
-		if (!e.isRedirection())
-		{
-			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-			m_res.setBody(e.getPage());
-		}
-		else
-			m_res.setHeader(HEADER_LOCATION, e.getRedirectionUrl());
+		onHttpException(e);
 	}
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_serverConfig.getKeepAliveTimeout()).build();
 	determineKeepAlive(m_res.getStatusCode());
@@ -492,6 +547,7 @@ void Client::onPollOut()
 	}
 	catch (const std::exception &e)
 	{
+		Logger::error("Error sending response to client on fd " + Logger::get(m_fd) + ": " + e.what());
 		m_events		   = 0;
 		m_connectionClosed = true;
 		return;
@@ -508,6 +564,7 @@ void Client::onPollOut()
 		m_count++;
 		return;
 	}
+	m_time	 = std::time(0);
 	m_events = POLLOUT;
 }
 

@@ -41,11 +41,27 @@ Vec<unsigned short> AHttpMessage::initCloseStatus()
 	return (vec);
 }
 
+Vec<unsigned short> AHttpMessage::initRedirectionStatus()
+{
+	Vec<unsigned short> vec;
+
+	vec.push(300);
+	vec.push(301);
+	vec.push(302);
+	vec.push(303);
+	vec.push(307);
+	vec.push(308);
+	return (vec);
+}
+
 const Map<unsigned short, std::string> AHttpMessage::m_statusReasonMap =
 	AHttpMessage::initStatusReasonMap();
 
 const Vec<unsigned short> AHttpMessage::m_closeStatus =
 	AHttpMessage::initCloseStatus();
+
+const Vec<unsigned short> AHttpMessage::m_redirectionStatus =
+	AHttpMessage::initRedirectionStatus();
 
 
 AHttpMessage::AHttpMessage() :
@@ -199,6 +215,18 @@ void AHttpMessage::setMethod(const HttpMethod &method)
 bool AHttpMessage::isCloseStatus(unsigned short statusCode) const
 {
 	return m_closeStatus.contains(statusCode);
+}
+
+/**
+ *
+ * @brief Checks if the current HTTP status code is one that indicates a redirection.
+ *
+ * @return true if the status code is in the list of redirection status codes, false otherwise.
+ *
+ */
+bool AHttpMessage::isRedirectionStatus(unsigned short statusCode) const
+{
+	return m_redirectionStatus.contains(statusCode);
 }
 
 

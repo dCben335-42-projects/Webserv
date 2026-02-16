@@ -13,33 +13,55 @@ size_t				 EventLoop::m_nfds = 0;
 
 void EventLoop::init()
 {
-	Map<std::string> binmap1;
+	const std::string ip = "localhost";
+
+
+
 	// Set<HttpMethod>	 allowedMethods1;
 	// allowedMethods1.insert(HttpMethod::GET);
 	// allowedMethods1.insert(HttpMethod::POST);
 	// allowedMethods1.insert(HttpMethod::DELETE);
+
+	Config::Location *defaultLocation = new Config::Location("");
+	defaultLocation->setRoot("files/www/website");
+	// defaultLocation->setReturn(LocationReturn(301, "/auth/login"));
+
+	Config::Location *slashLoc = new Config::Location("/");
+	slashLoc->setAutoIndex(true);
+
+	Config::Location *bin = new Config::Location("/cgi-bin");
+	Map<std::string>  binmap1;
 	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
-	Config::CgiParams *param2 = new Config::CgiParams(binmap1);
+	Config::CgiParams *cgi = new Config::CgiParams(binmap1);
+	bin->setCgiParams(cgi);
 
-	Config::Location *defaultLocation = new Config::Location("", "files/www/website", "", true, param2);
-	Config::Location *loc1			  = new Config::Location("/assets", "", "", true, NULL);
-	Config::Location *loc2			  = new Config::Location("/assets/", "", "files/www/website/assets", NULL);
-	Config::Location *loc8			  = new Config::Location("/cgi-bin", "", "files/www/usr/bin", true, NULL);
-	Config::Location *loc9			  = new Config::Location("/uploads", "", "files/www/uploads", true, NULL);
 
-	defaultLocation->addIndexFile("index.htms");
-	Config::Location *loc10 = new Config::Location("/auth/register", "", "files/www/auth/register.html", true, NULL);
-	Config::Location *loc11 = new Config::Location("/auth/login", "", "files/www/auth/login.html", true, NULL);
-	loc9->setUpload("files/www/uploads/");
+	Config::Location *uploadLocation = new Config::Location("/uploads");
+	uploadLocation->setAutoIndex(true);
+	uploadLocation->setUpload("files/www/uploads");
+	uploadLocation->setAlias("files/www/uploads");
+	Set<HttpMethod> uploadMethods;
+	uploadMethods.insert(HttpMethod::GET);
+	// uploadLocation->setMethods(uploadMethods);
+
+
+	Config::Location *registerLocation = new Config::Location("/auth/register");
+	registerLocation->addIndexFile("register.html");
+	registerLocation->setReturn(LocationReturn(301, "/uploads"));
+	Config::Location *loginLocation = new Config::Location("/auth/login");
+	loginLocation->addIndexFile("login.html");
+	loginLocation->setReturn(LocationReturn(301, "/auth/register"));
+
+
 	Map<const Config::Location *> locations;
-	locations.set(loc1->getPath(), loc1);
-	locations.set(loc2->getPath(), loc2);
-	locations.set(loc8->getPath(), loc8);
-	locations.set(loc9->getPath(), loc9);
-	locations.set(loc10->getPath(), loc10);
-	locations.set(loc11->getPath(), loc11);
-	Config *config1 = new Config("127.0.0.1", 8080, "localhost", defaultLocation, locations);
+	locations.set("/", slashLoc);
+	locations.set("/cgi-bin", bin);
+	locations.set("/uploads", uploadLocation);
+	locations.set("/auth/register", registerLocation);
+	locations.set("/auth/login", loginLocation);
+
+	Config *config1 = new Config(ip, 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
 	Signals::catchSigs();
 }

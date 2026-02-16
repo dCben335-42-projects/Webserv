@@ -1,10 +1,9 @@
 #ifndef HTTP_REQUEST_HPP
 #define HTTP_REQUEST_HPP
 
-#include "Vec.hpp"
-#include "Config.hpp"
 #include "AHttpInboundMessage.hpp"
-#include "String.hpp"
+#include "Config.hpp"
+#include "Location.hpp"
 #include "Accept.hpp"
 
 class HttpRequest : public AHttpInboundMessage
@@ -32,6 +31,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::string	 readMethodString(const std::string &currentRawStr) const;
 		HttpRequest &parseCookie();
 
+		typedef Vec<const Config::Location *>::const_iterator m_locCIt;
 
 	public:
 		HttpRequest();
@@ -43,11 +43,15 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<Accept>					&getAccepts() const;
 		bool								 getActiveAutoIndex() const;
 		bool								 getConnectionKeepAlive() const;
+		const Set<HttpMethod>				*getAllowedMethods() const;
 
 		bool isHeadersEndPos() const;
 
 		bool		hasUpload() const;
 		std::string getUploadPath() const;
+
+		bool				  hasReturn() const;
+		const LocationReturn &getReturn() const;
 
 		bool isAllowedMethod() const;
 

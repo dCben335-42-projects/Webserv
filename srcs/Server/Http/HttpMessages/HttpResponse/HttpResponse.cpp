@@ -59,14 +59,6 @@ void HttpResponse::setFullResponse(const std::string str)
 	m_fullResponse = str;
 }
 
-#include "Logger.hpp"
-void HttpResponse::appendToFullResponse(const char *buf, size_t size)
-{
-	Logger::debug("Appending to full response: " + Number::toString(size) + " bytes");
-	m_fullResponse.append(buf, size);
-}
-
-
 
 /**
  *
@@ -104,7 +96,7 @@ size_t HttpResponse::getSentBytes() const
 	return m_sentBytes;
 }
 
-
+#include "errno.h"
 /**
  *
  * @brief Sends the HTTP response over the given socket.

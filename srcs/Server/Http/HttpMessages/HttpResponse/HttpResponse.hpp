@@ -9,8 +9,6 @@ class HttpResponse : public AHttpMessage
 		std::string m_fullResponse;
 		size_t		m_sentBytes;
 
-
-
 	public:
 		HttpResponse();
 		~HttpResponse();
@@ -21,7 +19,6 @@ class HttpResponse : public AHttpMessage
 
 		void setStatusCode(unsigned short code);
 		void setFullResponse(const std::string str);
-		void appendToFullResponse(const char *buf, size_t size);
 
 		bool sendOnce(int socket);
 

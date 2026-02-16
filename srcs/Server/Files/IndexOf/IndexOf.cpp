@@ -1,9 +1,11 @@
 #include "IndexOf.hpp"
 #include <dirent.h>
-#include <sstream>
 #include "Number.hpp"
-#include "webserv.hpp"
 #include "String.hpp"
+#include "HttpMethod.hpp"
+#include "File.hpp"
+#include "webserv.hpp"
+
 
 const std::string IndexOf::HEAD_TEMPLATE =
 	"<!DOCTYPE html>\n"
@@ -11,7 +13,7 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"<head>\n"
 	"<meta charset=\"UTF-8\">\n"
 	"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-	"<title>Index of {{LOCATION}}</title>\n"
+	"<title>Index of" INDEXOF_TEMPLATE_LOCATION "</title>\n"
 	"<style>\n"
 	"body {\n"
 	"  font-family: system-ui, sans-serif;\n"
@@ -42,8 +44,10 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"  border-radius: 4px;\n"
 	"  border: none;\n"
 	"  cursor: pointer;\n"
-	"  transition: background 0.2s ease;\n"
+	"  transition: background 0.2s ease,\n"
+	"				filter 0.2s ease-in-out;\n"
 	"}\n"
+	".btn:hover { filter: brightness(0.9); }\n"
 	".btn-upload {\n"
 	"  background: #0066b8;\n"
 	"  color: #fff;\n"
@@ -54,7 +58,7 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"  color: #fff;\n"
 	"}\n"
 	".btn-delete:hover { background: #c43c28; }\n"
-	".actions { display: flex; }\n"
+	".actions { display: flex; gap: 0.5rem; }\n"
 	"table {\n"
 	"  border-collapse: collapse;\n"
 	"  width: 100%;\n"
@@ -72,6 +76,26 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"tr:hover { background: #eef6ff; }\n"
 	".size, .date { text-align: right; color: #555; }\n"
 	".icon { width: 1.6rem; text-align: center; }\n"
+	".editbox {\n"
+	"  display: grid;\n"
+	"  gap: 0.5rem;\n"
+	"  margin-top: 1.5rem;\n"
+	"  padding: 1rem;\n"
+	"  background: #fff;\n"
+	"  border-radius: 8px;\n"
+	"  box-shadow: 0 1px 4px rgba(0,0,0,0.08);\n"
+	"}\n"
+	".editbox textarea {\n"
+	"  width: 100%;\n"
+	"  box-sizing: border-box;\n"
+	"  min-height: 500px;\n"
+	"  padding: 0.5rem;\n"
+	"  font-family: monospace;\n"
+	"  font-size: 0.9rem;\n"
+	"  border: 1px solid #ddd;\n"
+	"  border-radius: 4px;\n"
+	"  resize: vertical;\n"
+	"}\n"
 	".footer {\n"
 	"  margin-top: 1.5rem;\n"
 	"  font-size: 0.85rem;\n"
@@ -79,6 +103,9 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"  text-align: center;\n"
 	"  padding-top: 0.5rem;\n"
 	"  border-top: 1px solid #ddd;\n"
+	"}\n"
+	".hidden {\n"
+	"  display: none;\n"
 	"}\n"
 	"</style>\n"
 	"<script>\n"
@@ -96,13 +123,17 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"  fetch(path, { method: 'DELETE' })\n"
 	"    .then(r => r.ok ? console.log(r) : alert('Delete failed'));\n"
 	"}\n"
-	"function fetchFile(path) {\n"
+	"function fetchFile(path, size) {\n"
+	"  if (size > " INDEXOF_MAX_FETCH_SIZE_STR ")\n"
+	"    return alert('File too large to edit');\n"
+	"  const editbox = document.querySelector('.editbox');\n"
 	"  const textarea = document.getElementById('editfile');\n"
 	"  fetch(path, { method: 'GET' })\n"
 	"    .then(r => r.text())"
 	"    .then(content => {\n"
 	"  textarea.textContent = content;\n"
 	"  textarea.name = path;\n"
+	"  editbox.classList.remove('hidden');\n"
 	"});\n"
 	"}\n"
 	"function editFile() {\n"
@@ -113,51 +144,67 @@ const std::string IndexOf::HEAD_TEMPLATE =
 	"</script>\n"
 	"</head>\n"
 	"<body>\n"
-	"<h1>Index of {{LOCATION}}</h1>\n"
-	"<div class=\"path\">{{PATH}}</div>\n"
-	"<div class=\"upload-box\">\n"
-	"  <input type=\"file\" id=\"fileInput\">\n"
-	"  <button class=\"btn btn-upload\" onclick=\"uploadFile()\">Upload</button>\n"
-	"</div>\n"
+	"<h1>Index of" INDEXOF_TEMPLATE_LOCATION "</h1>\n"
+	"<div class=\"path\">" INDEXOF_TEMPLATE_PATH "</div>\n"
+	"" INDEXOF_TEMPLATE_UPLOAD_FORM
 	"<table>\n"
 	"<tr>"
 	"<th></th>"
-	"<th>Name</th>"
-	"<th class=\"size\">Size</th>"
-	"<th class=\"date\">Created</th>"
-	"<th class=\"date\">Modified</th>"
+	"<th>" INDEXOF_COL_NAME "</th>"
+	"<th class=\"size\">" INDEXOF_COL_SIZE "</th>"
+	"<th class=\"date\">" INDEXOF_COL_CHANGED "</th>"
+	"<th class=\"date\">" INDEXOF_COL_MODIFIED "</th>"
 	"<th>Actions</th>"
 	"</tr>\n";
 
 const std::string IndexOf::LINE_TEMPLATE =
 	"<tr>"
-	"<td class=\"icon\">{{ICON}}</td>"
-	"<td><a href=\"{{LINK}}\">{{NAME}}</a></td>"
-	"<td class=\"size\">{{SIZE_HUMAN}}</td>"
-	"<td class=\"date\">{{CREATED_HUMAN}}</td>"
-	"<td class=\"date\">{{DATE_HUMAN}}</td>"
-	"<td class=\"actions\">"
-	"<button class=\"btn btn-delete\" onclick=\"deleteFile('{{LINK}}')\">Delete</button>"
-	"<button class=\"btn btn-edit\" onclick=\"fetchFile('{{LINK}}')\">Edit</button>"
-	"</td>"
+	"<td class=\"icon\">" INDEXOF_TEMPLATE_ICON "</td>"
+	"<td><a href=\"" INDEXOF_TEMPLATE_LINK "\">" INDEXOF_TEMPLATE_NAME "</a></td>"
+	"<td class=\"size\">" INDEXOF_TEMPLATE_SIZE_HUMAN "</td>"
+	"<td class=\"date\">" INDEXOF_TEMPLATE_CHANGED_HUMAN "</td>"
+	"<td class=\"date\">" INDEXOF_TEMPLATE_MODIFIED_HUMAN "</td>"
+	"<td class=\"actions\">" INDEXOF_TEMPLATE_DELETE_BUTTON INDEXOF_TEMPLATE_EDIT_BUTTON "</td>"
 	"</tr>\n";
+
+const std::string IndexOf::EDIT_BUTTON_TEMPLATE =
+	"<button class=\"btn btn-edit\" onclick=\"fetchFile('" INDEXOF_TEMPLATE_LINK "', " INDEXOF_TEMPLATE_SIZE ")\">Edit</button>";
+
+const std::string IndexOf::DELETE_BUTTON_TEMPLATE =
+	"<button class=\"btn btn-delete\" onclick=\"deleteFile('" INDEXOF_TEMPLATE_LINK "')\">Delete</button>";
+
+const std::string IndexOf::UPLOAD_FORM_TEMPLATE =
+	"<div class=\"upload-box\">\n"
+	"  <input type=\"file\" id=\"fileInput\">\n"
+	"  <button class=\"btn btn-upload\" onclick=\"uploadFile()\">Upload</button>\n"
+	"</div>\n";
+
+const std::string IndexOf::EDIT_FORM_TEMPLATE =
+	"<div class='editbox hidden'>"
+	"<textarea id='editfile' name='editfile' rows='4' cols='50'></textarea>"
+	"<button class=\"btn btn-submit\" onclick=\"editFile()\">Edit</button>"
+	"</div>";
 
 const std::string IndexOf::FOOT_TEMPLATE =
 	"</table>\n"
-	"<div id='editbox'>"
-	"<textarea id='editfile' name='editfile' rows='4' cols='50'></textarea>"
-	"<button class=\"btn btn-submit\" onclick=\"editFile('{{LINK}}')\">Edit</button>"
-	"</div>"
-	"<div class=\"footer\">{{FILE_COUNT}} items &middot; Generated by {{SERVER_NAME}}</div>\n"
+	"" INDEXOF_TEMPLATE_EDIT_FORM
+	"<div class=\"footer\">" INDEXOF_TEMPLATE_FILE_COUNT " items &middot; Generated by " INDEXOF_TEMPLATE_SERVER_NAME "</div>\n"
 	"</body>\n"
 	"</html>\n";
 
 
-IndexOf::IndexOf(const std::string &targetPath, const std::string &location)
+
+
+IndexOf::IndexOf(
+	const std::string	  &targetPath,
+	const std::string	  &location,
+	const Set<HttpMethod> *allowedMethods)
 {
-	m_path	   = targetPath;
-	m_location = location;
-	scanDirectory().generate();
+	m_path		= targetPath;
+	m_location	= location;
+	m_hasPost	= !allowedMethods || allowedMethods->contains(HttpMethod::POST);
+	m_hasPut	= !allowedMethods || allowedMethods->contains(HttpMethod::PUT);
+	m_hasDelete = !allowedMethods || allowedMethods->contains(HttpMethod::DELETE);
 }
 
 IndexOf::~IndexOf()
@@ -219,17 +266,82 @@ std::string IndexOf::generateLine(
 	const std::string &name,
 	const std::string &sizeHuman,
 	const std::string &createdHuman,
-	const std::string &dateHuman)
+	const std::string &dateHuman,
+	const std::string &size)
 {
 	std::string line = LINE_TEMPLATE;
 
-	String::replaceAll(line, "{{ICON}}", icon);
-	String::replaceAll(line, "{{LINK}}", link);
-	String::replaceAll(line, "{{NAME}}", name);
-	String::replaceAll(line, "{{CREATED_HUMAN}}", createdHuman);
-	String::replaceAll(line, "{{SIZE_HUMAN}}", sizeHuman);
-	String::replaceAll(line, "{{DATE_HUMAN}}", dateHuman);
+	String::replaceAll(line, INDEXOF_TEMPLATE_ICON, icon);
+	String::replaceAll(line, INDEXOF_TEMPLATE_LINK, link);
+	String::replaceAll(line, INDEXOF_TEMPLATE_NAME, name);
+	String::replaceAll(line, INDEXOF_TEMPLATE_CHANGED_HUMAN, createdHuman);
+	String::replaceAll(line, INDEXOF_TEMPLATE_SIZE_HUMAN, sizeHuman);
+	String::replaceAll(line, INDEXOF_TEMPLATE_MODIFIED_HUMAN, dateHuman);
+	if (name != "..")
+	{
+		std::string editBtn = m_hasPut ? EDIT_BUTTON_TEMPLATE : "";
+		if (m_hasPut)
+		{
+			String::replaceAll(editBtn, INDEXOF_TEMPLATE_SIZE, size);
+			String::replaceAll(editBtn, INDEXOF_TEMPLATE_LINK, link);
+		}
+		String::replaceAll(line, INDEXOF_TEMPLATE_EDIT_BUTTON, editBtn);
+
+		std::string deleteBtn = m_hasDelete ? DELETE_BUTTON_TEMPLATE : "";
+		if (m_hasDelete)
+			String::replaceAll(deleteBtn, INDEXOF_TEMPLATE_LINK, link);
+		String::replaceAll(line, INDEXOF_TEMPLATE_DELETE_BUTTON, deleteBtn);
+	}
+	else
+	{
+		String::replaceAll(line, INDEXOF_TEMPLATE_EDIT_BUTTON, "");
+		String::replaceAll(line, INDEXOF_TEMPLATE_DELETE_BUTTON, "");
+	}
 	return line;
+}
+
+
+/**
+ *
+ * @brief Generates the head section of the index page.
+ *
+ * @note This function uses the HEAD_TEMPLATE constant to format the head section.
+ * @see HEAD_TEMPLATE
+ *
+ * @return std::string The generated head section.
+ *
+ */
+std::string IndexOf::generateHead()
+{
+	std::string		  head		 = HEAD_TEMPLATE;
+	const std::string uploadForm = m_hasPost ? UPLOAD_FORM_TEMPLATE : "";
+
+	String::replaceAll(head, INDEXOF_TEMPLATE_LOCATION, String::htmlEscape(m_location));
+	String::replaceAll(head, INDEXOF_TEMPLATE_UPLOAD_FORM, uploadForm);
+	String::replaceAll(head, INDEXOF_TEMPLATE_PATH, String::htmlEscape(m_path));
+	return head;
+}
+
+
+/**
+ *
+ * @brief Generates the foot section of the index page.
+ *
+ * @note This function uses the FOOT_TEMPLATE constant to format the foot section.
+ * @see FOOT_TEMPLATE
+ *
+ * @return std::string The generated foot section.
+ *
+ */
+std::string IndexOf::generateFoot()
+{
+	std::string		  foot	   = FOOT_TEMPLATE;
+	const std::string editForm = m_hasPut ? EDIT_FORM_TEMPLATE : "";
+
+	String::replaceAll(foot, INDEXOF_TEMPLATE_EDIT_FORM, editForm);
+	String::replaceAll(foot, INDEXOF_TEMPLATE_FILE_COUNT, Number::toString(m_files.size()));
+	String::replaceAll(foot, INDEXOF_TEMPLATE_SERVER_NAME, SERVER_NAME);
+	return foot;
 }
 
 /**
@@ -249,30 +361,22 @@ std::string IndexOf::generateLine(
  */
 IndexOf &IndexOf::generate()
 {
-	std::string line;
-	std::string result = HEAD_TEMPLATE;
-	String::replaceAll(result, "{{LOCATION}}", String::htmlEscape(m_location));
-	String::replaceAll(result, "{{PATH}}", String::htmlEscape(m_path));
+	m_page = generateHead();
 
 	if (m_location != "/")
-		result += generateLine("📁", "../", "..", "-", "-", "-");
+		m_page += generateLine("📁", "../", "..", "-", "-", "-", "");
 	for (Vec<File>::const_iterator it = m_files.begin(); it != m_files.end(); ++it)
 	{
-		result += generateLine(
+		m_page += generateLine(
 			it->getIcon(),
 			it->getUri(),
 			it->getName(),
 			it->getSizeHuman(),
 			it->getCreatedAtHuman(),
-			it->getLastModifiedHuman());
+			it->getLastModifiedHuman(),
+			Number::toString(it->getSize()));
 	}
-	std::string foot = FOOT_TEMPLATE;
-	String::replaceAll(foot, "{{FILE_COUNT}}", Number::toString(m_files.size()));
-	String::replaceAll(foot, "{{SERVER_NAME}}", SERVER_NAME);
-	result += foot;
-	m_page = result;
-
-
+	m_page += generateFoot();
 	return *this;
 }
 

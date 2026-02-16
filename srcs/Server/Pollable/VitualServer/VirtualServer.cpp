@@ -3,13 +3,17 @@
 #include <fcntl.h>
 #include "Number.hpp"
 #include <unistd.h>
-#include "Logger.hpp"
+#include <netdb.h>
 #include <arpa/inet.h>
+
+#include "Logger.hpp"
 #include "httpExceptions.hpp"
 #include "Date.hpp"
 
 #include "Client.hpp"
 #include "HttpUser.hpp"
+
+
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
@@ -17,6 +21,7 @@ VirtualServer::VirtualServer(const Config &config) :
 	m_bindIp(config.getIp()),
 	m_bindPort(config.getPort())
 {
+	m_isIPv6 = m_bindIp.find(':') != std::string::npos;
 	setupSocket(m_bindIp, m_bindPort);
 	m_events = POLLIN;
 	EventLoop::addHandler(this);
@@ -129,6 +134,42 @@ struct in6_addr VirtualServer::convertIPv6(const std::string &ip)
 }
 
 
+
+/**
+ *
+ * @brief Resolves a hostname to an IPv6 address and returns it as a struct in6_addr.
+ *
+ * @param hostname The hostname to resolve (e.g., "example.com").
+ * @return The resolved IPv6 address as a struct in6_addr.
+ * @note This function uses the getaddrinfo system call to resolve the hostname to an IPv6 address.
+ * It sets up the appropriate hints for IPv6 and SOCK_STREAM, and retrieves the first result.
+ *
+ * @throws BindException if the hostname cannot be resolved or if getaddrinfo fails.
+ *
+ */
+struct in6_addr VirtualServer::resolveIPv6(const std::string &hostname)
+{
+	struct addrinfo	 hints;
+	struct addrinfo *result;
+
+	std::memset(&hints, 0, sizeof(hints));
+	hints.ai_family	  = AF_INET6;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(hostname.c_str(), NULL, &hints, &result) != 0)
+		throw BindException();
+
+	struct sockaddr_in6 *addr =
+		reinterpret_cast<struct sockaddr_in6 *>(result->ai_addr);
+
+	struct in6_addr ip = addr->sin6_addr;
+
+	freeaddrinfo(result);
+	return ip;
+}
+
+
+
 /**
  *
  * @brief Converts an IPv4 address from string format to a 32-bit integer in network byte order.
@@ -159,6 +200,38 @@ uint32_t VirtualServer::convertIPv4(const std::string &ip)
 			value = value * 10 + (ip[i] - '0');
 	}
 	return htonl(addr);
+}
+
+
+/**
+ *
+ * @brief Resolves a hostname to an IPv4 address and returns it as a 32-bit integer in network byte order.
+ *
+ * @param hostname The hostname to resolve (e.g., "example.com").
+ * @return The resolved IPv4 address as a 32-bit integer in network byte order.
+ * @note This function uses the getaddrinfo system call to resolve the hostname to an IPv4 address.
+ * It sets up the appropriate hints for IPv4 and SOCK_STREAM, and retrieves the first result.
+ *
+ * @throws BindException if the hostname cannot be resolved or if getaddrinfo fails.
+ *
+ */
+uint32_t VirtualServer::resolveIPv4(const std::string &hostname)
+{
+	struct addrinfo	 hints;
+	struct addrinfo *result;
+
+	std::memset(&hints, 0, sizeof(hints));
+	hints.ai_family	  = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(hostname.c_str(), NULL, &hints, &result) != 0)
+		throw BindException();
+
+	struct sockaddr_in *addr = reinterpret_cast<struct sockaddr_in *>(result->ai_addr);
+	const uint32_t		ip	 = addr->sin_addr.s_addr;
+	freeaddrinfo(result);
+
+	return ip;
 }
 
 
@@ -206,7 +279,7 @@ void VirtualServer::bindAndListen(
 		struct sockaddr_in6 *addr6 = reinterpret_cast<struct sockaddr_in6 *>(&storage);
 		addr6->sin6_family		   = AF_INET6;
 		addr6->sin6_port		   = htons(port);
-		addr6->sin6_addr		   = convertIPv6(ip);
+		addr6->sin6_addr		   = isalpha(ip[0]) ? resolveIPv6(ip) : convertIPv6(ip);
 		addrlen					   = sizeof(struct sockaddr_in6);
 	}
 	else
@@ -214,7 +287,7 @@ void VirtualServer::bindAndListen(
 		struct sockaddr_in *addr4 = reinterpret_cast<struct sockaddr_in *>(&storage);
 		addr4->sin_family		  = AF_INET;
 		addr4->sin_port			  = htons(port);
-		addr4->sin_addr.s_addr	  = convertIPv4(ip);
+		addr4->sin_addr.s_addr	  = isalpha(ip[0]) ? resolveIPv4(ip) : convertIPv4(ip);
 		addrlen					  = sizeof(struct sockaddr_in);
 	}
 
@@ -241,7 +314,7 @@ bool VirtualServer::setupSocket(
 {
 	try
 	{
-		m_fd = socket(AF_INET, SOCK_STREAM, 0);
+		m_fd = socket(m_isIPv6 ? AF_INET6 : AF_INET, SOCK_STREAM, 0);
 		if (m_fd < 0)
 			throw SocketCreationException();
 		setReusable(m_fd);
@@ -284,6 +357,7 @@ void VirtualServer::createClient(int clientFd)
 	{
 		std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
 		close(clientFd);
+		return;
 	}
 	new Client(clientFd, m_config, *this);
 }

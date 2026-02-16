@@ -4,39 +4,29 @@
 #include "Config.hpp"
 #include "Set.hpp"
 #include "HttpMethod.hpp"
+#include "LocationReturn.hpp"
 
 class Config::Location
 {
 	private:
-		std::string		 m_path;
-		std::string		 m_root;
-		std::string		 m_alias;
-		Vec<std::string> m_indexFiles;
-		std::string		 m_indexFile;
-		std::string		 m_upload;
-
+		std::string m_path;
 
 		const Config::CgiParams *m_cgi;
 
-		bool			m_hasMethods;
-		Set<HttpMethod> m_methods;
+		std::pair<bool, std::string>	m_root;
+		std::pair<bool, std::string>	m_alias;
+		std::pair<bool, std::string>	m_uploadDir;
+		std::pair<bool, bool>			m_autoIndex;
+		std::pair<bool, LocationReturn> m_return;
 
-		bool m_hasAutoIndex;
-		bool m_autoIndex;
+		// clang-format off
+		std::pair<bool, Set<HttpMethod> >  m_allowedMethods;
+		std::pair<bool, Vec<std::string> > m_indexFiles;
+		// clang-format on
 
 
 	public:
-		Location(
-			const std::string		 path,
-			const std::string		 root,
-			const std::string		 alias,
-			const bool				 autoIndex,
-			const Config::CgiParams *cgi);
-		Location(
-			const std::string		 path,
-			const std::string		 root,
-			const std::string		 alias,
-			const Config::CgiParams *cgi);
+		Location(const std::string path);
 		~Location();
 
 		static bool compare(const Location *a, const Location *b);
@@ -49,6 +39,7 @@ class Config::Location
 		const Config::CgiParams *getCgiParams() const;
 		const Set<HttpMethod>	&getAllowedMethods() const;
 		const std::string		&getUpload() const;
+		const LocationReturn	&getReturn() const;
 
 		bool hasAlias() const;
 		bool hasCgi() const;
@@ -58,6 +49,7 @@ class Config::Location
 		bool hasCgiParams() const;
 		bool hasMethods() const;
 		bool hasUpload() const;
+		bool hasReturn() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
@@ -67,6 +59,7 @@ class Config::Location
 		void setCgiParams(const Config::CgiParams *cgi);
 		void setMethods(const Set<HttpMethod> &methods);
 		void setUpload(const std::string &upload);
+		void setReturn(const LocationReturn &returnVal);
 
 		void setIndexFiles(const Vec<std::string> &indexFiles);
 		void addIndexFile(const std::string &indexFile);

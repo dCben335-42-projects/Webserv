@@ -6,6 +6,9 @@
 #include <cctype>
 #include "Vec.hpp"
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 class String
 {
 	private:

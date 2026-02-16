@@ -1,23 +1,12 @@
 #include "HttpRequest.hpp"
 #include "String.hpp"
 #include "Number.hpp"
-#include "Logger.hpp"
 #include "webserv.hpp"
-
-#include <cctype>
-#include <cstring>
-#include <stdexcept>
 #include <sys/socket.h>
-#include <unistd.h>
-#include <string>
-#include <cstring>
-#include <cctype>
-#include <stdexcept>
-#include <iostream>
-#include "File.hpp"
 #include "httpExceptions.hpp"
-#include "Config.hpp"
-#include "Location.hpp"
+#include "Logger.hpp"
+
+
 
 HttpRequest::HttpRequest() :
 	AHttpInboundMessage()
@@ -104,6 +93,17 @@ const Vec<Accept> &HttpRequest::getAccepts() const
 	return m_accepts;
 }
 
+
+
+/**
+ *
+ * @brief Determines whether the connection should be kept alive based on the "Connection" header.
+ *
+ * @note It is meant to be used internally during request parsing to set the m_connectionKeepAlive member variable.
+ *
+ * @return true if the connection should be kept alive, false otherwise.
+ *
+ */
 bool HttpRequest::determineConnectionKeepAlive() const
 {
 	const std::string connectionHeader = getHeader(HEADER_CONNECTION);
@@ -115,6 +115,14 @@ bool HttpRequest::determineConnectionKeepAlive() const
 	return false;
 }
 
+
+/**
+ *
+ * @brief Retrieves whether the connection should be kept alive based on the request headers.
+ *
+ * @return true if the connection should be kept alive, false otherwise.
+ *
+ */
 bool HttpRequest::getConnectionKeepAlive() const
 {
 	return m_connectionKeepAlive;
@@ -141,6 +149,16 @@ ssize_t HttpRequest::readOnce(int socketFd)
 	return bytesRead;
 }
 
+
+/**
+ *
+ * @brief Retrieves the value of a cookie with the specified key from the request.
+ *
+ * @param key The key of the cookie to retrieve.
+ *
+ * @return The value of the cookie if it exists, or an empty string if it does not exist.
+ *
+ */
 std::string HttpRequest::getCookieValue(const std::string &key) const
 {
 	if (!m_cookieValues.has(key))
@@ -148,6 +166,16 @@ std::string HttpRequest::getCookieValue(const std::string &key) const
 	return m_cookieValues.get(key);
 }
 
+
+/**
+ *
+ * @brief Checks if a cookie with the specified key exists in the request.
+ *
+ * @param key The key of the cookie to check for.
+ *
+ * @return true if the cookie exists, false otherwise.
+ *
+ */
 bool HttpRequest::hasCookieValue(const std::string &key) const
 {
 	return m_cookieValues.has(key);
@@ -194,6 +222,15 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 }
 
 
+/**
+ *
+ * @brief Parses the "Cookie" header from the request and stores the cookie key-value pairs.
+ *
+ * @return A reference to the current HttpRequest object.
+ *
+ * @throws std::invalid_argument if the "Cookie" header is malformed.
+ *
+ */
 HttpRequest &HttpRequest::parseCookie()
 {
 	if (!m_headers.has(HEADER_COOKIE))
@@ -235,6 +272,15 @@ void HttpRequest::parseTargetQuery(const std::string &path)
 }
 
 
+/**
+ *
+ * @brief Parses the "Accept" header value and stores the accepted content types.
+ *
+ * @param headerValue The value of the "Accept" header to parse.
+ *
+ * @note Updates the m_accepts member variable with the parsed Accept objects.
+ *
+ */
 void HttpRequest::parseAccepts(const std::string &headerValue)
 {
 	const Vec<std::string> parts = String::split(headerValue, ",");
@@ -257,6 +303,8 @@ void HttpRequest::parseActiveLocations(const Config &config)
 	const Map<const Config::Location *> &locs = config.getLocations();
 
 	m_activeLocations.push(config.getDefaultLocation());
+	if (locs.has("/"))
+		m_activeLocations.push(locs.get("/"));
 	for (Vec<std::string>::size_type i = 0; i < m_segments.size(); ++i)
 	{
 		std::string currentPath = "/";
@@ -277,6 +325,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		if (locs.has(currentPath))
 			m_activeLocations.push(locs.get(currentPath));
 	}
+
 	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Config::Location::compare);
 }
 
@@ -405,8 +454,8 @@ std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
 	const Config::Location *validLocation = NULL;
 	bool					isRoot		  = true;
 
-	Vec<const Config::Location *>::const_iterator end = segmentIndex == -1 ? m_activeLocations.begin() + 1 : m_activeLocations.end();
-	for (Vec<const Config::Location *>::const_iterator loc = m_activeLocations.begin(); loc != end; ++loc)
+	m_locCIt end = segmentIndex == -1 ? m_activeLocations.begin() + 1 : m_activeLocations.end();
+	for (m_locCIt loc = m_activeLocations.begin(); loc != end; ++loc)
 	{
 		if ((*loc)->hasAlias())
 		{
@@ -443,8 +492,8 @@ std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
  */
 bool HttpRequest::getActiveAutoIndex() const
 {
-	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
-	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+	m_locCIt it	   = m_activeLocations.end();
+	m_locCIt begin = m_activeLocations.begin();
 
 	while (it != begin)
 	{
@@ -465,21 +514,27 @@ bool HttpRequest::getActiveAutoIndex() const
  */
 std::string HttpRequest::getUploadPath() const
 {
-	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
-	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+	m_locCIt it	   = m_activeLocations.end();
+	m_locCIt begin = m_activeLocations.begin();
 
 	while (it != begin)
 	{
 		--it;
 		if ((*it)->hasUpload())
-		{
-			Logger::info("Upload path found: " + (*it)->getUpload());
 			return (*it)->getUpload();
-		}
 	}
 	return "";
 }
 
+
+
+/**
+ *
+ * @brief Checks if any of the active locations have a return directive.
+ *
+ * @return true if a return directive is found, false otherwise.
+ *
+ */
 bool HttpRequest::matchAccept(const std::string &contentType) const
 {
 	if (m_accepts.empty())
@@ -503,8 +558,8 @@ bool HttpRequest::matchAccept(const std::string &contentType) const
  */
 bool HttpRequest::hasUpload() const
 {
-	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
-	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+	m_locCIt it	   = m_activeLocations.end();
+	m_locCIt begin = m_activeLocations.begin();
 
 	while (it != begin)
 	{
@@ -518,6 +573,42 @@ bool HttpRequest::hasUpload() const
 
 /**
  *
+ * @brief Checks if any of the active locations have a return directive.
+ *
+ * @return true if a return directive is found, false otherwise.
+ *
+ */
+bool HttpRequest::hasReturn() const
+{
+	m_locCIt root = m_activeLocations.begin();
+
+	if ((*root)->hasReturn())
+		return true;
+	m_locCIt last = m_activeLocations.end() - 1;
+	return (*last)->hasReturn();
+}
+
+
+/**
+ *
+ * @brief Retrieves the return directive from the matched locations.
+ *
+ * @return A LocationReturn object representing the return directive, or a default-constructed object if not set.
+ *
+ */
+const LocationReturn &HttpRequest::getReturn() const
+{
+	m_locCIt root = m_activeLocations.begin();
+
+	if ((*root)->hasReturn())
+		return (*root)->getReturn();
+	m_locCIt last = m_activeLocations.end() - 1;
+	return (*last)->getReturn();
+}
+
+
+/**
+ *
  * @brief Checks if the HTTP method of the request is allowed
  * based on the active locations' configurations.
  *
@@ -526,17 +617,35 @@ bool HttpRequest::hasUpload() const
  */
 bool HttpRequest::isAllowedMethod() const
 {
-	Vec<const Config::Location *>::const_iterator it	= m_activeLocations.end();
-	Vec<const Config::Location *>::const_iterator begin = m_activeLocations.begin();
+	const Set<HttpMethod> *allowedMethods = getAllowedMethods();
+	if (allowedMethods == NULL)
+		return true;
+	return allowedMethods->contains(m_method);
+}
+
+
+/**
+ *
+ * @brief Retrieves the set of allowed HTTP methods based on the active locations' configurations.
+ *
+ * @return A pointer to a set of HttpMethod objects representing the allowed methods, or nullptr if no methods are set.
+ *
+ */
+const Set<HttpMethod> *HttpRequest::getAllowedMethods() const
+{
+	m_locCIt it	   = m_activeLocations.end();
+	m_locCIt begin = m_activeLocations.begin();
 
 	while (it != begin)
 	{
 		--it;
 		if ((*it)->hasMethods())
-			return (*it)->getAllowedMethods().contains(m_method);
+			return &(*it)->getAllowedMethods();
 	}
-	return true;
+	return NULL;
 }
+
+
 
 
 

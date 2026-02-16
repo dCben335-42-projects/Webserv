@@ -1,6 +1,7 @@
 SRC_FILES += Config/CgiParams/CgiParams.cpp
 SRC_FILES += Config/Config.cpp
 SRC_FILES += Config/Location/Location.cpp
+SRC_FILES += Config/Location/LocationReturn/LocationReturn.cpp
 SRC_FILES += EventLoop.cpp
 SRC_FILES += main.cpp
 SRC_FILES += ParsingConfig/Lexer/Lexer.cpp

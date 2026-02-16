@@ -4,7 +4,6 @@
 #include "Pollable.hpp"
 #include "Config.hpp"
 #include <netinet/in.h>
-#include <arpa/inet.h>
 
 class Client;
 class HttpUser;
@@ -67,19 +66,23 @@ class VirtualServer : public Pollable
 
 	private:
 		const Config  &m_config;
+		bool		   m_isIPv6;
 		std::string	   m_bindIp;
 		unsigned short m_bindPort;
 		Vec<HttpUser>  m_users;
 
 		bool setupSocket(const std::string &ip, unsigned short port);
 
-		uint32_t		convertIPv4(const std::string &ip);
+		uint32_t convertIPv4(const std::string &ip);
+		uint32_t resolveIPv4(const std::string &hostname);
+
 		struct in6_addr convertIPv6(const std::string &ip);
+		struct in6_addr resolveIPv6(const std::string &hostname);
 
 		void setReusable(int sockFd);
 		void bindAndListen(int sockFd, const std::string &ip, unsigned short port);
+		void createClient(int clientFd);
 
-		void								  createClient(int clientFd);
 		typedef Vec<HttpUser>::iterator		  UserIt;
 		typedef Vec<HttpUser>::const_iterator UserCIt;
 

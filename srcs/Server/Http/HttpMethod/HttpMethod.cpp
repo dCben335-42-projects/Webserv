@@ -1,7 +1,8 @@
 #include "HttpMethod.hpp"
 #include "httpExceptions.hpp"
 
-const Map<HttpMethod::Type, std::string> HttpMethod::m_methodMap = HttpMethod::initMethodMap();
+const Map<HttpMethod::Type, std::string> HttpMethod::m_methodMap =
+	HttpMethod::initMethodMap();
 
 Map<HttpMethod::Type, std::string> HttpMethod::initMethodMap()
 {
@@ -43,8 +44,8 @@ HttpMethod::HttpMethod(const std::string &method)
 	{
 		if (it->second == method)
 		{
-			m_type	  = it->first;
-			m_strType = it->second;
+			m_type = it->first;
+			m_str  = it->second;
 			return;
 		}
 		++it;
@@ -69,8 +70,8 @@ HttpMethod::HttpMethod(const Type &method)
 
 	if (it != m_methodMap.end())
 	{
-		m_type	  = it->first;
-		m_strType = it->second;
+		m_type = it->first;
+		m_str  = it->second;
 		return;
 	}
 }
@@ -90,8 +91,8 @@ HttpMethod &HttpMethod::operator=(const HttpMethod &other)
 {
 	if (this == &other)
 		return *this;
-	m_type	  = other.m_type;
-	m_strType = other.m_strType;
+	m_type = other.m_type;
+	m_str  = other.m_str;
 	return *this;
 }
 
@@ -138,5 +139,64 @@ HttpMethod::Type HttpMethod::getType() const
  */
 std::string HttpMethod::getStrType() const
 {
-	return m_strType;
+	return m_str;
+}
+
+
+/**
+ *
+ * @brief Gets a set of all defined HTTP methods.
+ *
+ * @return A set containing all HttpMethod objects defined in the method map.
+ *
+ */
+Set<HttpMethod> HttpMethod::getAllMethods()
+{
+	Set<HttpMethod>						   methods;
+	Map<Type, std::string>::const_iterator it  = m_methodMap.begin();
+	Map<Type, std::string>::const_iterator end = m_methodMap.end();
+
+	while (it != end)
+	{
+		methods.push(HttpMethod(it->first));
+		++it;
+	}
+
+	return methods;
+}
+
+/**
+ *
+ * @brief Converts a set of HttpMethod objects to a comma-separated string.
+ *
+ * @param methods The set of HttpMethod objects to convert.
+ *
+ * @return A string containing the comma-separated HTTP method names.
+ *
+ */
+std::string HttpMethod::toString(const Set<HttpMethod> &methods)
+{
+	std::string						result;
+	Set<HttpMethod>::const_iterator end = methods.end();
+	Set<HttpMethod>::const_iterator it	= methods.begin();
+
+	while (it != end)
+	{
+		result += it->getStrType();
+		++it;
+		if (it != end)
+		{
+			result += ", ";
+		}
+	}
+
+	return result;
+}
+
+
+
+std::ostream &operator<<(std::ostream &os, const HttpMethod &method)
+{
+	os << method.getStrType() << " (" << method.getType() << ")";
+	return os;
 }
