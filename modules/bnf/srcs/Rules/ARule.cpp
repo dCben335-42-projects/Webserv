@@ -203,6 +203,23 @@ bool ARule::isEnd() const
 	return m_nextRules.empty();
 }
 
+bool ARule::isGroup() const
+{
+	return m_type == GROUP;
+}
+
+bool ARule::isSymbol() const
+{
+	return m_type == SYMBOL;
+}
+
+const ARule *ARule::getNextRule() const
+{
+	if (m_nextRules.empty())
+		return NULL;
+	return *m_nextRules.begin();
+}
+
 std::ostream &operator<<(std::ostream &os, const ARule &data)
 {
 	os << "{\n";

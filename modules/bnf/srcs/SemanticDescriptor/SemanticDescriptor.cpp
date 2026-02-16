@@ -257,16 +257,9 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 		throw std::runtime_error("Erreur: nombre non suivi de '>'");
 	}
 
-	Logger::log("ok3");
-
 
 	// Consommation de "Number>"
 	str.erase(0, i + 1); // +1 pour '>'
-
-	Logger::log(value);
-
-
-
 
 	*out = value;
 	return true;

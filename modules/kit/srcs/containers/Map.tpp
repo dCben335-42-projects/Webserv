@@ -67,7 +67,6 @@ class MapBase
 			return isInMap(static_cast<const Derived &>(*this), key);
 		}
 
-
 		/**
 		 *
 		 * @brief Gets the value associated with the given key in the map.

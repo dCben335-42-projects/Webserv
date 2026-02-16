@@ -18,6 +18,40 @@
 #include "../BNFPath/BNFPath.hpp"
 #include "Json.hpp"
 
+class StringNode
+{
+	public:
+		std::string str;
+		int			is_required;
+
+		StringNode() : str(""), is_required(-1)
+		{
+		}
+		StringNode(const std::string &s, int required) : str(s), is_required(required)
+		{
+		}
+
+		StringNode &operator=(const StringNode &other)
+		{
+			if (this != &other)
+			{
+				this->str		  = other.str;
+				this->is_required = other.is_required;
+			}
+			return *this;
+		}
+
+		StringNode(const StringNode &other) : str(other.str), is_required(other.is_required)
+		{
+		}
+};
+
+struct FirstRequired
+{
+		int	   index;
+		size_t channel;
+};
+
 class DataCollector
 {
 	private:
@@ -27,9 +61,11 @@ class DataCollector
 		ARulePath			   m_path;
 		Map<size_t, ARulePath> m_pathStack;
 		Map<size_t, AJson *>   m_mapJson;
-		Vec<std::string>	   m_lines;
-		Vec<const ARule *>	   m_collectStr;
-		int					   m_collectStrIdx;
+		int					   m_requiredIdx;
+		// Vec<std::string>	   m_lines;
+		Vec<StringNode>	   m_lines;
+		Vec<const ARule *> m_collectStr;
+		int				   m_collectStrIdx;
 
 	public:
 		DataCollector();
@@ -37,9 +73,9 @@ class DataCollector
 
 		void generateJson(const BNFPath *cursor, const std::string &strToParsed, Vec<std::string> lines);
 		void recurseJson(
-			size_t	index_rule,
-			AJson **json);
+			size_t index_rule);
 
+		bool			   isLastWritable(size_t idxRule) const;
 		bool			   samePrec(const size_t n) const;
 		bool			   isEndOfPath() const;
 		bool			   isSequence(const size_t idx) const;
@@ -60,6 +96,7 @@ class DataCollector
 		int				   getFirstTerminalConcept(ARulePath path) const;
 		bool			   samePrecP(const ARulePath &path1, const ARulePath &path2, const size_t n) const;
 		int				   getFirstSequence(ARulePath path, size_t max_bottom) const;
+		FirstRequired	   getFirstRequiredInJsonMap(ARulePath path) const;
 		bool			   findCharPos(
 						  const std::vector<std::string> &lines,
 						  size_t						  globalIndex,

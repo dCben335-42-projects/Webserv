@@ -67,6 +67,9 @@ class ARule
 
 		bool isOption() const;
 		bool isSequence() const;
+		bool isGroup() const;
+		bool isSymbol() const;
+		const ARule *getNextRule() const;
 		bool is(const ERuleType type) const;
 
 		void	 setNextRules(const ARule *nextRule);

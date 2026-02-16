@@ -1,9 +1,9 @@
 <head>			::= { statement | 'evnt' }
 			
 
-statement 		::= ( 0>user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
+statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
 
-user_stmt		::= 'user' SPACE 97>user_name ';'
+user_stmt		::= 'user' SPACE 0>user_name btp 1>user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
 pid_stmt		::= 'pid' SPACE PATH ';'
 
@@ -31,7 +31,9 @@ basic_http_stmt	::= 'sendfile' TAB_SPACE BOOL
 				|= 'gzip' TAB_SPACE ( BOOL | btp ) btp
 				|= 'test' TAB_SPACE BOOL
 
-btp				::= BOOL BOOL
+btp				::= 0>test BOOL 0>test test
+test			::= 'test'
+
 
 gzip_stmt		::= 'gzip' TAB_SPACE ( BOOL | btp )
 				|= 'gzip_disable' TAB_SPACE STRING
@@ -48,7 +50,7 @@ gzip_mines		::= [ TAB_SPACE ] MIME [ LINE_JUMP ]
 
 include_stmt	::= 'include' TAB_SPACE PATH
 
-user_name 		::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' }
+user_name 		::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' } '+'
 
 IDENT 			::= LETTER { LETTER }
 
