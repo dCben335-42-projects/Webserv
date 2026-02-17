@@ -429,6 +429,12 @@ FirstRequired DataCollector::getFirstRequiredInJsonMap(ARulePath path) const
 
 // Vec<std::string> nlines;
 
+// bool DataCollector::hasYetWritable()
+// {
+// 	getNextRule();
+// 	return false;
+// }
+
 
 
 
@@ -486,7 +492,16 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 		{
 			size_t size = lines[line].size();
 			str.append(lines[line]);
+			Logger::log("str : " + str);
 			size_t tempI = i + size;
+			// if (m_pathNexts[i - 1][m_pathNexts[i - 1].size() - 1]->isEnd())
+			// {
+			// 	// Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i][index]->getConceptName()) + " (idx: " + Logger::get(index) + ")");
+			// 	if (concatPtr.has(index))
+			// 		concatPtr.get(index).clear();
+			// }
+
+
 			if (tempI >= m_pathNexts.size() || (getFirstTerminalConcept(m_pathNexts[i]) < 0 && getFirstRequiredInJsonMap(m_pathNexts[i]).index < 0))
 			{
 				i = tempI;
@@ -539,7 +554,6 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 					}
 				}
 				
-				
 				if (required.index >= 0)
 				{
 					if (!concatPtr.has(index))
@@ -556,6 +570,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 						size_t idx = concatPtr.get(index).get(required.channel);
 						StringNode &ptr = nlines[idx];
 						ptr.str += str;
+						Logger::log("ptr : " + Logger::get(ptr));
 						str.clear();
 					}
 				}
@@ -564,12 +579,54 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 					nlines.push(StringNode(str, required.index)); 
 					str.clear();
 				}
-				if (isEndP(m_pathNexts[i], index) && !samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
+				Logger::log("index : " + Logger::get(index));
+				// Logger::log(isEndP(m_pathNexts[i], index));
+				// Logger::log(m_pathNexts[i][index]);
+				// Logger::log(m_pathNexts[tempI][index]);
+
+				// (m_pathNexts[tempI] - 1 si pas le mem chemin
+				// Logger::log(samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1) && isEndP(m_pathNexts[i], index + 1));
+				// if (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1))
+				// {
+				// 	Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i][index]->getConceptName()) + " (idx: " + Logger::get(index) + ")");
+				// 	if (concatPtr.has(index))
+				// 		concatPtr.get(index).clear();
+				// }
+				i = tempI;
+				bool boos = true;
+				Logger::log(m_pathNexts[i - 1].size() - 1);
+				Logger::log(index);
+
+				if (index > 0)
 				{
+					for (int j = m_pathNexts[i - 1].size() - 1; j >= index; --j)
+					{
+						Logger::log(m_pathNexts[i - 1][j]);
+						if (!m_pathNexts[i - 1][j]->isEnd())
+						{
+							Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i - 1][j]->getConceptName()) + " (idx: " + Logger::get(j) + ")");
+							boos = false;
+							break;
+						}
+					}
+				}
+
+				
+				Logger::log("boos : " + Logger::get(boos));
+				Logger::log("----------------------");
+
+
+
+				// Logger::log(m_pathNexts[i - 1].size() - 1);
+				// Logger::log(Logger::get(m_pathNexts[i - 1][m_pathNexts[i - 1].size() - 1]));
+				// Logger::log("Next is end? " + Logger::get(m_pathNexts[i - 1][m_pathNexts[i - 1].size() - 1]->isEnd()));
+				if (boos)
+				{
+					// Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i][index]->getConceptName()) + " (idx: " + Logger::get(index) + ")");
 					if (concatPtr.has(index))
 						concatPtr.get(index).clear();
 				}
-				i = tempI;
+
 			}
 		}
 	}
