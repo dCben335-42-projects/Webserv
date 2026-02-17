@@ -46,6 +46,7 @@ class StringNode
 		}
 };
 
+std::ostream &operator<<(std::ostream &os, const StringNode &node);
 struct FirstRequired
 {
 		int	   index;
@@ -66,6 +67,7 @@ class DataCollector
 		Vec<StringNode>	   m_lines;
 		Vec<const ARule *> m_collectStr;
 		int				   m_collectStrIdx;
+		bool			   m_write;
 
 	public:
 		DataCollector();

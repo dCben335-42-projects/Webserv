@@ -1,5 +1,5 @@
 [0;33m[WEBSERV] Generating bnf module library...[0m
-[0;32m[BNF] Compiling libbnf.a: [##                                                ] 1/19[0m
+[0;32m[BNF] Compiling libbnf.a: [##                                                ] 1/19[0m[0;32m[BNF] Compiling libbnf.a: [#####                                             ] 2/19[0m
 [1;34m[BNF] Archiving libbnf.a...[0m
 [0;33m[WEBSERV] Generating log module library...[0m
 make[1]: Nothing to be done for 'all'.
@@ -7,7 +7,7 @@ make[1]: Nothing to be done for 'all'.
 make[1]: Nothing to be done for 'all'.
 [0;33m[WEBSERV] Generating json module library...[0m
 make[1]: Nothing to be done for 'all'.
-
+[0;32m[WEBSERV] Compiling webserv: [##                                                ] 1/23[0m
 [1;34m[WEBSERV] Linking webserv...[0m
 [0;32m[WEBSERV] Running webserv...[0m
 --------------------------
@@ -25,20 +25,10 @@ Parsing complete ✅
   t,
   a,
   +,
-  w,
-  w,
-  w,
-  -,
-  d,
-  a,
-  t,
-  a,
-  5,
-  5,
-  5,
-  +,
   test,
   on,
+  test,
+  test,
   w,
   w,
   w,
@@ -51,7 +41,197 @@ Parsing complete ✅
   6,
   6,
   +,
-  ;,
-  
-
+  ;
 ]
+json : {
+  "0": 
+    [
+
+    ]
+}
+-------------------
+json : {
+  "0": 
+    [
+
+    ]
+}
+-------------------
+[1;31m[ERROR] IdxRule: 2 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 3 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 4 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 1 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 0 / Path size: 5 / Next path size: 5[0m
+json : {
+  "0": 
+    [
+
+    ],
+  "1": 
+    {
+      "statement": 
+        [
+
+        ]
+    },
+  "2": 
+    {
+      "user_stmt": 
+        [
+          www-data+
+        ]
+    }
+}
+-------------------
+[1;31m[ERROR] IdxRule: 3 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 4 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 2 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 1 / Path size: 5 / Next path size: 5[0m
+[1;31m[ERROR] IdxRule: 0 / Path size: 5 / Next path size: 5[0m
+json : {
+  "0": 
+    [
+
+    ],
+  "1": 
+    {
+      "statement": 
+        [
+
+        ]
+    },
+  "2": 
+    {
+      "user_stmt": 
+        [
+          www-data+
+        ]
+    },
+  "3": 
+    {
+      "btp": 
+        [
+          testtest
+        ]
+    }
+}
+-------------------
+json : {
+  "0": 
+    [
+
+    ],
+  "1": 
+    {
+      "statement": 
+        [
+
+        ]
+    },
+  "2": 
+    {
+      "user_stmt": 
+        [
+          www-data+
+        ]
+    },
+  "3": 
+    {
+      "btp": 
+        [
+          testtest
+        ]
+    }
+}
+-------------------
+json : {
+  "0": 
+    [
+
+    ],
+  "1": 
+    {
+      "statement": 
+        [
+
+        ]
+    },
+  "2": 
+    {
+      "user_stmt": 
+        [
+          www-data+
+        ]
+    },
+  "3": 
+    {
+      "btp": 
+        [
+          testtest
+        ]
+    }
+}
+-------------------
+[1;31m[ERROR] IdxRule: 2 / Path size: 5 / Next path size: 3[0m
+[1;31m[ERROR] IdxRule: 3 / Path size: 5 / Next path size: 3[0m
+[1;31m[ERROR] IdxRule: 4 / Path size: 5 / Next path size: 3[0m
+[1;31m[ERROR] IdxRule: 1 / Path size: 5 / Next path size: 3[0m
+[1;31m[ERROR] IdxRule: 0 / Path size: 5 / Next path size: 3[0m
+json : {
+  "0": 
+    [
+
+    ],
+  "1": 
+    {
+      "statement": 
+        [
+
+        ]
+    },
+  "2": 
+    {
+      "user_stmt": 
+        [
+          www-data+,
+          www-data666+
+        ]
+    },
+  "3": 
+    {
+      "btp": 
+        [
+          testtest
+        ]
+    }
+}
+-------------------
+json : {
+  "0": 
+    [
+
+    ],
+  "1": 
+    {
+      "statement": 
+        [
+
+        ]
+    },
+  "2": 
+    {
+      "user_stmt": 
+        [
+          www-data+,
+          www-data666+
+        ]
+    },
+  "3": 
+    {
+      "btp": 
+        [
+          testtest
+        ]
+    }
+}
+-------------------

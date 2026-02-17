@@ -227,11 +227,11 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	os << Logger::indent() << "\"position\": " << "\"" << data.getConceptName() << "_" << data.getConceptDefIndex() << "\",\n";
 	os << Logger::indent() << "\"type\": " << "\"" << data.getTypeName() << "\",\n";
 	os << Logger::indent() << "\"index\": " << data.getRuleIndex() << ",\n";
-	os << Logger::indent() << "\"is_required_in_json\": " << LoggerJson::get(data.getRequiredInJsonMap()) << ",\n";
 	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
 	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
 	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";
-	os << Logger::indent() << "items\": " << LoggerJson::get(data.getItems()) << "\n";
+	os << Logger::indent() << "\"items\": " << LoggerJson::get(data.getItems()) << "\n";
+	os << Logger::indent() << "\"required\": " << "\"" << Logger::get(data.getRequiredInJsonMap()) << "\"\n";
 	Logger::decrementIndent();
 	os << Logger::indent() << "}";
 	return os;

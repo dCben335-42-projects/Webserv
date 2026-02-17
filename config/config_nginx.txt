@@ -1,9 +1,9 @@
-<head>			::= { statement | 'evnt' }
+<head>			::= { statement }
 			
 
-statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
+statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block )
 
-user_stmt		::= 'user' SPACE 0>user_name btp 1>user_name ';'
+user_stmt		::= 'user' SPACE 0>user_name  btp 1>user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
 pid_stmt		::= 'pid' SPACE PATH ';'
 

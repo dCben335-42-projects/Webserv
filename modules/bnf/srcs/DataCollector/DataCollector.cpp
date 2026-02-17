@@ -8,6 +8,18 @@ DataCollector::~DataCollector()
 {
 }
 
+/**
+ * @brief Checks whether the first `n` elements of the current path and the next path are identical.
+ *
+ * This function compares the prefix of length `n` between `m_path` and
+ * `m_pathNexts[m_cidx]`. If either container has fewer than `n` elements,
+ * the function immediately returns false.
+ *
+ * @param n Number of leading elements to compare.
+ * @return true if both paths contain at least `n` elements and all corresponding
+ *         elements in the prefix are equal.
+ * @return false if sizes are insufficient or any element differs.
+ */
 bool DataCollector::samePrec(const size_t n) const
 {
 	if (m_path.size() < n || m_pathNexts[m_cidx].size() < n)
@@ -36,7 +48,16 @@ bool DataCollector::isEnd(size_t idx) const
 	for (size_t i = idx; i < m_path.size(); ++i)
 	{
 		if (!m_path[i]->isEnd())
-			return false;
+		{
+			// clang-format off
+			const Map<size_t, Vec<std::string> > &requiredInJsonMap = m_path[i]->getRequiredInJsonMap();
+			// clang-format on
+			if (!requiredInJsonMap.empty())
+			{
+				Logger::debug("Not end : " + getKey(i) + " (idx: " + Logger::get(i) + ") because of requiredInJsonMap: " + Logger::get(requiredInJsonMap));
+				return false;
+			}
+		}
 	}
 	return true;
 }
@@ -129,7 +150,7 @@ bool DataCollector::hasRegisteredPath(const size_t idx) const
 
 void DataCollector::appendBuffer()
 {
-	Logger::log("appendBuffer : " + m_lines[0].str + " (required: " + Logger::get(m_lines[0].is_required) + ")");
+	// Logger::log("appendBuffer : " + m_lines[0].str + " (required: " + Logger::get(m_lines[0].is_required) + ")");
 	m_cidx += m_lines[0].str.size();
 	m_requiredIdx = m_lines[0].is_required;
 	if (m_requiredIdx >= 0)
@@ -151,17 +172,49 @@ bool DataCollector::isLastWritable(size_t idxRule) const
 
 	// Logger::log(m_path[idxRule + 1]);
 	// Logger::log(m_pathNexts[m_cidx][idxRule + 1]);
+	// Logger::log(m_path[idxRule]);
+	// Logger::log(m_pathNexts[m_cidx][idxRule]);
+	// Pas sure pour isSequence, isEnd plus approprie
 
+	// bool isSeq = isSequence(idxRule);
+	// bool end   = isEnd(idxRule + 1);
+	// if (idxRule >= m_pathNexts.size())
+	// 	return true;
+	// const bool isSeq = isSequence(idxRule);
 
+	// if (isSeq)
+	// {
+	// 	Logger::info("isSequence : " + getKey(idxRule) + " (idx: " + Logger::get(idxRule) + ")");
 
-	if (!samePrec(idxRule + 1))
-	{
-		Logger::log("isLastWritable : [idx: " + Logger::get(idxRule) + "]: true");
-		return true;
-	}
-	Logger::log("isLastWritable : [idx: " + Logger::get(idxRule) + "]: false");
-	return false;
+	// 	const std::string &cptr		= m_path[idxRule + 1]->getConceptName();
+	// 	bool			   isAllENd = true;
+	// 	size_t			   i		= idxRule + 1;
+	// 	while (i < m_mapJson.size() && i < m_pathNexts[m_cidx].size() && m_pathNexts[m_cidx][i]->getConceptName() == cptr)
+	// 	{
+	// 		if (!isEnd(i))
+	// 		{
+	// 			Logger::debug("Not end : " + getKey(i) + " (idx: " + Logger::get(i) + ")");
+	// 			isAllENd = false;
+	// 			break;
+	// 		}
+	// 		++i;
+	// 	}
+	// 	if (isAllENd)
+	// 	{
+	// 		Logger::debug("isLastWritable (sequence) : " + getKey(idxRule) + " (idx: " + Logger::get(idxRule) + ")");
+	// 		return true;
+	// 	}
+	// }
+	// if (!samePrec(idxRule + 1))
+	// {
+	// 	Logger::debug("Not samePrec for idxRule: " + Logger::get(idxRule + 1));
+	// 	return isEnd(idxRule + 1);
+	// }
+	return samePrec(idxRule + 1) && isEnd(idxRule + 1);
 }
+
+
+
 
 
 void DataCollector::recurseJson(size_t idxRule)
@@ -169,6 +222,9 @@ void DataCollector::recurseJson(size_t idxRule)
 	size_t			   idxRuleC = idxRule + 1;
 	const std::string &keyC		= getKey(idxRuleC);
 	const std::string &key		= getKey(idxRule);
+	if (key == "user_name")
+		Logger::debug("recurseJson : [idx: " + Logger::get(idxRule) + "]: " + key);
+	// Logger::log("recurseJson : [idx: " + Logger::get(idxRule) + "]: " + key);
 
 	if (isLastRule(idxRule))
 	{
@@ -181,36 +237,39 @@ void DataCollector::recurseJson(size_t idxRule)
 		return;
 	}
 	recurseJson(idxRuleC);
-	if ((int) idxRule > m_requiredIdx)
-		return;
+	// if ((int) idxRule > m_requiredIdx)
+	// 	return;
 
 	createNewObject(idxRule, key);
-	Logger::log("createNewObject : [idx: " + Logger::get(idxRule) + "]: " + key);
 
 	if (!m_buffer.empty())
 	{
 		getJson(idxRule)->asObject()->get(key)->asArray()->create(m_buffer);
 		m_buffer.clear();
 	}
+	// (void) m_write;
 
-	// Logger::log(m_path[idxRule]);
+	// if (isLastWritable(idxRule))
+	// {
+	// 	Logger::log("Writable : " + key + " (idx: " + Logger::get(idxRule) + ")");
+	// 	// if (idxRule == 0 && m_write)
+	// 	// 	movJson(getJson(0)->asArray(), 1);
+	// 	Logger::log("check if can move json from idx " + Logger::get(idxRule - 1) + " to idx " + Logger::get(idxRule));
+	// 	if (m_mapJson.has(idxRule - 1) && m_mapJson.has(idxRule))
+	// 	{
+	// 		Logger::log("last writable : move json from idx " + Logger::get(idxRule - 1) + " to idx " + Logger::get(idxRule));
+	// 		movJson(getJson(idxRule - 1)->asObject()->get(getKey(idxRule - 1)), idxRule);
+	// 		idxRule -= 1;
 
-	if (isLastWritable(idxRule))
-	{
-		Logger::log("jdjwd : " + key);
-		if (m_mapJson.has(idxRule - 1) && m_mapJson.has(idxRule))
-		{
-			Logger::log("ok");
-			Logger::log(getJson(idxRule - 1));
-			Logger::log(getJson(idxRule));
+	// 		Logger::log("Is idxRule: " + Logger::get(idxRule) + ", key: " + key + " writable ? ");
+	// 		if (isLastWritable(idxRule))
+	// 		{
+	// 			Logger::log("TEST : idxRule: " + Logger::get(idxRule) + " is writable");
+	// 		}
+	// 	}
+	// }
 
-			// AJson *currentJson = getJson(idxRule);
-			movJson(getJson(idxRule - 1)->asObject()->get(getKey(idxRule - 1)), idxRule);
-		}
-	}
-
-
-	// Logger::log("ok");
+	(void) m_write;
 
 
 
@@ -400,7 +459,8 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 
 		if (hasWordStartPath(wordStartPath, tempRulePath))
 		{
-			lines.push_back(str); str = "";
+			lines.push_back(str); 
+			str = "";
 		}
 
 		str += strToParsed[cursor->index];
@@ -416,7 +476,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	Vec<StringNode> nlines;
 
 
-	Logger::log(lines);
+	Logger::log(lines.size());
 	while (i < m_pathNexts.size())
 	{
 		size_t line;
@@ -513,15 +573,16 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 			}
 		}
 	}
-	Logger::log("----------------------");
+	Logger::log("nlines : " + Logger::get(nlines));
+	// Logger::log("----------------------");
 
-	for (size_t i = 0; i < nlines.size(); ++i)
-	{
-		if (nlines[i].is_required < 0)
-			Logger::info("nlines : " + nlines[i].str + "\n(required: " + Logger::get(nlines[i].is_required) + ")");
-		else
-			Logger::warn("nlines : " + nlines[i].str + "\n(required: " + Logger::get(nlines[i].is_required) + ")");
-	}
+	// for (size_t i = 0; i < nlines.size(); ++i)
+	// {
+	// 	if (nlines[i].is_required < 0)
+	// 		Logger::info("nlines : " + nlines[i].str + "\n(required: " + Logger::get(nlines[i].is_required) + ")");
+	// 	else
+	// 		Logger::warn("nlines : " + nlines[i].str + "\n(required: " + Logger::get(nlines[i].is_required) + ")");
+	// }
 
 
 
@@ -542,21 +603,29 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 	(void) m_collectStrIdx;;
 
 	// AJson *json = NULL;
-	AJson *arr = AJson::createArray();
-	// BUG pas de tableau creer si repetition sur la <head> line
-	m_mapJson.set(0, arr);
-    m_cidx = 0;
-	m_lines = nlines;
+	// AJson *arr = AJson::createArray();
+	// // BUG pas de tableau creer si repetition sur la <head> line
+	// m_mapJson.set(0, arr);
+    // m_cidx = 0;
+	// m_lines = nlines;
 
-	while (m_cidx < m_pathNexts.size())
-	{
-		m_collectStrIdx = -1;
-        m_path = m_pathNexts[m_cidx];
-		recurseJson(0);
-		Logger::log("json : " + LoggerJson::get(m_mapJson, false));
-		Logger::log("-------------------");
-	}
+	// while (m_cidx < m_pathNexts.size())
+	// {
+	// 	m_collectStrIdx = -1;
+    //     m_path = m_pathNexts[m_cidx];
+	// 	recurseJson(0);
+	// 	Logger::log("json : " + LoggerJson::get(m_mapJson, false));
+	// 	Logger::log("-------------------");
+	// }
+
 	// if (m_mapJson.has(0))
 	// 	Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
 }
 
+
+
+std::ostream &operator<<(std::ostream &os, const StringNode &node)
+{
+	os << "StringNode(str: " << node.str << ", is_required: " << node.is_required << ")";
+	return os;
+}
