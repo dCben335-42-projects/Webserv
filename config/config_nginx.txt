@@ -3,7 +3,7 @@
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block )
 
-user_stmt		::= 'user' SPACE 0>user_name  btp btp 1>user_name ';'
+user_stmt		::= 0>'user' 0>TAB_SPACE 0>user_name  btp btp 1>user_name ';'
 worker_stmt		::= 'worker_processes' SPACE IDENT ';'
 pid_stmt		::= 'pid' SPACE PATH ';'
 
@@ -32,7 +32,7 @@ basic_http_stmt	::= 'sendfile' TAB_SPACE BOOL
 				|= 'test' TAB_SPACE BOOL
 
 btp				::= 0>test BOOL 0>test test
-test			::= 'test'
+test			::= 0>'test'
 
 
 gzip_stmt		::= 'gzip' TAB_SPACE ( BOOL | btp )

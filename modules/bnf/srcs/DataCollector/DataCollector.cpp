@@ -406,6 +406,14 @@ bool DataCollector::findCharPos(
 // clang-format off
 FirstRequired DataCollector::getFirstRequiredInJsonMap(ARulePath path) const
 {
+
+			// 	if (m_pathNexts[i][m_pathNexts[i].size() - 1]->getRequiredInJsonMap().size() > 0)
+			// {
+			// 	nlines.push(StringNode(str, m_pathNexts[i].size() - 1));
+			// 	str.clear();
+			// 	i = tempI;
+			// 	continue;
+			// }
 	for (size_t i = 0; i < path.size() - 1; ++i)
 	{
 		if (path[i]->getRequiredInJsonMap().size() > 0)
@@ -422,6 +430,11 @@ FirstRequired DataCollector::getFirstRequiredInJsonMap(ARulePath path) const
 				}
 			}
 		}
+	}
+	if (path[path.size() - 1]->getRequiredInJsonMap().size() > 0)
+	{
+		// interdire les { 0>'word' } [ 0>'word' ] ( 0>'word' ) Selection interdite sur mot literal dans ces cas
+		return (FirstRequired) {(int) path.size() - 1, path[path.size() - 1]->getRequiredInJsonMap().begin()->first};
 	}
 	return (FirstRequired) {-1, 0};
 }
@@ -480,6 +493,7 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 
 	Map<size_t, Map<size_t, size_t> > concatPtr;
 	Vec<StringNode> nlines;
+	int index_saved = -1;
 
 
 	Logger::log(lines.size());
@@ -492,17 +506,33 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 		{
 			size_t size = lines[line].size();
 			str.append(lines[line]);
+			// str.append(" ");
+			
+			
+			
+			
 			Logger::log("str : " + str);
 			size_t tempI = i + size;
-			// if (m_pathNexts[i - 1][m_pathNexts[i - 1].size() - 1]->isEnd())
+			
+			if ((tempI < m_pathNexts.size() && !samePrecP(m_pathNexts[i], m_pathNexts[tempI], index_saved)) || (m_pathNexts[i][index_saved -1]->isSequence() && !isEndP(m_pathNexts[i], index_saved)))
+			{
+				Logger::log("CLEAR");
+				if (concatPtr.has(index_saved))
+				concatPtr.get(index_saved).clear();
+				index_saved = -1;
+			}
+
+			// S'il y en a un deja plus haut alors il est prioritaire
+			// if (m_pathNexts[i][m_pathNexts[i].size() - 1]->getRequiredInJsonMap().size() > 0)
 			// {
-			// 	// Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i][index]->getConceptName()) + " (idx: " + Logger::get(index) + ")");
-			// 	if (concatPtr.has(index))
-			// 		concatPtr.get(index).clear();
+			// 	nlines.push(StringNode(str, m_pathNexts[i].size() - 1));
+			// 	str.clear();
+			// 	i = tempI;
+			// 	continue;
 			// }
 
-
-			if (tempI >= m_pathNexts.size() || (getFirstTerminalConcept(m_pathNexts[i]) < 0 && getFirstRequiredInJsonMap(m_pathNexts[i]).index < 0))
+			// if (tempI >= m_pathNexts.size() || (getFirstTerminalConcept(m_pathNexts[i]) < 0 && getFirstRequiredInJsonMap(m_pathNexts[i]).index < 0))
+			if (tempI >= m_pathNexts.size() || (getFirstRequiredInJsonMap(m_pathNexts[i]).index < 0))
 			{
 				i = tempI;
 				nlines.push(StringNode(str, -1));
@@ -511,7 +541,8 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 			}
 			else
 			{
-				int index = getFirstTerminalConcept(m_pathNexts[i]);
+				// int index = getFirstTerminalConcept(m_pathNexts[i]);
+				int index = -1;
 				FirstRequired required = getFirstRequiredInJsonMap(m_pathNexts[i]);
 
 				if (required.index >= 0 && (required.index < index || index == -1))
@@ -524,35 +555,35 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 						continue;
 					}
 				}
-				else
-				{
-					if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
-					{
-						if (index - 1 < 0)
-						{
-							i = tempI;
-							continue;
-						}
+				// else
+				// {
+				// 	if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
+				// 	{
+				// 		if (index - 1 < 0)
+				// 		{
+				// 			i = tempI;
+				// 			continue;
+				// 		}
 						
-						if (index - 1 >= 0)
-						{
-							int seqIndex = getFirstSequence(m_pathNexts[i], index - 1);
-							if (seqIndex == -1)
-							{
-								i = tempI;
-								continue;
-							}
-							else
-							{
-								if (!isEndP(m_pathNexts[i], seqIndex + 1))
-								{
-									i = tempI;
-									continue;
-								}
-							}
-						}
-					}
-				}
+				// 		if (index - 1 >= 0)
+				// 		{
+				// 			int seqIndex = getFirstSequence(m_pathNexts[i], index - 1);
+				// 			if (seqIndex == -1)
+				// 			{
+				// 				i = tempI;
+				// 				continue;
+				// 			}
+				// 			else
+				// 			{
+				// 				if (!isEndP(m_pathNexts[i], seqIndex + 1))
+				// 				{
+				// 					i = tempI;
+				// 					continue;
+				// 				}
+				// 			}
+				// 		}
+				// 	}
+				// }
 				
 				if (required.index >= 0)
 				{
@@ -592,41 +623,19 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 				// 	if (concatPtr.has(index))
 				// 		concatPtr.get(index).clear();
 				// }
-				i = tempI;
-				bool boos = true;
-				Logger::log(m_pathNexts[i - 1].size() - 1);
-				Logger::log(index);
 
-				if (index > 0)
+				// Logger::log("index : " + Logger::get(index));
+				Logger::log(m_pathNexts[i][index - 1]);
+				Logger::log(m_pathNexts[tempI][index - 1]);
+				index_saved = index;
+
+				if (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index) || (m_pathNexts[i][index -1]->isSequence() && !isEndP(m_pathNexts[i], index)))
 				{
-					for (int j = m_pathNexts[i - 1].size() - 1; j >= index; --j)
-					{
-						Logger::log(m_pathNexts[i - 1][j]);
-						if (!m_pathNexts[i - 1][j]->isEnd())
-						{
-							Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i - 1][j]->getConceptName()) + " (idx: " + Logger::get(j) + ")");
-							boos = false;
-							break;
-						}
-					}
-				}
-
-				
-				Logger::log("boos : " + Logger::get(boos));
-				Logger::log("----------------------");
-
-
-
-				// Logger::log(m_pathNexts[i - 1].size() - 1);
-				// Logger::log(Logger::get(m_pathNexts[i - 1][m_pathNexts[i - 1].size() - 1]));
-				// Logger::log("Next is end? " + Logger::get(m_pathNexts[i - 1][m_pathNexts[i - 1].size() - 1]->isEnd()));
-				if (boos)
-				{
-					// Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i][index]->getConceptName()) + " (idx: " + Logger::get(index) + ")");
+					Logger::log("CLEAR");
 					if (concatPtr.has(index))
 						concatPtr.get(index).clear();
 				}
-
+				i = tempI;
 			}
 		}
 	}
