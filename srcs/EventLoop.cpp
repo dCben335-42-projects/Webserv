@@ -15,26 +15,23 @@ void EventLoop::init()
 {
 	const std::string ip = "localhost";
 
-
-
-	// Set<HttpMethod>	 allowedMethods1;
-	// allowedMethods1.insert(HttpMethod::GET);
-	// allowedMethods1.insert(HttpMethod::POST);
-	// allowedMethods1.insert(HttpMethod::DELETE);
-
 	Config::Location *defaultLocation = new Config::Location("");
 	defaultLocation->setRoot("files/www/website");
 	// defaultLocation->setReturn(LocationReturn(301, "/auth/login"));
 
 	Config::Location *slashLoc = new Config::Location("/");
+	Map<std::string>  binSlash;
+	binSlash.set(".py", "/usr/bin/python3");
 	slashLoc->setAutoIndex(true);
+	slashLoc->setCgiParams(new Config::CgiParams(binSlash));
 
 	Config::Location *bin = new Config::Location("/cgi-bin");
 	Map<std::string>  binmap1;
-	binmap1.set(".py", "/usr/bin/python3");
 	binmap1.set(".php", "/usr/bin/php");
 	Config::CgiParams *cgi = new Config::CgiParams(binmap1);
 	bin->setCgiParams(cgi);
+	bin->setAlias("files/www/usr/bin/");
+	bin->setAutoIndex(true);
 
 
 	Config::Location *uploadLocation = new Config::Location("/uploads");

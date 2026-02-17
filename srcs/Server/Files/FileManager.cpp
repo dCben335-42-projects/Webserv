@@ -371,7 +371,9 @@ std::string FileManager::readFile(const std::string &path)
 	if (!hasRPerm(path))
 		throw FileManager::FilePermissionException(path);
 
-	std::ifstream	   file(path.c_str(), std::ios::in | std::ios::binary);
+	std::ifstream file(path.c_str(), std::ios::in | std::ios::binary);
+	if (!file.is_open())
+		throw FileManager::FileReadException(path);
 	std::ostringstream content;
 	content << file.rdbuf();
 
@@ -392,13 +394,8 @@ std::string FileManager::readFile(const std::string &path)
  */
 std::string FileManager::getMime(const std::string &filePath)
 {
-	size_t		dotPos = filePath.rfind('.');
-	std::string ext;
+	const std::string &ext = determineExtension(filePath, NULL);
 
-	if (dotPos != std::string::npos)
-		ext = filePath.substr(dotPos);
-	else
-		ext = "";
 	if (m_mimes.has(ext))
 		return m_mimes.get(ext);
 	return MIME_OCTET;
@@ -424,6 +421,16 @@ std::string FileManager::getMime(const File &file)
 }
 
 
+/**
+ *
+ * @brief Gets the icon path for a given file based on its extension.
+ *
+ * @param file The File object for which to determine the icon.
+ *
+ * @return The icon path as a string.
+ * If the file extension is not recognized, returns the default icon path.
+ *
+ */
 std::string FileManager::getIcon(const File &file)
 {
 	if (file.getIsDirectory())
@@ -435,4 +442,33 @@ std::string FileManager::getIcon(const File &file)
 	if (m_icons.has(ext))
 		return m_icons.get(ext);
 	return m_icons.get("");
+}
+
+
+
+/**
+ *
+ * @brief Determines the file extension from the given file name.
+ *
+ * This function finds the last dot in the file name and returns the substring
+ * from that dot to the end of the string as the extension.
+ *
+ * @note If there is no dot, or if the dot is at the beginning or end of the file name,
+ * the function returns an empty string, indicating that there is no valid extension.
+ *
+ * @param fileName The name of the file from which to determine the extension.
+ * @param extPos Optional pointer to store the position of the extension in the file name.
+ *
+ * @return The file extension, including the dot (e.g., ".txt"), or an
+ * empty string if there is no valid extension.
+ *
+ */
+std::string FileManager::determineExtension(const std::string &fileName, size_t *extPos)
+{
+	size_t dotPos = fileName.rfind('.');
+	if (extPos)
+		*extPos = dotPos;
+	if (dotPos != std::string::npos && dotPos != 0 && dotPos != fileName.length() - 1)
+		return String::toLower(fileName.substr(dotPos));
+	return "";
 }

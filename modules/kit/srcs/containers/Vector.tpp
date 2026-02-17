@@ -219,6 +219,10 @@ class Vec
 			base::operator=(other);
 			return *this;
 		}
+		void operator+=(const Vec &other)
+		{
+			base::insert(base::end(), other.begin(), other.end());
+		}
 		~Vec()
 		{
 		}

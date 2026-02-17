@@ -63,8 +63,6 @@ class File
 		const std::string &getContent() const;
 
 		File &read();
-
-		static std::string determineExtension(const std::string &fileName, size_t *extPos);
 };
 
 

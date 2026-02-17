@@ -10,6 +10,7 @@
 #include "cgiEnv.hpp"
 
 #include "Signals.hpp"
+#include <stdio.h>
 
 CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	m_req(req),
@@ -105,8 +106,6 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar(CGI_HTTP_REFERER, m_req.getHeader(HEADER_REFERER)));
 }
 
-#include <stdio.h>
-#include <ctime>
 void CgiSpawner::childprocess()
 {
 	Signals::setIsChild(true);
@@ -142,10 +141,8 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 {
 	for (size_t i = start; i < urlSegments.size(); i++)
 	{
-		std::string fileExtension = File::determineExtension((urlSegments[i]), NULL);
-		if (fileExtension.empty())
-			continue;
-		if (!m_activeBinMap.has(fileExtension))
+		const std::string fileExtension = FileManager::determineExtension((urlSegments[i]), NULL);
+		if (fileExtension.empty() || !m_activeBinMap.has(fileExtension))
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
 		if (access(m_binPath.c_str(), X_OK) == -1)

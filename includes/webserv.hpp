@@ -3,6 +3,8 @@
 
 #include "constants.hpp"
 
+#define FLAG_LOCATION_ADD_UP 1
+
 #define SERVER_NAME "i_am_the_one_who_ports"
 #define SERVER_VERSION "1.0"
 #define SERVER_FULL_NAME SERVER_NAME "/" SERVER_VERSION
@@ -10,8 +12,9 @@
 #define PROTOCOL "HTTP/1.1"
 #define GATEWAY_INTERFACE "CGI/1.1"
 
-#define READ_BUFFER_SIZE 8192u
-#define WRITE_BUFFER_SIZE 8192u
+#define READ_CLIENT_BUFFER_SIZE 8192u
+#define WRITE_CLIENT_BUFFER_SIZE 8192u
+
 #define READ_CGI_BUFFER_SIZE 8192u
 #define WRITE_CGI_BUFFER_SIZE 8192u
 

@@ -23,4 +23,6 @@ class Config::CgiParams
 		void setAllowCgi(const bool &allowCgi);
 };
 
+std::ostream &operator<<(std::ostream &os, const Config::CgiParams &cgiParams);
+
 #endif

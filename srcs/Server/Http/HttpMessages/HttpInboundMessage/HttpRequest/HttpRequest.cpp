@@ -140,8 +140,8 @@ bool HttpRequest::getConnectionKeepAlive() const
  */
 ssize_t HttpRequest::readOnce(int socketFd)
 {
-	char		  buffer[READ_BUFFER_SIZE];
-	const ssize_t bytesRead = recv(socketFd, buffer, READ_BUFFER_SIZE, MSG_DONTWAIT);
+	char		  buffer[READ_CLIENT_BUFFER_SIZE];
+	const ssize_t bytesRead = recv(socketFd, buffer, READ_CLIENT_BUFFER_SIZE - 1, MSG_DONTWAIT);
 
 	if (bytesRead < 0)
 		return -1;
@@ -210,7 +210,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 			if (contentLength != m_body.size())
 				throw std::invalid_argument("Content-Length header value does not match the actual body size");
 		}
-		// std::cout << *this << std::endl;
+		std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
 		parseCookie();
 	}
@@ -301,10 +301,11 @@ void HttpRequest::parseAccepts(const std::string &headerValue)
 void HttpRequest::parseActiveLocations(const Config &config)
 {
 	const Map<const Config::Location *> &locs = config.getLocations();
-
+	Vec<const Config::Location *>		 locations;
 	m_activeLocations.push(config.getDefaultLocation());
+
 	if (locs.has("/"))
-		m_activeLocations.push(locs.get("/"));
+		locations.push(locs.get("/"));
 	for (Vec<std::string>::size_type i = 0; i < m_segments.size(); ++i)
 	{
 		std::string currentPath = "/";
@@ -315,7 +316,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 			currentPath += m_segments[j];
 		}
 		if (locs.has(currentPath))
-			m_activeLocations.push(locs.get(currentPath));
+			locations.push(locs.get(currentPath));
 		if (i == m_segments.size() - 1)
 		{
 			if (m_target[m_target.size() - 1] != '/')
@@ -323,9 +324,12 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		}
 		currentPath += "/";
 		if (locs.has(currentPath))
-			m_activeLocations.push(locs.get(currentPath));
+			locations.push(locs.get(currentPath));
 	}
-
+	if (ENABLE_LOCATION_ADD_UP)
+		m_activeLocations += locations;
+	else if (locations.size() > 0)
+		m_activeLocations.push(locations.back());
 	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Config::Location::compare);
 }
 

@@ -52,8 +52,7 @@ class FileManager
 		static std::string getMime(const File &file);
 		static std::string getIcon(const File &file);
 
-		static std::string findLastModifiedDate(const std::string &filePath);
-
+		static std::string determineExtension(const std::string &fileName, size_t *extPos);
 
 	public:
 		class FileException : public std::exception

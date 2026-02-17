@@ -118,7 +118,7 @@ bool HttpResponse::sendOnce(int socket)
 		return true;
 	const char	 *buf		= m_fullResponse.c_str();
 	const size_t  remaining = totalSize - m_sentBytes;
-	const size_t  to_send	= remaining < WRITE_BUFFER_SIZE ? remaining : WRITE_BUFFER_SIZE;
+	const size_t  to_send	= remaining < WRITE_CLIENT_BUFFER_SIZE ? remaining : WRITE_CLIENT_BUFFER_SIZE;
 	const ssize_t n			= send(socket, buf + m_sentBytes, to_send, MSG_NOSIGNAL);
 
 	if (n < 0)

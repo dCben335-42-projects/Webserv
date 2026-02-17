@@ -25,7 +25,7 @@ File::File(
 	m_createdAtHuman	= Date::toHumanFormat(gmtime(&m_stat.st_ctime));
 	m_lastModifiedHuman = Date::toHumanFormat(localtime(&m_stat.st_mtime));
 
-	m_extension = determineExtension(name, &m_extensionPos);
+	m_extension = FileManager::determineExtension(name, &m_extensionPos);
 	m_sizeHuman = Number::bytesToHumanSize(m_size);
 	m_icon		= FileManager::getIcon(*this);
 	m_mime		= FileManager::getMime(*this);
@@ -250,32 +250,4 @@ File &File::read()
 {
 	m_content = FileManager::readFile(m_fullPath);
 	return *this;
-}
-
-
-/**
- *
- * @brief Determines the file extension from the given file name.
- *
- * This function finds the last dot in the file name and returns the substring
- * from that dot to the end of the string as the extension.
- *
- * @note If there is no dot, or if the dot is at the beginning or end of the file name,
- * the function returns an empty string, indicating that there is no valid extension.
- *
- * @param fileName The name of the file from which to determine the extension.
- * @param extPos Optional pointer to store the position of the extension in the file name.
- *
- * @return The file extension, including the dot (e.g., ".txt"), or an
- * empty string if there is no valid extension.
- *
- */
-std::string File::determineExtension(const std::string &fileName, size_t *extPos)
-{
-	size_t dotPos = fileName.rfind('.');
-	if (extPos)
-		*extPos = dotPos;
-	if (dotPos != std::string::npos && dotPos != 0 && dotPos != fileName.length() - 1)
-		return fileName.substr(dotPos);
-	return "";
 }

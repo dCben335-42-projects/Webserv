@@ -410,6 +410,7 @@ std::ostream &operator<<(std::ostream &os, const Config::Location &location)
 	os << ", alias: " << location.getAlias();
 	os << ", indexFiles: " << Logger::get(location.getIndexFiles());
 	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
+	os << ", cgiParams: " << Logger::get(location.getCgiParams());
 	os << ")";
 	return os;
 }

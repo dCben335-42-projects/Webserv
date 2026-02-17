@@ -46,3 +46,13 @@ void Config::CgiParams::setAllowCgi(const bool &allowCgi)
 {
 	m_allowCgi = allowCgi;
 }
+
+
+
+#include "Logger.hpp"
+
+std::ostream &operator<<(std::ostream &os, const Config::CgiParams &cgiParams)
+{
+	os << "CgiParams(allowCgi: " << (cgiParams.getAllowCgi() ? "true" : "false") << ", binMap: " << Logger::get(cgiParams.getBinMap()) << ")";
+	return os;
+}
