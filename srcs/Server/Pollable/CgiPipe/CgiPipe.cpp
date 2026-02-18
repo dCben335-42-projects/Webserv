@@ -5,6 +5,7 @@
 #include "Signals.hpp"
 #include "httpMimes.hpp"
 #include "CgiOutput.hpp"
+#include "httpExceptions.hpp"
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,
@@ -12,7 +13,8 @@ CgiPipe::CgiPipe(
 	Client *const client) :
 	Pollable(stdout_pipe_fd),
 	m_client(client),
-	m_pid(pid)
+	m_pid(pid),
+	m_bytesWritten(0)
 {
 }
 
@@ -46,60 +48,47 @@ void CgiPipe::waitChild()
 				m_client->setEvents(POLLOUT);
 			}
 			else
-			{
-				std::cerr << "Wrong error code " << exit_status << std::endl;
-				throw std::runtime_error("Child process failed");
-			}
+				throw Http500Exception();
 		}
 		else
-		{
-			std::cerr << "Exited with signal" << std::endl;
-			throw std::runtime_error("Child process failed");
-		}
+			throw Http500Exception();
 	}
 }
 
 void CgiPipe::onPollIn()
 {
-	char buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
-	int	 bytesRead					  = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
-
-	if (bytesRead > 0)
-	{
-		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
-		return;
-	}
-	if (bytesRead < 0)
-		std::cerr << "Read error" << std::endl;
-	onError();
-}
-
-void CgiPipe::onError()
-{
-	m_events		  = 0;
-	HttpResponse &res = m_client->getResponse();
-	res.reset();
-	res.setStatusCode(500);
-	res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-	res.setBody("<h1>CGI Script Error</h1>");
-	res.build();
-	m_connectionClosed = true;
-	m_client->setEvents(POLLOUT);
+	onPollHangUp();
 }
 
 void CgiPipe::onPollOut()
 {
-	const std::string &body = m_client->getRequest().getBody();
-	if (write(m_fd, body.data(), body.size()) == -1)
-		onError();
+	const std::string &body			= m_client->getRequest().getBody();
+	const size_t	   remaining	= body.size() - m_bytesWritten;
+	const size_t	   to_send		= remaining < WRITE_CLIENT_BUFFER_SIZE ? remaining : WRITE_CLIENT_BUFFER_SIZE;
+	ssize_t			   bytesWritten = write(m_fd, body.data() + m_bytesWritten, to_send);
+
+	try
+	{
+		if (bytesWritten == -1)
+			throw Http500Exception();
+		m_bytesWritten += bytesWritten;
+		if (m_bytesWritten < body.size())
+			return;
+	}
+	catch (const AHttpException &e)
+	{
+		m_client->onHttpException(e);
+	}
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
 
 void CgiPipe::onPollErr()
 {
-	std::cerr << "CgiPipe error on fd " << m_fd << std::endl;
-	onError();
+	m_client->onHttpException(Http500Exception());
+	m_events = 0;
+	m_client->setEvents(POLLOUT);
+	m_connectionClosed = true;
 }
 
 void CgiPipe::onPollHangUp()
@@ -107,11 +96,6 @@ void CgiPipe::onPollHangUp()
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
 	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
-	if (bytesRead < 0)
-	{
-		std::cerr << "Read error" << std::endl;
-		return;
-	}
 	if (bytesRead > 0)
 	{
 		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
@@ -119,19 +103,21 @@ void CgiPipe::onPollHangUp()
 	}
 	try
 	{
+		if (bytesRead < 0)
+			throw Http500Exception();
 		waitChild();
 		m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
 		m_cgiOutput.build();
 		HttpResponse &res = m_client->getResponse();
 		res.setFullResponse(m_cgiOutput.getRes());
-		m_events = 0;
-		m_client->setEvents(POLLOUT);
-		m_connectionClosed = true;
 	}
-	catch (const std::exception &e)
+	catch (const AHttpException &e)
 	{
-		onError();
+		m_client->onHttpException(e);
 	}
+	m_events = 0;
+	m_client->setEvents(POLLOUT);
+	m_connectionClosed = true;
 }
 
 // TODO CGI timeout

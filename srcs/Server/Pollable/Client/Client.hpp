@@ -49,7 +49,6 @@ class Client : public Pollable
 
 
 		bool prepareResponse();
-		void onHttpException(const AHttpException &e);
 
 	public:
 		Client(int fd, const Config &config, VirtualServer &server);
@@ -60,8 +59,6 @@ class Client : public Pollable
 
 		void setEvents(const short events);
 
-		bool determineKeepAlive(unsigned short statusCode);
-
 		void onPollIn();
 		void onPollOut();
 		void onPollErr();
@@ -69,6 +66,9 @@ class Client : public Pollable
 
 		bool isTimedOut(const time_t currentTime) const;
 		void onTimeOut();
+
+		void onHttpException(const AHttpException &e);
+		bool determineKeepAlive(unsigned short statusCode);
 };
 
 

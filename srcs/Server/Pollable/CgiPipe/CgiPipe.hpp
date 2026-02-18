@@ -12,8 +12,8 @@ class CgiPipe : public Pollable
 		Client *const m_client;
 		CgiOutput	  m_cgiOutput;
 		pid_t		  m_pid;
+		size_t		  m_bytesWritten;
 
-		void onError();
 		void waitChild();
 
 	public:
