@@ -4,7 +4,7 @@
 #include "Logger.hpp"
 #include "webserv.hpp"
 
-HttpAuth::HttpAuth()
+HttpAuth::HttpAuth() : m_fullPage("")
 {
 }
 

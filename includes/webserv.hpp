@@ -29,8 +29,8 @@
 
 
 // Cookie Duration in seconds
-#define COOKIE_EXPIRE_DURATION 120u
-#define COOKIE_SESSION_MIN 60u
+#define COOKIE_EXPIRE_DURATION 36000u
+#define COOKIE_SESSION_MIN 600u
 
 // Usefuls Cookies defines
 #define COOKIE_FIELD_SEP "; "

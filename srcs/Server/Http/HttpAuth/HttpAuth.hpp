@@ -18,7 +18,9 @@ class HttpAuth
 
 	private:
 		Map<std::string> m_urlEncoded;
-		void			 checkField(const std::string field);
+		std::string		 m_fullPage;
+
+		void checkField(const std::string field);
 
 	public:
 		HttpAuth();

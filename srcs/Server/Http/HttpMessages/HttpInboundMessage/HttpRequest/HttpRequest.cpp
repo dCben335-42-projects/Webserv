@@ -176,8 +176,10 @@ std::string HttpRequest::getCookieValue(const std::string &key) const
  * @return true if the cookie exists, false otherwise.
  *
  */
+#include "Logger.hpp"
 bool HttpRequest::hasCookieValue(const std::string &key) const
 {
+	Logger::error(m_cookieValues);
 	return m_cookieValues.has(key);
 }
 
@@ -233,7 +235,7 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
  */
 HttpRequest &HttpRequest::parseCookie()
 {
-	if (!m_headers.has(HEADER_COOKIE))
+	if (!hasHeader(HEADER_COOKIE))
 		return *this;
 	const Vec<std::string> keyValues = String::splitPattern(getHeader(HEADER_COOKIE), COOKIE_FIELD_SEP);
 	for (Vec<std::string>::const_iterator it = keyValues.begin(); it != keyValues.end(); it++)

@@ -338,14 +338,14 @@ void Client::handleGet(const std::string &ressourcePath)
 	bool			  isIndexFile = false;
 	const std::string target	  = m_req.getTarget();
 
-	// if (target == "/cgi-bin/")
-	// {
-	// 	if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
-	// 		throw Http401Exception();
-	// 	const std::string token = m_req.getCookieValue(COOKIE_KEY_TOKEN);
-	// 	if (!m_server.hasUser(token))
-	// 		throw Http401Exception();
-	// }
+	if (target == "/cgi-bin/")
+	{
+		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
+			throw Http401Exception();
+		const std::string token = m_req.getCookieValue(COOKIE_KEY_TOKEN);
+		if (!m_server.hasUser(token))
+			throw Http401Exception();
+	}
 	try
 	{
 		std::string path = ressourcePath;

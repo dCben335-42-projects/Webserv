@@ -43,21 +43,25 @@ void EventLoop::init()
 	uploadMethods.insert(HttpMethod::GET);
 	uploadLocation->setMethods(uploadMethods);
 
+	Config::Location *authLocation = new Config::Location("/auth");
+	authLocation->setAlias("files/www/auth");
 
-	Config::Location *registerLocation = new Config::Location("/auth/register");
-	registerLocation->addIndexFile("register.html");
-	registerLocation->setReturn(LocationReturn(301, "/uploads"));
-	Config::Location *loginLocation = new Config::Location("/auth/login");
-	loginLocation->addIndexFile("login.html");
-	loginLocation->setReturn(LocationReturn(301, "/auth/register"));
+	// Config::Location *registerLocation = new Config::Location("/auth/register");
+	// registerLocation->addIndexFile("register.html");
+	// registerLocation->setRoot("files/www");
+	// registerLocation->setReturn(LocationReturn(301, "/uploads"));
+	// Config::Location *loginLocation = new Config::Location("/auth/login");
+	// loginLocation->addIndexFile("login.html");
+	// loginLocation->setReturn(LocationReturn(301, "/auth/register"));
 
 
 	Map<const Config::Location *> locations;
 	locations.set("/", slashLoc);
 	locations.set("/cgi-bin", bin);
 	locations.set("/uploads", uploadLocation);
-	locations.set("/auth/register", registerLocation);
-	locations.set("/auth/login", loginLocation);
+	locations.set("/auth", authLocation);
+	// locations.set("/auth/register", registerLocation);
+	// locations.set("/auth/login", loginLocation);
 
 	Config *config1 = new Config(ip, 8080, "localhost", defaultLocation, locations);
 	new VirtualServer(*(config1));
