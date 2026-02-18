@@ -23,7 +23,8 @@ void EventLoop::init()
 	Map<std::string>  binSlash;
 	binSlash.set(".py", "/usr/bin/python3");
 	slashLoc->setAutoIndex(true);
-	slashLoc->setCgiParams(new Config::CgiParams(binSlash));
+	Config::CgiParams *py = new Config::CgiParams(binSlash);
+	slashLoc->setCgiParams(py);
 
 	Config::Location *bin = new Config::Location("/cgi-bin");
 	Map<std::string>  binmap1;
@@ -40,7 +41,7 @@ void EventLoop::init()
 	uploadLocation->setAlias("files/www/uploads");
 	Set<HttpMethod> uploadMethods;
 	uploadMethods.insert(HttpMethod::GET);
-	// uploadLocation->setMethods(uploadMethods);
+	uploadLocation->setMethods(uploadMethods);
 
 
 	Config::Location *registerLocation = new Config::Location("/auth/register");

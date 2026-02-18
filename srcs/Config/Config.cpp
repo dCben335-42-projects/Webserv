@@ -27,6 +27,7 @@ Config::~Config()
 	for (Map<const Location *>::iterator it = m_locations.begin(); it != m_locations.end(); ++it)
 		delete it->second;
 	delete m_defaultLocation;
+	m_locations.clear();
 }
 
 

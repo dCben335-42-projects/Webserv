@@ -19,7 +19,6 @@ CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	m_has_post_data(false)
 {
 	m_has_post_data = !m_req.getBody().empty();
-	std::cout << m_has_post_data << std::endl;
 }
 
 CgiSpawner::~CgiSpawner()
@@ -33,14 +32,11 @@ void CgiSpawner::spawn()
 	m_pid = fork();
 	if (m_pid == -1)
 	{
-		if (m_stdoutPipe[1] != -1)
-			close(m_stdoutPipe[1]);
-		if (m_stdoutPipe[0] != -1)
-			close(m_stdoutPipe[0]);
-		if (m_stdinPipe[1] != -1)
-			close(m_stdinPipe[1]);
-		if (m_stdinPipe[0] != -1)
-			close(m_stdinPipe[0]);
+		close(m_stdoutPipe[1]);
+		close(m_stdoutPipe[0]);
+		close(m_stdinPipe[1]);
+		close(m_stdinPipe[0]);
+		throw Http500Exception();
 	}
 	if (m_pid == 0)
 		childprocess();
@@ -115,26 +111,40 @@ void CgiSpawner::childprocess()
 		NULL};
 	generateEnvp();
 	if (dup2(m_stdinPipe[0], STDIN_FILENO) == -1)
-		throw std::runtime_error("Dup2 failed");
+		exitChild();
 	close(m_stdinPipe[1]);
 	close(m_stdinPipe[0]);
 	if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
-		throw std::runtime_error("Dup2 failed");
+		exitChild();
 	close(m_stdoutPipe[0]);
 	close(m_stdoutPipe[1]);
-	execve(argv[0], argv, m_envp);
+	execve(argv[0], argv, m_envp.data());
 	perror("execve");
 	EventLoop::destroy();
 	(*this).~CgiSpawner();
-	exit(127);
+	exit(1);
+}
+
+void CgiSpawner::exitChild()
+{
+	close(m_stdinPipe[0]);
+	close(m_stdinPipe[1]);
+	close(m_stdoutPipe[0]);
+	close(m_stdoutPipe[1]);
+	if (!Signals::getIsDestroyed())
+	{
+		Signals::setIsDestroyed(true);
+		EventLoop::destroy();
+	}
+	(*this).~CgiSpawner();
+	exit(1);
 }
 
 void CgiSpawner::generateEnvp()
 {
-	size_t i;
-	for (i = 0; i < m_env.size(); i++)
-		m_envp[i] = const_cast<char *>(m_env[i].c_str());
-	m_envp[i] = NULL;
+	for (size_t i = 0; i < m_env.size(); i++)
+		m_envp.push(const_cast<char *>(m_env[i].c_str()));
+	m_envp.push(NULL);
 }
 
 ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const size_t start)
@@ -145,7 +155,7 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 		if (fileExtension.empty() || !m_activeBinMap.has(fileExtension))
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
-		if (access(m_binPath.c_str(), X_OK) == -1)
+		if (!FileManager::hasXPerm(m_binPath))
 			throw Http500Exception();
 		m_scriptPath = m_req.buildResourcePath(i);
 		return i;
@@ -174,46 +184,57 @@ void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t sc
 	}
 }
 
+void CgiSpawner::fillActiveBinMap()
+{
+	Vec<const Config::CgiParams *>		 cgiParams;
+	const Vec<const Config::Location *> &locations = m_req.getActiveLocations();
+
+	for (Vec<const Config::Location *>::const_iterator it = locations.begin(); it != locations.end(); it++)
+	{
+		if ((*it)->getCgiParams())
+			cgiParams.push((*it)->getCgiParams());
+	}
+	for (Vec<const Config::CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
+	{
+		const Map<std::string> binMap = (*it)->getBinMap();
+		for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)
+		{
+			std::string first = mit->first;
+			m_activeBinMap.set(first, mit->second);
+		}
+	}
+}
+
+bool CgiSpawner::isValidScript()
+{
+	struct stat st = FileManager::getStat(m_scriptPath);
+
+	if (FileManager::exists(m_scriptPath) && !FileManager::isFolder(st))
+	{
+		struct stat st = FileManager::getStat(m_scriptPath);
+		if (!FileManager::isFile(st))
+			throw Http404Exception();
+		if (!FileManager::hasRPerm(m_scriptPath))
+			throw Http403Exception();
+		return true;
+	}
+	return false;
+}
+
 bool CgiSpawner::isCgi()
 {
 	try
 	{
-		Vec<const Config::CgiParams *>		 cgiParams;
-		const Vec<const Config::Location *> &locations = m_req.getActiveLocations();
-
-		for (Vec<const Config::Location *>::const_iterator it = locations.begin(); it != locations.end(); it++)
-		{
-			if ((*it)->getCgiParams())
-				cgiParams.push((*it)->getCgiParams());
-		}
-		for (Vec<const Config::CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
-		{
-			const Map<std::string> binMap = (*it)->getBinMap();
-			for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)
-			{
-				std::string first = mit->first;
-				m_activeBinMap.set(first, mit->second);
-			}
-		}
-
+		fillActiveBinMap();
 		const Vec<std::string> &urlSegments = m_req.getSegments();
 		const ssize_t			size		= urlSegments.size();
 		ssize_t					scriptIndex = getScriptIndex(urlSegments, 0);
 
 		while (scriptIndex != -1 && scriptIndex < size)
 		{
-			struct stat st = FileManager::getStat(m_scriptPath);
-
-			if (FileManager::exists(m_scriptPath) && !FileManager::isFolder(st))
-			{
-				struct stat st = FileManager::getStat(m_scriptPath);
-				if (!FileManager::isFile(st))
-					throw Http404Exception();
-				if (!FileManager::hasRPerm(m_scriptPath))
-					throw Http403Exception();
+			if (isValidScript())
 				break;
-			}
-			scriptIndex = getScriptIndex(urlSegments, scriptIndex);
+			scriptIndex = getScriptIndex(urlSegments, scriptIndex + 1);
 		}
 		if (scriptIndex == -1)
 			return false;

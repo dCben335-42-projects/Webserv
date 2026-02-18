@@ -48,17 +48,16 @@ void CgiPipe::waitChild()
 			else
 			{
 				std::cerr << "Wrong error code " << exit_status << std::endl;
-				onError();
+				throw std::runtime_error("Child process failed");
 			}
 		}
 		else
 		{
 			std::cerr << "Exited with signal" << std::endl;
-			onError();
+			throw std::runtime_error("Child process failed");
 		}
 	}
 }
-
 
 void CgiPipe::onPollIn()
 {
@@ -84,13 +83,15 @@ void CgiPipe::onError()
 	res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 	res.setBody("<h1>CGI Script Error</h1>");
 	res.build();
+	m_connectionClosed = true;
 	m_client->setEvents(POLLOUT);
 }
 
 void CgiPipe::onPollOut()
 {
 	const std::string &body = m_client->getRequest().getBody();
-	write(m_fd, body.data(), body.size());
+	if (write(m_fd, body.data(), body.size()) == -1)
+		onError();
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
@@ -101,11 +102,6 @@ void CgiPipe::onPollErr()
 	onError();
 }
 
-
-
-
-
-#include "Logger.hpp"
 void CgiPipe::onPollHangUp()
 {
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
@@ -121,26 +117,29 @@ void CgiPipe::onPollHangUp()
 		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
 		return;
 	}
-	waitChild();
-	m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
-	m_cgiOutput.build();
-	HttpResponse &res = m_client->getResponse();
-	res.setFullResponse(m_cgiOutput.getRes());
-	m_events = 0;
-	m_client->setEvents(POLLOUT);
-	m_connectionClosed = true;
+	try
+	{
+		waitChild();
+		m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
+		m_cgiOutput.build();
+		HttpResponse &res = m_client->getResponse();
+		res.setFullResponse(m_cgiOutput.getRes());
+		m_events = 0;
+		m_client->setEvents(POLLOUT);
+		m_connectionClosed = true;
+	}
+	catch (const std::exception &e)
+	{
+		onError();
+	}
 }
 
-
-
-
-
+// TODO CGI timeout
 bool CgiPipe::isTimedOut(const time_t currentTime) const
 {
 	(void) currentTime;
 	return false;
 }
-
 
 void CgiPipe::onTimeOut()
 {

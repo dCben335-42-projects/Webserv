@@ -28,7 +28,7 @@ class CgiSpawner
 
 		bool			 m_has_post_data;
 		Vec<std::string> m_env;
-		char			*m_envp[32];
+		Vec<char *>		 m_envp;
 
 		void		setupPipes();
 		std::string makeEnvVar(const std::string &key, const std::string &value);
@@ -40,13 +40,16 @@ class CgiSpawner
 
 		void buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
 		void buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
+		void fillActiveBinMap();
+		void spawn();
+		void exitChild();
+		bool isValidScript();
 
 
 	public:
 		CgiSpawner(const HttpRequest &req, const Config &config);
 		~CgiSpawner();
 
-		void spawn();
 		void spawnCgi(Client *const client);
 
 		bool isCgi();

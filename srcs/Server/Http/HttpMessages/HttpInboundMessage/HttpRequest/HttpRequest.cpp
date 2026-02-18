@@ -326,7 +326,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		if (locs.has(currentPath))
 			locations.push(locs.get(currentPath));
 	}
-	if (ENABLE_LOCATION_ADD_UP)
+	if (FLAG_LOCATION_ADD_UP)
 		m_activeLocations += locations;
 	else if (locations.size() > 0)
 		m_activeLocations.push(locations.back());

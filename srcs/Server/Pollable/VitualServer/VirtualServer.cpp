@@ -431,7 +431,6 @@ bool VirtualServer::hasUser(const std::string &hash) const
 	return false;
 }
 
-#include "Logger.hpp"
 const std::string &VirtualServer::findCookie(const std::string &name, const std::string &pswd)
 {
 	for (UserIt it = m_users.begin(); it != m_users.end(); it++)
