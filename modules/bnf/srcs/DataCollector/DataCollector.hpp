@@ -63,6 +63,10 @@ class DataCollector
 		Map<size_t, ARulePath> m_pathStack;
 		Map<size_t, AJson *>   m_mapJson;
 		int					   m_requiredIdx;
+		bool				   m_bindTerminalConcept;
+		int					   m_indexSaved;
+		// clang-format off
+		Map<size_t, Map<size_t, size_t> > m_concatPtr;
 		// Vec<std::string>	   m_lines;
 		Vec<StringNode>	   m_lines;
 		Vec<const ARule *> m_collectStr;
@@ -73,7 +77,7 @@ class DataCollector
 		DataCollector();
 		~DataCollector();
 
-		void generateJson(const BNFPath *cursor, const std::string &strToParsed, Vec<std::string> lines);
+		void generateJson(const BNFPath *cursor, const std::string &strToParsed);
 		void recurseJson(
 			size_t index_rule);
 
@@ -99,6 +103,11 @@ class DataCollector
 		bool			   samePrecP(const ARulePath &path1, const ARulePath &path2, const size_t n) const;
 		int				   getFirstSequence(ARulePath path, size_t max_bottom) const;
 		FirstRequired	   getFirstRequiredInJsonMap(ARulePath path) const;
+		Vec<StringNode>	   stringOrganiser(const std::vector<std::string> &lines);
+		bool			   shouldContinueConcat(size_t i, size_t tempI, int index) const;
+		// void			   clearPtr(size_t tempI, size_t index, size_t i, bool isStart);
+		bool			   shouldClearConcat(size_t tempI, int index, size_t i) const;
+		void			   clearConcat(int index);
 		bool			   findCharPos(
 						  const std::vector<std::string> &lines,
 						  size_t						  globalIndex,

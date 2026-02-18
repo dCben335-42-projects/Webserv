@@ -349,6 +349,8 @@ void DataCollector::recurseJson(size_t idxRule)
 
 int DataCollector::getFirstTerminalConcept(ARulePath path) const
 {
+	if (!m_bindTerminalConcept)
+		return -1;
 	for (size_t i = 0; i < path.size(); ++i)
 	{
 		if (path[i]->getConceptPtr()->isTerminalConcept())
@@ -367,7 +369,7 @@ int DataCollector::getFirstSequence(ARulePath path, size_t max_bottom) const
 	return -1;
 }
 
-bool hasWordStartPath(Vec<ARulePath> wordStartPath, ARulePath tempRulePath)
+bool hasWordStartPath(Vec<ARulePath> &wordStartPath, const ARulePath &tempRulePath)
 {
 	for (size_t k = 0; k < wordStartPath.size(); ++k)
 	{
@@ -406,14 +408,6 @@ bool DataCollector::findCharPos(
 // clang-format off
 FirstRequired DataCollector::getFirstRequiredInJsonMap(ARulePath path) const
 {
-
-			// 	if (m_pathNexts[i][m_pathNexts[i].size() - 1]->getRequiredInJsonMap().size() > 0)
-			// {
-			// 	nlines.push(StringNode(str, m_pathNexts[i].size() - 1));
-			// 	str.clear();
-			// 	i = tempI;
-			// 	continue;
-			// }
 	for (size_t i = 0; i < path.size() - 1; ++i)
 	{
 		if (path[i]->getRequiredInJsonMap().size() > 0)
@@ -439,31 +433,223 @@ FirstRequired DataCollector::getFirstRequiredInJsonMap(ARulePath path) const
 	return (FirstRequired) {-1, 0};
 }
 
+bool DataCollector::shouldContinueConcat(size_t i, size_t tempI, int index) const
+{
+    if (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
+        return false;
 
-// Vec<std::string> nlines;
+    if (index <= 0)
+        return true;
 
-// bool DataCollector::hasYetWritable()
+    int seqIndex = getFirstSequence(m_pathNexts[i], index - 1);
+    if (seqIndex == -1)
+        return true;
+
+    return !isEndP(m_pathNexts[i], seqIndex + 1);
+}
+
+// void DataCollector::clearPtr(size_t tempI, size_t index, size_t i, bool isStart)
 // {
-// 	getNextRule();
-// 	return false;
+// 	if (!isStart)
+// 		m_indexSaved = index;
+// 	if (tempI < m_pathNexts.size() && (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index) || (m_pathNexts[i][index -1]->isSequence() && !isEndP(m_pathNexts[i], index))))
+// 	{
+// 		if (m_concatPtr.has(index))
+// 			m_concatPtr.get(index).clear();
+// 		if (isStart)
+// 			m_indexSaved = -1;
+// 	}
 // }
 
+bool DataCollector::shouldClearConcat(size_t tempI, int index, size_t i) const
+{
+	// Logger::log("shouldClearConcat : tempI: " + Logger::get(tempI) + ", index: " + Logger::get(index) + ", i: " + Logger::get(i));
+	if (index < 0)
+		return false;
+	// Logger::log("shouldClearConcat : tempI: " + Logger::get(tempI) + ", index: " + Logger::get(index) + ", i: " + Logger::get(i));
+
+	if (tempI >= m_pathNexts.size())
+		return true;
+
+	// Logger::log("shouldClearConcat : tempI: " + Logger::get(tempI) + ", index: " + Logger::get(index) + ", i: " + Logger::get(i));
 
 
+	if (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
+		return true;
+
+	// Logger::log("shouldClearConcat : tempI: " + Logger::get(tempI) + ", index: " + Logger::get(index) + ", i: " + Logger::get(i));
+
+	
+	
+	if (index > 0 &&
+		m_pathNexts[i][index - 1]->isSequence() &&
+		isEndP(m_pathNexts[i], index))
+		return true;
+		
+	int seq = getFirstSequence(m_pathNexts[i], index);
+	bool to = seq < 0 ? false : isEndP(m_pathNexts[i], seq + 1);
+
+	return to;
+	// Logger::log("shouldClearConcat : tempI: " + Logger::get(tempI) + ", index: " + Logger::get(index) + ", i: " + Logger::get(i));
+
+	return false;
+}
+
+// void DataCollector::clearConcat(int index)
+// {
+//     if (index >= 0 && m_concatPtr.has(index))
+//         m_concatPtr.get(index).clear();
+// }
+
+void DataCollector::clearConcat(int index)
+{
+    if (index < 0)
+        return;
+
+    std::map<size_t, Map<size_t, size_t> >::iterator it = m_concatPtr.lower_bound(index);
+
+    while (it != m_concatPtr.end())
+    {
+		Logger::log("clearConcat : index: " + Logger::get(index) + ", it->first: " + Logger::get(it->first));
+        std::map<size_t, Map<size_t, size_t> >::iterator toErase = it++;
+        m_concatPtr.erase(toErase);
+    }
+}
+
+
+
+Vec<StringNode> DataCollector::stringOrganiser(const std::vector<std::string> &lines)
+{
+	size_t i = 0;
+	Vec<StringNode> nlines;
+	m_indexSaved = -1;
+	std::string str = "";
+	int index = -1;
+
+	while (i < m_pathNexts.size())
+	{
+		size_t line;
+		size_t col;
+		size_t tempI;
+
+		if (!findCharPos(lines, i, line, col))
+			break;
+
+		size_t size = lines[line].size();
+		str.append(lines[line]);
+		tempI = i + size;
+		Logger::log("str : " + Logger::get(str));
+		Logger::log(m_concatPtr);
+
+		// if (tempI >= m_pathNexts.size() && )
+		// 	return true;
+		if(shouldClearConcat(tempI, index, i))
+			clearConcat(index);
+
+		index = getFirstTerminalConcept(m_pathNexts[i]);
+		Logger::log("index : " + Logger::get(index));
+		FirstRequired required = getFirstRequiredInJsonMap(m_pathNexts[i]);
+
+		Logger::log("ops001");
+
+		if (tempI >= m_pathNexts.size() || (index & required.index) < 0)
+		{
+			Logger::log("ops00");
+			i = tempI;
+			nlines.push(StringNode(str, required.index));
+			index = required.index;
+			str.clear();
+			continue;
+		}
+		else
+		{
+			Logger::log("ops002");
+			if (required.index >= 0 && (required.index < index || index == -1))
+			{
+				Logger::log("ops0025");
+
+				// Logger::log("ops2");
+				index = required.index;
+				// Logger::log("index : " + Logger::get(index));
+				// Logger::log(m_pathNexts[i]);
+				// Logger::log(!isEndP(m_pathNexts[i], index + 1));
+				// Logger::log(!m_pathNexts[i][index - 1]->isSequence());
+				// // Si on est pas a la fin mais que le prochain element a pour parent le meme que l'actuel
+				// // Ne prend pas en compte les optional
+				// int seq = getFirstSequence(m_pathNexts[i], index);
+				// bool to = seq < 0 ? true : !m_pathNexts[i][seq + 1]->isEnd();
+
+				int seq = getFirstSequence(m_pathNexts[i], index);
+				bool to = seq < 0 ? true : !isEndP(m_pathNexts[i], seq + 1);
+				Logger::error("samePrecP : " + Logger::get(samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1)));
+
+
+				if (!isEndP(m_pathNexts[i], index + 1) || (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1) && to))
+				{
+					Logger::log("ops3");
+
+					i = tempI;
+					continue;
+				}
+			}
+			else if (shouldContinueConcat(i, tempI,index))
+			{
+				Logger::log("ops");
+				i = tempI;
+				continue;
+			}
+			
+			if (required.index >= 0)
+			{
+				Logger::log("ops8");
+
+				if (!m_concatPtr.has(index))
+					m_concatPtr.set(index, Map<size_t, size_t>());
+
+				if (!m_concatPtr.get(index).has(required.channel))
+				{
+					Logger::log("ops9");
+
+					nlines.push(StringNode(str, required.index)); 
+					str.clear();
+					m_concatPtr.get(index).set(required.channel, nlines.size() - 1);
+				}
+				else
+				{
+					Logger::log("ops10");
+
+					size_t idx = m_concatPtr.get(index).get(required.channel);
+					StringNode &ptr = nlines[idx];
+					ptr.str += str;
+					Logger::log("ptr : " + Logger::get(ptr));
+					str.clear();
+				}
+			}
+			else
+			{
+				nlines.push(StringNode(str, required.index)); 
+				str.clear();
+			}
+
+		}
+		if(shouldClearConcat(tempI, index, i))
+			clearConcat(index);
+		i = tempI;
+	}
+	return nlines;
+}
 
 // clang-format off
-void DataCollector::generateJson(const BNFPath *cursor, const std::string &strToParsed, Vec<std::string> lines)
+void DataCollector::generateJson(const BNFPath *cursor, const std::string &strToParsed)
 {
-	std::string str = "";
-	str += strToParsed[0];
-	lines.clear();
-	size_t l = 0;
+	m_bindTerminalConcept = false;
+
+	std::string str(1, strToParsed[0]);
+	Vec<std::string> lines;
 
 	m_pathNexts.push_back(cursor->rulePath);
 	while (cursor && cursor->next.size() > 0)
 	{
-		l++;
-
 		for (size_t i = 0; i < cursor->next.size(); ++i)
 		{
 			if (!cursor->next[i].isInvalidedPath)
@@ -473,219 +659,21 @@ void DataCollector::generateJson(const BNFPath *cursor, const std::string &strTo
 			}
 		}
 		m_pathNexts.push_back(cursor->rulePath);
-		ARulePath tempRulePath = cursor->rulePath;
-		Vec<ARulePath> wordStartPath = cursor->prev->wordStartPath;
-
-		if (hasWordStartPath(wordStartPath, tempRulePath))
+		if (hasWordStartPath(cursor->prev->wordStartPath, cursor->rulePath))
 		{
 			lines.push_back(str); 
 			str = "";
 		}
-
 		str += strToParsed[cursor->index];
 	}
 	lines.push_back(str);
-	str = "";
 
-	// Logger::log(lines);
-
-	size_t i = 0;
-
-	Map<size_t, Map<size_t, size_t> > concatPtr;
-	Vec<StringNode> nlines;
-	int index_saved = -1;
-
-
-	Logger::log(lines.size());
-	while (i < m_pathNexts.size())
-	{
-		size_t line;
-		size_t col;
-
-		if (findCharPos(lines, i, line, col))
-		{
-			size_t size = lines[line].size();
-			str.append(lines[line]);
-			// str.append(" ");
-			
-			
-			
-			
-			Logger::log("str : " + str);
-			size_t tempI = i + size;
-			
-			if ((tempI < m_pathNexts.size() && !samePrecP(m_pathNexts[i], m_pathNexts[tempI], index_saved)) || (m_pathNexts[i][index_saved -1]->isSequence() && !isEndP(m_pathNexts[i], index_saved)))
-			{
-				Logger::log("CLEAR");
-				if (concatPtr.has(index_saved))
-				concatPtr.get(index_saved).clear();
-				index_saved = -1;
-			}
-
-			// S'il y en a un deja plus haut alors il est prioritaire
-			// if (m_pathNexts[i][m_pathNexts[i].size() - 1]->getRequiredInJsonMap().size() > 0)
-			// {
-			// 	nlines.push(StringNode(str, m_pathNexts[i].size() - 1));
-			// 	str.clear();
-			// 	i = tempI;
-			// 	continue;
-			// }
-
-			// if (tempI >= m_pathNexts.size() || (getFirstTerminalConcept(m_pathNexts[i]) < 0 && getFirstRequiredInJsonMap(m_pathNexts[i]).index < 0))
-			if (tempI >= m_pathNexts.size() || (getFirstRequiredInJsonMap(m_pathNexts[i]).index < 0))
-			{
-				i = tempI;
-				nlines.push(StringNode(str, -1));
-				str.clear();
-				continue;
-			}
-			else
-			{
-				// int index = getFirstTerminalConcept(m_pathNexts[i]);
-				int index = -1;
-				FirstRequired required = getFirstRequiredInJsonMap(m_pathNexts[i]);
-
-				if (required.index >= 0 && (required.index < index || index == -1))
-				{
-					index = required.index;
-
-					if (!isEndP(m_pathNexts[i], index + 1) || samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1))
-					{	
-						i = tempI;
-						continue;
-					}
-				}
-				// else
-				// {
-				// 	if (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index))
-				// 	{
-				// 		if (index - 1 < 0)
-				// 		{
-				// 			i = tempI;
-				// 			continue;
-				// 		}
-						
-				// 		if (index - 1 >= 0)
-				// 		{
-				// 			int seqIndex = getFirstSequence(m_pathNexts[i], index - 1);
-				// 			if (seqIndex == -1)
-				// 			{
-				// 				i = tempI;
-				// 				continue;
-				// 			}
-				// 			else
-				// 			{
-				// 				if (!isEndP(m_pathNexts[i], seqIndex + 1))
-				// 				{
-				// 					i = tempI;
-				// 					continue;
-				// 				}
-				// 			}
-				// 		}
-				// 	}
-				// }
-				
-				if (required.index >= 0)
-				{
-					if (!concatPtr.has(index))
-						concatPtr.set(index, Map<size_t, size_t>());
-
-					if (!concatPtr.get(index).has(required.channel))
-					{
-						nlines.push(StringNode( str, required.index)); 
-						str.clear();
-						concatPtr.get(index).set(required.channel, nlines.size() - 1);
-					}
-					else
-					{
-						size_t idx = concatPtr.get(index).get(required.channel);
-						StringNode &ptr = nlines[idx];
-						ptr.str += str;
-						Logger::log("ptr : " + Logger::get(ptr));
-						str.clear();
-					}
-				}
-				else
-				{
-					nlines.push(StringNode(str, required.index)); 
-					str.clear();
-				}
-				Logger::log("index : " + Logger::get(index));
-				// Logger::log(isEndP(m_pathNexts[i], index));
-				// Logger::log(m_pathNexts[i][index]);
-				// Logger::log(m_pathNexts[tempI][index]);
-
-				// (m_pathNexts[tempI] - 1 si pas le mem chemin
-				// Logger::log(samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1) && isEndP(m_pathNexts[i], index + 1));
-				// if (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1))
-				// {
-				// 	Logger::log("End of path reached for index: " + Logger::get(m_pathNexts[i][index]->getConceptName()) + " (idx: " + Logger::get(index) + ")");
-				// 	if (concatPtr.has(index))
-				// 		concatPtr.get(index).clear();
-				// }
-
-				// Logger::log("index : " + Logger::get(index));
-				Logger::log(m_pathNexts[i][index - 1]);
-				Logger::log(m_pathNexts[tempI][index - 1]);
-				index_saved = index;
-
-				if (!samePrecP(m_pathNexts[i], m_pathNexts[tempI], index) || (m_pathNexts[i][index -1]->isSequence() && !isEndP(m_pathNexts[i], index)))
-				{
-					Logger::log("CLEAR");
-					if (concatPtr.has(index))
-						concatPtr.get(index).clear();
-				}
-				i = tempI;
-			}
-		}
-	}
+	Vec<StringNode> nlines = stringOrganiser(lines);
 	Logger::log("nlines : " + Logger::get(nlines));
-	// Logger::log("----------------------");
 
-	// for (size_t i = 0; i < nlines.size(); ++i)
-	// {
-	// 	if (nlines[i].is_required < 0)
-	// 		Logger::info("nlines : " + nlines[i].str + "\n(required: " + Logger::get(nlines[i].is_required) + ")");
-	// 	else
-	// 		Logger::warn("nlines : " + nlines[i].str + "\n(required: " + Logger::get(nlines[i].is_required) + ")");
-	// }
+	Logger::log(m_concatPtr);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// Logger::log("nlines : " + Logger::get(nlines));
-	// Logger::log("-------------------");
 	(void) m_collectStrIdx;;
-
-	// AJson *json = NULL;
-	// AJson *arr = AJson::createArray();
-	// // BUG pas de tableau creer si repetition sur la <head> line
-	// m_mapJson.set(0, arr);
-    // m_cidx = 0;
-	// m_lines = nlines;
-
-	// while (m_cidx < m_pathNexts.size())
-	// {
-	// 	m_collectStrIdx = -1;
-    //     m_path = m_pathNexts[m_cidx];
-	// 	recurseJson(0);
-	// 	Logger::log("json : " + LoggerJson::get(m_mapJson, false));
-	// 	Logger::log("-------------------");
-	// }
-
-	// if (m_mapJson.has(0))
-	// 	Logger::log("arr : " + LoggerJson::get(m_mapJson.get(0), false));
 }
 
 

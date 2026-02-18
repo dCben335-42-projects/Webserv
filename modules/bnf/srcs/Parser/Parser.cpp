@@ -445,5 +445,5 @@ void Parser::parse(const std::string &stringToParsed)
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 	DataCollector dataCollector;
-	dataCollector.generateJson(resolvePath(), stringToParsed, m_lines);
+	dataCollector.generateJson(resolvePath(), stringToParsed);
 }
