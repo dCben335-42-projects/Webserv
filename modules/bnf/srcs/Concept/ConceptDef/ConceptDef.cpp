@@ -14,6 +14,11 @@ size_t ConceptDef::size() const
 	return values.size();
 }
 
+const std::string &ConceptDef::getConceptName() const
+{
+	return m_conceptName;
+}
+
 void ConceptDef::finish()
 {
 	Vec<std::string> items = getItemsWithOption();
@@ -110,6 +115,24 @@ Vec<std::string> ConceptDef::getItemsWithOption()
 				allItems.push_back(items[i].getValue());
 		}
 	}
+	return allItems;
+}
+
+Vec<TerminalSymbol> ConceptDef::getItemsValueWithOption()
+{
+	Vec<TerminalSymbol> allItems;
+	for (ARulePath::iterator it = values.begin(); it != values.end(); ++it)
+	{
+		const ARule		   *rule  = *it;
+		Vec<TerminalSymbol> items = rule->getItems();
+
+		for (size_t i = 0; i < items.size(); ++i)
+		{
+			if (std::find(allItems.begin(), allItems.end(), items[i]) == allItems.end())
+				allItems.push_back(items[i]);
+		}
+	}
+
 	return allItems;
 }
 

@@ -2,8 +2,9 @@
 
 boolo			::= bool
 
-bool			::= 0>BOOL
-			
+bool			::= boolp
+
+boolp			::= bool
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block )
 

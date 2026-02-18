@@ -26,6 +26,7 @@ class SemanticDescriptor
 		ARuleMap		 m_startPath;
 		Map<Concept *>	 m_concepts;
 		std::string		 m_lastKey;
+		bool			 m_recursiveConceptAuthorize;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);

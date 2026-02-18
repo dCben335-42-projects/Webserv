@@ -23,8 +23,10 @@ class ConceptDef
 		size_t				size() const;
 		const ARule		   *getARule(const size_t index) const;
 
-		void finish();
-		void setRule(const ARule *rule);
+		void				finish();
+		void				setRule(const ARule *rule);
+		const std::string  &getConceptName() const;
+		Vec<TerminalSymbol> getItemsValueWithOption();
 
 
 

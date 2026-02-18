@@ -131,9 +131,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 				m_originelRules.get(*m_currentRule).push_once(nextRule);
 		}
 		else
-		{
 			getPathsTerminalChars(nextRule, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
-		}
 	}
 }
 
@@ -157,14 +155,9 @@ bool Parser::word(
 			if (!m_originelRules.has(pathInfo->path))
 				m_originelRules.set(pathInfo->path, Vec<ARulePath>());
 			m_currentRule = &pathInfo->path;
-			// Logger::log("Matched path: " + LoggerJson::get(data->terminal->getValue()));
-			// m_lines.push_back(data->terminal->getValue());
 
 			if ((int) idx - (int) data->position - 1 >= 0)
-			{
-				// Logger::log(idx - data->position - 1);
 				m_rules[idx - data->position - 1].push(pathInfo->path);
-			}
 
 			addNextPaths(mapPathCurrent, mapPathNext, pathInfo->path, rule);
 		}
@@ -398,14 +391,8 @@ const BNFPath *Parser::resolvePath()
 		mapPrev = mapCurrent;
 	}
 
-
-
 	return pathsTop[0]->getHead();
 }
-
-
-
-
 
 void Parser::parse(const std::string &stringToParsed)
 {

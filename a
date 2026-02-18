@@ -1,5 +1,5 @@
 [0;33m[WEBSERV] Generating bnf module library...[0m
-[0;32m[BNF] Compiling libbnf.a: [##                                                ] 1/19[0m[0;32m[BNF] Compiling libbnf.a: [#####                                             ] 2/19[0m
+[0;32m[BNF] Compiling libbnf.a: [##                                                ] 1/18[0m
 [1;34m[BNF] Archiving libbnf.a...[0m
 [0;33m[WEBSERV] Generating log module library...[0m
 make[1]: Nothing to be done for 'all'.
@@ -7,231 +7,3515 @@ make[1]: Nothing to be done for 'all'.
 make[1]: Nothing to be done for 'all'.
 [0;33m[WEBSERV] Generating json module library...[0m
 make[1]: Nothing to be done for 'all'.
-[0;32m[WEBSERV] Compiling webserv: [##                                                ] 1/23[0m
+
 [1;34m[WEBSERV] Linking webserv...[0m
 [0;32m[WEBSERV] Running webserv...[0m
 --------------------------
 
-Parsing complete ✅
-[
-  user,
-   ,
-  w,
-  w,
-  w,
-  -,
-  d,
-  a,
-  t,
-  a,
-  +,
-  test,
-  on,
-  test,
-  test,
-  w,
-  w,
-  w,
-  -,
-  d,
-  a,
-  t,
-  a,
-  6,
-  6,
-  6,
-  +,
-  ;
-]
-json : {
-  "0": 
-    [
-
-    ]
-}
--------------------
-json : {
-  "0": 
-    [
-
-    ]
-}
--------------------
-[1;31m[ERROR] IdxRule: 2 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 3 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 4 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 1 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 0 / Path size: 5 / Next path size: 5[0m
-json : {
-  "0": 
-    [
-
-    ],
-  "1": 
+{
+  "<head>": 
     {
-      "statement": 
+      "concept_name": "<head>"
+      "is_terminal_concept": false
+      "definitions":[
         [
+          {
+            "position": "<head>_0",
+            "type": "SEQUENCE",
+            "index": 0,
+            "ptr": "0x35257670",
+            "content": [
+              {my_address: 0x35252cc0, value: statement}
+            ]
+            "next": [
+              0x352538d0
+            ]
+            "items": [
+              {my_address: 0x35252cc0, value: statement}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "<head>_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x352538d0",
+            "content": [
+              {my_address: 0x35252c90, value: boolo}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35252c90, value: boolo}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
 
         ]
     },
-  "2": 
+  "APPLICATION_MIME": 
     {
-      "user_stmt": 
+      "concept_name": "APPLICATION_MIME"
+      "is_terminal_concept": true
+      "definitions":[
         [
-          www-data+
+          {
+            "position": "APPLICATION_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35266a50",
+            "content": [
+              {my_address: 0x35266dd0, value: application/json},
+              {my_address: 0x35266df8, value: application/javascript},
+              {my_address: 0x35266e20, value: application/vnd.ms-fontobject},
+              {my_address: 0x35266e48, value: application/pdf},
+              {my_address: 0x35266e70, value: application/xml},
+              {my_address: 0x35266e98, value: application/zip},
+              {my_address: 0x35266ec0, value: application/x-www-form-urlencoded},
+              {my_address: 0x35266ee8, value: application/x-yaml},
+              {my_address: 0x35266f10, value: application/toml},
+              {my_address: 0x35266f38, value: application/rtf},
+              {my_address: 0x35266f60, value: application/octet-stream}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35266dd0, value: application/json},
+              {my_address: 0x35266df8, value: application/javascript},
+              {my_address: 0x35266e20, value: application/vnd.ms-fontobject},
+              {my_address: 0x35266e48, value: application/pdf},
+              {my_address: 0x35266e70, value: application/xml},
+              {my_address: 0x35266e98, value: application/zip},
+              {my_address: 0x35266ec0, value: application/x-www-form-urlencoded},
+              {my_address: 0x35266ee8, value: application/x-yaml},
+              {my_address: 0x35266f10, value: application/toml},
+              {my_address: 0x35266f38, value: application/rtf},
+              {my_address: 0x35266f60, value: application/octet-stream}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "AUDIO_MIME": 
+    {
+      "concept_name": "AUDIO_MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "AUDIO_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35267aa0",
+            "content": [
+              {my_address: 0x35267b90, value: audio/mpeg},
+              {my_address: 0x35267bb8, value: audio/wav},
+              {my_address: 0x35267be0, value: audio/flac}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35267b90, value: audio/mpeg},
+              {my_address: 0x35267bb8, value: audio/wav},
+              {my_address: 0x35267be0, value: audio/flac}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "AUDIO_MIME_": 
+    {
+      "concept_name": "AUDIO_MIME_"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "AUDIO_MIME__0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525a410",
+            "content": AUDIO_MIME
+            "next": [
+              0x3525a4e0
+            ]
+            "items": [
+              {my_address: 0x3525a100, value: AUDIO_MIME}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "AUDIO_MIME__0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525a4e0",
+            "content": AUDIO_MIME
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525a130, value: AUDIO_MIME}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "BOOL": 
+    {
+      "concept_name": "BOOL"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "BOOL_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35265420",
+            "content": [
+              {my_address: 0x352536f0, value: on},
+              {my_address: 0x35253718, value: off}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352536f0, value: on},
+              {my_address: 0x35253718, value: off}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "DIGIT": 
+    {
+      "concept_name": "DIGIT"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "DIGIT_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x3526ac80",
+            "content": [
+              {my_address: 0x3526a4e0, value: 0},
+              {my_address: 0x3526a508, value: 1},
+              {my_address: 0x3526a530, value: 2},
+              {my_address: 0x3526a558, value: 3},
+              {my_address: 0x3526a580, value: 4},
+              {my_address: 0x3526a5a8, value: 5},
+              {my_address: 0x3526a5d0, value: 6},
+              {my_address: 0x3526a5f8, value: 7},
+              {my_address: 0x3526a620, value: 8},
+              {my_address: 0x3526a648, value: 9}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3526a4e0, value: 0},
+              {my_address: 0x3526a508, value: 1},
+              {my_address: 0x3526a530, value: 2},
+              {my_address: 0x3526a558, value: 3},
+              {my_address: 0x3526a580, value: 4},
+              {my_address: 0x3526a5a8, value: 5},
+              {my_address: 0x3526a5d0, value: 6},
+              {my_address: 0x3526a5f8, value: 7},
+              {my_address: 0x3526a620, value: 8},
+              {my_address: 0x3526a648, value: 9}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "FONT_MIME": 
+    {
+      "concept_name": "FONT_MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "FONT_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x352675c0",
+            "content": [
+              {my_address: 0x352676b0, value: font/woff},
+              {my_address: 0x352676d8, value: font/woff2},
+              {my_address: 0x35267700, value: font/ttf},
+              {my_address: 0x35267728, value: font/otf}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352676b0, value: font/woff},
+              {my_address: 0x352676d8, value: font/woff2},
+              {my_address: 0x35267700, value: font/ttf},
+              {my_address: 0x35267728, value: font/otf}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "IDENT": 
+    {
+      "concept_name": "IDENT"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "IDENT_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35264dd0",
+            "content": LETTER
+            "next": [
+              0x35264ea0
+            ]
+            "items": [
+              {my_address: 0x35264ca0, value: LETTER}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "IDENT_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x35264ea0",
+            "content": [
+              {my_address: 0x35264c70, value: LETTER}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35264c70, value: LETTER}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "IMAGE_MIME": 
+    {
+      "concept_name": "IMAGE_MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "IMAGE_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35267fd0",
+            "content": [
+              {my_address: 0x35268170, value: image/png},
+              {my_address: 0x35268198, value: image/jpeg},
+              {my_address: 0x352681c0, value: image/webp},
+              {my_address: 0x352681e8, value: image/gif},
+              {my_address: 0x35268210, value: image/svg+xml},
+              {my_address: 0x35268238, value: image/avif},
+              {my_address: 0x35268260, value: image/heic},
+              {my_address: 0x35268288, value: image/icns},
+              {my_address: 0x352682b0, value: image/bmp},
+              {my_address: 0x352682d8, value: image/tiff},
+              {my_address: 0x35268300, value: image/x-icon}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35268170, value: image/png},
+              {my_address: 0x35268198, value: image/jpeg},
+              {my_address: 0x352681c0, value: image/webp},
+              {my_address: 0x352681e8, value: image/gif},
+              {my_address: 0x35268210, value: image/svg+xml},
+              {my_address: 0x35268238, value: image/avif},
+              {my_address: 0x35268260, value: image/heic},
+              {my_address: 0x35268288, value: image/icns},
+              {my_address: 0x352682b0, value: image/bmp},
+              {my_address: 0x352682d8, value: image/tiff},
+              {my_address: 0x35268300, value: image/x-icon}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "LETTER": 
+    {
+      "concept_name": "LETTER"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "LETTER_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35269760",
+            "content": [
+              {my_address: 0x35254400, value: UPCASE_LETTER},
+              {my_address: 0x35254428, value: LOCASE_LETTER}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35254400, value: UPCASE_LETTER},
+              {my_address: 0x35254428, value: LOCASE_LETTER}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "LINE_JUMP": 
+    {
+      "concept_name": "LINE_JUMP"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "LINE_JUMP_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3526b5c0",
+            "content": 
+
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3526b440, value: 
+}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "LOCASE_LETTER": 
+    {
+      "concept_name": "LOCASE_LETTER"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "LOCASE_LETTER_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x3526a1f0",
+            "content": [
+              {my_address: 0x3526a770, value: a},
+              {my_address: 0x3526a798, value: b},
+              {my_address: 0x3526a7c0, value: c},
+              {my_address: 0x3526a7e8, value: d},
+              {my_address: 0x3526a810, value: e},
+              {my_address: 0x3526a838, value: f},
+              {my_address: 0x3526a860, value: g},
+              {my_address: 0x3526a888, value: h},
+              {my_address: 0x3526a8b0, value: i},
+              {my_address: 0x3526a8d8, value: j},
+              {my_address: 0x3526a900, value: k},
+              {my_address: 0x3526a928, value: l},
+              {my_address: 0x3526a950, value: m},
+              {my_address: 0x3526a978, value: n},
+              {my_address: 0x3526a9a0, value: o},
+              {my_address: 0x3526a9c8, value: p},
+              {my_address: 0x3526a9f0, value: q},
+              {my_address: 0x3526aa18, value: r},
+              {my_address: 0x3526aa40, value: s},
+              {my_address: 0x3526aa68, value: t},
+              {my_address: 0x3526aa90, value: u},
+              {my_address: 0x3526aab8, value: v},
+              {my_address: 0x3526aae0, value: w},
+              {my_address: 0x3526ab08, value: x},
+              {my_address: 0x3526ab30, value: y},
+              {my_address: 0x3526ab58, value: z}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3526a770, value: a},
+              {my_address: 0x3526a798, value: b},
+              {my_address: 0x3526a7c0, value: c},
+              {my_address: 0x3526a7e8, value: d},
+              {my_address: 0x3526a810, value: e},
+              {my_address: 0x3526a838, value: f},
+              {my_address: 0x3526a860, value: g},
+              {my_address: 0x3526a888, value: h},
+              {my_address: 0x3526a8b0, value: i},
+              {my_address: 0x3526a8d8, value: j},
+              {my_address: 0x3526a900, value: k},
+              {my_address: 0x3526a928, value: l},
+              {my_address: 0x3526a950, value: m},
+              {my_address: 0x3526a978, value: n},
+              {my_address: 0x3526a9a0, value: o},
+              {my_address: 0x3526a9c8, value: p},
+              {my_address: 0x3526a9f0, value: q},
+              {my_address: 0x3526aa18, value: r},
+              {my_address: 0x3526aa40, value: s},
+              {my_address: 0x3526aa68, value: t},
+              {my_address: 0x3526aa90, value: u},
+              {my_address: 0x3526aab8, value: v},
+              {my_address: 0x3526aae0, value: w},
+              {my_address: 0x3526ab08, value: x},
+              {my_address: 0x3526ab30, value: y},
+              {my_address: 0x3526ab58, value: z}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "LOG_LEVEL": 
+    {
+      "concept_name": "LOG_LEVEL"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "LOG_LEVEL_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35268af0",
+            "content": [
+              {my_address: 0x35266c30, value: debug},
+              {my_address: 0x35266c58, value: info},
+              {my_address: 0x35266c80, value: notice},
+              {my_address: 0x35266ca8, value: warn},
+              {my_address: 0x35266cd0, value: error},
+              {my_address: 0x35266cf8, value: crit}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35266c30, value: debug},
+              {my_address: 0x35266c58, value: info},
+              {my_address: 0x35266c80, value: notice},
+              {my_address: 0x35266ca8, value: warn},
+              {my_address: 0x35266cd0, value: error},
+              {my_address: 0x35266cf8, value: crit}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "MIME": 
+    {
+      "concept_name": "MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35265f70",
+            "content": [
+              {my_address: 0x35266130, value: TEXT_MIME},
+              {my_address: 0x35266158, value: APPLICATION_MIME},
+              {my_address: 0x35266180, value: FONT_MIME},
+              {my_address: 0x352661a8, value: MULTIPART_MIME},
+              {my_address: 0x352661d0, value: AUDIO_MIME},
+              {my_address: 0x352661f8, value: VIDEO_MIME},
+              {my_address: 0x35266220, value: IMAGE_MIME}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35266130, value: TEXT_MIME},
+              {my_address: 0x35266158, value: APPLICATION_MIME},
+              {my_address: 0x35266180, value: FONT_MIME},
+              {my_address: 0x352661a8, value: MULTIPART_MIME},
+              {my_address: 0x352661d0, value: AUDIO_MIME},
+              {my_address: 0x352661f8, value: VIDEO_MIME},
+              {my_address: 0x35266220, value: IMAGE_MIME}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "MULTIPART_MIME": 
+    {
+      "concept_name": "MULTIPART_MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "MULTIPART_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35267860",
+            "content": [
+              {my_address: 0x352674a0, value: multipart/form-data}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352674a0, value: multipart/form-data}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "NUMBER": 
+    {
+      "concept_name": "NUMBER"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "NUMBER_0",
+            "type": "SEQUENCE",
+            "index": 0,
+            "ptr": "0x35265170",
+            "content": [
+              {my_address: 0x35264ff0, value: DIGIT}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35264ff0, value: DIGIT}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "PATH": 
+    {
+      "concept_name": "PATH"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "PATH_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352656a0",
+            "content": /
+            "next": [
+              0x35265770
+            ]
+            "items": [
+              {my_address: 0x35265260, value: /}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "PATH_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x35265770",
+            "content": [
+              {my_address: 0x35264fc0, value: PATH_CHAR}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35264fc0, value: PATH_CHAR}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "PATH_CHAR": 
+    {
+      "concept_name": "PATH_CHAR"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "PATH_CHAR_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35265a40",
+            "content": [
+              {my_address: 0x35265be0, value: LETTER},
+              {my_address: 0x35265c08, value: DIGIT},
+              {my_address: 0x35265c30, value: /},
+              {my_address: 0x35265c58, value: .},
+              {my_address: 0x35265c80, value: _},
+              {my_address: 0x35265ca8, value: *},
+              {my_address: 0x35265cd0, value: -}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35265be0, value: LETTER},
+              {my_address: 0x35265c08, value: DIGIT},
+              {my_address: 0x35265c30, value: /},
+              {my_address: 0x35265c58, value: .},
+              {my_address: 0x35265c80, value: _},
+              {my_address: 0x35265ca8, value: *},
+              {my_address: 0x35265cd0, value: -}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "SIZE": 
+    {
+      "concept_name": "SIZE"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "SIZE_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35268790",
+            "content": NUMBER
+            "next": [
+              0x35268860
+            ]
+            "items": [
+              {my_address: 0x352667d0, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "SIZE_0",
+            "type": "GROUP",
+            "index": 1,
+            "ptr": "0x35268860",
+            "content": [
+              {my_address: 0x352544f0, value: k},
+              {my_address: 0x35254518, value: m}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352544f0, value: k},
+              {my_address: 0x35254518, value: m}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "SPACE": 
+    {
+      "concept_name": "SPACE"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "SPACE_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3526b340",
+            "content":  
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35252270, value:  }
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "STRING": 
+    {
+      "concept_name": "STRING"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "STRING_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35268de0",
+            "content": "
+            "next": [
+              0x35268eb0
+            ]
+            "items": [
+              {my_address: 0x35266a00, value: "}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "STRING_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x35268eb0",
+            "content": [
+              {my_address: 0x35266970, value: STRING_CHAR}
+            ]
+            "next": [
+              0x35268fd0
+            ]
+            "items": [
+              {my_address: 0x35266970, value: STRING_CHAR}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "STRING_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35268fd0",
+            "content": "
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352690a0, value: "}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "STRING_CHAR": 
+    {
+      "concept_name": "STRING_CHAR"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "STRING_CHAR_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x352692e0",
+            "content": [
+              {my_address: 0x35269480, value: LETTER},
+              {my_address: 0x352694a8, value: DIGIT},
+              {my_address: 0x352694d0, value: SPACE},
+              {my_address: 0x352694f8, value: _},
+              {my_address: 0x35269520, value: .}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35269480, value: LETTER},
+              {my_address: 0x352694a8, value: DIGIT},
+              {my_address: 0x352694d0, value: SPACE},
+              {my_address: 0x352694f8, value: _},
+              {my_address: 0x35269520, value: .}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "TAB": 
+    {
+      "concept_name": "TAB"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "TAB_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3526b120",
+            "content": 	
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35269160, value: 	}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "TAB_SPACE": 
+    {
+      "concept_name": "TAB_SPACE"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "TAB_SPACE_0",
+            "type": "SEQUENCE",
+            "index": 0,
+            "ptr": "0x352695d0",
+            "content": [
+              {my_address: 0x35251c20, value: SPACE},
+              {my_address: 0x35251c48, value: TAB}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35251c20, value: SPACE},
+              {my_address: 0x35251c48, value: TAB}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "TEXT_MIME": 
+    {
+      "concept_name": "TEXT_MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "TEXT_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35266380",
+            "content": [
+              {my_address: 0x35266520, value: text/html},
+              {my_address: 0x35266548, value: text/plain},
+              {my_address: 0x35266570, value: text/css},
+              {my_address: 0x35266598, value: text/csv},
+              {my_address: 0x352665c0, value: text/xml}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35266520, value: text/html},
+              {my_address: 0x35266548, value: text/plain},
+              {my_address: 0x35266570, value: text/css},
+              {my_address: 0x35266598, value: text/csv},
+              {my_address: 0x352665c0, value: text/xml}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "UPCASE_LETTER": 
+    {
+      "concept_name": "UPCASE_LETTER"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "UPCASE_LETTER_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35269ae0",
+            "content": [
+              {my_address: 0x35269bd0, value: A},
+              {my_address: 0x35269bf8, value: B},
+              {my_address: 0x35269c20, value: C},
+              {my_address: 0x35269c48, value: D},
+              {my_address: 0x35269c70, value: E},
+              {my_address: 0x35269c98, value: F},
+              {my_address: 0x35269cc0, value: G},
+              {my_address: 0x35269ce8, value: H},
+              {my_address: 0x35269d10, value: I},
+              {my_address: 0x35269d38, value: J},
+              {my_address: 0x35269d60, value: K},
+              {my_address: 0x35269d88, value: L},
+              {my_address: 0x35269db0, value: M},
+              {my_address: 0x35269dd8, value: N},
+              {my_address: 0x35269e00, value: O},
+              {my_address: 0x35269e28, value: P},
+              {my_address: 0x35269e50, value: Q},
+              {my_address: 0x35269e78, value: R},
+              {my_address: 0x35269ea0, value: S},
+              {my_address: 0x35269ec8, value: T},
+              {my_address: 0x35269ef0, value: U},
+              {my_address: 0x35269f18, value: V},
+              {my_address: 0x35269f40, value: W},
+              {my_address: 0x35269f68, value: X},
+              {my_address: 0x35269f90, value: Y},
+              {my_address: 0x35269fb8, value: Z}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35269bd0, value: A},
+              {my_address: 0x35269bf8, value: B},
+              {my_address: 0x35269c20, value: C},
+              {my_address: 0x35269c48, value: D},
+              {my_address: 0x35269c70, value: E},
+              {my_address: 0x35269c98, value: F},
+              {my_address: 0x35269cc0, value: G},
+              {my_address: 0x35269ce8, value: H},
+              {my_address: 0x35269d10, value: I},
+              {my_address: 0x35269d38, value: J},
+              {my_address: 0x35269d60, value: K},
+              {my_address: 0x35269d88, value: L},
+              {my_address: 0x35269db0, value: M},
+              {my_address: 0x35269dd8, value: N},
+              {my_address: 0x35269e00, value: O},
+              {my_address: 0x35269e28, value: P},
+              {my_address: 0x35269e50, value: Q},
+              {my_address: 0x35269e78, value: R},
+              {my_address: 0x35269ea0, value: S},
+              {my_address: 0x35269ec8, value: T},
+              {my_address: 0x35269ef0, value: U},
+              {my_address: 0x35269f18, value: V},
+              {my_address: 0x35269f40, value: W},
+              {my_address: 0x35269f68, value: X},
+              {my_address: 0x35269f90, value: Y},
+              {my_address: 0x35269fb8, value: Z}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "VERSION": 
+    {
+      "concept_name": "VERSION"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "VERSION_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35266670",
+            "content": NUMBER
+            "next": [
+              0x352684a0
+            ]
+            "items": [
+              {my_address: 0x35267330, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "VERSION_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x352684a0",
+            "content": .
+            "next": [
+              0x35268570
+            ]
+            "items": [
+              {my_address: 0x35267300, value: .}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "VERSION_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35268570",
+            "content": NUMBER
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352672b0, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "VIDEO_MIME": 
+    {
+      "concept_name": "VIDEO_MIME"
+      "is_terminal_concept": true
+      "definitions":[
+        [
+          {
+            "position": "VIDEO_MIME_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35267d90",
+            "content": [
+              {my_address: 0x352542b0, value: video/mp4},
+              {my_address: 0x352542d8, value: video/webm}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352542b0, value: video/mp4},
+              {my_address: 0x352542d8, value: video/webm}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "basic_http_stmt": 
+    {
+      "concept_name": "basic_http_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "basic_http_stmt_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525de60",
+            "content": sendfile
+            "next": [
+              0x3525df50
+            ]
+            "items": [
+              {my_address: 0x3525db60, value: sendfile}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525df50",
+            "content": TAB_SPACE
+            "next": [
+              0x3525e040
+            ]
+            "items": [
+              {my_address: 0x3525dc90, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525e040",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525e110, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_1",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525e250",
+            "content": tcp_nopush
+            "next": [
+              0x3525e320
+            ]
+            "items": [
+              {my_address: 0x3525e1a0, value: tcp_nopush}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_1",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525e320",
+            "content": TAB_SPACE
+            "next": [
+              0x3525e420
+            ]
+            "items": [
+              {my_address: 0x3525e1d0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_1",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525e420",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525e4f0, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_2",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525e660",
+            "content": tcp_nodelay
+            "next": [
+              0x3525e730
+            ]
+            "items": [
+              {my_address: 0x3525e5b0, value: tcp_nodelay}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_2",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525e730",
+            "content": TAB_SPACE
+            "next": [
+              0x3525e830
+            ]
+            "items": [
+              {my_address: 0x3525e5e0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_2",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525e830",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525e900, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_3",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525ea70",
+            "content": keepalive_timeout
+            "next": [
+              0x3525eb40
+            ]
+            "items": [
+              {my_address: 0x3525e9c0, value: keepalive_timeout}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_3",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525eb40",
+            "content": TAB_SPACE
+            "next": [
+              0x3525ec60
+            ]
+            "items": [
+              {my_address: 0x3525e9f0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_3",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525ec60",
+            "content": NUMBER
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525ed30, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_4",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525eec0",
+            "content": types_hash_max_size
+            "next": [
+              0x3525ef90
+            ]
+            "items": [
+              {my_address: 0x3525e990, value: types_hash_max_size}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_4",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525ef90",
+            "content": TAB_SPACE
+            "next": [
+              0x3525f080
+            ]
+            "items": [
+              {my_address: 0x3525edc0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_4",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525f080",
+            "content": NUMBER
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525f150, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_5",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525f290",
+            "content": default_type
+            "next": [
+              0x3525f360
+            ]
+            "items": [
+              {my_address: 0x3525e580, value: default_type}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_5",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525f360",
+            "content": TAB_SPACE
+            "next": [
+              0x3525f430
+            ]
+            "items": [
+              {my_address: 0x3525f1e0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_5",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525f430",
+            "content": MIME
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525f500, value: MIME}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_6",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525f640",
+            "content": access_log
+            "next": [
+              0x3525f710
+            ]
+            "items": [
+              {my_address: 0x3525f590, value: access_log}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_6",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525f710",
+            "content": TAB_SPACE
+            "next": [
+              0x3525f810
+            ]
+            "items": [
+              {my_address: 0x3525f5c0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_6",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525f810",
+            "content": PATH
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525f8e0, value: PATH}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_7",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525fa20",
+            "content": error_log
+            "next": [
+              0x3525faf0
+            ]
+            "items": [
+              {my_address: 0x3525f970, value: error_log}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_7",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525faf0",
+            "content": TAB_SPACE
+            "next": [
+              0x3525fbf0
+            ]
+            "items": [
+              {my_address: 0x3525f9a0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_7",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525fbf0",
+            "content": PATH
+            "next": [
+              0x3525fd50
+            ]
+            "items": [
+              {my_address: 0x3525fcc0, value: PATH}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_7",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x3525fd50",
+            "content": SPACE
+            "next": [
+              0x3525fe80
+            ]
+            "items": [
+              {my_address: 0x3525fe20, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_7",
+            "type": "SYMBOL",
+            "index": 4,
+            "ptr": "0x3525fe80",
+            "content": LOG_LEVEL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525ff50, value: LOG_LEVEL}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_8",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35260030",
+            "content": server_tokens
+            "next": [
+              0x35260100
+            ]
+            "items": [
+              {my_address: 0x3525fd20, value: server_tokens}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_8",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35260100",
+            "content": TAB_SPACE
+            "next": [
+              0x35260200
+            ]
+            "items": [
+              {my_address: 0x3525ffb0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_8",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35260200",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352602d0, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_9",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352604a0",
+            "content": gzip
+            "next": [
+              0x35260570
+            ]
+            "items": [
+              {my_address: 0x35260360, value: gzip}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_9",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35260570",
+            "content": TAB_SPACE
+            "next": [
+              0x35260670
+            ]
+            "items": [
+              {my_address: 0x35260390, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_9",
+            "type": "GROUP",
+            "index": 2,
+            "ptr": "0x35260670",
+            "content": [
+              {my_address: 0x35252a60, value: BOOL},
+              {my_address: 0x35252a88, value: btp}
+            ]
+            "next": [
+              0x352607c0
+            ]
+            "items": [
+              {my_address: 0x35252a60, value: BOOL},
+              {my_address: 0x35252a88, value: btp}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_9",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x352607c0",
+            "content": btp
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35260890, value: btp}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "basic_http_stmt_10",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352609a0",
+            "content": test
+            "next": [
+              0x35260a70
+            ]
+            "items": [
+              {my_address: 0x352608f0, value: test}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_10",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35260a70",
+            "content": TAB_SPACE
+            "next": [
+              0x35260b70
+            ]
+            "items": [
+              {my_address: 0x35260920, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "basic_http_stmt_10",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35260b70",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35260c40, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "bool": 
+    {
+      "concept_name": "bool"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "bool_0",
+            "type": "OPTION",
+            "index": 0,
+            "ptr": "0x35252fd0",
+            "content": [
+              {my_address: 0x35252b90, value: bool}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35252b90, value: bool}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "boolo": 
+    {
+      "concept_name": "boolo"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "boolo_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35252360",
+            "content": bool
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35252b20, value: bool}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "btp": 
+    {
+      "concept_name": "btp"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "btp_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35260e80",
+            "content": test
+            "next": [
+              0x35260f50
+            ]
+            "items": [
+              {my_address: 0x35260cd0, value: test}
+            ]
+            "required": "{
+              "0": 
+                [
+                  test
+                ]
+            }"
+          },
+          {
+            "position": "btp_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35260f50",
+            "content": BOOL
+            "next": [
+              0x35261080
+            ]
+            "items": [
+              {my_address: 0x35261020, value: BOOL}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "btp_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35261080",
+            "content": test
+            "next": [
+              0x35261260
+            ]
+            "items": [
+              {my_address: 0x35261150, value: test}
+            ]
+            "required": "{
+              "0": 
+                [
+                  test
+                ]
+            }"
+          },
+          {
+            "position": "btp_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x35261260",
+            "content": test
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35261330, value: test}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "event_rule": 
+    {
+      "concept_name": "event_rule"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "event_rule_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525c470",
+            "content": worker_connections
+            "next": [
+              0x3525c560
+            ]
+            "items": [
+              {my_address: 0x3525c2a0, value: worker_connections}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_rule_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525c560",
+            "content": SPACE
+            "next": [
+              0x3525c680
+            ]
+            "items": [
+              {my_address: 0x3525c3d0, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_rule_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525c680",
+            "content": NUMBER
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525c750, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "event_rule_1",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525c890",
+            "content": multi_accept
+            "next": [
+              0x3525c960
+            ]
+            "items": [
+              {my_address: 0x3525c270, value: multi_accept}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_rule_1",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525c960",
+            "content": SPACE
+            "next": [
+              0x3525ca30
+            ]
+            "items": [
+              {my_address: 0x3525c7e0, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_rule_1",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525ca30",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525cb00, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "event_stmt": 
+    {
+      "concept_name": "event_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "event_stmt_0",
+            "type": "OPTION",
+            "index": 0,
+            "ptr": "0x3525bdb0",
+            "content": [
+              {my_address: 0x3525bbb0, value: TAB_SPACE}
+            ]
+            "next": [
+              0x3525bea0
+            ]
+            "items": [
+              {my_address: 0x3525bbb0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525bea0",
+            "content": event_rule
+            "next": [
+              0x3525bfc0
+            ]
+            "items": [
+              {my_address: 0x3525bbe0, value: event_rule}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525bfc0",
+            "content": ;
+            "next": [
+              0x3525c120
+            ]
+            "items": [
+              {my_address: 0x3525c090, value: ;}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "event_stmt_0",
+            "type": "OPTION",
+            "index": 3,
+            "ptr": "0x3525c120",
+            "content": [
+              {my_address: 0x3525c210, value: LINE_JUMP}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525c210, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "events_block": 
+    {
+      "concept_name": "events_block"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "events_block_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525b4e0",
+            "content": events
+            "next": [
+              0x3525b5b0
+            ]
+            "items": [
+              {my_address: 0x3525b330, value: events}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "events_block_0",
+            "type": "OPTION",
+            "index": 1,
+            "ptr": "0x3525b5b0",
+            "content": [
+              {my_address: 0x3525b360, value: SPACE}
+            ]
+            "next": [
+              0x3525b6f0
+            ]
+            "items": [
+              {my_address: 0x3525b360, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "events_block_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525b6f0",
+            "content": {
+            "next": [
+              0x3525b850
+            ]
+            "items": [
+              {my_address: 0x3525b7c0, value: {}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "events_block_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x3525b850",
+            "content": LINE_JUMP
+            "next": [
+              0x3525b980
+            ]
+            "items": [
+              {my_address: 0x3525b920, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "events_block_0",
+            "type": "SEQUENCE",
+            "index": 4,
+            "ptr": "0x3525b980",
+            "content": [
+              {my_address: 0x3525ba50, value: event_stmt}
+            ]
+            "next": [
+              0x3525bab0
+            ]
+            "items": [
+              {my_address: 0x3525ba50, value: event_stmt}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "events_block_0",
+            "type": "SYMBOL",
+            "index": 5,
+            "ptr": "0x3525bab0",
+            "content": }
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525b820, value: }}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "gzip_mines": 
+    {
+      "concept_name": "gzip_mines"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "gzip_mines_0",
+            "type": "OPTION",
+            "index": 0,
+            "ptr": "0x35263e10",
+            "content": [
+              {my_address: 0x35263c60, value: TAB_SPACE}
+            ]
+            "next": [
+              0x35263f00
+            ]
+            "items": [
+              {my_address: 0x35263c60, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_mines_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35263f00",
+            "content": MIME
+            "next": [
+              0x35264020
+            ]
+            "items": [
+              {my_address: 0x35263c90, value: MIME}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_mines_0",
+            "type": "OPTION",
+            "index": 2,
+            "ptr": "0x35264020",
+            "content": [
+              {my_address: 0x35264110, value: LINE_JUMP}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35264110, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "gzip_stmt": 
+    {
+      "concept_name": "gzip_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "gzip_stmt_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352618b0",
+            "content": gzip
+            "next": [
+              0x352619a0
+            ]
+            "items": [
+              {my_address: 0x35261390, value: gzip}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x352619a0",
+            "content": TAB_SPACE
+            "next": [
+              0x35261a90
+            ]
+            "items": [
+              {my_address: 0x352616c0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_0",
+            "type": "GROUP",
+            "index": 2,
+            "ptr": "0x35261a90",
+            "content": [
+              {my_address: 0x352539a0, value: BOOL},
+              {my_address: 0x352539c8, value: btp}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352539a0, value: BOOL},
+              {my_address: 0x352539c8, value: btp}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_1",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35261c90",
+            "content": gzip_disable
+            "next": [
+              0x35261d60
+            ]
+            "items": [
+              {my_address: 0x35261be0, value: gzip_disable}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_1",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35261d60",
+            "content": TAB_SPACE
+            "next": [
+              0x35261e60
+            ]
+            "items": [
+              {my_address: 0x35261c10, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_1",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35261e60",
+            "content": STRING
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35261f30, value: STRING}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_2",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352620a0",
+            "content": gzip_vary
+            "next": [
+              0x35262170
+            ]
+            "items": [
+              {my_address: 0x35261ff0, value: gzip_vary}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_2",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35262170",
+            "content": TAB_SPACE
+            "next": [
+              0x35262270
+            ]
+            "items": [
+              {my_address: 0x35262020, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_2",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35262270",
+            "content": BOOL
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35262340, value: BOOL}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_3",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35262480",
+            "content": gzip_proxied
+            "next": [
+              0x35262550
+            ]
+            "items": [
+              {my_address: 0x352623d0, value: gzip_proxied}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_3",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35262550",
+            "content": TAB_SPACE
+            "next": [
+              0x35262650
+            ]
+            "items": [
+              {my_address: 0x35262400, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_3",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35262650",
+            "content": IDENT
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35262720, value: IDENT}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_4",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352628b0",
+            "content": gzip_comp_level
+            "next": [
+              0x35262980
+            ]
+            "items": [
+              {my_address: 0x352627b0, value: gzip_comp_level}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_4",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35262980",
+            "content": TAB_SPACE
+            "next": [
+              0x35262a80
+            ]
+            "items": [
+              {my_address: 0x352627e0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_4",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35262a80",
+            "content": NUMBER
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35262b50, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_5",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35262c90",
+            "content": gzip_buffers
+            "next": [
+              0x35262d60
+            ]
+            "items": [
+              {my_address: 0x35261fc0, value: gzip_buffers}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_5",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35262d60",
+            "content": TAB_SPACE
+            "next": [
+              0x35262e30
+            ]
+            "items": [
+              {my_address: 0x35262be0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_5",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35262e30",
+            "content": NUMBER
+            "next": [
+              0x35262f90
+            ]
+            "items": [
+              {my_address: 0x35262f00, value: NUMBER}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_5",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x35262f90",
+            "content": SPACE
+            "next": [
+              0x352630c0
+            ]
+            "items": [
+              {my_address: 0x35263060, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_5",
+            "type": "SYMBOL",
+            "index": 4,
+            "ptr": "0x352630c0",
+            "content": SIZE
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35263190, value: SIZE}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_6",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352632f0",
+            "content": gzip_http_version
+            "next": [
+              0x352633c0
+            ]
+            "items": [
+              {my_address: 0x352631f0, value: gzip_http_version}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_6",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x352633c0",
+            "content": TAB_SPACE
+            "next": [
+              0x352634e0
+            ]
+            "items": [
+              {my_address: 0x35263270, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_stmt_6",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x352634e0",
+            "content": VERSION
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352635b0, value: VERSION}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "gzip_stmt_7",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352636a0",
+            "content": gzip_types
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35263640, value: gzip_types}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "gzip_types": 
+    {
+      "concept_name": "gzip_types"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "gzip_types_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35263940",
+            "content": gzip_types
+            "next": [
+              0x35263a10
+            ]
+            "items": [
+              {my_address: 0x35262f60, value: gzip_types}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_types_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35263a10",
+            "content": LINE_JUMP
+            "next": [
+              0x35263b00
+            ]
+            "items": [
+              {my_address: 0x35263770, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "gzip_types_0",
+            "type": "SEQUENCE",
+            "index": 2,
+            "ptr": "0x35263b00",
+            "content": [
+              {my_address: 0x35263bd0, value: gzip_mines}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35263bd0, value: gzip_mines}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "http_block": 
+    {
+      "concept_name": "http_block"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "http_block_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525cd40",
+            "content": http
+            "next": [
+              0x3525ce10
+            ]
+            "items": [
+              {my_address: 0x3525cb90, value: http}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_block_0",
+            "type": "OPTION",
+            "index": 1,
+            "ptr": "0x3525ce10",
+            "content": [
+              {my_address: 0x3525cbc0, value: SPACE}
+            ]
+            "next": [
+              0x3525cf30
+            ]
+            "items": [
+              {my_address: 0x3525cbc0, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_block_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525cf30",
+            "content": {
+            "next": [
+              0x3525d090
+            ]
+            "items": [
+              {my_address: 0x3525d000, value: {}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_block_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x3525d090",
+            "content": LINE_JUMP
+            "next": [
+              0x3525d1c0
+            ]
+            "items": [
+              {my_address: 0x3525d160, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_block_0",
+            "type": "SEQUENCE",
+            "index": 4,
+            "ptr": "0x3525d1c0",
+            "content": [
+              {my_address: 0x3525d290, value: http_stmt}
+            ]
+            "next": [
+              0x3525d2f0
+            ]
+            "items": [
+              {my_address: 0x3525d290, value: http_stmt}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_block_0",
+            "type": "SYMBOL",
+            "index": 5,
+            "ptr": "0x3525d2f0",
+            "content": }
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525d060, value: }}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "http_stmt": 
+    {
+      "concept_name": "http_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "http_stmt_0",
+            "type": "OPTION",
+            "index": 0,
+            "ptr": "0x3525d5f0",
+            "content": [
+              {my_address: 0x3525d3f0, value: TAB_SPACE}
+            ]
+            "next": [
+              0x3525d6e0
+            ]
+            "items": [
+              {my_address: 0x3525d3f0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_stmt_0",
+            "type": "GROUP",
+            "index": 1,
+            "ptr": "0x3525d6e0",
+            "content": [
+              {my_address: 0x3525d7d0, value: basic_http_stmt},
+              {my_address: 0x3525d7f8, value: gzip_stmt},
+              {my_address: 0x3525d820, value: include_stmt}
+            ]
+            "next": [
+              0x3525d8a0
+            ]
+            "items": [
+              {my_address: 0x3525d7d0, value: basic_http_stmt},
+              {my_address: 0x3525d7f8, value: gzip_stmt},
+              {my_address: 0x3525d820, value: include_stmt}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525d8a0",
+            "content": ;
+            "next": [
+              0x3525da00
+            ]
+            "items": [
+              {my_address: 0x3525d970, value: ;}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "http_stmt_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x3525da00",
+            "content": LINE_JUMP
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525dad0, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          }
+        ],
+        [
+          {
+            "position": "http_stmt_1",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525db90",
+            "content": LINE_JUMP
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525db30, value: LINE_JUMP}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "include_stmt": 
+    {
+      "concept_name": "include_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "include_stmt_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35264350",
+            "content": include
+            "next": [
+              0x35264420
+            ]
+            "items": [
+              {my_address: 0x352641a0, value: include}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "include_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x35264420",
+            "content": TAB_SPACE
+            "next": [
+              0x35264540
+            ]
+            "items": [
+              {my_address: 0x352641d0, value: TAB_SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "include_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35264540",
+            "content": PATH
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35264610, value: PATH}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "pid_stmt": 
+    {
+      "concept_name": "pid_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "pid_stmt_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525af00",
+            "content": pid
+            "next": [
+              0x3525afd0
+            ]
+            "items": [
+              {my_address: 0x3525a630, value: pid}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "pid_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525afd0",
+            "content": SPACE
+            "next": [
+              0x3525b0a0
+            ]
+            "items": [
+              {my_address: 0x3525acc0, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "pid_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525b0a0",
+            "content": PATH
+            "next": [
+              0x3525b200
+            ]
+            "items": [
+              {my_address: 0x3525b170, value: PATH}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "pid_stmt_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x3525b200",
+            "content": ;
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525b2d0, value: ;}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "statement": 
+    {
+      "concept_name": "statement"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "statement_0",
+            "type": "GROUP",
+            "index": 0,
+            "ptr": "0x35252730",
+            "content": [
+              {my_address: 0x352528d0, value: user_stmt},
+              {my_address: 0x352528f8, value: worker_stmt},
+              {my_address: 0x35252920, value: pid_stmt},
+              {my_address: 0x35252948, value: events_block},
+              {my_address: 0x35252970, value: http_block}
+            ]
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352528d0, value: user_stmt},
+              {my_address: 0x352528f8, value: worker_stmt},
+              {my_address: 0x35252920, value: pid_stmt},
+              {my_address: 0x35252948, value: events_block},
+              {my_address: 0x35252970, value: http_block}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "test": 
+    {
+      "concept_name": "test"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "test_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35261540",
+            "content": test
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x352613c0, value: test}
+            ]
+            "required": "{
+              "0": 
+                [
+                  'test'
+                ]
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "user_name": 
+    {
+      "concept_name": "user_name"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "user_name_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x352648a0",
+            "content": LOCASE_LETTER
+            "next": [
+              0x35264970
+            ]
+            "items": [
+              {my_address: 0x352646a0, value: LOCASE_LETTER}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "user_name_0",
+            "type": "SEQUENCE",
+            "index": 1,
+            "ptr": "0x35264970",
+            "content": [
+              {my_address: 0x35264a40, value: LOCASE_LETTER},
+              {my_address: 0x35264a68, value: DIGIT},
+              {my_address: 0x35264a90, value: _},
+              {my_address: 0x35264ab8, value: -}
+            ]
+            "next": [
+              0x35264b10
+            ]
+            "items": [
+              {my_address: 0x35264a40, value: LOCASE_LETTER},
+              {my_address: 0x35264a68, value: DIGIT},
+              {my_address: 0x35264a90, value: _},
+              {my_address: 0x35264ab8, value: -}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "user_name_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35264b10",
+            "content": +
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35264be0, value: +}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "user_stmt": 
+    {
+      "concept_name": "user_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x35259880",
+            "content": user
+            "next": [
+              0x352599c0
+            ]
+            "items": [
+              {my_address: 0x35252af0, value: user}
+            ]
+            "required": "{
+              "0": 
+                [
+                  'user'
+                ]
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x352599c0",
+            "content": TAB_SPACE
+            "next": [
+              0x35259b00
+            ]
+            "items": [
+              {my_address: 0x35251cb0, value: TAB_SPACE}
+            ]
+            "required": "{
+              "0": 
+                [
+                  TAB_SPACE
+                ]
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x35259b00",
+            "content": user_name
+            "next": [
+              0x35259c20
+            ]
+            "items": [
+              {my_address: 0x35252050, value: user_name}
+            ]
+            "required": "{
+              "0": 
+                [
+                  user_name
+                ]
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x35259c20",
+            "content": btp
+            "next": [
+              0x35259cf0
+            ]
+            "items": [
+              {my_address: 0x35254310, value: btp}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 4,
+            "ptr": "0x35259cf0",
+            "content": btp
+            "next": [
+              0x35259e10
+            ]
+            "items": [
+              {my_address: 0x35252d70, value: btp}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 5,
+            "ptr": "0x35259e10",
+            "content": user_name
+            "next": [
+              0x35259f30
+            ]
+            "items": [
+              {my_address: 0x35254360, value: user_name}
+            ]
+            "required": "{
+              "1": 
+                [
+                  user_name
+                ]
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 6,
+            "ptr": "0x35259f30",
+            "content": AUDIO_MIME_
+            "next": [
+              0x3525a000
+            ]
+            "items": [
+              {my_address: 0x35252eb0, value: AUDIO_MIME_}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "user_stmt_0",
+            "type": "SYMBOL",
+            "index": 7,
+            "ptr": "0x3525a000",
+            "content": ;
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x35252f70, value: ;}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
+        ]
+    },
+  "worker_stmt": 
+    {
+      "concept_name": "worker_stmt"
+      "is_terminal_concept": false
+      "definitions":[
+        [
+          {
+            "position": "worker_stmt_0",
+            "type": "SYMBOL",
+            "index": 0,
+            "ptr": "0x3525a820",
+            "content": worker_processes
+            "next": [
+              0x3525a910
+            ]
+            "items": [
+              {my_address: 0x3525a600, value: worker_processes}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "worker_stmt_0",
+            "type": "SYMBOL",
+            "index": 1,
+            "ptr": "0x3525a910",
+            "content": SPACE
+            "next": [
+              0x3525aa30
+            ]
+            "items": [
+              {my_address: 0x3525a760, value: SPACE}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "worker_stmt_0",
+            "type": "SYMBOL",
+            "index": 2,
+            "ptr": "0x3525aa30",
+            "content": IDENT
+            "next": [
+              0x3525ab90
+            ]
+            "items": [
+              {my_address: 0x3525ab00, value: IDENT}
+            ]
+            "required": "{
+            }"
+          },
+          {
+            "position": "worker_stmt_0",
+            "type": "SYMBOL",
+            "index": 3,
+            "ptr": "0x3525ab90",
+            "content": ;
+            "next": [
+
+            ]
+            "items": [
+              {my_address: 0x3525ac60, value: ;}
+            ]
+            "required": "{
+            }"
+          }
+        ]
+      ]
+      "parents":[
+
+        ]
+      "terminal_chars":[
+
         ]
     }
 }
--------------------
-[1;31m[ERROR] IdxRule: 3 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 4 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 2 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 1 / Path size: 5 / Next path size: 5[0m
-[1;31m[ERROR] IdxRule: 0 / Path size: 5 / Next path size: 5[0m
-json : {
-  "0": 
-    [
-
-    ],
-  "1": 
-    {
-      "statement": 
-        [
-
-        ]
-    },
-  "2": 
-    {
-      "user_stmt": 
-        [
-          www-data+
-        ]
-    },
-  "3": 
-    {
-      "btp": 
-        [
-          testtest
-        ]
-    }
-}
--------------------
-json : {
-  "0": 
-    [
-
-    ],
-  "1": 
-    {
-      "statement": 
-        [
-
-        ]
-    },
-  "2": 
-    {
-      "user_stmt": 
-        [
-          www-data+
-        ]
-    },
-  "3": 
-    {
-      "btp": 
-        [
-          testtest
-        ]
-    }
-}
--------------------
-json : {
-  "0": 
-    [
-
-    ],
-  "1": 
-    {
-      "statement": 
-        [
-
-        ]
-    },
-  "2": 
-    {
-      "user_stmt": 
-        [
-          www-data+
-        ]
-    },
-  "3": 
-    {
-      "btp": 
-        [
-          testtest
-        ]
-    }
-}
--------------------
-[1;31m[ERROR] IdxRule: 2 / Path size: 5 / Next path size: 3[0m
-[1;31m[ERROR] IdxRule: 3 / Path size: 5 / Next path size: 3[0m
-[1;31m[ERROR] IdxRule: 4 / Path size: 5 / Next path size: 3[0m
-[1;31m[ERROR] IdxRule: 1 / Path size: 5 / Next path size: 3[0m
-[1;31m[ERROR] IdxRule: 0 / Path size: 5 / Next path size: 3[0m
-json : {
-  "0": 
-    [
-
-    ],
-  "1": 
-    {
-      "statement": 
-        [
-
-        ]
-    },
-  "2": 
-    {
-      "user_stmt": 
-        [
-          www-data+,
-          www-data666+
-        ]
-    },
-  "3": 
-    {
-      "btp": 
-        [
-          testtest
-        ]
-    }
-}
--------------------
-json : {
-  "0": 
-    [
-
-    ],
-  "1": 
-    {
-      "statement": 
-        [
-
-        ]
-    },
-  "2": 
-    {
-      "user_stmt": 
-        [
-          www-data+,
-          www-data666+
-        ]
-    },
-  "3": 
-    {
-      "btp": 
-        [
-          testtest
-        ]
-    }
-}
--------------------
+Checking concept: in concept: bool
+[BNF Parsing - InvalidEntryException]: [33mInvalid character 'o' at position 78.[0m

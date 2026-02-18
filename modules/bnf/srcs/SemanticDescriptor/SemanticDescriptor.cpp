@@ -236,10 +236,16 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 {
 	size_t i = 0;
 
-	if (str.empty() || !std::isdigit(str[0]))
-	{
+	if (str.empty())
 		return false;
+
+	if (str[0] == '"')
+	{
+		throw std::runtime_error("Error: A token cannot begin with double quotes");
 	}
+
+	if (!std::isdigit(str[0]))
+		return false;
 
 
 	// Parse du nombre
@@ -255,6 +261,10 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 	if (i >= str.size() || str[i] != '>')
 	{
 		throw std::runtime_error("Erreur: nombre non suivi de '>'");
+	}
+	if (i + 1 >= str.size() || str[i + 1] == '"')
+	{
+		throw std::runtime_error("Error: A token cannot begin with double quotes");
 	}
 
 
@@ -280,7 +290,8 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	cpt->pushDef(conceptDef);
 
 	const Vec<std::string> words = splitwords(m_content.substr(cursor));
-	// Logger::log(words);
+
+	// Logger::log("Words: " + Logger::get(words));
 
 	std::string word;
 	ARule	   *arule	   = NULL;
@@ -333,7 +344,6 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		conceptDef->setRule(arule);
 		aruleIndex++;
 	}
-
 
 	conceptDef->finish();
 	conceptDef->computeOptionalIndex();
@@ -453,6 +463,9 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 			if (!isInMap(m_concepts, item.getValue()))
 				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item.getValue());
 
+			if (!m_recursiveConceptAuthorize && (isInContainer(node.getPath(), item.getValue())))
+				throw std::runtime_error("Recursive concept are forbidden: " + item.getValue());
+
 			hasInfRecursivity += isInContainer(node.getPath(), item.getValue()) || hasRecursiveErrorOnNewNode(item.getValue(), &node);
 		}
 		if (!hasInfRecursivity)
@@ -465,8 +478,33 @@ void SemanticDescriptor::checkValidity()
 {
 	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
 	tree->addSegmentPath(CURSOR);
+
+	m_recursiveConceptAuthorize = false;
+	if (m_recursiveConceptAuthorize == false)
+	{
+		for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+		{
+			std::string conceptName = it->first;
+			ConceptList definitions = it->second->getDefinitions();
+
+			for (ConceptList::const_iterator conceptIt = definitions.begin(); conceptIt != definitions.end(); ++conceptIt)
+			{
+				Vec<TerminalSymbol> items = (*conceptIt)->getItemsValueWithOption();
+				for (Vec<TerminalSymbol>::iterator itemIt = items.begin(); itemIt != items.end(); ++itemIt)
+				{
+					if (itemIt->isTerminalChar())
+						continue;
+					else if (itemIt->getValue() == conceptName)
+					{
+						throw std::runtime_error("Recursive concept are forbidden: " + conceptName);
+					}
+				}
+			}
+		}
+	}
+
 	if (hasRecursiveError(*tree))
-		throw std::runtime_error("ERREUR !");
+		throw std::runtime_error("Concept recursion loop detected in the configuration !");
 }
 
 Map<Concept *> SemanticDescriptor::getConcepts() const
