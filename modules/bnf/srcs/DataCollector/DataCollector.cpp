@@ -495,12 +495,6 @@ bool DataCollector::shouldClearConcat(size_t tempI, int index, size_t i) const
 	return false;
 }
 
-// void DataCollector::clearConcat(int index)
-// {
-//     if (index >= 0 && m_concatPtr.has(index))
-//         m_concatPtr.get(index).clear();
-// }
-
 void DataCollector::clearConcat(int index)
 {
     if (index < 0)
@@ -516,7 +510,25 @@ void DataCollector::clearConcat(int index)
     }
 }
 
-
+void DataCollector::clearAllIsEndKey(ARulePath path, ARulePath pathNext)
+{
+	for (size_t i = path.size(); i-- > 0;)
+	{
+		if (isEndP(path, i))
+		{
+			(void) pathNext;
+			// if (path[i]->isSequence())
+			// {
+			// 	if (samePrecP(path, pathNext, i + 1))
+			// 		return ;
+			// 	else
+			// 		clearConcat(i);
+			// }
+			// else
+			clearConcat(i);
+		}
+	}
+}
 
 Vec<StringNode> DataCollector::stringOrganiser(const std::vector<std::string> &lines)
 {
@@ -541,14 +553,14 @@ Vec<StringNode> DataCollector::stringOrganiser(const std::vector<std::string> &l
 		Logger::log("str : " + Logger::get(str));
 		Logger::log(m_concatPtr);
 
-		// if (tempI >= m_pathNexts.size() && )
-		// 	return true;
 		if(shouldClearConcat(tempI, index, i))
 			clearConcat(index);
-
+		
 		index = getFirstTerminalConcept(m_pathNexts[i]);
 		Logger::log("index : " + Logger::get(index));
 		FirstRequired required = getFirstRequiredInJsonMap(m_pathNexts[i]);
+
+		clearAllIsEndKey(m_pathNexts[i], m_pathNexts[tempI]);
 
 		Logger::log("ops001");
 

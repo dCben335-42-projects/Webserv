@@ -106,13 +106,14 @@ class DataCollector
 		Vec<StringNode>	   stringOrganiser(const std::vector<std::string> &lines);
 		bool			   shouldContinueConcat(size_t i, size_t tempI, int index) const;
 		// void			   clearPtr(size_t tempI, size_t index, size_t i, bool isStart);
+		void			   clearAllIsEndKey(ARulePath path, ARulePath pathNext);
 		bool			   shouldClearConcat(size_t tempI, int index, size_t i) const;
 		void			   clearConcat(int index);
 		bool			   findCharPos(
-						  const std::vector<std::string> &lines,
-						  size_t						  globalIndex,
-						  size_t						 &lineIndex,
-						  size_t						 &localIndex);
+						const std::vector<std::string> &lines,
+						size_t						  globalIndex,
+						size_t						 &lineIndex,
+						size_t						 &localIndex);
 };
 
 

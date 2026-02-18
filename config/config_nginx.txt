@@ -1,14 +1,14 @@
-<head>			::= { statement } { boolo }
+<head>			::= { statement } { bool }
 
-boolo			::= bool
+bool			::= 0>boolp
 
-bool			::= boolp
+boolp			::= { boolpi }
 
-boolp			::= bool
+boolpi			::= 0>BOOL
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block )
 
-user_stmt		::= 0>'user' 0>TAB_SPACE 0>user_name  btp btp 1>user_name AUDIO_MIME_ ';'
+user_stmt		::= 0>'user' 0>TAB_SPACE 0>user_name  btp btp 1>user_name 0>AUDIO_MIME_ ';'
 
 
 AUDIO_MIME_		::= AUDIO_MIME AUDIO_MIME
