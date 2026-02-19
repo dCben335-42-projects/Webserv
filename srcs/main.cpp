@@ -1,7 +1,7 @@
 #include "Lexer.hpp"
 #include "EventLoop.hpp"
 #include "Json.hpp"
-
+#include "ConfigParser.hpp"
 // void testJson()
 // {
 // 	JsonObject *obj = new JsonObject();
@@ -30,12 +30,75 @@
 // 	delete obj;
 // }
 
+// clang-format off
+void printDirectives(const std::map<std::string, std::vector<std::string> > &dirs,
+					 int													indent)
+{
+	std::string pad(indent, ' ');
+
+	for (std::map<std::string, std::vector<std::string> >::const_iterator it =
+			 dirs.begin();
+		 it != dirs.end();
+		 ++it)
+	{
+		std::cout << pad << it->first << " : ";
+
+		for (size_t i = 0; i < it->second.size(); ++i)
+			std::cout << it->second[i] << " ";
+
+		std::cout << std::endl;
+	}
+}
+
+void printHttpConfig(const HttpConfig &config)
+{
+	std::cout << "\n========== HTTP ==========\n";
+
+	printDirectives(config.directives, 2);
+
+	for (size_t i = 0; i < config.servers.size(); ++i)
+	{
+		std::cout << "\n  ===== SERVER " << i << " =====\n";
+
+		printDirectives(config.servers[i].directives, 4);
+
+		for (size_t j = 0; j < config.servers[i].locations.size(); ++j)
+		{
+			const LocationConfig &loc = config.servers[i].locations[j];
+
+			std::cout << "\n    --- LOCATION: "
+					  << loc.path << " ---\n";
+
+			printDirectives(loc.directives, 6);
+		}
+	}
+}
+// clang-format on
+
+
 int main()
 {
 	try
 	{
-		Lexer lexer("config/config_nginx.txt");
-		lexer.parseConfigFile("config/test.txt");
+		// Lexer lexer("config/config_nginx.txt");
+		// lexer.parseConfigFile("config/test.txt");
+
+		std::ifstream file("config/default.txt");
+
+		if (!file.is_open())
+		{
+			std::cerr << "Error: cannot open config file" << std::endl;
+			return 1;
+		}
+
+		ConfigParser parser;
+		HttpConfig	 config = parser.parse(file);
+
+		// printHttpConfig(config);
+		Logger::log(config);
+
+		std::cout << "Parsed successfully!" << std::endl;
+		std::cout << "Servers count: " << config.servers.size() << std::endl;
 		// Lexer lexer("config/config_nginx.txt");
 		// lexer.parseConfigFile("config/test.txt");
 

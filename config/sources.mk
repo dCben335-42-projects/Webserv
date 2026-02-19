@@ -3,6 +3,7 @@ SRC_FILES += Config/Config.cpp
 SRC_FILES += Config/Location/Location.cpp
 SRC_FILES += EventLoop.cpp
 SRC_FILES += main.cpp
+SRC_FILES += ParsingConfig/ConfigParser/ConfigParser.cpp
 SRC_FILES += ParsingConfig/Lexer/Lexer.cpp
 SRC_FILES += Server/CgiSpawner/CgiSpawner.cpp
 SRC_FILES += Server/Files/File/File.cpp

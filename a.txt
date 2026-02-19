@@ -1,135 +1,228 @@
-==191091== Memcheck, a memory error detector
-==191091== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==191091== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==191091== Command: ./webserv
-==191091== 
-==191091== Conditional jump or move depends on uninitialised value(s)
-==191091==    at 0x44CEDD: std::_Vector_base<ARule const*, std::allocator<ARule const*> >::_M_allocate(unsigned long) (stl_vector.h:378)
-==191091==    by 0x44D7B0: std::_Vector_base<ARule const*, std::allocator<ARule const*> >::_M_create_storage(unsigned long) (stl_vector.h:395)
-==191091==    by 0x44D604: std::_Vector_base<ARule const*, std::allocator<ARule const*> >::_Vector_base(unsigned long, std::allocator<ARule const*> const&) (stl_vector.h:332)
-==191091==    by 0x44D505: std::vector<ARule const*, std::allocator<ARule const*> >::vector(std::vector<ARule const*, std::allocator<ARule const*> > const&) (stl_vector.h:597)
-==191091==    by 0x44659C: Vec<ARule const*>::Vec(Vec<ARule const*> const&) (Vector.tpp:287)
-==191091==    by 0x472B89: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:401)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== Conditional jump or move depends on uninitialised value(s)
-==191091==    at 0x44D3BC: ARule const** std::__copy_move<false, true, std::random_access_iterator_tag>::__copy_m<ARule const*>(ARule const* const*, ARule const* const*, ARule const**) (stl_algobase.h:430)
-==191091==    by 0x44DA64: ARule const** std::__copy_move_a2<false, ARule const* const*, ARule const**>(ARule const* const*, ARule const* const*, ARule const**) (stl_algobase.h:494)
-==191091==    by 0x44DA14: ARule const** std::__copy_move_a1<false, ARule const* const*, ARule const**>(ARule const* const*, ARule const* const*, ARule const**) (stl_algobase.h:522)
-==191091==    by 0x44D9B6: ARule const** std::__copy_move_a<false, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**>(__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**) (stl_algobase.h:530)
-==191091==    by 0x44D94E: ARule const** std::copy<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**>(__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**) (stl_algobase.h:619)
-==191091==    by 0x44D8F4: ARule const** std::__uninitialized_copy<true>::__uninit_copy<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**>(__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**) (stl_uninitialized.h:147)
-==191091==    by 0x44D8AC: ARule const** std::uninitialized_copy<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**>(__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**) (stl_uninitialized.h:184)
-==191091==    by 0x44D668: ARule const** std::__uninitialized_copy_a<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**, ARule const*>(__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, ARule const**, std::allocator<ARule const*>&) (stl_uninitialized.h:372)
-==191091==    by 0x44D563: std::vector<ARule const*, std::allocator<ARule const*> >::vector(std::vector<ARule const*, std::allocator<ARule const*> > const&) (stl_vector.h:601)
-==191091==    by 0x44659C: Vec<ARule const*>::Vec(Vec<ARule const*> const&) (Vector.tpp:287)
-==191091==    by 0x472B89: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:401)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091== 
-==191091== Conditional jump or move depends on uninitialised value(s)
-==191091==    at 0x470EDF: DataCollector::samePrecP(Vec<ARule const*>, Vec<ARule const*>, unsigned long) const (DataCollector.cpp:24)
-==191091==    by 0x472BAF: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:401)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== Invalid read of size 8
-==191091==    at 0x471341: DataCollector::getKey[abi:cxx11](unsigned long) const (DataCollector.cpp:95)
-==191091==    by 0x4717CC: DataCollector::recurseJson(unsigned long, AJson**, bool) (DataCollector.cpp:166)
-==191091==    by 0x472F79: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:495)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091==  Address 0x4e117b8 is 0 bytes after a block of size 8 alloc'd
-==191091==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==191091==    by 0x44D19F: std::__new_allocator<ARule const*>::allocate(unsigned long, void const*) (new_allocator.h:137)
-==191091==    by 0x44D130: __gnu_cxx::__alloc_traits<std::allocator<ARule const*>, ARule const*>::allocate(std::allocator<ARule const*>&, unsigned long) (alloc_traits.h:133)
-==191091==    by 0x44CEEF: std::_Vector_base<ARule const*, std::allocator<ARule const*> >::_M_allocate(unsigned long) (stl_vector.h:378)
-==191091==    by 0x456618: ARule const** std::vector<ARule const*, std::allocator<ARule const*> >::_M_allocate_and_copy<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > > >(unsigned long, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >) (stl_vector.h:1614)
-==191091==    by 0x456415: std::vector<ARule const*, std::allocator<ARule const*> >::operator=(std::vector<ARule const*, std::allocator<ARule const*> > const&) (vector.tcc:232)
-==191091==    by 0x44758E: Vec<ARule const*>::operator=(Vec<ARule const*> const&) (Vector.tpp:293)
-==191091==    by 0x472F4E: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:493)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== Invalid read of size 8
-==191091==    at 0x471341: DataCollector::getKey[abi:cxx11](unsigned long) const (DataCollector.cpp:95)
-==191091==    by 0x4717CC: DataCollector::recurseJson(unsigned long, AJson**, bool) (DataCollector.cpp:166)
-==191091==    by 0x4718DF: DataCollector::recurseJson(unsigned long, AJson**, bool) (DataCollector.cpp:207)
-==191091==    by 0x472F79: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:495)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091==  Address 0x4e118d0 is 0 bytes after a block of size 16 alloc'd
-==191091==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==191091==    by 0x44D19F: std::__new_allocator<ARule const*>::allocate(unsigned long, void const*) (new_allocator.h:137)
-==191091==    by 0x44D130: __gnu_cxx::__alloc_traits<std::allocator<ARule const*>, ARule const*>::allocate(std::allocator<ARule const*>&, unsigned long) (alloc_traits.h:133)
-==191091==    by 0x44CEEF: std::_Vector_base<ARule const*, std::allocator<ARule const*> >::_M_allocate(unsigned long) (stl_vector.h:378)
-==191091==    by 0x456618: ARule const** std::vector<ARule const*, std::allocator<ARule const*> >::_M_allocate_and_copy<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > > >(unsigned long, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >) (stl_vector.h:1614)
-==191091==    by 0x456415: std::vector<ARule const*, std::allocator<ARule const*> >::operator=(std::vector<ARule const*, std::allocator<ARule const*> > const&) (vector.tcc:232)
-==191091==    by 0x44758E: Vec<ARule const*>::operator=(Vec<ARule const*> const&) (Vector.tpp:293)
-==191091==    by 0x472F4E: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:493)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== Invalid read of size 8
-==191091==    at 0x471341: DataCollector::getKey[abi:cxx11](unsigned long) const (DataCollector.cpp:95)
-==191091==    by 0x4717CC: DataCollector::recurseJson(unsigned long, AJson**, bool) (DataCollector.cpp:166)
-==191091==    by 0x4718DF: DataCollector::recurseJson(unsigned long, AJson**, bool) (DataCollector.cpp:207)
-==191091==    by 0x4718DF: DataCollector::recurseJson(unsigned long, AJson**, bool) (DataCollector.cpp:207)
-==191091==    by 0x472F79: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:495)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091==  Address 0x4e11e58 is 0 bytes after a block of size 24 alloc'd
-==191091==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==191091==    by 0x44D19F: std::__new_allocator<ARule const*>::allocate(unsigned long, void const*) (new_allocator.h:137)
-==191091==    by 0x44D130: __gnu_cxx::__alloc_traits<std::allocator<ARule const*>, ARule const*>::allocate(std::allocator<ARule const*>&, unsigned long) (alloc_traits.h:133)
-==191091==    by 0x44CEEF: std::_Vector_base<ARule const*, std::allocator<ARule const*> >::_M_allocate(unsigned long) (stl_vector.h:378)
-==191091==    by 0x456618: ARule const** std::vector<ARule const*, std::allocator<ARule const*> >::_M_allocate_and_copy<__gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > > >(unsigned long, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >, __gnu_cxx::__normal_iterator<ARule const* const*, std::vector<ARule const*, std::allocator<ARule const*> > >) (stl_vector.h:1614)
-==191091==    by 0x456415: std::vector<ARule const*, std::allocator<ARule const*> >::operator=(std::vector<ARule const*, std::allocator<ARule const*> > const&) (vector.tcc:232)
-==191091==    by 0x44758E: Vec<ARule const*>::operator=(Vec<ARule const*> const&) (Vector.tpp:293)
-==191091==    by 0x472F4E: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:493)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== 
-==191091== HEAP SUMMARY:
-==191091==     in use at exit: 10,535 bytes in 163 blocks
-==191091==   total heap usage: 1,246 allocs, 1,083 frees, 168,490 bytes allocated
-==191091== 
-==191091== 456 (40 direct, 416 indirect) bytes in 1 blocks are definitely lost in loss record 44 of 51
-==191091==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==191091==    by 0x47A9C1: AJson::createArray() (AJson.cpp:34)
-==191091==    by 0x472E4C: DataCollector::generateJson(BNFPath const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Vec<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >) (DataCollector.cpp:485)
-==191091==    by 0x446189: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== 1,200 (80 direct, 1,120 indirect) bytes in 1 blocks are definitely lost in loss record 50 of 51
-==191091==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==191091==    by 0x444B43: Parser::resolvePath() (Parser.cpp:334)
-==191091==    by 0x446132: Parser::parse(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Parser.cpp:451)
-==191091==    by 0x419B14: Lexer::parseConfigFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:41)
-==191091==    by 0x419154: main (main.cpp:38)
-==191091== 
-==191091== 8,879 (160 direct, 8,719 indirect) bytes in 1 blocks are definitely lost in loss record 51 of 51
-==191091==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==191091==    by 0x4197B2: Lexer::Lexer(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (Lexer.cpp:25)
-==191091==    by 0x4190F8: main (main.cpp:37)
-==191091== 
-==191091== LEAK SUMMARY:
-==191091==    definitely lost: 280 bytes in 3 blocks
-==191091==    indirectly lost: 10,255 bytes in 160 blocks
-==191091==      possibly lost: 0 bytes in 0 blocks
-==191091==    still reachable: 0 bytes in 0 blocks
-==191091==         suppressed: 0 bytes in 0 blocks
-==191091== 
-==191091== Use --track-origins=yes to see where uninitialised values come from
-==191091== For lists of detected and suppressed errors, rerun with: -s
-==191091== ERROR SUMMARY: 12 errors from 9 contexts (suppressed: 0 from 0)
+[0;33m[WEBSERV] Generating bnf module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating log module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating kit module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;33m[WEBSERV] Generating json module library...[0m
+make[1]: Nothing to be done for 'all'.
+[0;32m[WEBSERV] Compiling webserv: [##                                                ] 1/24[0m
+[1;34m[WEBSERV] Linking webserv...[0m
+[0;32m[WEBSERV] Running webserv...[0m
+--------------------------
+
+HttpConfig:
+{
+  "autoindex": 
+    [
+      on;
+    ],
+  "client_body_timeout": 
+    [
+      20;
+    ],
+  "client_header_timeout": 
+    [
+      10;
+    ],
+  "client_max_body_size": 
+    [
+      500;
+    ],
+  "client_max_header_size": 
+    [
+      100;
+    ],
+  "default_type": 
+    [
+      application/octet-stream;
+    ],
+  "keepalive_timeout": 
+    [
+      65;
+    ],
+  "sendfile": 
+    [
+      on,
+      /var/www/uploads;
+    ]
+}
+servers: [
+  {
+    "auth_loc": 
+      [
+        /auth;
+      ],
+    "index": 
+      [
+        index.html,
+        index.htm;
+      ],
+    "listen": 
+      [
+        80;
+      ],
+    "root": 
+      [
+        /var/www/website/;
+      ],
+    "sendfile": 
+      [
+        on,
+        /var/www/uploads;
+      ],
+    "server_name": 
+      [
+        i_am_the_one_who_ports;
+      ]
+  }
+  locations: [
+    /: {
+      }
+,
+    /test: {
+        "index": 
+          [
+            index.html,
+            index.htm,
+            index2.html,
+            shrek.html,
+            benoit.html;
+          ],
+        "root": 
+          [
+            html;
+          ]
+      }
+,
+    /uploads: {
+        "alias": 
+          [
+            /var/www/uploads;
+          ],
+        "autoindex": 
+          [
+            on;
+          ]
+      }
+,
+    /bonjour: {
+        "allowed_methods": 
+          [
+            GET,
+            POST;
+          ],
+        "return": 
+          [
+            200,
+            bonjour;
+          ]
+      }
+,
+    /redirect: {
+        "return": 
+          [
+            301,
+            /bonjour;
+          ]
+      }
+,
+    /usr/bin/: {
+        "auth_required": 
+          [
+            on;
+          ],
+        "cgi_pass": 
+          [
+            .php,
+            /usr/bin/php
+          ],
+        "{": 
+          [
+
+          ]
+      }
+
+  ]
+  add_headers: {
+    "Set-Cookie": "token=424242;",
+    "X-Cache-Info:": "not cacheable; meta data too large;"
+  }
+,
+  {
+    "index": 
+      [
+        index.html,
+        index.htm;
+      ],
+    "listen": 
+      [
+        127.0.0.1:80;
+      ],
+    "root": 
+      [
+        /var/www/website/;
+      ],
+    "server_name": 
+      [
+        second_server;
+      ]
+  }
+  locations: [
+    /health: {
+        "return": 
+          [
+            200,
+            Server is running\n;
+          ]
+      }
+,
+    /old-page: {
+        "return": 
+          [
+            301,
+            /new-page;
+          ]
+      }
+,
+    /temp: {
+        "return": 
+          [
+            302,
+            /temporary-page;
+          ]
+      }
+,
+    /private: {
+        "return": 
+          [
+            403;
+          ]
+      }
+,
+    /deprecated: {
+        "return": 
+          [
+            410;
+          ]
+      }
+,
+    /maintenance: {
+        "return": 
+          [
+            503,
+            Service temporarily unavailable\n;
+          ]
+      }
+
+  ]
+
+]
+error_pages: {
+  "404": "/var/www/errors/404.html;",
+  "413": "/var/www/errors/413.html;",
+  "500": "/var/www/errors/500.html;"
+}
+
+Parsed successfully!
+Servers count: 2

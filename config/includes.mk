@@ -2,6 +2,7 @@ INCLUDES_FLAGS += -I ./srcs/Config/CgiParams
 INCLUDES_FLAGS += -I ./srcs/Config
 INCLUDES_FLAGS += -I ./srcs/Config/Location
 INCLUDES_FLAGS += -I ./srcs/.
+INCLUDES_FLAGS += -I ./srcs/ParsingConfig/ConfigParser
 INCLUDES_FLAGS += -I ./srcs/ParsingConfig/Lexer
 INCLUDES_FLAGS += -I ./srcs/Server/CgiSpawner
 INCLUDES_FLAGS += -I ./srcs/Server/Files/File

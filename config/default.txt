@@ -29,6 +29,8 @@ http {
         add_header        Set-Cookie "token=424242";
 
         auth_loc         /auth;
+        
+        add_header        X-Cache-Info: not cacheable; meta data too large;
 
         location / {
         }
