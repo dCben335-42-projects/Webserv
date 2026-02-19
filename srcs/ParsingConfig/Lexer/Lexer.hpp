@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "bnf.hpp"
+#include "ConfigParser.hpp"
 
 class Lexer
 {
@@ -15,7 +16,7 @@ class Lexer
 	public:
 		Lexer(std::string const &filepath);
 		~Lexer();
-		void parseConfigFile(std::string const &filepath);
+		HttpConfig parseConfigFile(std::string const &filepath);
 
 		const std::string &getContent() const;
 };

@@ -1,5 +1,0 @@
-<head>		    ::= { NUMBER | STRING }
-
-NUMBER          ::= DIGIT { DIGIT } 
-
-STRING          ::= { CHAR }

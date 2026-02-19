@@ -4,7 +4,6 @@
 #include "../ARulePathInfo/ARulePathInfo.hpp"
 #include "Json.hpp"
 #include "../BNFPath/BNFPath.hpp"
-#include "../DataCollector/DataCollector.hpp"
 
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
@@ -431,6 +430,4 @@ void Parser::parse(const std::string &stringToParsed)
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
-	DataCollector dataCollector;
-	dataCollector.generateJson(resolvePath(), stringToParsed);
 }

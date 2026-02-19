@@ -2,7 +2,6 @@ BNF_SRCS += ./srcs/ARulePathInfo/ARulePathInfo.cpp
 BNF_SRCS += ./srcs/Concept/Concept.cpp
 BNF_SRCS += ./srcs/Concept/ConceptDef/ConceptDef.cpp
 BNF_SRCS += ./srcs/Concept/ConceptNode/ConceptNode.cpp
-BNF_SRCS += ./srcs/DataCollector/DataCollector.cpp
 BNF_SRCS += ./srcs/Exception/SemanticException.cpp
 BNF_SRCS += ./srcs/Parser/Parser.cpp
 BNF_SRCS += ./srcs/Rules/ARule.cpp

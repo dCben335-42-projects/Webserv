@@ -1,70 +1,76 @@
-<head>			::= { statement  }
-				|= 
+<head>			::= http
+
+QUOTE 					::= '"'
+
+WORD_QUOTED				::= QUOTE { LETTER | '.' | '-' | '_' | DIGIT | '=' | SPACE | ';' | '\\' } QUOTE
+
+
+http			::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
 
 
 
-statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block ) { LINE_JUMP }
-
-user_stmt		::= 'user' SPACE !user_name ';'
-worker_stmt		::= 'worker_processes' SPACE !IDENT ';'
-
-ok				::= '_proc' 'esses'
-pid_stmt		::= 'pid' SPACE !PATH ';'
-
-events_block	::= 'events' [ SPACE ] '{' LINE_JUMP { event_stmt } !nom '}'
-
-event_stmt		::= [ TAB_SPACE ] event_rule ';' [ LINE_JUMP ]
-
-number 	=	!NUMBER
-bool 	= !BOOL
-event_rule		::= !0'worker_connections' SPACE !NUMBER !BOLL
-				|= 	!0'multi_accept' [ STRING ]  SPACE !STRING
+http_directives		::= { default_type | keepalive_timeout | client_header_timeout | client_body_timeout | client_max_body_size | client_max_header_size | autoindex | sendfile | error_page | server }
 
 
-nom ::= NUMBER BOOL
+default_type			::= IDENT 'default_type' 			IDENT PATH	 	SEMI	LINE_JUMP
+keepalive_timeout		::= IDENT 'keepalive_timeout' 		IDENT NUMBER 	SEMI	LINE_JUMP
+client_header_timeout	::= IDENT 'client_header_timeout' 	IDENT NUMBER 	SEMI	LINE_JUMP
+client_body_timeout		::= IDENT 'client_body_timeout' 	IDENT NUMBER 	SEMI	LINE_JUMP
+client_max_body_size	::= IDENT 'client_max_body_size' 	IDENT NUMBER 	SEMI	LINE_JUMP
+client_max_header_size	::= IDENT 'client_max_header_size' 	IDENT NUMBER 	SEMI	LINE_JUMP
+autoindex				::= IDENT 'autoindex' 				IDENT BOOL 		SEMI	LINE_JUMP
+sendfile				::= IDENT 'sendfile' 				IDENT BOOL 		IDENT	PATH		SEMI	LINE_JUMP
+error_page				::= IDENT 'error_page'				IDENT NUMBER  	IDENT	PATH		SEMI	LINE_JUMP
+listen					::= IDENT 'listen'					IDENT [ IP ]	NUMBER	SEMI	LINE_JUMP
+server_name				::= IDENT 'server_name'				IDENT WORD		SEMI	LINE_JUMP
+root					::= IDENT 'root'					IDENT PATH		SEMI	LINE_JUMP
+index					::= IDENT 'index'					IDENT { FILE }	SEMI	LINE_JUMP
+add_header				::= IDENT 'add_header'				IDENT WORD		IDENT	WORD		SEMI	LINE_JUMP
+auth_loc				::= IDENT 'auth_loc'				IDENT PATH		SEMI	LINE_JUMP
+alias					::= IDENT 'alias'					IDENT PATH		SEMI	LINE_JUMP
+return					::= IDENT 'return'					IDENT NUMBER	IDENT	[ WORD_QUOTED | PATH ]	SEMI	LINE_JUMP
+allowed_methods			::= IDENT 'allowed_methods'			IDENT { HTTP_METHOD | IDENT }	SEMI	LINE_JUMP
+auth_required			::= IDENT 'auth_required'			IDENT BOOL		SEMI	LINE_JUMP
+cgi_pass				::= IDENT 'cgi_pass'				IDENT EXT		IDENT	PATH	SEMI	LINE_JUMP
 
-http_block		::= 'http' [ SPACE ] '{' LINE_JUMP { http_stmt } '}'
 
-http_stmt		::= [ TAB_SPACE ] ( basic_http_stmt | gzip_stmt | include_stmt ) ';' LINE_JUMP
-				|= LINE_JUMP
+location				::= IDENT 'location'				IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT LINE_JUMP
 
-basic_http_stmt	::= !0'sendfile' TAB_SPACE !BOOL
-				|= !0'tcp_nopush' TAB_SPACE !BOOL
-				|= !0'tcp_nodelay' TAB_SPACE !BOOL
-				|= !0'keepalive_timeout' TAB_SPACE !NUMBER
-				|= !0'types_hash_max_size' TAB_SPACE !NUMBER
-				|= !0'default_type' TAB_SPACE !MIME
-				|= !0'access_log' TAB_SPACE !PATH
-				|= !0'error_log' TAB_!SPACE PATH SPACE LOG_LEVEL
-				|= !0'server_tokens' TAB_SPACE BOOL
-				|= !0'test' TAB_SPACE BOOL
+location_directives		::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass }
 
-gzip_stmt		::= !0'gzip' TAB_SPACE BOOL
-				|= !0'gzip' TAB_SPACE BOOL BOOL
-				|= !0'gzip_disable' TAB_SPACE STRING
-				|= !0'gzip_vary' TAB_SPACE BOOL
-				|= !0'gzip_proxied' TAB_SPACE IDENT
-				|= !0'gzip_comp_level' TAB_SPACE NUMBER
-				|= !0'gzip_buffers' TAB_SPACE NUMBER SPACE SIZE
-				|= !0'gzip_http_version' TAB_SPACE VERSION
-				|= gzip_types
+HTTP_METHOD				::= ( 'GET' | 'POST' )
+EXT						::= ( '.py' | '.php' )
 
-gzip_types		::= 'gzip_types' LINE_JUMP { gzip_mines }
+IP						::=	NUMBER POINT NUMBER POINT NUMBER POINT NUMBER [ ':' ]
 
-gzip_mines		::= [ TAB_SPACE ] MIME [ LINE_JUMP ]
 
-include_stmt	::= 'include' TAB_SPACE !PATH
+server					::= IDENT 'server' SPACE BRACE_IN LINE_JUMP { listen | server_name | root | index | location | sendfile | add_header | auth_loc } IDENT BRACE_OUT LINE_JUMP
 
-user_name 		::= LOCASE_LETTER { LOCASE_LETTER | DIGIT | '_' | '-' }
 
-IDENT 			::= LETTER { LETTER }
+FILE					::=	{ LETTER | DIGIT } POINT { LETTER | DIGIT } [ SPACE ]
+POINT					::= '.'
+PATH					::= { LETTER | '/' | POINT | NUMBER | '-' }
+
+
+
+
+WORD					::= [ WORD_QUOTED ] [ WORD_NORMAL ]
+WORD_NORMAL				::= { LETTER | '.' | '-' | '_' | DIGIT | '=' }
+
+
+
+IDENT					::= [ TAB_SPACE ]
+
+
+
+
+
+
+
 
 NUMBER 			::= { DIGIT }
 
 BOOL 			::= ( 'on' | 'off' )
-
-PATH 			::= '/' { PATH_CHAR }
-PATH_CHAR 		::= ( LETTER | DIGIT | '/' | '.' | '_' | '*' | '-' )
 
 MIME 			::= ( TEXT_MIME | APPLICATION_MIME | FONT_MIME | MULTIPART_MIME | AUDIO_MIME | VIDEO_MIME | IMAGE_MIME )
 
@@ -102,6 +108,10 @@ TAB_SPACE		::= { SPACE | TAB }
 TAB				::= '\t'
 SPACE			::= ' '
 LINE_JUMP		::= '\n'
+
+BRACE_IN		::= '{'
+BRACE_OUT		::= '}'
+SEMI			::= ';'
 
 
 

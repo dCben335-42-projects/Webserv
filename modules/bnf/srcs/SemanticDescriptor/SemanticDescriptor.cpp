@@ -241,6 +241,7 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 
 	if (str[0] == '"')
 	{
+		Logger::log(str);
 		throw std::runtime_error("Error: A token cannot begin with double quotes");
 	}
 
@@ -290,8 +291,10 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	cpt->pushDef(conceptDef);
 
 	const Vec<std::string> words = splitwords(m_content.substr(cursor));
-
-	// Logger::log("Words: " + Logger::get(words));
+	Logger::log("----------------------------------------------------------------");
+	Logger::log("----------------------------------------------------------------");
+	Logger::log("----------------------------------------------------------------");
+	Logger::debug("Words: " + Logger::get(words));
 
 	std::string word;
 	ARule	   *arule	   = NULL;
@@ -323,7 +326,10 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			if (word != DIVIDER)
 			{
 				if (!validate_string_strict(word))
+				{
+					Logger::log("Invalid concept name: " + word);
 					throw InvalidConceptNameException(word);
+				}
 				arule->addItem(TerminalSymbol::specify(word));
 
 				if (n >= 0)

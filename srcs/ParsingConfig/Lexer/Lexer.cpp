@@ -25,7 +25,7 @@ Lexer::Lexer(std::string const &filepath)
 }
 
 
-void Lexer::parseConfigFile(std::string const &filepath)
+HttpConfig Lexer::parseConfigFile(std::string const &filepath)
 {
 	std::ifstream ifs(filepath.c_str(), std::ios::in);
 	if (!ifs.is_open())
@@ -35,14 +35,21 @@ void Lexer::parseConfigFile(std::string const &filepath)
 	m_content = ss.str();
 	ifs.close();
 
+	Logger::log("Parsing config file: " + filepath);
 	try
 	{
 		m_parser->parse(m_content);
+		ConfigParser  parser;
+		std::ifstream ifs(filepath.c_str(), std::ios::in);
+		if (!ifs.is_open())
+			throw std::runtime_error("Lexer: cannot open file: " + filepath);
+		return parser.parse(ifs);
 	}
 	catch (const SemanticException &e)
 	{
 		std::cout << e;
 	}
+	return HttpConfig();
 }
 
 
