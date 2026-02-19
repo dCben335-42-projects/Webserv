@@ -70,6 +70,40 @@ bool DataCollector::isEndP(ARulePath path, size_t idx) const
 	return true;
 }
 
+int DataCollector::isEndOptPE(ARulePath path, ARulePath pathNext, int idx) const
+{
+	int i = path.size() - 1;
+
+	while (i >= idx)
+	{
+		// Logger::log("sameprec" + Logger::get(samePrecP(path, pathNext, i + 1)));
+		if (samePrecP(path, pathNext, i + 1) && !path[i]->isSequence())
+		{
+			return i + 1;
+		}
+		if (!path[i]->isEnd())
+		{
+			// chercher si tous les elements suivant sont optionnel en faire une liste et verifier si pathNext se refere a un de ces elements si cest le cas return false (cette reference peut se faire en leur mileu de ARulePath ou a la fin) sinon on continue la boucle
+
+			Vec<const ARule *> optionals;
+			const ARule		  *next = path[i]->getNextRule();
+
+			while (next)
+			{
+				optionals.push(next);
+				next = next->getNextRule();
+			}
+
+			// Verifier si pathNext se refere a un de ces elements optionnels
+
+			if (samePrecP(path, pathNext, i) && optionals.contains(pathNext[i]))
+				return i + 1;
+		}
+		i--;
+	}
+	return idx;
+}
+
 int DataCollector::getLastSequence(Vec<ARulePath> pathStack, size_t idx) const
 {
 	int size = pathStack[idx].size();
@@ -211,136 +245,6 @@ bool DataCollector::isLastWritable(size_t idxRule) const
 	// 	return isEnd(idxRule + 1);
 	// }
 	return samePrec(idxRule + 1) && isEnd(idxRule + 1);
-}
-
-
-
-
-
-void DataCollector::recurseJson(size_t idxRule)
-{
-	size_t			   idxRuleC = idxRule + 1;
-	const std::string &keyC		= getKey(idxRuleC);
-	const std::string &key		= getKey(idxRule);
-	if (key == "user_name")
-		Logger::debug("recurseJson : [idx: " + Logger::get(idxRule) + "]: " + key);
-	// Logger::log("recurseJson : [idx: " + Logger::get(idxRule) + "]: " + key);
-
-	if (isLastRule(idxRule))
-	{
-		appendBuffer();
-		if (idxRule == 0 && !m_buffer.empty())
-		{
-			m_mapJson.get(0)->asArray()->create(m_buffer);
-			m_buffer.clear();
-		}
-		return;
-	}
-	recurseJson(idxRuleC);
-	// if ((int) idxRule > m_requiredIdx)
-	// 	return;
-
-	createNewObject(idxRule, key);
-
-	if (!m_buffer.empty())
-	{
-		getJson(idxRule)->asObject()->get(key)->asArray()->create(m_buffer);
-		m_buffer.clear();
-	}
-	// (void) m_write;
-
-	// if (isLastWritable(idxRule))
-	// {
-	// 	Logger::log("Writable : " + key + " (idx: " + Logger::get(idxRule) + ")");
-	// 	// if (idxRule == 0 && m_write)
-	// 	// 	movJson(getJson(0)->asArray(), 1);
-	// 	Logger::log("check if can move json from idx " + Logger::get(idxRule - 1) + " to idx " + Logger::get(idxRule));
-	// 	if (m_mapJson.has(idxRule - 1) && m_mapJson.has(idxRule))
-	// 	{
-	// 		Logger::log("last writable : move json from idx " + Logger::get(idxRule - 1) + " to idx " + Logger::get(idxRule));
-	// 		movJson(getJson(idxRule - 1)->asObject()->get(getKey(idxRule - 1)), idxRule);
-	// 		idxRule -= 1;
-
-	// 		Logger::log("Is idxRule: " + Logger::get(idxRule) + ", key: " + key + " writable ? ");
-	// 		if (isLastWritable(idxRule))
-	// 		{
-	// 			Logger::log("TEST : idxRule: " + Logger::get(idxRule) + " is writable");
-	// 		}
-	// 	}
-	// }
-
-	(void) m_write;
-
-
-
-
-
-	(void) keyC;
-	(void) key;
-	(void) idxRuleC;
-
-
-
-
-
-	// if (ptr)
-	// {
-	// 	Logger::log("ok1");
-	// 	createNewObject(idxRuleC, keyC);
-	// 	getObjectArray(idxRuleC, keyC)->push(ptr);
-	// 	movJson(getJson(idxRule)->asObject()->get(key), idxRuleC);
-	// 	return;
-	// }
-
-	// if (!(idxRuleC < m_path.size() && !isTerminalConcept(idxRuleC)))
-	// {
-	// 	Logger::log("ok2");
-
-	// 	if (idxRule == 0)
-	// 		*json = AJson::createString(m_buffer);
-	// 	return;
-	// }
-	// if (hasRegisteredPath(idxRuleC))
-	// {
-	// 	Logger::log("ok3");
-	// 	movJson(getJson(idxRule), idxRuleC);
-	// }
-
-	// createNewObject(idxRuleC, keyC);
-
-	// // Logger::log(m_path[idxRule]->getConceptName() + " : " + Logger::get(idxRuleC) + " : " + Logger::get(m_pathStack.get(idxRuleC).size()));
-
-
-	// if (!m_buffer.empty())
-	// {
-	// 	Logger::log("ok4");
-	// 	JsonArray *currentArray = getObjectArray(idxRuleC, keyC);
-	// 	if (isSequence(idxRuleC))
-	// 	{
-	// 		addArrayIfNotExist(currentArray);
-	// 		currentArray->getLast()->asArray()->create(m_buffer);
-	// 	}
-	// 	else
-	// 	{
-	// 		currentArray->create(m_buffer);
-	// 		if (isSequence(idxRule) && m_path[idxRuleC]->isEnd())
-	// 		{
-	// 			currentArray = getObjectArray(idxRule, key);
-	// 			addArrayIfNotExist(currentArray);
-	// 			movJson(currentArray->getLast(), idxRuleC);
-	// 		}
-	// 	}
-	// 	m_buffer.clear();
-	// }
-
-	// if (isEndOfPath() || !samePrec(idxRuleC))
-	// {
-	// 	Logger::log("ok5");
-	// 	AJson *currentJson = getJson(idxRule);
-	// 	AJson *target	   = !idxRule ? currentJson : currentJson->asObject()->get(key);
-	// 	movJson(target, idxRuleC);
-	// }
-	// Logger::log("ok6");
 }
 
 
@@ -512,22 +416,45 @@ void DataCollector::clearConcat(int index)
 
 void DataCollector::clearAllIsEndKey(ARulePath path, ARulePath pathNext)
 {
-	for (size_t i = path.size(); i-- > 0;)
-	{
-		if (isEndP(path, i))
-		{
-			(void) pathNext;
-			// if (path[i]->isSequence())
-			// {
-			// 	if (samePrecP(path, pathNext, i + 1))
-			// 		return ;
-			// 	else
-			// 		clearConcat(i);
-			// }
-			// else
-			clearConcat(i);
-		}
-	}
+	Logger::log(path);
+	Logger::log(pathNext);
+
+
+	int val = isEndOptPE(path, pathNext, 0);
+
+	Logger::log("clearAllIsEndKey : val: " + Logger::get(val));
+	Logger::log("clearAllIsEndKey : path: " + Logger::get(path.size()));
+
+
+	if (val >= (int)path.size())
+		return;
+
+
+	clearConcat(val);
+	// int i = path.size() - 1;
+	// while (i >= val)
+	// {
+	// 	clearConcat(i);
+	// 	i--;
+	// }
+
+
+	// for (size_t i = path.size(); i-- > 0;)
+	// {
+	// 	if (!isEndP(path, i))
+	// 		break;
+
+	// 	(void) pathNext;
+	// 	// if (path[i]->isSequence())
+	// 	// {
+	// 	// 	if (samePrecP(path, pathNext, i + 1))
+	// 	// 		return ;
+	// 	// 	else
+	// 	// 		clearConcat(i);
+	// 	// }
+	// 	// else
+	// 	clearConcat(i);
+	// }
 }
 
 Vec<StringNode> DataCollector::stringOrganiser(const std::vector<std::string> &lines)
@@ -557,16 +484,12 @@ Vec<StringNode> DataCollector::stringOrganiser(const std::vector<std::string> &l
 			clearConcat(index);
 		
 		index = getFirstTerminalConcept(m_pathNexts[i]);
-		Logger::log("index : " + Logger::get(index));
 		FirstRequired required = getFirstRequiredInJsonMap(m_pathNexts[i]);
 
 		clearAllIsEndKey(m_pathNexts[i], m_pathNexts[tempI]);
 
-		Logger::log("ops001");
-
 		if (tempI >= m_pathNexts.size() || (index & required.index) < 0)
 		{
-			Logger::log("ops00");
 			i = tempI;
 			nlines.push(StringNode(str, required.index));
 			index = required.index;
@@ -575,61 +498,40 @@ Vec<StringNode> DataCollector::stringOrganiser(const std::vector<std::string> &l
 		}
 		else
 		{
-			Logger::log("ops002");
 			if (required.index >= 0 && (required.index < index || index == -1))
 			{
-				Logger::log("ops0025");
-
-				// Logger::log("ops2");
 				index = required.index;
-				// Logger::log("index : " + Logger::get(index));
-				// Logger::log(m_pathNexts[i]);
-				// Logger::log(!isEndP(m_pathNexts[i], index + 1));
-				// Logger::log(!m_pathNexts[i][index - 1]->isSequence());
-				// // Si on est pas a la fin mais que le prochain element a pour parent le meme que l'actuel
-				// // Ne prend pas en compte les optional
-				// int seq = getFirstSequence(m_pathNexts[i], index);
-				// bool to = seq < 0 ? true : !m_pathNexts[i][seq + 1]->isEnd();
 
 				int seq = getFirstSequence(m_pathNexts[i], index);
 				bool to = seq < 0 ? true : !isEndP(m_pathNexts[i], seq + 1);
-				Logger::error("samePrecP : " + Logger::get(samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1)));
 
 
 				if (!isEndP(m_pathNexts[i], index + 1) || (samePrecP(m_pathNexts[i], m_pathNexts[tempI], index + 1) && to))
 				{
-					Logger::log("ops3");
-
 					i = tempI;
 					continue;
 				}
 			}
 			else if (shouldContinueConcat(i, tempI,index))
 			{
-				Logger::log("ops");
 				i = tempI;
 				continue;
 			}
 			
 			if (required.index >= 0)
 			{
-				Logger::log("ops8");
 
 				if (!m_concatPtr.has(index))
 					m_concatPtr.set(index, Map<size_t, size_t>());
 
 				if (!m_concatPtr.get(index).has(required.channel))
 				{
-					Logger::log("ops9");
-
 					nlines.push(StringNode(str, required.index)); 
 					str.clear();
 					m_concatPtr.get(index).set(required.channel, nlines.size() - 1);
 				}
 				else
 				{
-					Logger::log("ops10");
-
 					size_t idx = m_concatPtr.get(index).get(required.channel);
 					StringNode &ptr = nlines[idx];
 					ptr.str += str;

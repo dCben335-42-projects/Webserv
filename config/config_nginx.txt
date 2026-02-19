@@ -1,10 +1,10 @@
 <head>			::= { statement } { bool }
 
-bool			::= 0>boolp
+bool			::= boolp [ TAB_SPACE ]
 
 boolp			::= { boolpi }
 
-boolpi			::= 0>BOOL
+boolpi			::= 0>BOOL [ LINE_JUMP ] 
 
 statement 		::= ( user_stmt | worker_stmt | pid_stmt | events_block | http_block )
 
