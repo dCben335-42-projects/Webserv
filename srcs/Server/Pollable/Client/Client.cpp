@@ -142,24 +142,25 @@ void Client::setEvents(const short events)
 void Client::handlePost(const std::string &ressourcePath)
 {
 	(void) ressourcePath;
-	const std::string &target = m_req.getTarget();
-	if (target == "/auth/register" || target == "/auth/login")
+	const std::string &target  = m_req.getTarget();
+	const std::string  authloc = "/auth/";
+	if (target == authloc + "register" || target == authloc + "login")
 	{
-		HttpAuth auth;
-		if (target == "/auth/register")
+		HttpAuth auth(authloc);
+		if (target == authloc + "register")
 		{
 			auth.parse(m_req.getBody(), HttpAuth::REGISTER);
 			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
 			m_res.setBody("Register Successful !");
-			m_res.setHeader(HEADER_SET_COOKIE, m_server.createCookie(urlEncoded.get(AUTH_REGISTER_NAME_KEY), urlEncoded.get(AUTH_REGISTER_PSWD_KEY)));
+			m_res.setHeader(HEADER_SET_COOKIE, m_server.createUser(urlEncoded.get(AUTH_REGISTER_NAME_KEY), urlEncoded.get(AUTH_REGISTER_PSWD_KEY)));
 			m_res.setStatusCode(201);
 		}
-		else if (target == "/auth/login")
+		else if (target == authloc + "login")
 		{
 			auth.parse(m_req.getBody(), HttpAuth::LOGIN);
 			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
 			m_res.setBody("Login Successful !");
-			m_res.setHeader(HEADER_SET_COOKIE, m_server.findCookie(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY)));
+			m_res.setHeader(HEADER_SET_COOKIE, m_server.findUser(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY), "/auth/"));
 			m_res.setStatusCode(200);
 		}
 		return;
@@ -337,6 +338,7 @@ void Client::handleGet(const std::string &ressourcePath)
 
 	bool			  isIndexFile = false;
 	const std::string target	  = m_req.getTarget();
+	const std::string authLoc	  = "/auth/";
 
 	if (target == "/cgi-bin/")
 	{
@@ -346,10 +348,10 @@ void Client::handleGet(const std::string &ressourcePath)
 		if (!m_server.hasUser(token))
 			throw Http401Exception();
 	}
-	if (target == "/auth/")
+	if (target == authLoc)
 	{
-		HttpAuth auth;
-		auth.generatePage("/auth");
+		HttpAuth auth(authLoc);
+		auth.generatePage();
 		m_res.setBody(auth.getPage());
 		m_res.setStatusCode(200);
 		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);

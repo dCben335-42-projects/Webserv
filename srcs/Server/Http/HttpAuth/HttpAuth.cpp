@@ -87,33 +87,49 @@ const std::string HttpAuth::m_templatePage =
 	"    </style>\n"
 	"\n"
 	"    <script>\n"
-	"        document.addEventListener(\"DOMContentLoaded\", function() {\n"
-	"            var eyeButtons = document.querySelectorAll('.inputWrapper button');\n"
-	"            var inputPasswords = document.querySelectorAll('.inputWrapper input[type=password]');\n"
-	"            for (var i = 0; i < eyeButtons.length; i++) {\n"
-	"                (function(i){\n"
-	"                    eyeButtons[i].addEventListener('click', function() {\n"
-	"                        var oldType = inputPasswords[i].getAttribute('type');\n"
-	"                        inputPasswords[i].setAttribute('type', oldType == 'text' ? 'password' : 'text');\n"
-	"                    });\n"
-	"                })(i);\n"
-	"            }\n"
-	"            var inputs = document.querySelectorAll('input');\n"
-	"            var url = new URLSearchParams(window.location.search);\n"
-	"            for (var i = 0; i < inputs.length; i++) {\n"
-	"                if (url.has(inputs[i].name)) {\n"
-	"                    var errorMsg = document.querySelector('small[data-name=' + inputs[i].name + ']');\n"
-	"                    if (errorMsg) errorMsg.textContent = url.get(inputs[i].name);\n"
+	"        document.addEventListener(\"DOMContentLoaded\", () => {\n"
+	"            const eyeButtons = document.querySelectorAll(\".inputWrapper button\")\n"
+	"            const inputPasswords = document.querySelectorAll(\".inputWrapper input[type=password]\")\n"
+	"            eyeButtons.forEach((button, i) => {\n"
+	"                button.addEventListener(\"click\", () => {\n"
+	"                    const oldType = inputPasswords[i].getAttribute(\"type\")\n"
+	"                    inputPasswords[i].setAttribute(\"type\", oldType === \"text\" ? \"password\" : \"text\")\n"
+	"                })\n"
+	"            })\n"
+	"            const inputs = document.querySelectorAll(\"input\")\n"
+	"            const url = new URLSearchParams(window.location.search)\n"
+	"            inputs.forEach((input, i) => {\n"
+	"                if (url.has(input.name)) {\n"
+	"                    const errorMsg = document.querySelector(`small[data-name=${input.name}]`)\n"
+	"                    errorMsg.textContent = url.get(input.name)\n"
 	"                }\n"
-	"            }\n"
-	"        });\n"
+	"            })\n"
+	"			const registerForm = document.querySelector(\" .rform \")\n"
+	"			const loginForm = document.querySelector(\" .lform \")\n"
+	"			registerForm.addEventListener(\"submit\", (e) => handleSubmit(e, registerForm, \"" AUTH_TEMPLATE_AUTHLOC AUTH_REGISTER_LOC "\"));\n"
+	"			loginForm.addEventListener(\"submit\", (e) => handleSubmit(e, loginForm, \"" AUTH_TEMPLATE_AUTHLOC AUTH_LOGIN_LOC "\"))\n"
+	"			function handleSubmit(e,form,url) {\n"
+	"				e.preventDefault()\n"
+	"				const bodyData = new URLSearchParams(new FormData(form))\n"
+	"				fetch(url, { method: 'POST', body: bodyData })\n"
+	"					.then(r => {\n"
+	"						if (r.status === 201 || r.status === 200) {\n"
+	"							window.location = '/'\n"
+	"						}\n"
+	"						if (r.redirected) {\n"
+	"							console.log(r)\n"
+	"							window.location = r.url"
+	"						}\n"
+	"				})\n"
+	"			}\n"
+	"        })\n"
 	"    </script>\n"
 	"</head>\n"
 	"\n"
 	"<body>\n"
 	"    <section class=\"container\">\n"
 	"        <h1>Register Form</h1>\n"
-	"        <form method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC AUTH_TEMPLATE_REGISTER_LOC "\">\n"
+	"        <form class=\"rform\" method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC AUTH_REGISTER_LOC "\">\n"
 	"            <div class=\"fields\">\n"
 	"                <div class=\"field\">\n"
 	"                    <label>\n"
@@ -150,7 +166,7 @@ const std::string HttpAuth::m_templatePage =
 	"    </section>\n"
 	"    <section class=\"container\">\n"
 	"        <h1>Login Form</h1>\n"
-	"        <form method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC AUTH_TEMPLATE_LOGIN_LOC "\">\n"
+	"        <form class=\"lform\" method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC AUTH_LOGIN_LOC "\">\n"
 	"            <div class=\"fields\">\n"
 	"                <div class=\"field\">\n"
 	"                    <label>\n"
@@ -179,7 +195,7 @@ const std::string HttpAuth::m_templatePage =
 	"</html>\n";
 
 
-HttpAuth::HttpAuth() : m_page("")
+HttpAuth::HttpAuth(const std::string authLoc) : m_page(""), m_authLoc(authLoc)
 {
 }
 
@@ -187,11 +203,11 @@ HttpAuth::~HttpAuth()
 {
 }
 
-void HttpAuth::generatePage(const std::string &authLoc)
+void HttpAuth::generatePage()
 {
 	m_page = m_templatePage;
 
-	String::replaceAll(m_page, AUTH_TEMPLATE_AUTHLOC, authLoc);
+	String::replaceAll(m_page, AUTH_TEMPLATE_AUTHLOC, m_authLoc);
 }
 
 const std::string &HttpAuth::getPage() const
@@ -207,7 +223,11 @@ void HttpAuth::parse(const std::string &body, AuthMode mode)
 	{
 		Vec<std::string> fieldSplit = String::split((*it), COOKIE_VALUE_SEP);
 		if (fieldSplit.size() != 2)
-			throw Http400Exception();
+		{
+			if (fieldSplit.size() == 0)
+				throw Http400Exception("Invalid field");
+			throw Http301Exception(m_authLoc + "?" + fieldSplit[0] + "=" + "Field should contain at least 1 character");
+		}
 		m_urlEncoded.set(fieldSplit[0], String::urlDecode(fieldSplit[1]));
 	}
 	if (mode == REGISTER)
@@ -216,7 +236,7 @@ void HttpAuth::parse(const std::string &body, AuthMode mode)
 		checkField(AUTH_REGISTER_PSWD_KEY);
 		checkField(AUTH_REGISTER_CONFIRM_KEY);
 		if (m_urlEncoded.get(AUTH_REGISTER_PSWD_KEY) != m_urlEncoded.get(AUTH_REGISTER_CONFIRM_KEY))
-			throw Http400Exception();
+			throw Http301Exception(m_authLoc + "?" + AUTH_REGISTER_CONFIRM_KEY + "=" + "Passwords must match");
 	}
 	else
 	{
@@ -230,7 +250,7 @@ void HttpAuth::checkField(const std::string field)
 	if (!m_urlEncoded.has(field))
 		throw Http400Exception();
 	if (m_urlEncoded.get(field).empty())
-		throw Http400Exception();
+		throw Http301Exception(m_authLoc + "?" + field + "=" + "Field should containt at least 1 character");
 }
 
 const Map<std::string> &HttpAuth::getUrlEncoded() const

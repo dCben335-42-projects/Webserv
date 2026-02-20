@@ -12,8 +12,8 @@
 
 #define AUTH_TEMPLATE_AUTHLOC "{{ AUTH_LOC }}"
 
-#define AUTH_TEMPLATE_REGISTER_LOC "/register"
-#define AUTH_TEMPLATE_LOGIN_LOC "/login"
+#define AUTH_REGISTER_LOC "/register"
+#define AUTH_LOGIN_LOC "/login"
 
 class HttpAuth
 {
@@ -28,18 +28,19 @@ class HttpAuth
 		Map<std::string>		 m_urlEncoded;
 		static const std::string m_templatePage;
 		std::string				 m_page;
+		const std::string		 m_authLoc;
 
 		void checkField(const std::string field);
 
 	public:
-		HttpAuth();
+		HttpAuth(const std::string authLoc);
 		~HttpAuth();
 
 		void					parse(const std::string &body, AuthMode mode);
 		const Map<std::string> &getUrlEncoded() const;
 
 		const std::string &getPage() const;
-		void			   generatePage(const std::string &authLoc);
+		void			   generatePage();
 };
 
 #endif
