@@ -361,13 +361,21 @@ void SemanticDescriptor::addParent()
 {
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
-		V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
+		const Vec<ConceptDef *> &defs	   = (*it).second->getDefinitions();
+		const size_t			 defsCount = defs.size();
+
+		for (size_t o = 0; o < defsCount; ++o)
 		{
-			V_FOREACH(const ARule *, ruleIt, (*conceptIt)->getValues())
+			ConceptDef *conceptIt = defs[o];
+
+			const ARulePath &rules		= conceptIt->getValuesConstRef();
+			const size_t	 rulesCount = rules.size();
+
+			for (size_t b = 0; b < rulesCount; ++b)
 			{
-				Concept			   *conceptPtr;
-				const ARule		   *rule  = *ruleIt;
-				Vec<TerminalSymbol> items = rule->getItems();
+				Concept					  *conceptPtr;
+				const ARule				  *rule	 = rules[b];
+				const Vec<TerminalSymbol> &items = rule->getItems();
 
 				for (size_t i = 0; i < items.size(); ++i)
 				{
@@ -394,10 +402,11 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + items[i].getValue());
 			conceptPathsCopy = conceptPaths;
 			conceptPathsCopy.push_back(items[i].getValue());
-			V_FOREACH(ConceptDef *, conceptIt, conceptPtr->getDefinitions())
-			{
-				ndw((*conceptIt)->getARule(0), conceptPathsCopy);
-			}
+
+			const Vec<ConceptDef *> &defs	   = conceptPtr->getDefinitions();
+			const size_t			 defsCount = defs.size();
+			for (size_t j = 0; j < defsCount; ++j)
+				ndw(defs[j]->getARule(0), conceptPathsCopy);
 			continue;
 		}
 		for (size_t j = 0; j < conceptPaths.size(); ++j)
@@ -408,15 +417,14 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 void SemanticDescriptor::findAllNext()
 {
 	Vec<std::string> conceptPaths;
-	ARulePath		 path;
 
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
 		conceptPaths.push_back((*it).first);
-		V_FOREACH(ConceptDef *, conceptIt, (*it).second->getDefinitions())
-		{
-			ndw((*conceptIt)->getARule(0), conceptPaths);
-		}
+		const Vec<ConceptDef *> &defs	   = (*it).second->getDefinitions();
+		const size_t			 defsCount = defs.size();
+		for (size_t i = 0; i < defsCount; ++i)
+			ndw(defs[i]->getARule(0), conceptPaths);
 		conceptPaths.clear();
 	}
 }

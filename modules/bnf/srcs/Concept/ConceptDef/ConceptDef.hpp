@@ -27,6 +27,7 @@ class ConceptDef
 		void				setRule(const ARule *rule);
 		const std::string  &getConceptName() const;
 		Vec<TerminalSymbol> getItemsValueWithOption();
+		const ARulePath	   &getValuesConstRef() const;
 
 
 

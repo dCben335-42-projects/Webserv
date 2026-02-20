@@ -32,13 +32,7 @@ int main()
 
 		HttpConfig config = lexer.parseConfigFile("config/default.txt");
 
-
 		Logger::log(config);
-
-		// std::cout << "Parsed successfully!" << std::endl;
-		// std::cout << "Servers count: " << config.getServers().size() << std::endl;
-		// Lexer lexer("config/config_nginx.txt");
-		// lexer.parseConfigFile("config/test.txt");
 
 		return 0;
 	}

@@ -142,6 +142,11 @@ ARulePath ConceptDef::getValues() const
 	return values;
 }
 
+const ARulePath &ConceptDef::getValuesConstRef() const
+{
+	return values;
+}
+
 const ARule *ConceptDef::getARule(const size_t index) const
 {
 	if (values.size() > index)

@@ -40,10 +40,10 @@ class Parser
 		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, const std::string &conceptName, const ARulePath &prefix);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void getPathsTerminalChars(const ARulePath &prefix, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path);
+		void getPathsTerminalChars(const ARulePath &prefix, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, const ARulePath &path);
 
 		bool word(
-			TerminalCharInfo  *data,
+			TerminalCharInfo  &data,
 			const char		   c,
 			const ARule *const rule,
 			const ARulePath	  &path,
