@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <algorithm>
 
 template <typename V>
 class VecImpl
@@ -146,15 +147,23 @@ class VecBase
 			static_cast<Derived &>(*this).push_back(value);
 		}
 
+		// void push_once(const V &value)
+		// {
+		// 	Derived &derived = static_cast<Derived &>(*this);
+		// 	for (size_t i = 0; i < derived.size(); ++i)
+		// 	{
+		// 		if (derived[i] == value)
+		// 			return;
+		// 	}
+		// 	derived.push_back(value);
+		// }
+
 		void push_once(const V &value)
 		{
-			Derived &derived = static_cast<Derived &>(*this);
-			for (size_t i = 0; i < derived.size(); ++i)
-			{
-				if (derived[i] == value)
-					return;
-			}
-			derived.push_back(value);
+			Derived &d = static_cast<Derived &>(*this);
+
+			if (std::find(d.begin(), d.end(), value) == d.end())
+				d.push_back(value);
 		}
 
 		/**
@@ -223,10 +232,9 @@ class VecBase
 		void concat(const Derived &other)
 		{
 			Derived &derived = static_cast<Derived &>(*this);
-			for (size_t i = 0; i < other.size(); ++i)
-			{
-				derived.push_back(other[i]);
-			}
+
+			derived.reserve(derived.size() + other.size());
+			derived.insert(derived.end(), other.begin(), other.end());
 		}
 
 
@@ -241,14 +249,10 @@ class VecBase
 		static Derived concat(const Derived &vec1, const Derived &vec2)
 		{
 			Derived result;
-			for (size_t i = 0; i < vec1.size(); ++i)
-			{
-				result.push_back(vec1[i]);
-			}
-			for (size_t i = 0; i < vec2.size(); ++i)
-			{
-				result.push_back(vec2[i]);
-			}
+			result.reserve(vec1.size() + vec2.size());
+
+			result.insert(result.end(), vec1.begin(), vec1.end());
+			result.insert(result.end(), vec2.begin(), vec2.end());
 			return result;
 		}
 
@@ -294,6 +298,10 @@ class Vec
 			return *this;
 		}
 
+		Vec operator+(const Vec &other) const
+		{
+			return VecBase<Vec<V>, V>::concat(*this, other);
+		}
 
 		bool operator==(const Vec &other) const
 		{

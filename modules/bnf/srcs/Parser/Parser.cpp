@@ -34,14 +34,14 @@ void Parser::addPathPossibility(
 		if (!item.isTerminalChar())
 			getPathsTerminalChars(prefix, itemValue, mapPath, conceptPaths, path);
 		else
-			mapPath[rule].push_once(ARulePathInfo(ARulePath::concat(prefix, path)));
+			mapPath[rule].push_once(ARulePathInfo(prefix + path));
 	}
 
 	const Set<const ARule *>		  &terminalChars = m_semantic.getConcept(conceptName)->getTerminalChars();
 	Set<const ARule *>::const_iterator ite			 = terminalChars.end();
 	for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != ite; ++it)
 		if (rule == *it)
-			mapPath[rule].push_once(ARulePathInfo(ARulePath::concat(prefix, path)));
+			mapPath[rule].push_once(ARulePathInfo(prefix + path));
 }
 
 void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
@@ -59,7 +59,14 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 				if (terminalSymbol->isTerminalChar())
 					mapPathNext[rule].push_once(ARulePathInfo(slicePath));
 				else
-					getPathsTerminalChars(slicePath, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
+				{
+					Vec<std::string> emptyConceptPaths;
+					emptyConceptPaths.reserve(8);
+
+					ARulePath emptyPath;
+					emptyPath.reserve(8);
+					getPathsTerminalChars(slicePath, terminalSymbol->getValue(), mapPathNext, emptyConceptPaths, emptyPath);
+				}
 			}
 		}
 
@@ -111,52 +118,16 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 		if (terminalSymbol.isTerminalChar())
 			mapPathNext[lastRule].push_once(ARulePathInfo(nextRule));
 		else
-			getPathsTerminalChars(nextRule, terminalSymbol.getValue(), mapPathNext, Vec<std::string>(), ARulePath());
+		{
+			Vec<std::string> emptyConceptPaths;
+			emptyConceptPaths.reserve(8);
+
+			ARulePath emptyPath;
+			emptyPath.reserve(8);
+			getPathsTerminalChars(nextRule, terminalSymbol.getValue(), mapPathNext, emptyConceptPaths, emptyPath);
+		}
 	}
 }
-
-// bool Parser::word(
-// 	TerminalCharInfo  &data,
-// 	const char		   c,
-// 	const ARule *const rule,
-// 	const ARulePath	  &path,
-// 	const ARuleMap	  &mapPathCurrent,
-// 	ARuleMap		  &mapPathNext)
-// {
-
-// 	if (data.position >= data.length)
-// 		return false;
-
-// 	if (data.terminal->getValue()[data.position] == c)
-// 	{
-// 		if (data.position == data.length - 1)
-// 		{
-// 			addNextPaths(mapPathCurrent, mapPathNext, path, rule);
-// 		}
-// 		else
-// 		{
-// 			data.position += 1;
-
-// 			ARulePaths &paths = mapPathNext[rule];
-
-// 			for (size_t i = 0; i < paths.size(); ++i)
-// 			{
-// 				ARulePathInfo &it = paths[i];
-// 				if (it.path == path)
-// 				{
-// 					it.terminalCharsInfo.push(data);
-// 					return true;
-// 				}
-// 			}
-// 			ARulePathInfo pathInfoObj(path);
-// 			pathInfoObj.terminalCharsInfo.push(data);
-// 			paths.push_once(pathInfoObj);
-// 		}
-// 		return true;
-// 	}
-// 	return false;
-// }
-
 
 bool Parser::word(TerminalCharInfo	&data,
 				  const char		 c,
@@ -208,50 +179,6 @@ bool Parser::word(TerminalCharInfo	&data,
 
 	return true;
 }
-
-// bool Parser::parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext)
-// {
-// 	bool isValidWithCurrentPath = false;
-// 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
-// 	{
-// 		const ARule				  *rule		  = it->first;
-// 		const ARulePaths		  &paths	  = it->second;
-// 		const Vec<TerminalSymbol> &items	  = rule->getItems();
-// 		size_t					   pathsCount = paths.size();
-// 		size_t					   itemsCount = items.size();
-
-// 		for (size_t pathIndex = 0; pathIndex < pathsCount; ++pathIndex)
-// 		{
-// 			size_t indexElementTerminalChar = 0;
-// 			for (size_t itemIndex = 0; itemIndex < itemsCount; ++itemIndex)
-// 			{
-// 				if (!items[itemIndex].isTerminalChar())
-// 					continue;
-
-// 				// TerminalCharInfo data;
-// 				// if (!paths[pathIndex].terminalCharsInfo.has(indexElementTerminalChar))
-// 				// {
-// 				// 	data = TerminalCharInfo(&items[itemIndex], 0);
-// 				// }
-// 				// else
-// 				// {
-// 				// 	data = paths[pathIndex].terminalCharsInfo[indexElementTerminalChar];
-// 				// }
-
-// 				TerminalCharInfo &data =
-// 					paths[pathIndex].terminalCharsInfo.has(indexElementTerminalChar)
-// 						? paths[pathIndex].terminalCharsInfo[indexElementTerminalChar]
-// 						: TerminalCharInfo(&items[itemIndex], 0);
-
-
-// 				if (word(data, c, rule, paths[pathIndex].path, mapPathCurrent, mapPathNext))
-// 					isValidWithCurrentPath = true;
-// 				indexElementTerminalChar++;
-// 			}
-// 		}
-// 	}
-// 	return isValidWithCurrentPath;
-// }
 
 
 bool Parser::parseCurrentChar(const char	  c,
@@ -307,33 +234,6 @@ bool Parser::parseCurrentChar(const char	  c,
 
 	return isValidWithCurrentPath;
 }
-
-
-// bool Parser::isFullyOptional(const ARule &rule) const
-// {
-// 	if (rule.isOption())
-// 		return true;
-// 	Vec<TerminalSymbol> items = rule.getItems();
-// 	for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
-// 	{
-// 		if (item->isTerminalChar())
-// 			continue;
-// 		Concept			 *cpt = m_semantic.getConcepts().get(item->getValue());
-// 		Vec<ConceptDef *> def = cpt->getDefinitions();
-
-// 		for (Vec<ConceptDef *>::iterator cdef = def.begin(); cdef != def.end(); ++cdef)
-// 		{
-// 			ARulePath rules				= (*cdef)->getRules();
-// 			size_t	  isOptionalCounter = 0;
-
-// 			for (size_t k = 0; k < rules.size(); ++k)
-// 				isOptionalCounter += isFullyOptional(*(rules[k]));
-// 			if (isOptionalCounter == rules.size())
-// 				return true;
-// 		}
-// 	}
-// 	return false;
-// }
 
 bool Parser::isFullyOptional(const ARule &rule) const
 {
@@ -475,7 +375,13 @@ void Parser::parse(const std::string &stringToParsed)
 	ARuleMap mapPathNext;
 	char	 c;
 
-	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, Vec<std::string>(), ARulePath());
+	Vec<std::string> emptyConceptPaths;
+	emptyConceptPaths.reserve(8);
+
+	ARulePath emptyPath;
+	emptyPath.reserve(8);
+
+	getPathsTerminalChars(ARulePath(), CURSOR, mapPathCurrent, emptyConceptPaths, emptyPath);
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{
