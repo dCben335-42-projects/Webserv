@@ -5,6 +5,8 @@
 #include "Json.hpp"
 #include "../BNFPath/BNFPath.hpp"
 
+
+
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
 }
@@ -300,97 +302,10 @@ bool Parser::isValidEmptyFile()
 	return false;
 }
 
-void Parser::completePath()
-{
-	m_indexedPaths.push(m_originelRules);
-	m_originelRules.clear();
-}
-
 std::ostream &operator<<(std::ostream &os, const BNFPath &data)
 {
 	os << data.next.size();
 	return os;
-}
-
-const BNFPath *Parser::resolvePath()
-{
-	// clang-format off
-	Vec<BNFPath *> basePaths;
-	Vec<BNFPath *> pathsTop;
-	Map<ARulePath, Vec<ARulePath> > *mapPrev = &m_indexedPaths[0];
-
-	typedef Map<ARulePath, Vec<ARulePath> >::const_iterator MapIt;
-	for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
-	{
-		basePaths.push_once(new BNFPath(it->first, 0, m_rules[0]));
-	}
-	pathsTop	 = basePaths;
-	for (size_t k = 1; k < m_indexedPaths.size(); ++k)
-	{
-		Map<ARulePath, Vec<ARulePath> > *mapCurrent = &m_indexedPaths[k];
-
-		Vec<const ARulePath *>						   vecKey;
-		Map<const ARulePath *, Vec<const ARulePath *> > mapValueToKey;
-		for (MapIt it = mapCurrent->begin(); it != mapCurrent->end(); ++it)
-		{
-			vecKey.push_once(&it->first);
-		}
-
-		for (MapIt it = mapPrev->begin(); it != mapPrev->end(); ++it)
-		{
-			const ARulePath &ident = it->first;
-			for (size_t i = 0; i < it->second.size(); ++i)
-			{
-				const ARulePath &vecValue = it->second[i];
-				for (size_t j = 0; j < vecKey.size(); ++j)
-				{
-					bool found		 = false;
-					const ARulePath &vecKeyValue = *vecKey[j];
-
-					if (!BNFPath::compare(vecValue, vecKeyValue))
-						continue;
-					
-					for (size_t l = 0; l < pathsTop.size(); ++l)
-					{
-						if (pathsTop[l]->rulePath == ident)
-						{
-							if (found)
-								throw std::runtime_error("Ambiguous path resolution.");
-							pathsTop[l]->setNext(vecKeyValue, k, m_rules[k]);
-							found = true;
-						}
-					}
-				}
-			}
-		}
-
-		Vec<BNFPath *> bufferTemp;
-		for (int i = 0; i < static_cast<int>(pathsTop.size()); ++i)
-		{
-			BNFPath &current = *pathsTop[i];
-
-			if (current.next.empty())
-			{
-				pathsTop.remove(i);
-				current.deleteBranch();
-				i--;
-				continue;
-			}
-
-			const size_t size = current.next.size();
-			pathsTop[i]		  = &(current.next[0]);
-			for (size_t j = 1; j < size; ++j)
-				bufferTemp.push_once(&(current.next[j]));
-		}
-
-		if (pathsTop.size() < 1)
-			throw std::runtime_error("All paths have been invalidated. The input string does not conform to the grammar.");
-
-		pathsTop.concat(bufferTemp);
-		mapPrev = mapCurrent;
-	}
-
-	return pathsTop[0]->getHead();
 }
 
 void Parser::parse(const std::string &stringToParsed)
@@ -418,15 +333,14 @@ void Parser::parse(const std::string &stringToParsed)
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext, i))
 			throw InvalidEntryException(std::string("Invalid character '") + c + "' at position " + Logger::get(i) + ".");
-		completePath();
 		if (i == stringToParsed.size() - 1)
 			break;
 
 		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();
 	}
-	
-	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)) // Pas tout a fait correct si il existe une suite pleinement optionnele cest aussi valide
+
+	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c))
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");

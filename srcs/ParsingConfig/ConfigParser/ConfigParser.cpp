@@ -1,4 +1,11 @@
 #include "ConfigParser.hpp"
+#include "Map.hpp"
+#include "Vec.hpp"
+#include <sstream>
+#include <stack>
+#include <fstream>
+#include <iostream>
+#include <cctype>
 
 inline Vec<std::string> split(const std::string &line)
 {
@@ -48,8 +55,11 @@ std::string joinTokens(const Vec<std::string> &tokens, size_t start)
 	return result;
 }
 
-HttpConfig ConfigParser::parse(std::istream &input)
+#include <sstream>
+
+HttpConfig ConfigParser::parse(std::string &content)
 {
+	std::istringstream		input(content);
 	std::string				line;
 	std::stack<std::string> context;
 

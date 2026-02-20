@@ -9,14 +9,10 @@
 class Lexer
 {
 	private:
-		std::string			m_content;
-		SemanticDescriptor *m_semanticDescriptor;
-		Parser			   *m_parser;
+		const SemanticDescriptor m_semanticDescriptor;
 
 	public:
-		Lexer(std::string const &filepath);
+		Lexer(const std::string &content);
 		~Lexer();
 		HttpConfig parseConfigFile(std::string const &filepath);
-
-		const std::string &getContent() const;
 };

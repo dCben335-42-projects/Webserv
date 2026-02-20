@@ -7,7 +7,7 @@ EXPORT_SRCS_VAR					= BNF_SRCS
 # Compiler flags
 AR 								= ar -rcs
 CXX         					= c++
-WWW_FLAGS    					= -Wall -Wextra -Werror -g3 
+WWW_FLAGS    					= -Wall -Wextra -Werror 
 DEPS_FLAGS   					= -MMD -MP 
 CPP98_FLAGS  					= -std=c++98
 CXX_FLAGS     					= $(WWW_FLAGS) $(CPP98_FLAGS) $(DEPS_FLAGS)

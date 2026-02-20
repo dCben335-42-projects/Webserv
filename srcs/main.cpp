@@ -2,32 +2,41 @@
 #include "EventLoop.hpp"
 #include "Json.hpp"
 #include "ConfigParser.hpp"
+#include <sstream>
+#include <fstream>
+#include <stdexcept>
 
 // clang-format on
+
+void readFile(const std::string &filepath, std::string &content)
+{
+	std::ifstream ifs(filepath.c_str(), std::ios::in);
+	if (!ifs.is_open())
+		throw std::runtime_error("Cannot open file: " + filepath);
+	std::ostringstream ss;
+	ss << ifs.rdbuf();
+	content = ss.str();
+	ifs.close();
+}
+
 
 int main()
 {
 	try
 	{
-		Lexer	   lexer("config/conf_test.txt");
+		std::string content;
+		readFile("config/conf_test.txt", content);
+		Lexer lexer(content);
+
+		Logger::log("Starting config parsing...");
+
 		HttpConfig config = lexer.parseConfigFile("config/default.txt");
 
-		// std::ifstream file("config/default.txt");
 
-		// if (!file.is_open())
-		// {
-		// 	std::cerr << "Error: cannot open config file" << std::endl;
-		// 	return 1;
-		// }
-
-		// ConfigParser parser;
-		// HttpConfig	 config = parser.parse(file);
-
-		// printHttpConfig(config);
 		Logger::log(config);
 
-		std::cout << "Parsed successfully!" << std::endl;
-		std::cout << "Servers count: " << config.getServers().size() << std::endl;
+		// std::cout << "Parsed successfully!" << std::endl;
+		// std::cout << "Servers count: " << config.getServers().size() << std::endl;
 		// Lexer lexer("config/config_nginx.txt");
 		// lexer.parseConfigFile("config/test.txt");
 

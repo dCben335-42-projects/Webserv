@@ -47,6 +47,8 @@ class SemanticDescriptor
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
+		SemanticDescriptor &operator=(const SemanticDescriptor &other);
+
 		ARuleMap				 getStartPath() const;
 		Map<Concept *>			 getConcepts() const;
 		Concept				   *&getConcept(const std::string &key);

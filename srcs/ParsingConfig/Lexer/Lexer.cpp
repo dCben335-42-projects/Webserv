@@ -8,56 +8,37 @@
 
 using namespace bnf;
 
-Lexer::Lexer(std::string const &filepath)
+void readFile(const std::string &filepath, std::string &content);
+
+
+Lexer::Lexer(const std::string &content) : m_semanticDescriptor(content)
 {
-	std::ifstream ifs(filepath.c_str(), std::ios::in);
-	if (!ifs.is_open())
-		throw std::runtime_error("Lexer: cannot open file: " + filepath);
-	std::ostringstream ss;
-	ss << ifs.rdbuf();
-	m_content = ss.str();
-	ifs.close();
-
-	m_semanticDescriptor = new SemanticDescriptor(m_content);
-	// Logger::log(m_semanticDescriptor);
-
-	m_parser = new Parser(*m_semanticDescriptor);
 }
+
+Lexer::~Lexer()
+{
+}
+
 
 
 HttpConfig Lexer::parseConfigFile(std::string const &filepath)
 {
-	std::ifstream ifs(filepath.c_str(), std::ios::in);
-	if (!ifs.is_open())
-		throw std::runtime_error("Lexer: cannot open file: " + filepath);
-	std::ostringstream ss;
-	ss << ifs.rdbuf();
-	m_content = ss.str();
-	ifs.close();
+	std::string content;
+	readFile(filepath, content);
 
 	Logger::log("Parsing config file: " + filepath);
 	try
 	{
-		m_parser->parse(m_content);
-		ConfigParser  parser;
-		std::ifstream ifs(filepath.c_str(), std::ios::in);
-		if (!ifs.is_open())
-			throw std::runtime_error("Lexer: cannot open file: " + filepath);
-		return parser.parse(ifs);
+		Parser sparser(m_semanticDescriptor);
+		sparser.parse(content);
+		Logger::log("Config file parsed successfully!");
+
+		ConfigParser parser;
+		return parser.parse(content);
 	}
 	catch (const SemanticException &e)
 	{
 		std::cout << e;
 	}
 	return HttpConfig();
-}
-
-
-Lexer::~Lexer()
-{
-}
-
-const std::string &Lexer::getContent() const
-{
-	return m_content;
 }

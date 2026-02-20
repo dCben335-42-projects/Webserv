@@ -2,14 +2,6 @@
 #define CONFIG_PARSER_HPP
 
 #include <string>
-#include "Map.hpp"
-#include "Vec.hpp"
-#include <sstream>
-#include <stack>
-#include <fstream>
-#include <iostream>
-#include <cctype>
-#include "Logger.hpp"
 #include "HttpConfig.hpp"
 
 class ConfigParser
@@ -18,7 +10,7 @@ class ConfigParser
 		HttpConfig m_http;
 
 	public:
-		HttpConfig parse(std::istream &input);
+		HttpConfig parse(std::string &content);
 };
 
 #include "ConfigParser.tpp"

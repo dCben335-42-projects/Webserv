@@ -16,6 +16,25 @@ SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
 	parseBlocks();
 }
 
+SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &other)
+{
+	if (this != &other)
+	{
+		// Clean up existing resources
+		delete tree;
+		for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+		{
+			Vec<ConceptDef *> &defs = (*it).second->getDefinitions();
+			for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
+				delete *conceptIt;
+			delete (*it).second;
+		}
+	}
+	return *this;
+}
+
+
+
 SemanticDescriptor::~SemanticDescriptor()
 {
 	delete tree;

@@ -52,8 +52,9 @@ class Parser
 					  ARuleMap			&mapPathNext);
 
 	public:
-		~Parser();
+		Parser();
 		Parser(const SemanticDescriptor &semantic);
+		~Parser();
 
 		void parse(const std::string &stringToParsed);
 
