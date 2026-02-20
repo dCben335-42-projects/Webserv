@@ -29,26 +29,16 @@ void Parser::addPathPossibility(
 		if (conceptPaths.contains(item))
 			continue;
 		if (!itemIt->isTerminalChar())
-		{
 			getPathsTerminalChars(prefix, item, mapPath, conceptPaths, path);
-		}
 		else
-		{
-			const ARulePath &newPath = ARulePath::concat(prefix, path);
-			ARulePaths		&paths	 = mapPath[rule];
-			paths.push_once(ARulePathInfo(newPath));
-		}
+			mapPath[rule].push_once(ARulePathInfo(ARulePath::concat(prefix, path)));
 	}
 
 	const Set<const ARule *> &terminalChars = m_semantic.getConcept(conceptName)->getTerminalChars();
 	for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != terminalChars.end(); ++it)
 	{
 		if (rule == *it)
-		{
-			const ARulePath &newPath = ARulePath::concat(prefix, path);
-			ARulePaths		&paths	 = mapPath[rule];
-			paths.push_once(ARulePathInfo(newPath));
-		}
+			mapPath[rule].push_once(ARulePathInfo(ARulePath::concat(prefix, path)));
 	}
 }
 
@@ -56,23 +46,23 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 {
 	for (int i = path.size() - 1; i >= 0; --i)
 	{
-		if (path[i]->isSequence())
+		const ARule *rule = path[i];
+		if (rule->isSequence())
 		{
 			const ARulePath			  &slicePath = path.slice(i + 1);
-			const Vec<TerminalSymbol> &items	 = path[i]->getItems();
+			const Vec<TerminalSymbol> &items	 = rule->getItems();
 			for (Vec<TerminalSymbol>::const_iterator terminalSymbol = items.begin(); terminalSymbol != items.end(); ++terminalSymbol)
 			{
 				if (terminalSymbol->isTerminalChar())
 				{
-					ARulePaths &paths = mapPathNext[path[i]];
-					paths.push_once(ARulePathInfo(slicePath));
+					mapPathNext[rule].push_once(ARulePathInfo(slicePath));
 				}
 				else
 					getPathsTerminalChars(slicePath, terminalSymbol->getValue(), mapPathNext, Vec<std::string>(), ARulePath());
 			}
 		}
 
-		const ARule *adjacentRule = path[i]->tryGetAdjacentRules();
+		const ARule *adjacentRule = rule->tryGetAdjacentRules();
 		while (adjacentRule)
 		{
 			if (isFullyOptional(*adjacentRule))
