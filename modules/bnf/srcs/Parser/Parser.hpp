@@ -20,12 +20,34 @@
 
 // typedef Vec<ARulePath> ARulePathsOk;
 
+class PathCacheKey
+{
+	public:
+		std::string conceptName;
+		ARulePath	pathContext;
+
+		PathCacheKey();
+		PathCacheKey(const std::string &name, const ARulePath &path);
+
+		bool operator==(const PathCacheKey &other) const;
+
+		bool operator<(const PathCacheKey &other) const;
+};
+
+std::ostream &operator<<(std::ostream &os, const PathCacheKey &key);
+
+// subPath, terminalSymbol->getValue()
+
 class Parser
 {
 	private:
+		Set<PathCacheKey>					  m_computing;
 		mutable std::map<const ARule *, bool> m_optionalCache;
 		mutable std::set<const ARule *>		  m_optionalComputing;
-		const SemanticDescriptor			 &m_semantic;
+		// std::map<std::pair<const ARule *, std::string>, ARulePaths> m_pathsCache;
+		// std::map<std::string, ARuleMap> m_pathsCache;
+		Map<PathCacheKey, ARuleMap> m_pathsCache;
+		const SemanticDescriptor   &m_semantic;
 
 		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 
@@ -37,10 +59,11 @@ class Parser
 		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 
 		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule);
-		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, const std::string &conceptName, const ARulePath &prefix);
+		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARuleMap &mapPath, const std::string &conceptName, ARulePath &completePath);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void getPathsTerminalChars(const ARulePath &prefix, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, const ARulePath &path);
+		void getPathsTerminalChars(ARulePath &completePath, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> &conceptPaths);
+		void precomputeOptional(const ARule *rule);
 
 		bool word(
 			TerminalCharInfo  &data,
