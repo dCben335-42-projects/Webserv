@@ -24,11 +24,6 @@ ServerConfig::~ServerConfig()
 }
 
 // ===== GETTERS =====
-const ServerConfig::Directives &ServerConfig::getDirectives() const
-{
-	return directives;
-}
-
 const Map<LocationConfig> &ServerConfig::getLocations() const
 {
 	return locations;
@@ -37,40 +32,4 @@ const Map<LocationConfig> &ServerConfig::getLocations() const
 Map<LocationConfig> &ServerConfig::getLocations()
 {
 	return locations;
-}
-
-const Map<std::string> &ServerConfig::getAddHeaders() const
-{
-	return add_headers;
-}
-
-const Map<std::string> &ServerConfig::getCgiPass() const
-{
-	return cgi_pass;
-}
-
-const Map<std::string> &ServerConfig::getErrorPages() const
-{
-	return error_pages;
-}
-
-// ===== SETTERS =====
-void ServerConfig::setDirectiveAt(const std::string &key, const Vec<std::string> &value)
-{
-	directives[key] = value;
-}
-
-void ServerConfig::setCgiPassAt(const std::string &key, const std::string &value)
-{
-	cgi_pass[key] = value;
-}
-
-void ServerConfig::setErrorPagesAt(const std::string &key, const std::string &value)
-{
-	error_pages[key] = value;
-}
-
-void ServerConfig::setAddHeadersAt(const std::string &key, const std::string &value)
-{
-	add_headers[key] = value;
 }
