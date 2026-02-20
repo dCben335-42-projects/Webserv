@@ -135,7 +135,7 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-ARulePath ARule::getNextRules(ARulePath supRuleParent) const
+ARulePath ARule::getNextRules(const ARulePath &supRuleParent) const
 {
 	if (m_nextRules.empty())
 	{
@@ -145,13 +145,15 @@ ARulePath ARule::getNextRules(ARulePath supRuleParent) const
 		}
 		else
 		{
-			supRuleParent.pop_back();
-			const ARule *val = supRuleParent.back();
-			return val->getNextRules(supRuleParent);
+			ARulePath newPath = supRuleParent;
+			newPath.pop_back();
+			const ARule *val = newPath.back();
+			return val->getNextRules(newPath);
 		}
 	}
-	supRuleParent.back() = *m_nextRules.begin();
-	return supRuleParent;
+	ARulePath newPath = supRuleParent;
+	newPath.back()	  = *m_nextRules.begin();
+	return newPath;
 }
 
 const ARule *ARule::tryGetAdjacentRules() const

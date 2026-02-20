@@ -14,6 +14,7 @@ SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
 	std::istringstream iss(m_content);
 	splitBlocks(iss);
 	parseBlocks();
+	Logger::log("Semantic descriptor parsed successfully!");
 }
 
 SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &other)

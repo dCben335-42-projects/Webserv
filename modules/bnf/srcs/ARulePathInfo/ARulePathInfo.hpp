@@ -45,7 +45,7 @@ class ARulePathInfo
 		ARulePath			  path;
 		Vec<TerminalCharInfo> terminalCharsInfo;
 
-		ARulePathInfo(ARulePath path);
+		ARulePathInfo(const ARulePath &path);
 		~ARulePathInfo();
 
 		bool operator==(const ARulePathInfo &other) const;

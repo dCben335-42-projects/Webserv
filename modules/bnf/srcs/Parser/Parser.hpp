@@ -23,9 +23,11 @@
 class Parser
 {
 	private:
-		const SemanticDescriptor &m_semantic;
+		mutable std::map<const ARule *, bool> m_optionalCache;
+		mutable std::set<const ARule *>		  m_optionalComputing;
+		const SemanticDescriptor			 &m_semantic;
 
-		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t idx);
+		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 
 		bool isFullyOptional(const ARule &rule) const;
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
@@ -34,44 +36,25 @@ class Parser
 		bool isValidEmptyFile();
 		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 
-		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, ARulePath path, const ARule *const rule);
-		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, std::string conceptName, ARulePath prefix);
+		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule);
+		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARulePath path, ARuleMap &mapPath, const std::string &conceptName, const ARulePath &prefix);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void getPathsTerminalChars(ARulePath prefix, std::string conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path);
+		void getPathsTerminalChars(const ARulePath &prefix, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> conceptPaths, ARulePath path);
 
-		const BNFPath *resolvePath();
-		void		   completePath();
-		bool		   word(
-					  TerminalCharInfo	*data,
-					  const char		 c,
-					  size_t			 idx,
-					  const ARule *const rule,
-					  ARulePathInfo		*pathInfo,
-					  const ARuleMap	&mapPathCurrent,
-					  ARuleMap			&mapPathNext);
+		bool word(
+			TerminalCharInfo  *data,
+			const char		   c,
+			const ARule *const rule,
+			const ARulePath	  &path,
+			const ARuleMap	  &mapPathCurrent,
+			ARuleMap		  &mapPathNext);
 
 	public:
-		Parser();
 		Parser(const SemanticDescriptor &semantic);
 		~Parser();
 
 		void parse(const std::string &stringToParsed);
-
-
-		// clang-format off
-		Vec< Map<ARulePath, Vec<ARulePath> > > m_indexedPaths;
-
-
-		// clang-format off
-		Map<ARulePath, Vec<ARulePath> > m_originelRules;
-		ARulePath						  *m_currentRule;
-		// clang-format off
-		Vec<ARulePath >		  m_startingPaths;
-
-		Vec<std::string> m_lines;
-		Vec<Vec<ARulePath> > m_rules;
-		// Vec<const ARule const *> validatedRules;
 };
 
 #endif

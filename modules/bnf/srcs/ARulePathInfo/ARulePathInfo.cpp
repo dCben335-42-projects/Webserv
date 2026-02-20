@@ -1,6 +1,6 @@
 #include "ARulePathInfo.hpp"
 
-ARulePathInfo::ARulePathInfo(ARulePath path) : path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
+ARulePathInfo::ARulePathInfo(const ARulePath &path) : path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
 {
 }
 
