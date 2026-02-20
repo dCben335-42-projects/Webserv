@@ -1,10 +1,10 @@
 #include "ConfigParser.hpp"
 
-inline std::vector<std::string> split(const std::string &line)
+inline Vec<std::string> split(const std::string &line)
 {
-	std::vector<std::string> tokens;
-	std::string				 current;
-	bool					 inQuotes = false;
+	Vec<std::string> tokens;
+	std::string		 current;
+	bool			 inQuotes = false;
 
 	for (std::string::size_type i = 0; i < line.size(); ++i)
 	{
@@ -36,7 +36,7 @@ inline std::vector<std::string> split(const std::string &line)
 	return tokens;
 }
 
-std::string joinTokens(const std::vector<std::string> &tokens, size_t start)
+std::string joinTokens(const Vec<std::string> &tokens, size_t start)
 {
 	std::string result;
 	for (size_t i = start; i < tokens.size(); ++i)
@@ -58,11 +58,10 @@ HttpConfig ConfigParser::parse(std::istream &input)
 
 	while (std::getline(input, line))
 	{
-		Logger::log("Parsing line: " + line);
 		if (line.empty())
 			continue;
 
-		std::vector<std::string> tokens = split(line);
+		Vec<std::string> tokens = split(line);
 		if (tokens.empty())
 			continue;
 
@@ -85,7 +84,7 @@ HttpConfig ConfigParser::parse(std::istream &input)
 			context.push("location");
 			currentLocation = LocationConfig();
 			if (tokens.size() > 1)
-				currentLocation.path = tokens[1];
+				currentLocation.getPath() = tokens[1];
 			continue;
 		}
 
@@ -94,11 +93,11 @@ HttpConfig ConfigParser::parse(std::istream &input)
 		{
 			if (context.top() == "location")
 			{
-				currentServer.locations[currentLocation.path] = currentLocation;
+				currentServer.getLocations()[currentLocation.getPath()] = currentLocation;
 			}
 			else if (context.top() == "server")
 			{
-				m_http.servers.push_back(currentServer);
+				m_http.getServers().push_back(currentServer);
 			}
 			context.pop();
 			continue;

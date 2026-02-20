@@ -2,8 +2,8 @@
 #define CONFIG_PARSER_HPP
 
 #include <string>
-#include <map>
-#include <vector>
+#include "Map.hpp"
+#include "Vec.hpp"
 #include <sstream>
 #include <stack>
 #include <fstream>

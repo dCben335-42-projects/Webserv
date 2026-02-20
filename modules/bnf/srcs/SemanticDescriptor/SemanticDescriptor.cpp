@@ -142,12 +142,10 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 	{
 		char c = rule[i];
 
-		/* Gestion du backslash */
 		if (c == '\\' && i + 1 < rule.size())
 		{
 			char next = rule[i + 1];
 
-			/* Séquences échappées */
 			if (next == 'n')
 				current += '\n';
 			else if (next == 't')
@@ -162,16 +160,14 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 				current += next;
 			else
 			{
-				/* backslash inutile → littéral */
 				current += '\\';
 				current += next;
 			}
 
-			++i; /* on consomme le caractère suivant */
+			++i;
 			continue;
 		}
 
-		/* Quotes */
 		if (c == '\'' && !in_double_quote)
 		{
 			in_single_quote = !in_single_quote;
@@ -195,7 +191,6 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 			continue;
 		}
 
-		/* Hors quotes */
 		if (!in_single_quote && !in_double_quote)
 		{
 			if (std::isspace((unsigned char) c))
@@ -240,16 +235,11 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 		return false;
 
 	if (str[0] == '"')
-	{
-		Logger::log(str);
 		throw std::runtime_error("Error: A token cannot begin with double quotes");
-	}
 
 	if (!std::isdigit(str[0]))
 		return false;
 
-
-	// Parse du nombre
 	int value = 0;
 	while (i < str.size() && std::isdigit(str[i]))
 	{
@@ -257,8 +247,6 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 		++i;
 	}
 
-
-	// Vérification du '>'
 	if (i >= str.size() || str[i] != '>')
 	{
 		throw std::runtime_error("Erreur: nombre non suivi de '>'");
@@ -268,9 +256,7 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 		throw std::runtime_error("Error: A token cannot begin with double quotes");
 	}
 
-
-	// Consommation de "Number>"
-	str.erase(0, i + 1); // +1 pour '>'
+	str.erase(0, i + 1);
 
 	*out = value;
 	return true;
@@ -291,10 +277,6 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	cpt->pushDef(conceptDef);
 
 	const Vec<std::string> words = splitwords(m_content.substr(cursor));
-	Logger::log("----------------------------------------------------------------");
-	Logger::log("----------------------------------------------------------------");
-	Logger::log("----------------------------------------------------------------");
-	Logger::debug("Words: " + Logger::get(words));
 
 	std::string word;
 	ARule	   *arule	   = NULL;
@@ -399,9 +381,7 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 			continue;
 		}
 		for (size_t j = 0; j < conceptPaths.size(); ++j)
-		{
-			m_concepts.get(conceptPaths[j])->addTerminalChar(rule); // Peut etre faire en map  (key)char -> (value)set<ARule *>
-		}
+			m_concepts.get(conceptPaths[j])->addTerminalChar(rule);
 	}
 }
 

@@ -27,7 +27,7 @@ int main()
 		Logger::log(config);
 
 		std::cout << "Parsed successfully!" << std::endl;
-		std::cout << "Servers count: " << config.servers.size() << std::endl;
+		std::cout << "Servers count: " << config.getServers().size() << std::endl;
 		// Lexer lexer("config/config_nginx.txt");
 		// lexer.parseConfigFile("config/test.txt");
 

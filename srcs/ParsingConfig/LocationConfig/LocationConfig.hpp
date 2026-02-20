@@ -2,23 +2,41 @@
 #define CONFIG_LOCATION_HPP
 
 #include <string>
-#include <map>
-#include <vector>
-#include <sstream>
-#include <stack>
-#include <fstream>
+#include "Map.hpp"
+#include "Vec.hpp"
 #include <iostream>
-#include <cctype>
-#include "Logger.hpp"
 
 struct LocationConfig
 {
-		std::string path;
+	private:
 		// clang-format off
-		std::map<std::string, std::vector<std::string> > directives;
-		std::map<std::string, std::string>				add_headers;
-		std::map<std::string, std::string>				cgi_pass;
-		std::map<std::string, std::string>				error_pages;
+		typedef Map<Vec<std::string> > Directives;
+		// clang-format on
+
+		std::string		 path;
+		Directives		 directives;
+		Map<std::string> add_headers;
+		Map<std::string> cgi_pass;
+		Map<std::string> error_pages;
+
+	public:
+		// ===== CONSTRUCTOR =====
+		LocationConfig();
+		~LocationConfig();
+
+		// ===== GETTERS =====
+		const std::string	   &getPath() const;
+		std::string			   &getPath();
+		const Directives	   &getDirectives() const;
+		const Map<std::string> &getAddHeaders() const;
+		const Map<std::string> &getCgiPass() const;
+		const Map<std::string> &getErrorPages() const;
+
+		// ===== SETTERS =====
+		void setDirectiveAt(const std::string &key, const Vec<std::string> &value);
+		void setCgiPassAt(const std::string &key, const std::string &value);
+		void setErrorPagesAt(const std::string &key, const std::string &value);
+		void setAddHeadersAt(const std::string &key, const std::string &value);
 };
 
 std::ostream &operator<<(std::ostream &os, const LocationConfig &data);
