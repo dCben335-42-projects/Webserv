@@ -21,14 +21,19 @@ class Client : public Pollable
 		};
 
 	private:
-		const Config  &m_serverConfig;
+		const Config *m_config;
+		bool		  m_isConfigSet;
+
 		VirtualServer &m_server;
-		HttpRequest	   m_req;
-		HttpResponse   m_res;
-		time_t		   m_time;
-		TimeoutState   m_timeoutState;
-		bool		   m_shouldClose;
-		size_t		   m_count;
+
+		HttpRequest	 m_req;
+		HttpResponse m_res;
+
+		time_t		 m_time;
+		TimeoutState m_timeoutState;
+
+		bool   m_shouldClose;
+		size_t m_count;
 
 		static const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> initMethodHandler();
 		static const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> m_methodHandler;
@@ -42,13 +47,15 @@ class Client : public Pollable
 		void serveIndexOf(const std::string &ressourcePath, const std::string &target);
 		bool findIndexFile(std::string &ressourcePath, const std::string &target);
 
+		void serveReturn();
+
 		void handleGet(const std::string &ressourcePath);
 		void handlePost(const std::string &ressourcePath);
 		void handleDelete(const std::string &ressourcePath);
 		void handlePutPatch(const std::string &ressourcePath);
 
-
-		bool prepareResponse();
+		bool		  prepareResponse();
+		const Config *findHostConfig() const;
 
 	public:
 		Client(int fd, const Config &config, VirtualServer &server);

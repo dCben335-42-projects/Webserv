@@ -7,7 +7,6 @@ int main()
 {
 	try
 	{
-		Logger::log("Starting web server...").openFile("logs/server.log", Logger::Append);
 		EventLoop::init();
 		EventLoop::run();
 		return 0;

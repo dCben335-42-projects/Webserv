@@ -52,7 +52,7 @@ std::string Date::toHumanFormat(const tm *timeInfo)
 	return std::string(buf);
 }
 
-double Date::getDiffTime(time_t &first, time_t &second)
+double Date::getDiffTime(const time_t &first, const time_t &second)
 {
 	return std::difftime(first, second);
 }

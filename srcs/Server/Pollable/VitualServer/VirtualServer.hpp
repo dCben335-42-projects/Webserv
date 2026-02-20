@@ -65,7 +65,10 @@ class VirtualServer : public Pollable
 
 
 	private:
-		const Config  &m_config;
+		const Config &m_config;
+
+		const Vec<const Config *> configs;
+
 		bool		   m_isIPv6;
 		std::string	   m_bindIp;
 		unsigned short m_bindPort;
@@ -93,6 +96,8 @@ class VirtualServer : public Pollable
 		const Config  &getConfig() const;
 		std::string	   getBindIp() const;
 		unsigned short getBindPort() const;
+
+		const Vec<const Config *> &getConfigs() const;
 
 		void onPollIn();
 		void onPollOut();

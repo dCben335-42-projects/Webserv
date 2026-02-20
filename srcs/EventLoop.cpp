@@ -38,9 +38,6 @@ void EventLoop::init()
 	uploadLocation->setAutoIndex(true);
 	uploadLocation->setUpload("files/www/uploads");
 	uploadLocation->setAlias("files/www/uploads");
-	Set<HttpMethod> uploadMethods;
-	uploadMethods.insert(HttpMethod::GET);
-	uploadLocation->setMethods(uploadMethods);
 
 	Map<const Config::Location *> locations;
 	locations.set("/", slashLoc);

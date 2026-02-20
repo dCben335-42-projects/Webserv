@@ -15,6 +15,14 @@ HttpRequest::HttpRequest() :
 }
 
 
+/**
+ *
+ * @brief Resets the HttpRequest object to its initial state,
+ * clearing all stored data and resetting member variables.
+ *
+ * @return A reference to the current HttpRequest object.
+ *
+ */
 HttpRequest &HttpRequest::reset()
 {
 	m_queryString.clear();
@@ -31,6 +39,7 @@ HttpRequest &HttpRequest::reset()
 	m_headersEndPos		  = 0;
 	m_totalLen			  = 0;
 	m_isFirstLineParsed	  = false;
+	m_host				  = std::make_pair(false, std::string());
 	return *this;
 }
 
@@ -203,14 +212,14 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 		AHttpInboundMessage::parse(m_rawStr, pos);
 
 		if (!hasHeader(HEADER_HOST))
-			throw std::invalid_argument("Missing Host Header Field");
+			throw std::invalid_argument(REQ_MISSING_HOST_MSG);
 		parseActiveLocations(serverConfig);
 		parseAccepts(getHeader(HEADER_ACCEPT));
 		if (hasHeader(HEADER_CONTENT_LENGTH))
 		{
 			const size_t contentLength = readContentLength(m_rawStr);
 			if (contentLength != m_body.size())
-				throw std::invalid_argument("Content-Length header value does not match the actual body size");
+				throw std::invalid_argument(REQ_CONTENT_LENGTH_MISMATCH_MSG);
 		}
 		std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
@@ -337,6 +346,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 
 
 
+
 /**
  *
  * @brief Parses the first line of the raw HTTP request string,
@@ -364,7 +374,7 @@ size_t HttpRequest::parseFirstLine()
 	{
 		std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
 		if (path.empty() || path[0] != '/')
-			throw std::invalid_argument("Invalid Request Target: " + path);
+			throw std::invalid_argument(REQ_INVALID_TARGET_MSG + path);
 		parseTargetQuery(path);
 	}
 
@@ -373,7 +383,7 @@ size_t HttpRequest::parseFirstLine()
 	{
 		const std::string httpVersion = requestLine.substr(versionPos + 1);
 		if (httpVersion != PROTOCOL)
-			throw std::invalid_argument("Unsupported HTTP Version: " + httpVersion);
+			throw std::invalid_argument(REQ_UNSUPPORTED_METHOD_MSG + httpVersion);
 	}
 	return lineEnd;
 }
@@ -399,10 +409,10 @@ size_t HttpRequest::readContentLength(const std::string &headers) const
 	const size_t len   = headers.size();
 	size_t		 clPos = String::findIC(headers, toFind);
 	if (clPos == std::string::npos)
-		throw Http400Exception("Missing Content-Length Header");
+		throw Http400Exception(REQ_MISSING_CONTENT_LENGTH_MSG);
 	clPos += std::strlen(toFind);
 	if (headers[clPos] != ':')
-		throw Http400Exception("Expected ':' after Content-Length header");
+		throw Http400Exception(REQ_EXPECTED_HEADER_COLON_MSG);
 	++clPos;
 	while (clPos < len && std::isspace(static_cast<unsigned char>(headers[clPos])))
 		++clPos;
@@ -411,7 +421,7 @@ size_t HttpRequest::readContentLength(const std::string &headers) const
 		++endPos;
 
 	if (endPos <= clPos)
-		throw Http400Exception("Invalid Content-Length value: No digits found");
+		throw Http400Exception(REQ_INVALID_CONTENT_LENGTH_MSG);
 	return Number::toSizeT(headers.substr(clPos, endPos - clPos));
 }
 
@@ -437,6 +447,35 @@ std::string HttpRequest::readMethodString(const std::string &currentRawStr) cons
 	if (methodEnd != std::string::npos)
 		return requestLine.substr(0, methodEnd);
 	return "";
+}
+
+
+/**
+ *
+ * @brief Reads the Host header value from the raw HTTP request string.
+ *
+ * @param currentHeader The raw HTTP header string.
+ *
+ * @return A string representing the Host header value, or an empty string if not found.
+ *
+ */
+std::string HttpRequest::readHost(const std::string &currentHeader) const
+{
+	const char *toFind = HEADER_LINE_ENDING HEADER_HOST;
+
+	size_t hostPos = String::findIC(currentHeader, toFind);
+	if (hostPos == std::string::npos)
+		return "";
+	const size_t endPos = currentHeader.find(HEADER_LINE_ENDING, hostPos + std::strlen(toFind));
+	if (endPos == std::string::npos)
+		return "";
+	hostPos += std::strlen(toFind);
+	if (currentHeader[hostPos] != ':')
+		throw Http400Exception(REQ_EXPECTED_HEADER_COLON_MSG);
+	++hostPos;
+	while (hostPos < endPos && std::isspace(static_cast<unsigned char>(currentHeader[hostPos])))
+		++hostPos;
+	return currentHeader.substr(hostPos, endPos - hostPos);
 }
 
 
@@ -651,7 +690,133 @@ const Set<HttpMethod> *HttpRequest::getAllowedMethods() const
 	return NULL;
 }
 
+/**
+ *
+ * @brief Checks if the Host header is present in the request.
+ *
+ * @return true if the Host header is present, false otherwise.
+ *
+ */
+bool HttpRequest::hasHost() const
+{
+	return m_host.first;
+}
 
+/**
+ *
+ * @brief Retrieves the value of the Host header from the request.
+ *
+ * @return A string representing the Host header value.
+ *
+ */
+const std::string &HttpRequest::getHost() const
+{
+	return m_host.second;
+}
+
+/**
+ *
+ * @brief Checks if the size of the raw request string exceeds the specified maximum headers size.
+ *
+ * @param maxHeadersSize The maximum allowed size for the request headers in bytes.
+ *
+ * @throws Http413Exception if the size of the raw request string exceeds the specified maximum headers size.
+ *
+ *
+ */
+void HttpRequest::checkHeadersSize(const size_t maxHeadersSize) const
+{
+	if (m_rawStr.size() > maxHeadersSize)
+	{
+		if (hasCompleteHeader())
+			throw Http413Exception(REQ_SERVER_MAX_HEADERS_REACHED_MSG + Number::toString(maxHeadersSize) + " bytes");
+		throw Http413Exception(REQ_DEFAULT_MAX_HEADERS_REACHED_MSG + Number::toString(maxHeadersSize) + " bytes");
+	}
+}
+
+
+
+/**
+ *
+ * @brief Checks if the HTTP request headers are complete by looking for the end of headers sequence.
+ *
+ * @param maxHeadersSize The maximum allowed size for the request headers in bytes.
+ *
+ * @note Updates m_isFirstLineParsed member.
+ * @note Updates m_firstLineEndPos member.
+ * @note Updates m_headersEndPos member.
+ *
+ * @throws Http400Exception if the request line is malformed or if the Host header is missing when headers are complete.
+ *
+ * @return true if the headers are complete, false otherwise.
+ *
+ */
+bool HttpRequest::isCompleteHeader(const size_t maxHeadersSize)
+{
+	if (!m_isFirstLineParsed)
+	{
+		if (m_rawStr.find(HEADER_LINE_ENDING) == std::string::npos)
+		{
+			checkHeadersSize(maxHeadersSize);
+			return false;
+		}
+		try
+		{
+			m_firstLineEndPos	= parseFirstLine();
+			m_isFirstLineParsed = true;
+		}
+		catch (const std::invalid_argument &e)
+		{
+			throw Http400Exception(e.what());
+		}
+	}
+	const size_t headersEnd = m_rawStr.find(HEADER_ENDING);
+	if (!m_host.first)
+	{
+		const std::string host = readHost(m_rawStr);
+		if (host.empty())
+		{
+			if (headersEnd != std::string::npos)
+				throw Http400Exception(REQ_MISSING_HOST_MSG);
+			return false;
+		}
+		m_host = std::make_pair(true, host);
+	}
+	if (headersEnd == std::string::npos)
+	{
+		checkHeadersSize(maxHeadersSize);
+		return false;
+	}
+	m_headersEndPos = headersEnd;
+	return true;
+}
+
+
+
+/**
+ *
+ * @brief Checks if the HTTP request body is complete based on the Content-Length header.
+ *
+ * @param maxBodySize The maximum allowed size for the request body in bytes.
+ *
+ * @throws Http413Exception if the Content-Length exceeds the specified maximum body size.
+ *
+ * @return true if the request body is complete, false otherwise.
+ *
+ */
+bool HttpRequest::isCompleteBody(const size_t maxBodySize)
+{
+	const HttpMethod::Type methodType = m_method.getType();
+	if (methodType != HttpMethod::POST &&
+		methodType != HttpMethod::PUT &&
+		methodType != HttpMethod::PATCH)
+		return true;
+	const size_t contentLength = readContentLength(m_rawStr);
+	if (contentLength > maxBodySize)
+		throw Http413Exception(REQ_MAX_BODY_REACHED_MSG + Number::toString(maxBodySize) + " bytes");
+	m_totalLen = m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
+	return m_rawStr.size() >= m_totalLen;
+}
 
 
 
@@ -675,38 +840,10 @@ bool HttpRequest::isComplete(const size_t maxBodySize, const size_t maxHeadersSi
 {
 	if (m_totalLen)
 		return m_rawStr.size() >= m_totalLen;
-	if (!m_isFirstLineParsed)
-	{
-		size_t headersEnd = m_rawStr.find(HEADER_ENDING);
-		if (headersEnd == std::string::npos)
-		{
-			if (m_rawStr.size() > maxHeadersSize)
-				throw Http413Exception("The request headers size exceeds the server's configured maximum of " + Number::toString(maxHeadersSize) + " bytes");
-			return false;
-		}
-		m_headersEndPos = headersEnd;
-		if (m_headersEndPos > maxHeadersSize)
-			throw Http413Exception("The request headers size exceeds the server's configured maximum of " + Number::toString(maxHeadersSize) + " bytes");
-		try
-		{
-			m_firstLineEndPos = parseFirstLine();
-		}
-		catch (const std::invalid_argument &e)
-		{
-			throw Http400Exception(e.what());
-		}
-		m_isFirstLineParsed = true;
-	}
-	const HttpMethod::Type methodType = m_method.getType();
-	if (methodType != HttpMethod::POST &&
-		methodType != HttpMethod::PUT &&
-		methodType != HttpMethod::PATCH)
-		return true;
-	const size_t contentLength = readContentLength(m_rawStr);
-	if (contentLength > maxBodySize)
-		throw Http413Exception("The request body size exceeds the server's configured maximum of " + Number::toString(maxBodySize) + " bytes");
-	m_totalLen = m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
-	return m_rawStr.size() >= m_totalLen;
+	if (!isCompleteHeader(maxHeadersSize))
+		return false;
+	checkHeadersSize(maxHeadersSize);
+	return isCompleteBody(maxBodySize);
 }
 
 
@@ -717,7 +854,7 @@ bool HttpRequest::isComplete(const size_t maxBodySize, const size_t maxHeadersSi
  * @return true if the headers are complete, false otherwise.
  *
  */
-bool HttpRequest::isHeadersEndPos() const
+bool HttpRequest::hasCompleteHeader() const
 {
 	return m_headersEndPos != 0;
 }

@@ -6,6 +6,18 @@
 #include "Location.hpp"
 #include "Accept.hpp"
 
+#define REQ_MISSING_HOST_MSG "Missing Host Header Field"
+#define REQ_INVALID_CONTENT_LENGTH_MSG "Invalid Content-Length value: No digits found"
+#define REQ_CONTENT_LENGTH_MISMATCH_MSG "Content-Length header value does not match the actual body size"
+#define REQ_UNSUPPORTED_METHOD_MSG "Unsupported HTTP Version: "
+#define REQ_INVALID_TARGET_MSG "Invalid Request Target: "
+#define REQ_MISSING_CONTENT_LENGTH_MSG "Missing Content-Length Header"
+#define REQ_EXPECTED_HEADER_COLON_MSG "Expected ':' after header designation"
+
+#define REQ_SERVER_MAX_HEADERS_REACHED_MSG "The request headers size exceeds the server's configured maximum of "
+#define REQ_DEFAULT_MAX_HEADERS_REACHED_MSG "The request headers size exceeds the default maximum of "
+#define REQ_MAX_BODY_REACHED_MSG "The request body size exceeds the server's configured maximum of "
+
 class HttpRequest : public AHttpInboundMessage
 {
 	private:
@@ -21,6 +33,9 @@ class HttpRequest : public AHttpInboundMessage
 		size_t m_totalLen;
 		bool   m_isFirstLineParsed;
 
+		std::pair<bool, std::string> m_host;
+
+
 		size_t parseFirstLine();
 		void   parseTargetQuery(const std::string &path);
 		void   parseActiveLocations(const Config &config);
@@ -29,7 +44,12 @@ class HttpRequest : public AHttpInboundMessage
 
 		size_t		 readContentLength(const std::string &headers) const;
 		std::string	 readMethodString(const std::string &currentRawStr) const;
+		std::string	 readHost(const std::string &headers) const;
 		HttpRequest &parseCookie();
+
+		void checkHeadersSize(const size_t maxHeadersSize) const;
+		bool isCompleteHeader(const size_t maxHeadersSize);
+		bool isCompleteBody(const size_t maxBodySize);
 
 		typedef Vec<const Config::Location *>::const_iterator m_locCIt;
 
@@ -44,8 +64,8 @@ class HttpRequest : public AHttpInboundMessage
 		bool								 getActiveAutoIndex() const;
 		bool								 getConnectionKeepAlive() const;
 		const Set<HttpMethod>				*getAllowedMethods() const;
-
-		bool isHeadersEndPos() const;
+		bool								 hasHost() const;
+		const std::string					&getHost() const;
 
 		bool		hasUpload() const;
 		std::string getUploadPath() const;
@@ -66,6 +86,7 @@ class HttpRequest : public AHttpInboundMessage
 		bool		matchAccept(const std::string &contentType) const;
 
 		bool isComplete(const size_t maxBodySize, const size_t maxHeadersSize);
+		bool hasCompleteHeader() const;
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

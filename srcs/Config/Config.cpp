@@ -6,20 +6,20 @@
 Config::Config(
 	const std::string			&ip,
 	unsigned short				 port,
-	const std::string			&domain,
+	const std::string			&serverName,
 	Location					*defaultLoc,
 	const Map<const Location *> &locs) :
 	m_ip(ip),
 	m_port(port),
-	m_domain(domain),
 	m_defaultLocation(defaultLoc),
 	m_locations(locs)
 {
 	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
-	m_maxBodySize	   = MAX_BODY_SIZE;
-	m_maxHeadersSize   = MAX_HEADERS_SIZE;
+	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
+	m_maxHeadersSize   = FALLBACK_MAX_HEADERS_SIZE;
+	m_serverName	   = std::make_pair(serverName != "", serverName);
 }
 
 Config::~Config()
@@ -53,18 +53,6 @@ unsigned short Config::getPort() const
 {
 	return m_port;
 }
-/**
- *
- * @brief Gets the domain name of the virtual server.
- *
- * @return The domain name as a constant reference to a string.
- *
- */
-const std::string &Config::getDomain() const
-{
-	return m_domain;
-}
-
 
 
 
@@ -89,17 +77,6 @@ void Config::setIp(const std::string &ip)
 void Config::setPort(unsigned short port)
 {
 	m_port = port;
-}
-/**
- *
- * @brief Sets the domain name of the virtual server.
- *
- * @param domain The domain name to be set.
- *
- */
-void Config::setDomain(const std::string &domain)
-{
-	m_domain = domain;
 }
 
 /**
@@ -260,6 +237,46 @@ size_t Config::getMaxHeadersSize() const
 	return m_maxHeadersSize;
 }
 
+
+/**
+ *
+ * @brief Sets the server name for the virtual server.
+ *
+ * @param serverName The server name to be set.
+ *
+ */
+void Config::setServerName(const std::string &serverName)
+{
+	m_serverName.first	= true;
+	m_serverName.second = serverName;
+}
+
+
+/**
+ *
+ * @brief Checks if the virtual server has a server name configured.
+ *
+ * @return true if the server name is configured, false otherwise.
+ *
+ */
+bool Config::hasServerName() const
+{
+	return m_serverName.first;
+}
+
+
+/**
+ *
+ * @brief Gets the server name for the virtual server.
+ *
+ * @return The server name as a constant reference to a string.
+ *
+ */
+const std::string &Config::getServerName() const
+{
+	return m_serverName.second;
+}
+
 /**
  *
  * @brief Gets the default Location object for the virtual server.
@@ -293,7 +310,7 @@ std::ostream &operator<<(std::ostream &os, const Config &config)
 {
 	os << "Config(ip=" << config.getIp()
 	   << ", port=" << config.getPort()
-	   << ", domain=" << config.getDomain()
+	   << ", serverName=" << config.getServerName()
 	   << ", defaultLocation=" << LoggerJson::get(config.getDefaultLocation())
 	   << ")";
 	return os;

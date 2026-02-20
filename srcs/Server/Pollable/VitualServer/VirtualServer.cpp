@@ -73,6 +73,19 @@ const Config &VirtualServer::getConfig() const
 
 /**
  *
+ * @brief Gets the list of configurations associated with the virtual server.
+ *
+ * @return A constant reference to a vector of pointers to Config objects.
+ *
+ */
+const Vec<const Config *> &VirtualServer::getConfigs() const
+{
+	return configs;
+}
+
+
+/**
+ *
  * @brief Converts an IPv6 address from string format to a struct in6_addr.
  *
  * @param ip The IPv6 address as a string (e.g., "2001:0db8:85a3:0000:0000:8a2e:0370:7334").
@@ -414,7 +427,7 @@ const std::string VirtualServer::createCookie(const std::string name, const std:
 		if (name == it->getName())
 			throw Http409Exception();
 	}
-	HttpUser newUser(name, pswd, m_config.getDomain(), m_config.getPort());
+	HttpUser newUser(name, pswd, m_config.getServerName(), m_config.getPort());
 	newUser.stringifyCookie();
 	m_users.push(newUser);
 	return newUser.getStringifiedCookie();

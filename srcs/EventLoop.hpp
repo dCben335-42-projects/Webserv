@@ -16,16 +16,15 @@ class EventLoop
 		static void		 deletePollable(const int fd, const size_t &index);
 		static Pollable *getHandler(const int fd);
 
-	public:
-		static const size_t maxFds = 4096;
+		static void updatePollStatus();
 
+
+	public:
 		static void init();
 		static void run();
 		static void destroy();
 
-		static void addHandler(Pollable *const handler);
-		static void updatePollStatus();
-
+		static void	  addHandler(Pollable *const handler);
 		static size_t getNfds();
 };
 

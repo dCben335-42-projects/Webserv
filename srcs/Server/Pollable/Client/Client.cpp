@@ -15,7 +15,7 @@
 
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
-	m_serverConfig(config),
+	m_config(&config),
 	m_server(server)
 {
 	m_count = 0;
@@ -29,9 +29,20 @@ Client::~Client()
 		close(m_fd);
 }
 
+
 const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> Client::m_methodHandler =
 	Client::initMethodHandler();
 
+/**
+ *
+ * @brief Initializes the method handler map.
+ *
+ * This function creates a mapping between HTTP methods and their corresponding handler functions in the Client class.
+ * It associates each HTTP method (e.g., GET, POST, DELETE, PUT, PATCH) with the appropriate member function that handles requests of that method type.
+ *
+ * @return A map where the keys are HTTP methods and the values are pointers to member functions of the Client class that handle those methods.
+ *
+ */
 const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> Client::initMethodHandler()
 {
 	Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> methodHandler;
@@ -45,6 +56,16 @@ const Map<HttpMethod, void (Client::*)(const std::string &ressourcePath)> Client
 
 const Set<HttpMethod> Client::handledMethods = Client::initHandledMethods();
 
+/**
+ *
+ * @brief Initializes the set of handled HTTP methods.
+ *
+ * This function iterates through the method handler map
+ * and collects the HTTP methods that have associated handlers.
+ *
+ * @return A set of HTTP methods that the client can handle.
+ *
+ */
 const Set<HttpMethod> Client::initHandledMethods()
 {
 	Set<HttpMethod> handledMethods;
@@ -297,9 +318,9 @@ void Client::serveIndexOf(const std::string &ressourcePath, const std::string &t
  */
 bool Client::findIndexFile(std::string &ressourcePath, const std::string &target)
 {
-	if (m_serverConfig.hasIndexFiles(target))
+	if (m_config->hasIndexFiles(target))
 	{
-		const Vec<std::string> indexFiles = m_serverConfig.getIndexFiles(target);
+		const Vec<std::string> indexFiles = m_config->getIndexFiles(target);
 		for (size_t i = 0; i < indexFiles.size(); ++i)
 		{
 			const std::string indexPath = String::removeDuplicateSlashes(ressourcePath + "/" + indexFiles[i]);
@@ -382,6 +403,22 @@ void Client::handleGet(const std::string &ressourcePath)
 	}
 }
 
+
+void Client::serveReturn()
+{
+	const LocationReturn &locReturn	 = m_req.getReturn();
+	const unsigned short  statusCode = locReturn.getStatusCode();
+	m_res.setStatusCode(statusCode);
+	if (m_req.isRedirectionStatus(statusCode))
+		m_res.setHeader(HEADER_LOCATION, locReturn.getTarget());
+	else
+	{
+		m_res.setBody(locReturn.getTarget());
+		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
+	}
+}
+
+
 /**
  *
  * @brief Prepares the HTTP response based on the client's request.
@@ -400,22 +437,12 @@ void Client::handleGet(const std::string &ressourcePath)
  */
 bool Client::prepareResponse()
 {
-	CgiSpawner cgiHandler(m_req, m_serverConfig);
-
 	if (m_req.hasReturn())
 	{
-		const LocationReturn &locReturn	 = m_req.getReturn();
-		const unsigned short  statusCode = locReturn.getStatusCode();
-		m_res.setStatusCode(statusCode);
-		if (m_req.isRedirectionStatus(statusCode))
-			m_res.setHeader(HEADER_LOCATION, locReturn.getTarget());
-		else
-		{
-			m_res.setBody(locReturn.getTarget());
-			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
-		}
+		serveReturn();
 		return true;
 	}
+	CgiSpawner cgiHandler(m_req, *m_config);
 	if (!m_req.isAllowedMethod())
 		throw Http403Exception();
 	if (cgiHandler.isCgi())
@@ -424,14 +451,39 @@ bool Client::prepareResponse()
 		m_events = 0;
 		return false;
 	}
-	const size_t	  segmentSize	= m_req.getSegmentSize();
-	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
-	const HttpMethod &method		= m_req.getMethod();
-
+	const HttpMethod &method = m_req.getMethod();
 	if (!Client::m_methodHandler.has(method))
 		throw Http405Exception(method.getStrType());
+
+	const size_t	  segmentSize	= m_req.getSegmentSize();
+	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
 	(this->*Client::m_methodHandler.get(method))(ressourcePath);
 	return true;
+}
+
+
+/**
+ *
+ * @brief Finds the appropriate server configuration based on the client's request.
+ *
+ * This function checks the Host header in the client's request and compares it with the server configurations available in the VirtualServer.
+ * If a matching server name is found, it returns that configuration. Otherwise, it returns the default configuration (the first one in the list).
+ *
+ * @return A pointer to the Config object that matches the client's request, or the default configuration if no match is found.
+ *
+ */
+const Config *Client::findHostConfig() const
+{
+	const std::string		  &host	 = m_req.getHost();
+	const Vec<const Config *> &confs = m_server.getConfigs();
+
+	for (Vec<const Config *>::const_iterator it = confs.begin(); it != confs.end(); ++it)
+	{
+		const Config &config = *(*it);
+		if (config.hasServerName() && config.getServerName() == host)
+			return &config;
+	}
+	return confs.at(0);
 }
 
 
@@ -510,17 +562,20 @@ void Client::onPollIn()
 	if (bytesRead == 0)
 		return onPollHangUp();
 	m_time						= std::time(0);
-	const size_t maxBodySize	= m_serverConfig.getMaxBodySize();
-	const size_t maxHeadersSize = m_serverConfig.getMaxHeadersSize();
+	const size_t maxBodySize	= m_config->getMaxBodySize();
+	const size_t maxHeadersSize = m_config->getMaxHeadersSize();
 	try
 	{
-		if (!m_req.isComplete(maxBodySize, maxHeadersSize))
+		const bool hasCompleteRequest = m_req.isComplete(maxBodySize, maxHeadersSize);
+		if (m_req.hasHost())
+			m_config = findHostConfig();
+		if (!hasCompleteRequest)
 		{
-			m_timeoutState = m_req.isHeadersEndPos() ? BODY_TIMEOUT : HEADER_TIMEOUT;
+			m_timeoutState = m_req.hasCompleteHeader() ? BODY_TIMEOUT : HEADER_TIMEOUT;
 			return;
 		}
 		m_timeoutState = KEEP_ALIVE_TIMEOUT;
-		m_req.parse(m_serverConfig);
+		m_req.parse(*m_config);
 		if (!prepareResponse())
 			return;
 	}
@@ -528,7 +583,7 @@ void Client::onPollIn()
 	{
 		onHttpException(e);
 	}
-	m_res.fill(!m_req.getConnectionKeepAlive(), m_serverConfig.getKeepAliveTimeout()).build();
+	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
 	determineKeepAlive(m_res.getStatusCode());
 	m_events = POLLOUT;
 }
@@ -635,14 +690,26 @@ bool Client::isTimedOut(const time_t currentTime) const
 	time_t timeoutTime = m_time;
 
 	if (m_timeoutState == KEEP_ALIVE_TIMEOUT)
-		timeoutTime += m_serverConfig.getKeepAliveTimeout();
+		timeoutTime += m_config->getKeepAliveTimeout();
 	if (m_timeoutState == HEADER_TIMEOUT)
-		timeoutTime += m_serverConfig.getHeaderTimeout();
+		timeoutTime += m_config->getHeaderTimeout();
 	if (m_timeoutState == BODY_TIMEOUT)
-		timeoutTime += m_serverConfig.getBodyTimeout();
-	return currentTime > timeoutTime;
+		timeoutTime += m_config->getBodyTimeout();
+	return Date::getDiffTime(timeoutTime, currentTime) < 0;
 }
 
+
+/**
+ *
+ * @brief Handles the timeout event for the client connection.
+ *
+ * This function is called when the client's connection has timed out based on the current timeout state.
+ * If the timeout occurred during the header or body reception, it prepares a 408 Request Timeout response.
+ * If the timeout occurred during the keep-alive state, it simply closes the connection.
+ *
+ * @note This function is called when a timeout is detected for the client connection.
+ *
+ */
 void Client::onTimeOut()
 {
 	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)

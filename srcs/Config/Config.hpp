@@ -13,7 +13,8 @@ class Config
 	private:
 		std::string	   m_ip;
 		unsigned short m_port;
-		std::string	   m_domain;
+
+		std::pair<bool, std::string> m_serverName;
 
 		Location			 *m_defaultLocation;
 		Map<const Location *> m_locations;
@@ -28,7 +29,7 @@ class Config
 	public:
 		Config(const std::string		   &ip,
 			   unsigned short				port,
-			   const std::string		   &domain,
+			   const std::string		   &serverName,
 			   Location					   *defaultLoc,
 			   const Map<const Location *> &locs);
 
@@ -37,18 +38,20 @@ class Config
 
 		void setIp(const std::string &ip);
 		void setPort(unsigned short port);
-		void setDomain(const std::string &domain);
 		void setKeepAliveTimeout(const time_t timeout);
 		void setHeaderTimeout(const time_t timeout);
 		void setBodyTimeout(const time_t timeout);
 		void setMaxBodySize(const size_t maxBodySize);
 		void setMaxHeadersSize(const size_t maxHeadersSize);
+		void setServerName(const std::string &serverName);
 
 		const std::string			&getIp() const;
 		unsigned short				 getPort() const;
-		const std::string			&getDomain() const;
 		const Location				*getDefaultLocation() const;
 		const Map<const Location *> &getLocations() const;
+
+		bool			   hasServerName() const;
+		const std::string &getServerName() const;
 
 		time_t getKeepAliveTimeout() const;
 		time_t getHeaderTimeout() const;
