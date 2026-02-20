@@ -42,4 +42,12 @@
 #define COOKIE_VALUE_SEP "="
 
 #define FORM_FIELD_SEP "&"
+
+#define REGISTER_SUCCESS_MSG "Register Successful"
+#define EDIT_SUCCESS_MSG "Filed edited successfully"
+#define DELETE_SUCCESS_MSG "File deleted successfully"
+#define LOGIN_SUCCESS_MSG "Login Successful"
+#define UPLOAD_SUCCESS_MSG "File uploaded successfully"
+#define INVALID_UPLOAD_DATA_MSG "Invalid file upload data"
+
 #endif

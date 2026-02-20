@@ -106,8 +106,8 @@ const std::string HttpAuth::m_templatePage =
 	"            })\n"
 	"			const registerForm = document.querySelector(\" .rform \")\n"
 	"			const loginForm = document.querySelector(\" .lform \")\n"
-	"			registerForm.addEventListener(\"submit\", (e) => handleSubmit(e, registerForm, \"" AUTH_TEMPLATE_AUTHLOC AUTH_REGISTER_LOC "\"));\n"
-	"			loginForm.addEventListener(\"submit\", (e) => handleSubmit(e, loginForm, \"" AUTH_TEMPLATE_AUTHLOC AUTH_LOGIN_LOC "\"))\n"
+	"			registerForm.addEventListener(\"submit\", (e) => handleSubmit(e, registerForm, \"" AUTH_TEMPLATE_AUTHLOC "/" AUTH_REGISTER_LOC "\"));\n"
+	"			loginForm.addEventListener(\"submit\", (e) => handleSubmit(e, loginForm, \"" AUTH_TEMPLATE_AUTHLOC "/" AUTH_LOGIN_LOC "\"))\n"
 	"			function handleSubmit(e,form,url) {\n"
 	"				e.preventDefault()\n"
 	"				const bodyData = new URLSearchParams(new FormData(form))\n"
@@ -129,7 +129,7 @@ const std::string HttpAuth::m_templatePage =
 	"<body>\n"
 	"    <section class=\"container\">\n"
 	"        <h1>Register Form</h1>\n"
-	"        <form class=\"rform\" method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC AUTH_REGISTER_LOC "\">\n"
+	"        <form class=\"rform\" method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC "/" AUTH_REGISTER_LOC "\">\n"
 	"            <div class=\"fields\">\n"
 	"                <div class=\"field\">\n"
 	"                    <label>\n"
@@ -166,7 +166,7 @@ const std::string HttpAuth::m_templatePage =
 	"    </section>\n"
 	"    <section class=\"container\">\n"
 	"        <h1>Login Form</h1>\n"
-	"        <form class=\"lform\" method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC AUTH_LOGIN_LOC "\">\n"
+	"        <form class=\"lform\" method=\"post\" action=\"" AUTH_TEMPLATE_AUTHLOC "/" AUTH_LOGIN_LOC "\">\n"
 	"            <div class=\"fields\">\n"
 	"                <div class=\"field\">\n"
 	"                    <label>\n"
@@ -225,8 +225,8 @@ void HttpAuth::parse(const std::string &body, AuthMode mode)
 		if (fieldSplit.size() != 2)
 		{
 			if (fieldSplit.size() == 0)
-				throw Http400Exception("Invalid field");
-			throw Http301Exception(m_authLoc + "?" + fieldSplit[0] + "=" + "Field should contain at least 1 character");
+				throw Http400Exception(AUTH_INVALID_FIELD);
+			throw Http301Exception(m_authLoc + "?" + fieldSplit[0] + "=" + AUTH_NEED_ONE_CHARACTER);
 		}
 		m_urlEncoded.set(fieldSplit[0], String::urlDecode(fieldSplit[1]));
 	}
@@ -236,7 +236,7 @@ void HttpAuth::parse(const std::string &body, AuthMode mode)
 		checkField(AUTH_REGISTER_PSWD_KEY);
 		checkField(AUTH_REGISTER_CONFIRM_KEY);
 		if (m_urlEncoded.get(AUTH_REGISTER_PSWD_KEY) != m_urlEncoded.get(AUTH_REGISTER_CONFIRM_KEY))
-			throw Http301Exception(m_authLoc + "?" + AUTH_REGISTER_CONFIRM_KEY + "=" + "Passwords must match");
+			throw Http301Exception(m_authLoc + "?" + AUTH_REGISTER_CONFIRM_KEY + "=" + AUTH_NEED_MATCH_PSWDS);
 	}
 	else
 	{
@@ -250,7 +250,7 @@ void HttpAuth::checkField(const std::string field)
 	if (!m_urlEncoded.has(field))
 		throw Http400Exception();
 	if (m_urlEncoded.get(field).empty())
-		throw Http301Exception(m_authLoc + "?" + field + "=" + "Field should containt at least 1 character");
+		throw Http301Exception(m_authLoc + "?" + field + "=" + AUTH_NEED_ONE_CHARACTER);
 }
 
 const Map<std::string> &HttpAuth::getUrlEncoded() const

@@ -12,8 +12,13 @@
 
 #define AUTH_TEMPLATE_AUTHLOC "{{ AUTH_LOC }}"
 
-#define AUTH_REGISTER_LOC "/register"
-#define AUTH_LOGIN_LOC "/login"
+#define AUTH_REGISTER_LOC "register"
+#define AUTH_LOGIN_LOC "login"
+
+#define AUTH_INVALID_CREDENTIALS "Invalid Credentials"
+#define AUTH_INVALID_FIELD "Invalid field"
+#define AUTH_NEED_ONE_CHARACTER "Field should contain at least 1 character"
+#define AUTH_NEED_MATCH_PSWDS "Passwords must match"
 
 class HttpAuth
 {

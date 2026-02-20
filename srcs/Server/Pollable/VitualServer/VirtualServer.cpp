@@ -444,5 +444,5 @@ const std::string &VirtualServer::findUser(const std::string &name, const std::s
 			return it->getStringifiedCookie();
 		}
 	}
-	throw Http301Exception(authLoc + "?" + AUTH_LOGIN_PSWD_KEY + "=" + "Invalid Credentials");
+	throw Http301Exception(authLoc + "?" + AUTH_LOGIN_PSWD_KEY + "=" + AUTH_INVALID_CREDENTIALS);
 }

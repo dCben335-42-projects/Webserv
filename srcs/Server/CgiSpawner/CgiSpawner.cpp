@@ -119,7 +119,6 @@ void CgiSpawner::childprocess()
 	close(m_stdoutPipe[0]);
 	close(m_stdoutPipe[1]);
 	execve(argv[0], argv, m_envp.data());
-	perror("execve");
 	EventLoop::destroy();
 	(*this).~CgiSpawner();
 	exit(1);
