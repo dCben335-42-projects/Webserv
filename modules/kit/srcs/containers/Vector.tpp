@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <algorithm>
 
 template <typename V>
 class VecImpl
@@ -24,7 +25,7 @@ class VecBase
 		 * @return true if the index exists in the vector, false otherwise.
 		 *
 		 */
-		bool has(size_t index) const
+		bool has(const size_t index) const
 		{
 			return index < static_cast<const Derived &>(*this).size();
 		}
@@ -72,10 +73,12 @@ class VecBase
 		 * @return The value at the given index.
 		 *
 		 */
-		const V &get(size_t index) const
+		const V &get(const size_t index) const
 		{
 			return static_cast<const Derived &>(*this)[index];
 		}
+
+
 
 		/**
 		 *
@@ -85,12 +88,19 @@ class VecBase
 		 * @param value The value to be set at the given index.
 		 *
 		 */
-		void set(size_t index, const V &value)
+		void set(const size_t index, const V &value)
 		{
 			static_cast<Derived &>(*this)[index] = value;
 		}
 
-		void remove(size_t index)
+		/**
+		 *
+		 * @brief Removes the value at the given index from the vector.
+		 *
+		 * @param index The index of the value to be removed.
+		 *
+		 */
+		void remove(const size_t index)
 		{
 			static_cast<Derived &>(*this).erase(
 				static_cast<Derived &>(*this).begin() + index);
@@ -146,6 +156,21 @@ class VecBase
 
 		/**
 		 *
+		 * @brief Adds a value to the end of the vector if it does not already exist.
+		 *
+		 * @param value The value to be added.
+		 *
+		 */
+		void push_once(const V &value)
+		{
+			Derived &d = static_cast<Derived &>(*this);
+
+			if (std::find(d.begin(), d.end(), value) == d.end())
+				d.push_back(value);
+		}
+
+		/**
+		 *
 		 * @brief Finds the index of the given value in the vector.
 		 *
 		 * @param value The value to search for in the vector.
@@ -153,7 +178,7 @@ class VecBase
 		 * @return The index of the value if found, -1 otherwise.
 		 *
 		 */
-		size_t indexOf(const V &value) const
+		int indexOf(const V &value) const
 		{
 			const Derived &derived = static_cast<const Derived &>(*this);
 			for (size_t i = 0; i < derived.size(); ++i)
@@ -161,7 +186,7 @@ class VecBase
 				if (derived[i] == value)
 					return i;
 			}
-			return static_cast<size_t>(-1);
+			return -1;
 		}
 
 
@@ -198,7 +223,61 @@ class VecBase
 				--right;
 			}
 		}
+
+		/**
+		 * @brief Merge another vector into this one.
+		 *
+		 * @param other The other vector to merge.
+		 *
+		 * @note This method appends all elements from the other vector to this vector.
+		 *
+		 */
+		void concat(const Derived &other)
+		{
+			Derived &derived = static_cast<Derived &>(*this);
+
+			derived.reserve(derived.size() + other.size());
+			derived.insert(derived.end(), other.begin(), other.end());
+		}
+
+
+		/**
+		 * @brief Merge two vectors in a new vector.
+		 *
+		 * @param vec1 The first vector.
+		 * @param vec2 The second vector.
+		 *
+		 * @return A new vector containing all elements from vec1 followed by all elements from vec2.
+		 */
+		static Derived concat(const Derived &vec1, const Derived &vec2)
+		{
+			Derived result;
+			result.reserve(vec1.size() + vec2.size());
+
+			result.insert(result.end(), vec1.begin(), vec1.end());
+			result.insert(result.end(), vec2.begin(), vec2.end());
+			return result;
+		}
+
+		/**
+		 * @brief Recreates new vector with the n primary elements of the vector.
+		 *
+		 * @param n The number of elements to keep from the start of the vector.
+		 */
+
+		Derived slice(const size_t n) const
+		{
+			Derived		   result;
+			const Derived &derived = static_cast<const Derived &>(*this);
+			const size_t   size	   = n > derived.size() ? derived.size() : n;
+			result.reserve(size);
+			for (size_t i = 0; i < size; ++i)
+				result.push_back(derived[i]);
+			return result;
+		}
 };
+
+// #include <utility>
 
 template <typename V>
 class Vec
@@ -216,15 +295,30 @@ class Vec
 		}
 		Vec &operator=(const Vec &other)
 		{
-			base::operator=(other);
+			if (this != &other)
+				base::operator=(other);
 			return *this;
 		}
 		void operator+=(const Vec &other)
 		{
-			base::insert(base::end(), other.begin(), other.end());
+			this->concat(other);
 		}
-		~Vec()
+
+		Vec operator+(const Vec &other) const
 		{
+			return VecBase<Vec<V>, V>::concat(*this, other);
+		}
+
+		bool operator==(const Vec &other) const
+		{
+			if (this->size() != other.size())
+				return false;
+			for (size_t i = 0; i < this->size(); ++i)
+			{
+				if ((*this)[i] != other[i])
+					return false;
+			}
+			return true;
 		}
 };
 

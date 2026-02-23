@@ -17,11 +17,13 @@ class JsonArray : public AJson
 
 		const Vec<AJson *> &get() const;
 		AJson			   *get(size_t index) const;
+		AJson			   *getLast() const;
 
-		bool has(size_t index) const;
-		void push(AJson *value);
-		void remove(size_t index);
-		bool contains(AJson *value) const;
+		bool   has(size_t index) const;
+		void   push(AJson *value);
+		void   remove(size_t index);
+		bool   contains(AJson *value) const;
+		size_t size() const;
 
 		void create(const char *value);
 		void create(const std::string &value);

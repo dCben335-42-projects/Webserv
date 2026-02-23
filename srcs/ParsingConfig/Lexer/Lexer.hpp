@@ -1,19 +1,15 @@
-#include <string>
-#include <memory>
-#include <iostream>
-#include <map>
-#include <vector>
+#include "ConfigParser.hpp"
 #include "bnf.hpp"
+
+using namespace bnf;
 
 class Lexer
 {
 	private:
-		std::string		   m_content;
-		SemanticDescriptor m_semanticDescriptor;
+		const SemanticDescriptor m_semanticDescriptor;
 
 	public:
-		Lexer(std::string const &filepath);
+		Lexer(const std::string &content);
 		~Lexer();
-
-		const std::string &getContent() const;
+		HttpConfig parseConfigFile(std::string const &filepath);
 };

@@ -18,6 +18,7 @@ class JsonObject : public AJson
 
 		const Map<std::string, AJson *> &get() const;
 		const AJson						*get(const std::string &key) const;
+		AJson							*get(const std::string &key);
 
 		void set(const std::string &key, AJson *value);
 		void remove(const std::string &key);

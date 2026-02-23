@@ -4,7 +4,7 @@ NAME        					= webserv
 
 # Compiler flags
 CXX         					= c++
-WWW_FLAGS    					= -Wall -Wextra -Werror -g3
+WWW_FLAGS    					= -Wall -Wextra -Werror
 EVERYTHING_FLAGS 				= 
 DEPS_FLAGS   					= -MMD -MP
 CPP98_FLAGS  					= -std=c++98

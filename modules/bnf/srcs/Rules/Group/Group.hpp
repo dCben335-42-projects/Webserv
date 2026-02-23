@@ -13,10 +13,10 @@ class Group : public ARule
 		Group(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr);
 		~Group();
 
-		Vec<TerminalSymbol> getItems() const;
-		std::string			getPrintableValue() const;
-		const std::string	getTypeName() const;
-		void				addItem(const TerminalSymbol &val);
+		const Vec<TerminalSymbol> &getItems() const;
+		std::string				   getPrintableValue() const;
+		const std::string		   getTypeName() const;
+		void					   addItem(const TerminalSymbol &val);
 
 	private:
 		Vec<TerminalSymbol> m_items;

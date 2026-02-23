@@ -3,7 +3,7 @@
 
 #include <string>
 #include "bnf_defs.hpp"
-#include "../Rules/ARule.hpp"
+#include "../../Rules/ARule.hpp"
 
 class ConceptDef
 {
@@ -13,7 +13,6 @@ class ConceptDef
 
 		ARulePath			getRules();
 		ARulePath			getValues() const;
-		ARule			   *getARule(size_t index = 0);
 		Vec<TerminalSymbol> getItemsOfARule(size_t index = 0);
 		Vec<TerminalSymbol> getItems();
 		Vec<std::string>	getItemsValue();
@@ -21,9 +20,16 @@ class ConceptDef
 		bool				getIsTerminal() const;
 		void				computeOptionalIndex();
 		size_t				getOptionalEndIndex() const;
+		size_t				size() const;
+		const ARule		   *getARule(const size_t index) const;
 
-		void finish();
-		void setRule(ARule *rule);
+		void				finish();
+		void				setRule(const ARule *rule);
+		const std::string  &getConceptName() const;
+		Vec<TerminalSymbol> getItemsValueWithOption();
+		const ARulePath	   &getValuesConstRef() const;
+
+
 
 	private:
 		const std::string m_conceptName;

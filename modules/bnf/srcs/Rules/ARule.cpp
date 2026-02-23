@@ -74,6 +74,13 @@ static const BnfMap rules[] = {
 	 .hasClosure  = false},
 };
 
+/**
+ * @brief Check if a word is a keyword (opener or closer)
+ *
+ * @param word The word to check
+ * @param onlyClose If true, only check for closers
+ * @return true if the word is a keyword, false otherwise
+ */
 bool ARule::isKeyWord(const std::string &word, bool onlyClose)
 {
 	size_t i = 0;
@@ -89,6 +96,12 @@ bool ARule::isKeyWord(const std::string &word, bool onlyClose)
 	return false;
 }
 
+/**
+ * @brief Get the BnfMap for a given opener
+ *
+ * @param opener The opener to get the BnfMap for
+ * @return BnfMap The BnfMap for the given opener
+ */
 BnfMap ARule::getMap(const std::string &opener)
 {
 	size_t i = 0;
@@ -107,7 +120,7 @@ ConceptDef *ARule::getConceptDefPtr()
 	return m_conceptDefPtr;
 }
 
-const std::string ARule::getConceptName() const
+const std::string &ARule::getConceptName() const
 {
 	return m_conceptName;
 }
@@ -122,7 +135,7 @@ size_t ARule::getRuleIndex() const
 	return m_ruleIndex;
 }
 
-ARulePath ARule::getNextRules(ARulePath supRuleParent)
+ARulePath ARule::getNextRules(const ARulePath &supRuleParent) const
 {
 	if (m_nextRules.empty())
 	{
@@ -132,18 +145,20 @@ ARulePath ARule::getNextRules(ARulePath supRuleParent)
 		}
 		else
 		{
-			supRuleParent.pop_back();
-			ARule *val = supRuleParent.back();
-			return val->getNextRules(supRuleParent);
+			ARulePath newPath = supRuleParent;
+			newPath.pop_back();
+			const ARule *val = newPath.back();
+			return val->getNextRules(newPath);
 		}
 	}
-	supRuleParent.back() = *m_nextRules.begin();
-	return supRuleParent;
+	ARulePath newPath = supRuleParent;
+	newPath.back()	  = *m_nextRules.begin();
+	return newPath;
 }
 
-ARule *ARule::tryGetAdjacentRules()
+const ARule *ARule::tryGetAdjacentRules() const
 {
-	Set<ARule *>::iterator it = m_nextRules.begin();
+	Set<const ARule *>::iterator it = m_nextRules.begin();
 	return *it;
 }
 
@@ -152,7 +167,7 @@ std::string ARule::printNext() const
 	return LoggerJson::get(m_nextRules, true);
 }
 
-void ARule::setNextRules(ARule *nextRule)
+void ARule::setNextRules(const ARule *nextRule)
 {
 	m_nextRules.insert(nextRule);
 }
@@ -160,6 +175,51 @@ void ARule::setNextRules(ARule *nextRule)
 Concept *ARule::getConceptPtr() const
 {
 	return m_conceptPtr;
+}
+
+bool ARule::isOption() const
+{
+	return m_type == OPTION;
+}
+
+bool ARule::isSequence() const
+{
+	return m_type == SEQUENCE;
+}
+
+// clang-format off
+const Map<size_t, Vec<std::string> > &ARule::getRequiredInJsonMap() const
+{
+	return m_requiredInJson;
+}
+
+void ARule::addRequiredInJson(size_t index, const std::string &val)
+{
+	if (!m_requiredInJson.has(index))
+		m_requiredInJson.set(index, Vec<std::string>());
+	m_requiredInJson.get(index).push(val);
+}
+
+bool ARule::isEnd() const
+{
+	return m_nextRules.empty();
+}
+
+bool ARule::isGroup() const
+{
+	return m_type == GROUP;
+}
+
+bool ARule::isSymbol() const
+{
+	return m_type == SYMBOL;
+}
+
+const ARule *ARule::getNextRule() const
+{
+	if (m_nextRules.empty())
+		return NULL;
+	return *m_nextRules.begin();
 }
 
 std::ostream &operator<<(std::ostream &os, const ARule &data)
@@ -172,6 +232,8 @@ std::ostream &operator<<(std::ostream &os, const ARule &data)
 	os << Logger::indent() << "\"ptr\": " << "\"" << &data << "\",\n";
 	os << Logger::indent() << "\"content\": " << data.getPrintableValue() << "\n";
 	os << Logger::indent() << "\"next\": " << data.printNext() << "\n";
+	os << Logger::indent() << "\"items\": " << LoggerJson::get(data.getItems()) << "\n";
+	os << Logger::indent() << "\"required\": " << "\"" << Logger::get(data.getRequiredInJsonMap()) << "\"\n";
 	Logger::decrementIndent();
 	os << Logger::indent() << "}";
 	return os;

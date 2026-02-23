@@ -7,7 +7,7 @@ EXPORT_SRCS_VAR					= BNF_SRCS
 # Compiler flags
 AR 								= ar -rcs
 CXX         					= c++
-WWW_FLAGS    					= -Wall -Wextra -Werror -g3 
+WWW_FLAGS    					= -Wall -Wextra -Werror 
 DEPS_FLAGS   					= -MMD -MP 
 CPP98_FLAGS  					= -std=c++98
 CXX_FLAGS     					= $(WWW_FLAGS) $(CPP98_FLAGS) $(DEPS_FLAGS)
@@ -56,7 +56,15 @@ MODULE_KIT_MK_OBJ				= $(MODULE_KIT_DIR)/config/objs.mk
 KIT_SRCS 						:= $(addprefix $(MODULE_KIT_DIR)/, $(KIT_SRCS))
 KIT_OBJS 						:= $(addprefix $(MODULE_KIT_DIR)/, $(KIT_OBJS))
 
-INCLUDES_FLAGS 					+= -I $(MODULE_LOG_INCLUDES) -I $(MODULE_KIT_INCLUDES)
+MODULE_JSON_DIR 					= $(MODULES_DIR)/json
+MODULE_JSON_INCLUDES				= $(MODULE_JSON_DIR)/includes
+MODULE_JSON_MK_SRCS				= $(MODULE_JSON_DIR)/config/sources.mk
+MODULE_JSON_MK_OBJ				= $(MODULE_JSON_DIR)/config/objs.mk		
+-include $(MODULE_JSON_MK_SRCS)	# SRCS from MODULE_JSON => $(JSON_SRCS)
+-include $(MODULE_JSON_MK_OBJ) 	# OBJS from MODULE_JSON => $(JSON_OBJS)
+JSON_SRCS 						:= $(addprefix $(MODULE_JSON_DIR)/, $(JSON_SRCS))
+JSON_OBJS 						:= $(addprefix $(MODULE_JSON_DIR)/, $(JSON_OBJS))
+INCLUDES_FLAGS 					+= -I $(MODULE_LOG_INCLUDES) -I $(MODULE_KIT_INCLUDES) -I $(MODULE_JSON_INCLUDES)
 
 # Colors
 RED     						= \033[0;31m
@@ -94,6 +102,12 @@ $(MODULE_KIT_MK_OBJ): $(KIT_SRCS)
 $(KIT_OBJS): $(MODULE_KIT_MK_OBJ)
 	@$(MAKE) $(MAKE_FLAGS) all -C $(MODULE_KIT_DIR)
 
+$(MODULE_JSON_MK_OBJ): $(JSON_SRCS)
+	@$(MAKE) $(MAKE_FLAGS) obj -C $(MODULE_JSON_DIR)
+
+$(JSON_OBJS): $(MODULE_JSON_MK_OBJ)
+	@$(MAKE) $(MAKE_FLAGS) all -C $(MODULE_JSON_DIR)
+
 -include $(DEPS)
 
 clean:
@@ -104,11 +118,13 @@ clean_libs: clean
 	@echo "$(YELLOW)$(ALIAS) Cleaning module libraries...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
+	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_JSON_DIR)
 
 fclean_libs: fclean
 	@echo "$(YELLOW)$(ALIAS) Removed libraries and obj.mk.$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_LOG_DIR)
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
+	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_JSON_DIR)
 
 fclean: clean
 	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"

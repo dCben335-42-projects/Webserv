@@ -76,10 +76,19 @@ class MapBase
 		 * @return The value associated with the given key.
 		 *
 		 */
-		V &get(const K &key)
+		const V &get(const K &key) const
 		{
-			return getMapValue(static_cast<Derived &>(*this), key);
+			return getMapValue(static_cast<const Derived &>(*this), key);
 		}
+
+		V *getPtr(const K &key)
+		{
+			typename Derived::iterator it = static_cast<Derived &>(*this).find(key);
+			if (it == static_cast<Derived &>(*this).end())
+				return NULL;
+			return &it->second;
+		}
+
 		/**
 		 *
 		 * @brief Gets the value associated with the given key in the map.
@@ -89,9 +98,9 @@ class MapBase
 		 * @return The value associated with the given key.
 		 *
 		 */
-		const V &get(const K &key) const
+		V &get(const K &key)
 		{
-			return getMapValue(static_cast<const Derived &>(*this), key);
+			return getMapValue(static_cast<Derived &>(*this), key);
 		}
 
 		/**

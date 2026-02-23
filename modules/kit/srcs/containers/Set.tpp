@@ -90,6 +90,22 @@ class SetBase
 
 		/**
 		 *
+		 * @brief Gets a pointer to the value from the set that matches the given value.
+		 *
+		 * @param value The value to be searched for.
+		 *
+		 * @return A pointer to the value from the set that matches the given value, or nullptr if not found.
+		 *
+		 */
+		V *getPtr(const V &value)
+		{
+			Derived					  &derived = static_cast<Derived &>(*this);
+			typename Derived::iterator it	   = derived.find(value);
+			return const_cast<V *>(it != derived.end() ? &(*it) : NULL);
+		}
+
+		/**
+		 *
 		 * @brief Tries to get the value from the set that matches the given value.
 		 *
 		 * @param value The value to be searched for.
