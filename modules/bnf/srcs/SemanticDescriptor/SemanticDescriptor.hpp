@@ -66,7 +66,7 @@ class SemanticDescriptor
 		const Concept			*getConcept(const std::string &key) const;
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 		ConceptNode				*getTree() const;
-		void					 ndw(const ARule *rule, Vec<std::string> &conceptPaths);
+		void					 findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
 		void					 findAllNext();
 		Vec<std::string>		 splitwords(std::string rule);
 };

@@ -6,14 +6,29 @@
 #include "Json.hpp"
 #include "../BNFPath/BNFPath.hpp"
 
+/**
+ * @brief Constructs a Parser object with the given SemanticDescriptor.
+ * @param semantic The SemanticDescriptor that defines the grammar rules and concepts for parsing.
+ */
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
 }
 
+/**
+ * @brief Destructor for the Parser class.
+ */
 Parser::~Parser()
 {
 }
 
+/**
+ * @brief Adds a path possibility to the ARuleMap based on the given rule and concept name.
+ * @param rule The ARule for which the path possibility is being added.
+ * @param conceptPaths A vector of strings representing the current concept paths being explored.
+ * @param mapPath The ARuleMap to which the path possibility will be added.
+ * @param conceptName The name of the concept associated with the rule.
+ * @param completePath The current complete path of ARules being explored.
+ */
 void Parser::addPathPossibility(
 	const ARule *const rule,
 	Vec<std::string>  &conceptPaths,
@@ -51,6 +66,11 @@ void Parser::addPathPossibility(
 	completePath.pop_back();
 }
 
+/**
+ * @brief Adds sequence paths to the ARuleMap based on the given path.
+ * @param path The ARulePath representing the current sequence of rules.
+ * @param mapPathNext The ARuleMap to which the sequence paths will be added.
+ */
 void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 {
 	for (int i = path.size() - 1; i >= 0; --i)
@@ -85,6 +105,13 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 	}
 }
 
+/**
+ * @brief Retrieves the terminal characters associated with the given concept name and updates the ARuleMap accordingly.
+ * @param completePath The current complete path of ARules being explored.
+ * @param conceptName The name of the concept for which terminal characters are being retrieved.
+ * @param mapPath The ARuleMap to which the terminal character paths will be added.
+ * @param conceptPaths A vector of strings representing the current concept paths being explored to avoid cycles.
+ */
 void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> &conceptPaths)
 {
 	conceptPaths.push_back(conceptName);
@@ -107,6 +134,13 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string &c
 	conceptPaths.pop_back();
 }
 
+/**
+ * @brief Adds the next paths to the ARuleMap based on the current path and rule.
+ * @param mapPathCurrent The current ARuleMap representing the active paths.
+ * @param mapPathNext The ARuleMap to which the next paths will be added.
+ * @param path The current ARulePath being explored.
+ * @param rule The ARule for which the next paths are being added.
+ */
 void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule)
 {
 	addSequencePaths(path, mapPathNext);
@@ -133,6 +167,16 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	}
 }
 
+/**
+ * @brief Processes a terminal character in the parsing process and updates the ARuleMap accordingly.
+ * @param data The TerminalCharInfo containing information about the current terminal character being processed.
+ * @param c The current character being parsed from the input string.
+ * @param rule The ARule associated with the current path being processed.
+ * @param path The current ARulePath being explored.
+ * @param mapPathCurrent The current ARuleMap representing the active paths before processing the character.
+ * @param mapPathNext The ARuleMap to which the next paths will be added after processing the character.
+ * @return true if the character is valid for the current path and rule, false otherwise.
+ */
 bool Parser::word(
 	TerminalCharInfo  &data,
 	const char		   c,
@@ -176,7 +220,13 @@ bool Parser::word(
 	return true;
 }
 
-
+/**
+ * @brief Parses the current character against the active paths in the ARuleMap and updates the next paths accordingly.
+ * @param c The current character being parsed from the input string.
+ * @param mapPathCurrent The current ARuleMap representing the active paths before processing the character.
+ * @param mapPathNext The ARuleMap to which the next paths will be added after processing the character.
+ * @return true if the character is valid for at least one of the current paths and rules, false otherwise.
+ */
 bool Parser::parseCurrentChar(
 	const char		c,
 	const ARuleMap &mapPathCurrent,
@@ -224,6 +274,11 @@ bool Parser::parseCurrentChar(
 	return isValidWithCurrentPath;
 }
 
+/**
+ * @brief Checks if the given ARule is fully optional.
+ * @param rule The ARule to be checked.
+ * @return true if the ARule is fully optional, false otherwise.
+ */
 bool Parser::isFullyOptional(const ARule &rule) const
 {
 	std::map<const ARule *, bool>::iterator cacheIt = m_optionalCache.find(&rule);
@@ -290,6 +345,11 @@ bool Parser::isFullyOptional(const ARule &rule) const
 	return result;
 }
 
+/**
+ * @brief Checks if the given ARulePath is fully optional until the end.
+ * @param path The ARulePath to be checked.
+ * @return true if the ARulePath is fully optional until the end, false otherwise.
+ */
 bool Parser::isFullyOptionalEnd(ARulePath path)
 {
 	while (path.size() > 0)
@@ -302,15 +362,22 @@ bool Parser::isFullyOptionalEnd(ARulePath path)
 	return true;
 }
 
-
-
+/**
+ * @brief Checks if the given ARulePath is fully optional until the end, starting from the next rules of the last ARule in the path.
+ * @param path The ARulePath to be checked.
+ * @return true if the ARulePath is fully optional until the end, false otherwise.
+ */
 bool Parser::isFullyOptionalEndAdvance(const ARulePath &path)
 {
 	return isFullyOptionalEnd(path.back()->getNextRules(path));
 }
 
-
-
+/**
+ * @brief Verifies if the current ARuleMap can lead to a valid end state with the given character.
+ * @param mapPathCurrent The current ARuleMap representing the active paths before processing the character.
+ * @param c The current character being parsed from the input string.
+ * @return true if the current ARuleMap can lead to a valid end state with the given character, false otherwise.
+ */
 bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 {
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
@@ -329,7 +396,10 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 }
 
 
-
+/**
+ * @brief Checks if the file can be considered valid when it is empty, based on the grammar rules defined in the SemanticDescriptor.
+ * @return true if the file can be considered valid when empty, false otherwise.
+ */
 bool Parser::isValidEmptyFile()
 {
 	ARulePath				 startPath;
@@ -344,7 +414,10 @@ bool Parser::isValidEmptyFile()
 	return false;
 }
 
-
+/**
+ * @brief Precomputes whether the given ARule is optional and caches the result for future reference.
+ * @param rule The ARule for which optionality is being precomputed.
+ */
 void Parser::precomputeOptional(const ARule *rule)
 {
 	if (m_optionalCache.find(rule) != m_optionalCache.end())
@@ -413,6 +486,10 @@ void Parser::precomputeOptional(const ARule *rule)
 	m_optionalComputing.erase(rule);
 }
 
+/**
+ * @brief Parses the given string according to the grammar rules defined in the SemanticDescriptor.
+ * @param stringToParsed The string to be parsed.
+ */
 void Parser::parse(const std::string &stringToParsed)
 {
 	if (stringToParsed.empty())

@@ -5,6 +5,11 @@
 
 using namespace bnf;
 
+/**
+ * @brief Constructs a SemanticDescriptor object by parsing the given string content.
+ * @param m_content The string content representing the semantic descriptor to be parsed.
+ * @throws std::runtime_error if the semantic descriptor is not valid.
+ */
 SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL)
 {
 	try
@@ -29,6 +34,12 @@ SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL
 	}
 }
 
+
+/**
+ * @brief Assigns the contents of another SemanticDescriptor to this one.
+ * @param other The SemanticDescriptor to be assigned.
+ * @return A reference to this SemanticDescriptor.
+ */
 SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &other)
 {
 	if (this != &other)
@@ -45,6 +56,9 @@ SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &othe
 	return *this;
 }
 
+/**
+ * @brief Destructor for the SemanticDescriptor class.
+ */
 SemanticDescriptor::~SemanticDescriptor()
 {
 	delete tree;
@@ -57,6 +71,13 @@ SemanticDescriptor::~SemanticDescriptor()
 	}
 }
 
+
+/**
+ * @brief Checks if the given line represents the start of a rule.
+ * @param line The line to be checked.
+ * @param startDef A pointer to a size_t variable where the start position of the definition will be stored.
+ * @return true if the line represents the start of a rule, false otherwise.
+ */
 bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 {
 	size_t size = line.size();
@@ -84,6 +105,10 @@ bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 	return false;
 }
 
+/**
+ * @brief Splits the input stream into blocks based on the start of rules.
+ * @param iss The input string stream containing the semantic descriptor.
+ */
 void SemanticDescriptor::splitBlocks(std::istringstream &iss)
 {
 	std::string line, cblock;
@@ -105,6 +130,13 @@ void SemanticDescriptor::splitBlocks(std::istringstream &iss)
 		blocks.push_back(cblock);
 }
 
+
+/**
+ * @brief Finds the separator in the given block and updates the position accordingly.
+ * @param block The block of text to be checked.
+ * @param pos A reference to a size_t variable where the position of the separator will be stored.
+ * @return true if the separator is '::=', false if it is '|='.
+ */
 bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 {
 	if ((pos = block.find(EQRULE)) != std::string::npos)
@@ -121,6 +153,9 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 	throw ConceptHasNotDefinitionException();
 }
 
+/**
+ * @brief Parses the concept name from the given string and updates the last key accordingly.
+ */
 void SemanticDescriptor::parseBlocks()
 {
 	size_t pos;
@@ -140,15 +175,11 @@ void SemanticDescriptor::parseBlocks()
 }
 
 
-// Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
-// {
-// 	// Split '(', ')', '{', '}', '[', ']' and '|' if they are not inside simple or double quotes
-// 	// split words that are not inside simple or double quotes, if they are inside quotes, keep them together, the whitespace make part of the word
-
-// }
-
-
-
+/**
+ * @brief Splits the given rule string into individual words, considering quotes and escape sequences.
+ * @param rule The rule string to be split.
+ * @return A vector of strings representing the individual words in the rule.
+ */
 Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 {
 	Vec<std::string> result;
@@ -246,6 +277,12 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 	return result;
 }
 
+/**
+ * @brief Parses and consumes a prefix from the given string.
+ * @param str The string to be parsed.
+ * @param out A pointer to an integer where the parsed value will be stored.
+ * @return true if a valid prefix was found and consumed, false otherwise.
+ */
 bool SemanticDescriptor::parseAndConsumePrefix(std::string &str, int *out)
 {
 	size_t i = 0;
@@ -279,6 +316,12 @@ bool SemanticDescriptor::parseAndConsumePrefix(std::string &str, int *out)
 	return true;
 }
 
+
+/**
+ * @brief Parses a rule from the given content starting at the specified cursor position.
+ * @param m_content The content containing the rule to be parsed.
+ * @param cursor The position in the content where the rule starts.
+ */
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
 	Concept	   *cpt		   = NULL;
@@ -359,6 +402,9 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 	conceptDef->computeOptionalIndex();
 }
 
+/**
+ * @brief Adds parent relationships for all concepts in the semantic descriptor.
+ */
 void SemanticDescriptor::addParent()
 {
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
@@ -389,7 +435,13 @@ void SemanticDescriptor::addParent()
 	}
 }
 
-void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
+
+/**
+ * @brief Recursively processes the given rule and updates the concept paths.
+ * @param rule The ARule to be processed.
+ * @param conceptPaths A vector of strings representing the current concept paths being explored.
+ */
+void SemanticDescriptor::findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths)
 {
 	Concept			   *conceptPtr;
 	Vec<std::string>	conceptPathsCopy;
@@ -409,7 +461,7 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 			const Vec<ConceptDef *> &defs	   = conceptPtr->getDefinitions();
 			const size_t			 defsCount = defs.size();
 			for (size_t j = 0; j < defsCount; ++j)
-				ndw(defs[j]->getARule(0), conceptPathsCopy);
+				findTerminalChar(defs[j]->getARule(0), conceptPathsCopy);
 			continue;
 		}
 		for (size_t j = 0; j < conceptPaths.size(); ++j)
@@ -417,6 +469,10 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 	}
 }
 
+
+/**
+ * @brief Finds all terminal characters for each concept in the semantic descriptor.
+ */
 void SemanticDescriptor::findAllNext()
 {
 	Vec<std::string> conceptPaths;
@@ -427,16 +483,24 @@ void SemanticDescriptor::findAllNext()
 		const Vec<ConceptDef *> &defs	   = (*it).second->getDefinitions();
 		const size_t			 defsCount = defs.size();
 		for (size_t i = 0; i < defsCount; ++i)
-			ndw(defs[i]->getARule(0), conceptPaths);
+			findTerminalChar(defs[i]->getARule(0), conceptPaths);
 		conceptPaths.clear();
 	}
 }
+
 
 ARuleMap SemanticDescriptor::getStartPath() const
 {
 	return m_startPath;
 }
 
+/**
+ * @brief Parses the concept name from the given string and updates the last key accordingly.
+ * @param s The string containing the concept name to be parsed.
+ * @throws EmptyConceptNameException if the concept name is empty.
+ * @throws ConceptHasNotDefinitionException if the concept does not have a definition.
+ * @throws ConceptAlreadyDefinedException if the concept has already been defined.
+ */
 void SemanticDescriptor::parseConceptName(std::string s)
 {
 	std::istringstream iss(erasePaternWrapper(s, WS));
@@ -450,6 +514,12 @@ void SemanticDescriptor::parseConceptName(std::string s)
 	m_lastKey = s;
 }
 
+/**
+ * @brief Checks for recursive errors when adding a new node to the ConceptNode tree.
+ * @param item The name of the concept being added as a new node.
+ * @param parentPtr A pointer to the parent ConceptNode to which the new node will be added.
+ * @return true if a recursive error is detected, false otherwise.
+ */
 bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr)
 {
 	ConceptNode *tempN = new ConceptNode(item, m_concepts[item]->getDefinitions());
@@ -461,6 +531,13 @@ bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNod
 	return hasRecursiveError(*tempN);
 }
 
+/**
+ * @brief Checks for recursive errors in the ConceptNode tree by traversing the nodes and their concepts.
+ * @param node The ConceptNode to be checked for recursive errors.
+ * @return true if a recursive error is detected, false otherwise.
+ * @throws ConceptNotFoundException if a concept referenced in the node is not found in the semantic descriptor.
+ * @throws RecursiveConceptException if a recursive concept is detected in the node.
+ */
 bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 {
 	Vec<TerminalSymbol> items;
@@ -492,16 +569,14 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 	return node.hasInfRecursivity();
 }
 
+/**
+ * @brief Checks the validity of the semantic descriptor by constructing a ConceptNode tree and verifying for recursive errors.
+ * @throws RecursiveConceptException if a recursive concept is detected in the definitions.
+ * @throws RecursiveLoopConceptException if a recursive loop is detected in the definitions.
+ */
 void SemanticDescriptor::checkValidity()
 {
-	try
-	{
-		tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
-	}
-	catch (std::bad_alloc &)
-	{
-		throw MemoryAllocationFailedException();
-	}
+	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
 	tree->addSegmentPath(CURSOR);
 
 	m_recursiveConceptAuthorize = false;
@@ -532,31 +607,62 @@ void SemanticDescriptor::checkValidity()
 		throw RecursiveLoopConceptException();
 }
 
+
+/**
+ * @brief Retrieves the map of concepts defined in the semantic descriptor.
+ * @return A map where the keys are concept names and the values are pointers to Concept objects.
+ */
 Map<Concept *> SemanticDescriptor::getConcepts() const
 {
 	return m_concepts;
 }
 
+/**
+ * @brief Retrieves a concept by its name from the semantic descriptor.
+ * @param key The name of the concept to retrieve.
+ * @return A reference to a pointer to the Concept object.
+ */
 Concept *&SemanticDescriptor::getConcept(const std::string &key)
 {
 	return m_concepts.get(key);
 }
 
+/**
+ * @brief Retrieves a concept by its name from the semantic descriptor.
+ * @param key The name of the concept to retrieve.
+ * @return A pointer to the Concept object.
+ */
 const Concept *SemanticDescriptor::getConcept(const std::string &key) const
 {
 	return m_concepts.get(key);
 }
 
+/**
+ * @brief Retrieves the ConceptNode tree of the semantic descriptor.
+ * @return A pointer to the root ConceptNode.
+ */
 ConceptNode *SemanticDescriptor::getTree() const
 {
 	return tree;
 }
 
+/**
+ * @brief Retrieves the definitions of a concept by its name from the semantic descriptor.
+ * @param conceptName The name of the concept whose definitions are to be retrieved.
+ * @return A reference to a vector of pointers to ConceptDef objects representing the definitions of the specified concept.
+ */
 const Vec<ConceptDef *> &SemanticDescriptor::getConceptDefs(const std::string &conceptName) const
 {
 	return m_concepts.get(conceptName)->getDefinitions();
 }
 
+
+/**
+ * @brief Overloads the stream insertion operator to output the semantic descriptor.
+ * @param os The output stream.
+ * @param data The semantic descriptor to output.
+ * @return The output stream.
+ */
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 {
 	Logger::log(data.getConcepts());
