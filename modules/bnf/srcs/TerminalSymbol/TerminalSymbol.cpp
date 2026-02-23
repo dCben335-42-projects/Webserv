@@ -31,6 +31,11 @@ const std::string &TerminalSymbol::getValue() const
 	return m_str;
 }
 
+const std::string *TerminalSymbol::getValuePtr() const
+{
+	return &m_str;
+}
+
 const char *TerminalSymbol::getCharOfValue(size_t index) const
 {
 	return &m_str[index];

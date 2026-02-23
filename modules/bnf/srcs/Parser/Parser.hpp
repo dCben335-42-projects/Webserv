@@ -36,10 +36,10 @@ class Parser
 		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 
 		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule);
-		void addPathPossibility(const ARule *const rule, Vec<std::string> &conceptPaths, ARuleMap &mapPath, const std::string &conceptName, ARulePath &completePath);
+		void addPathPossibility(Vec<const std::string *> &conceptPaths, ARulePath &completePath, const ARule *const rule, ARuleMap &mapPath, const std::string *conceptName);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void getPathsTerminalChars(ARulePath &completePath, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> &conceptPaths);
+		void getPathsTerminalChars(Vec<const std::string *> &conceptPaths, ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
 		void precomputeOptional(const ARule *rule);
 
 		void processTerminalSymbol(

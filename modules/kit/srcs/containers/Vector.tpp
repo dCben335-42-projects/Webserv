@@ -264,16 +264,23 @@ class VecBase
 		 *
 		 * @param n The number of elements to keep from the start of the vector.
 		 */
-
-		Derived slice(const size_t n) const
+		Derived slice(size_t n) const
 		{
-			Derived		   result;
 			const Derived &derived = static_cast<const Derived &>(*this);
-			const size_t   size	   = n > derived.size() ? derived.size() : n;
-			result.reserve(size);
-			for (size_t i = 0; i < size; ++i)
-				result.push_back(derived[i]);
-			return result;
+			if (n >= derived.size())
+				return derived;
+			return Derived(derived.begin(), derived.begin() + n);
+		}
+
+		/**
+		 * @brief Recreates new vector with the n primary elements of the vector without bounds checking.
+		 *
+		 * @param n The number of elements to keep from the start of the vector.
+		 */
+		Derived slice_unsafe(size_t n) const
+		{
+			const Derived &derived = static_cast<const Derived &>(*this);
+			return Derived(derived.begin(), derived.begin() + n);
 		}
 };
 
@@ -302,6 +309,11 @@ class Vec
 		void operator+=(const Vec &other)
 		{
 			this->concat(other);
+		}
+
+		template <typename InputIt>
+		Vec(InputIt first, InputIt last) : base(first, last)
+		{
 		}
 
 		Vec operator+(const Vec &other) const

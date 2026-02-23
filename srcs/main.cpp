@@ -19,7 +19,7 @@ int main()
 		Logger::log("Fatal error: " + std::string(e.what()));
 		return 1;
 	}
-	EventLoop::init();
-	EventLoop::run();
+	// EventLoop::init();
+	// EventLoop::run();
 	return 0;
 }

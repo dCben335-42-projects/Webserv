@@ -15,6 +15,7 @@ class TerminalSymbol
 		const std::string	 &getValue() const;
 		const char			 *getCharOfValue(size_t index) const;
 		static TerminalSymbol specify(const std::string &val);
+		const std::string	 *getValuePtr() const;
 
 	protected:
 		std::string m_str;
