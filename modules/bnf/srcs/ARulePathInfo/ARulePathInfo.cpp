@@ -37,10 +37,6 @@ bool ARulePathInfo::operator==(const ARulePathInfo &other) const
 	return true;
 }
 
-
-
-
-
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 {
 	os << "ARulePathInfo(path=[";

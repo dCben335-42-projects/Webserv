@@ -30,40 +30,37 @@ Parser::~Parser()
  * @param completePath The current complete path of ARules being explored.
  */
 void Parser::addPathPossibility(
-	Vec<const std::string *> &conceptPaths,
-	ARulePath				 &completePath,
-	const ARule *const		  rule,
-	ARuleMap				 &mapPath,
-	const std::string		 *conceptName)
+	ARulePath		  &completePath,
+	const ARule *const rule,
+	ARuleMap		  &mapPath)
 {
 	const Vec<TerminalSymbol> &items = rule->getItems();
 	const size_t			   size	 = items.size();
-	completePath.push_back(rule);
 
 	for (size_t i = 0; i < size; ++i)
 	{
 		const TerminalSymbol &item		= items[i];
 		const std::string	 *itemValue = item.getValuePtr();
-		if (conceptPaths.contains(itemValue))
+		if (m_conceptPaths.contains(itemValue))
 			continue;
 		if (!item.isTerminalChar())
-			getPathsTerminalChars(conceptPaths, completePath, itemValue, mapPath);
+			getPathsTerminalChars(completePath, itemValue, mapPath);
 		else
 		{
-			mapPath[rule].push_once(ARulePathInfo(completePath));
+			ARulePaths &element = mapPath[rule];
+			bool		found	= false;
+			for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
+			{
+				if (it->path == completePath)
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				element.push_back(ARulePathInfo(completePath));
 		}
 	}
-
-	const Set<const ARule *>		  &terminalChars = m_semantic.getConcept(*conceptName)->getTerminalChars();
-	Set<const ARule *>::const_iterator ite			 = terminalChars.end();
-	for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != ite; ++it)
-	{
-		if (rule == *it)
-		{
-			mapPath[rule].push_once(ARulePathInfo(completePath));
-		}
-	}
-	completePath.pop_back();
 }
 
 /**
@@ -79,9 +76,11 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 		const ARule *const rule = path[i];
 		if (rule->isSequence())
 		{
-			ARulePath				   subPath = i == lastIndex ? path : ARulePath(path.begin(), path.begin() + i + 1);
-			const Vec<TerminalSymbol> &items   = rule->getItems();
-			size_t					   n	   = items.size();
+			ARulePath subPath = path;
+			if (i != lastIndex)
+				subPath.resize(i + 1);
+			const Vec<TerminalSymbol> &items = rule->getItems();
+			size_t					   n	 = items.size();
 			for (size_t i = 0; i < n; ++i)
 				processTerminalSymbol(items[i], rule, subPath, mapPathNext);
 		}
@@ -108,14 +107,22 @@ void Parser::processTerminalSymbol(
 	ARuleMap			 &mapPath)
 {
 	if (symbol.isTerminalChar())
-		mapPath[rule].push_once(ARulePathInfo(path));
-	else
 	{
-		Vec<const std::string *> emptyConceptPaths;
-		emptyConceptPaths.reserve(8);
-		const std::string *ptr = symbol.getValuePtr();
-		getPathsTerminalChars(emptyConceptPaths, path, ptr, mapPath);
+		ARulePaths &element = mapPath[rule];
+		bool		found	= false;
+		for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
+		{
+			if (it->path == path)
+			{
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			element.push_back(ARulePathInfo(path));
 	}
+	else
+		getPathsTerminalChars(path, symbol.getValuePtr(), mapPath);
 }
 
 /**
@@ -125,9 +132,9 @@ void Parser::processTerminalSymbol(
  * @param mapPath The ARuleMap to which the terminal character paths will be added.
  * @param conceptPaths A vector of strings representing the current concept paths being explored to avoid cycles.
  */
-void Parser::getPathsTerminalChars(Vec<const std::string *> &conceptPaths, ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
+void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
 {
-	conceptPaths.push_back(conceptName);
+	m_conceptPaths.push_back(conceptName);
 	const Vec<ConceptDef *> &defs			 = m_semantic.getConceptDefs(*conceptName);
 	size_t					 conceptDefCount = defs.size();
 	for (size_t i = 0; i < conceptDefCount; ++i)
@@ -138,13 +145,35 @@ void Parser::getPathsTerminalChars(Vec<const std::string *> &conceptPaths, ARule
 		while (k < size)
 		{
 			const ARule *subRule = def->getARule(k);
-			addPathPossibility(conceptPaths, completePath, subRule, mapPath, conceptName);
+			completePath.push_back(subRule);
+			addPathPossibility(completePath, subRule, mapPath);
+			const Set<const ARule *>		  &terminalChars = m_semantic.getConcept(*conceptName)->getTerminalChars();
+			Set<const ARule *>::const_iterator ite			 = terminalChars.end();
+			for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != ite; ++it)
+			{
+				if (subRule == *it)
+				{
+					ARulePaths &element = mapPath[subRule];
+					bool		found	= false;
+					for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
+					{
+						if (it->path == completePath)
+						{
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						element.push_back(ARulePathInfo(completePath));
+				}
+			}
+			completePath.pop_back();
 			if (!isFullyOptional(*subRule))
 				break;
 			++k;
 		}
 	}
-	conceptPaths.pop_back();
+	m_conceptPaths.pop_back();
 }
 
 /**
@@ -215,10 +244,9 @@ bool Parser::word(
 		}
 	}
 
-	ARulePathInfo pathInfoObj(path);
-	pathInfoObj.terminalCharsInfo.reserve(1);
-	pathInfoObj.terminalCharsInfo.push_back(data);
-	paths.push_back(pathInfoObj);
+	paths.push_back(ARulePathInfo(path));
+	paths.back().terminalCharsInfo.reserve(1);
+	paths.back().terminalCharsInfo.push_back(data);
 
 	return true;
 }
@@ -249,7 +277,8 @@ bool Parser::parseCurrentChar(
 
 		for (size_t pathIndex = 0; pathIndex < pathsCount; ++pathIndex)
 		{
-			size_t indexElementTerminalChar = 0;
+			size_t				 indexElementTerminalChar = 0;
+			const ARulePathInfo &cpaths					  = paths[pathIndex];
 
 			for (size_t itemIndex = 0; itemIndex < itemsCount; ++itemIndex)
 			{
@@ -259,16 +288,16 @@ bool Parser::parseCurrentChar(
 					continue;
 
 				TerminalCharInfo data;
-				if (paths[pathIndex].terminalCharsInfo.has(indexElementTerminalChar))
+				if (cpaths.terminalCharsInfo.has(indexElementTerminalChar))
 				{
-					data = paths[pathIndex].terminalCharsInfo[indexElementTerminalChar];
+					data = cpaths.terminalCharsInfo[indexElementTerminalChar];
 				}
 				else
 				{
 					data = TerminalCharInfo(&item, 0);
 				}
 
-				if (word(data, c, rule, paths[pathIndex].path, mapPathCurrent, mapPathNext))
+				if (word(data, c, rule, cpaths.path, mapPathCurrent, mapPathNext))
 					isValidWithCurrentPath = true;
 				++indexElementTerminalChar;
 			}
@@ -353,14 +382,15 @@ bool Parser::isFullyOptional(const ARule &rule) const
  * @param path The ARulePath to be checked.
  * @return true if the ARulePath is fully optional until the end, false otherwise.
  */
-bool Parser::isFullyOptionalEnd(ARulePath path)
+bool Parser::isFullyOptionalEnd(const ARulePath &path)
 {
-	while (path.size() > 0)
+	ARulePath current = path;
+	while (!current.empty())
 	{
-		const ARule *rule = path.back();
+		const ARule *rule = current.back();
 		if (!isFullyOptional(*rule))
 			return false;
-		path = rule->getNextRules(path);
+		current = rule->getNextRules(current);
 	}
 	return true;
 }
@@ -502,8 +532,9 @@ void Parser::parse(const std::string &stringToParsed)
 		return;
 	}
 
-	const Vec<ConceptDef *> &defs = m_semantic.getConceptDefs(CURSOR);
-	for (size_t i = 0; i < defs.size(); ++i)
+	const Vec<ConceptDef *> &defs	  = m_semantic.getConceptDefs(CURSOR);
+	const size_t			 defsSize = defs.size();
+	for (size_t i = 0; i < defsSize; ++i)
 	{
 		const ARule *startRule = defs[i]->getARule(0);
 		precomputeOptional(startRule);
@@ -513,18 +544,12 @@ void Parser::parse(const std::string &stringToParsed)
 	ARuleMap mapPathNext;
 	char	 c;
 
-	Vec<const std::string *> emptyConceptPaths;
-	emptyConceptPaths.reserve(8);
+	m_conceptPaths.reserve(8);
 
 	ARulePath completePath;
 	completePath.reserve(8);
 
-	// TerminalSymbol startSymbol(CURSOR);
-	// TerminalSymbol startSymbol(CURSOR, false);
-
-	// CURSOR
-
-	getPathsTerminalChars(emptyConceptPaths, completePath, &CURSOR, mapPathCurrent);
+	getPathsTerminalChars(completePath, &CURSOR, mapPathCurrent);
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{

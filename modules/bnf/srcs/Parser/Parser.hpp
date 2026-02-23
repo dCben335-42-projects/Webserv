@@ -23,6 +23,7 @@ class Parser
 	private:
 		mutable std::map<const ARule *, bool> m_optionalCache;
 		mutable std::set<const ARule *>		  m_optionalComputing;
+		Vec<const std::string *>			  m_conceptPaths;
 
 		const SemanticDescriptor &m_semantic;
 
@@ -30,16 +31,17 @@ class Parser
 
 		bool isFullyOptional(const ARule &rule) const;
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
-		bool isFullyOptionalEnd(ARulePath path);
+		// bool isFullyOptionalEnd(ARulePath path);
+		bool isFullyOptionalEnd(const ARulePath &path);
 
 		bool isValidEmptyFile();
 		bool verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c);
 
 		void addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule);
-		void addPathPossibility(Vec<const std::string *> &conceptPaths, ARulePath &completePath, const ARule *const rule, ARuleMap &mapPath, const std::string *conceptName);
+		void addPathPossibility(ARulePath &completePath, const ARule *const rule, ARuleMap &mapPath);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void getPathsTerminalChars(Vec<const std::string *> &conceptPaths, ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
+		void getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
 		void precomputeOptional(const ARule *rule);
 
 		void processTerminalSymbol(

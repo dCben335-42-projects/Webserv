@@ -22,7 +22,6 @@ struct TerminalCharInfo
 		{
 		}
 
-
 		TerminalCharInfo &operator=(const TerminalCharInfo &other)
 		{
 			if (this == &other)
@@ -37,6 +36,7 @@ struct TerminalCharInfo
 		size_t				  position;
 		size_t				  length;
 };
+
 std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data);
 
 class ARulePathInfo
