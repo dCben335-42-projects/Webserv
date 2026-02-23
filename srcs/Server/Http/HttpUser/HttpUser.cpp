@@ -73,7 +73,6 @@ std::string HttpUser::generateEncryptedPassword(const std::string &pswd)
 
 	m_salt		  = Number::toString(salt) + Number::toString(secondSalt);
 	encryptedPass = Number::toString(m_token.computeHash(pswd + m_salt));
-	Logger::info(encryptedPass);
 	return encryptedPass;
 }
 

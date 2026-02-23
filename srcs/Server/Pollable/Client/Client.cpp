@@ -13,6 +13,9 @@
 #include "httpHeaders.hpp"
 #include "Logger.hpp"
 
+const std::string errorFile	 = "error.log";
+const std::string accessFile = "access.log";
+
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
 	m_config(&config),
@@ -21,12 +24,14 @@ Client::Client(int fd, const Config &config, VirtualServer &server) :
 	m_count = 0;
 	reset();
 	EventLoop::addHandler(this);
+	Logger::openFile(accessFile).custom("Client connected");
 }
 
 Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
+	Logger::openFile(accessFile).custom("Client disconnected");
 }
 
 
@@ -403,7 +408,8 @@ void Client::handleGet(const std::string &ressourcePath)
 	}
 	catch (const FileManager::FileException &e)
 	{
-		std::cerr << e.what() << '\n';
+		// TODO
+		Logger::openFile(errorFile).custom(m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + e.what());
 		throw e.getHttpException();
 	}
 }
@@ -615,12 +621,17 @@ void Client::onPollIn()
 	catch (const AHttpException &e)
 	{
 		onHttpException(e);
+		Logger::openFile(errorFile).custom("Response ready"
+										   " " +
+										   m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(e.getStatusCode()) + " " + e.what() + " " + e.getExtraMessage());
 	}
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
 	determineKeepAlive(m_res.getStatusCode());
+	Logger::openFile(accessFile).custom("Reponse ready"
+										" " +
+										m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
 	m_events = POLLOUT;
 }
-
 
 
 
@@ -644,13 +655,17 @@ void Client::onPollOut()
 	}
 	catch (const std::exception &e)
 	{
-		Logger::error("Error sending response to client on fd " + Logger::get(m_fd) + ": " + e.what());
+		// TODO
+		//  Logger::error("Error sending response to client on fd " + Logger::get(m_fd) + ": " + e.what());
 		m_events		   = 0;
 		m_connectionClosed = true;
 		return;
 	}
 	if (hasFullySent)
 	{
+		Logger::openFile(accessFile).custom("Reponse sent"
+											" " +
+											m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
 		if (m_shouldClose)
 		{
 			m_connectionClosed = true;
@@ -678,7 +693,8 @@ void Client::onPollOut()
  */
 void Client::onPollErr()
 {
-	Logger::error("Poll error on client socket fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
+	// TODO
+	//  Logger::error("Poll error on client socket fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
@@ -697,8 +713,9 @@ void Client::onPollErr()
  */
 void Client::onPollHangUp()
 {
-
-	Logger::info("client disconnected on fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
+	// TODO
+	// Logger::info("client disconnected on fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
+	Logger::openFile(accessFile).custom("Connection terminated by a peer");
 	m_events		   = 0;
 	m_connectionClosed = true;
 }

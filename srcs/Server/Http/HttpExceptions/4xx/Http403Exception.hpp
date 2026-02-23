@@ -11,6 +11,10 @@ class Http403Exception : public AHttpException
 		Http403Exception() : AHttpException(HTTP_403_MSG, 403)
 		{
 		}
+		Http403Exception(const std::string &extraMsg) : AHttpException(HTTP_403_MSG, 403)
+		{
+			m_extraMessage = extraMsg;
+		}
 };
 
 #endif

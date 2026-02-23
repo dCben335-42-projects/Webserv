@@ -335,6 +335,7 @@ bool VirtualServer::setupSocket(
 			throw SocketCreationException();
 		setReusable(m_fd);
 		bindAndListen(m_fd, ip, port);
+		// TODO
 		Logger::info("VirtualServer bound to " + Logger::get(ip) + ":" + Logger::get(port))
 			.info("Go to http://" + Logger::get(ip) + ":" + Logger::get(port) + " to access the server");
 		return true;
@@ -346,7 +347,8 @@ bool VirtualServer::setupSocket(
 			close(m_fd);
 			m_fd = -1;
 		}
-		std::cerr << e.what() << " (" << ip << ":" << port << ")" << std::endl;
+		// TODO
+		//  std::cerr << e.what() << " (" << ip << ":" << port << ")" << std::endl;
 		return false;
 	}
 }
@@ -371,7 +373,8 @@ void VirtualServer::createClient(int clientFd)
 {
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
 	{
-		std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
+		// TODO
+		// std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
 		close(clientFd);
 		return;
 	}
@@ -399,7 +402,8 @@ void VirtualServer::onPollIn()
 	int clientFd = accept(m_fd, (struct sockaddr *) &clientAddr, &clientLen);
 	if (clientFd < 0)
 	{
-		std::cerr << "Accept failed on fd " << m_fd << ": " << strerror(errno) << std::endl;
+		// TODO
+		// std::cerr << "Accept failed on fd " << m_fd << ": " << strerror(errno) << std::endl;
 		return;
 	}
 	createClient(clientFd);
@@ -411,7 +415,8 @@ void VirtualServer::onPollOut()
 
 void VirtualServer::onPollErr()
 {
-	std::cerr << "VirtualServer error on fd " << m_fd << std::endl;
+	// TODO
+	// std::cerr << "VirtualServer error on fd " << m_fd << std::endl;
 }
 
 void VirtualServer::onPollHangUp()

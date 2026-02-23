@@ -213,7 +213,8 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 			if (contentLength != m_body.size())
 				throw std::invalid_argument(REQ_CONTENT_LENGTH_MISMATCH_MSG);
 		}
-		std::cout << *this << std::endl;
+		// TODO
+		//  std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
 		parseCookie();
 	}
@@ -807,17 +808,17 @@ ssize_t HttpRequest::readOnce(int socketFd)
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message)
 {
-	Logger::log("----- HTTP Request -----\n");
-	Logger::log(BLUE "Method: " + message.getMethod().getStrType() + RESET);
-	Logger::log(GREEN "Target: " + message.getTarget() + RESET);
-	Logger::log(CYAN "Query String: " + message.getQueryString() + RESET);
-	Logger::log(CYAN "Segments: " + LoggerJson::get(message.getSegments()) + RESET);
-	Logger::log(YELLOW "Headers:");
-	Logger::log(message.getHeaders());
-	Logger::log(YELLOW "Active Locations:").log(LoggerJson::get(message.getActiveLocations()));
-	Logger::log(YELLOW "Accepts:").log(LoggerJson::get(message.getAccepts()));
-	Logger::log(MAGENTA "Body:" RESET "\n");
-	Logger::log(message.getBody());
-	Logger::log(RESET "------------------------");
+	o << Logger::get("----- HTTP Request -----\n");
+	o << Logger::get(BLUE "Method: " + message.getMethod().getStrType() + RESET);
+	o << Logger::get(GREEN "Target: " + message.getTarget() + RESET);
+	o << Logger::get(CYAN "Query String: " + message.getQueryString() + RESET);
+	o << Logger::get(CYAN "Segments: " + LoggerJson::get(message.getSegments()) + RESET);
+	o << Logger::get(YELLOW "Headers:");
+	o << Logger::get(message.getHeaders());
+	o << Logger::get(YELLOW "Active Locations:") << Logger::get(LoggerJson::get(message.getActiveLocations()));
+	o << Logger::get(YELLOW "Accepts:") << Logger::get(LoggerJson::get(message.getAccepts()));
+	o << Logger::get(MAGENTA "Body:" RESET "\n");
+	o << Logger::get(message.getBody());
+	o << Logger::get(RESET "------------------------");
 	return o;
 }

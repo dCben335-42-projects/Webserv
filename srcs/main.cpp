@@ -3,6 +3,7 @@
 #include "FileManager.hpp"
 #include "Logger.hpp"
 #include "EventLoop.hpp"
+#include "webserv.hpp"
 
 int main()
 {
@@ -19,6 +20,7 @@ int main()
 		Logger::log("Fatal error: " + std::string(e.what()));
 		return 1;
 	}
+	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ");
 	EventLoop::init();
 	EventLoop::run();
 	return 0;

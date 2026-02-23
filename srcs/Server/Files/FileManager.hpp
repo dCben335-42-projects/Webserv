@@ -81,7 +81,7 @@ class FileManager
 				{
 					return m_httpException;
 				}
-		};
+				};
 
 
 		class FileReadException : public FileException

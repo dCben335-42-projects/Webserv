@@ -109,6 +109,7 @@ void CgiPipe::onPollHangUp()
 		m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
 		m_cgiOutput.build();
 		HttpResponse &res = m_client->getResponse();
+		res.setStatusCode(m_cgiOutput.getStatusCode());
 		res.setFullResponse(m_cgiOutput.getRes());
 	}
 	catch (const AHttpException &e)

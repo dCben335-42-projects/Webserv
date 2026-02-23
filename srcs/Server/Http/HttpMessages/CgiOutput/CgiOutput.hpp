@@ -16,6 +16,7 @@ class CgiOutput : public AHttpInboundMessage
 		void			   appendToCgiOutput(const char *rawStr, size_t size);
 		void			   build();
 		const std::string &getRes() const;
+
 		CgiOutput();
 		~CgiOutput();
 };

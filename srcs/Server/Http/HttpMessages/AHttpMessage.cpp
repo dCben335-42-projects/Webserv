@@ -109,6 +109,10 @@ std::string AHttpMessage::getHeader(const std::string &key) const
 }
 
 
+unsigned short AHttpMessage::getStatusCode() const
+{
+	return m_statusCode;
+}
 
 /**
  *
@@ -278,6 +282,6 @@ std::string AHttpMessage::build()
 
 std::ostream &operator<<(std::ostream &o, AHttpMessage const &message)
 {
-	Logger::log(message.getHeaders());
+	o << Logger::get(message.getHeaders());
 	return o;
 }

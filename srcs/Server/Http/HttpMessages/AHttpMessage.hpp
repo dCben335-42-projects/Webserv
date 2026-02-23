@@ -33,6 +33,8 @@ class AHttpMessage
 		std::string				getHeader(const std::string &key) const;
 		const HttpMethod	   &getMethod() const;
 		const std::string	   &getBody() const;
+		unsigned short			getStatusCode() const;
+
 
 		void setMethod(const HttpMethod &method);
 		void setBody(const std::string &body);

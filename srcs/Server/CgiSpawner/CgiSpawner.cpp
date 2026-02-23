@@ -242,7 +242,8 @@ bool CgiSpawner::isCgi()
 	}
 	catch (const FileManager::FileException &e)
 	{
-		std::cerr << e.what() << '\n';
+		// TODO
+		//  std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
 	return true;
