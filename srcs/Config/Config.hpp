@@ -24,7 +24,6 @@ class Config
 		time_t m_bodyTimeout;
 
 		size_t m_maxBodySize;
-		size_t m_maxHeadersSize;
 
 	public:
 		Config(const std::string		   &ip,
@@ -42,7 +41,6 @@ class Config
 		void setHeaderTimeout(const time_t timeout);
 		void setBodyTimeout(const time_t timeout);
 		void setMaxBodySize(const size_t maxBodySize);
-		void setMaxHeadersSize(const size_t maxHeadersSize);
 		void setServerName(const std::string &serverName);
 
 		const std::string			&getIp() const;
@@ -57,8 +55,7 @@ class Config
 		time_t getHeaderTimeout() const;
 		time_t getBodyTimeout() const;
 
-		size_t getMaxBodySize() const;
-		size_t getMaxHeadersSize() const;
+		size_t getMaxBodySize(const std::string &locationPath) const;
 
 		bool					hasIndexFiles(const std::string &locationPath) const;
 		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;

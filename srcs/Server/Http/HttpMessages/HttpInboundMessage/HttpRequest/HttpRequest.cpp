@@ -44,7 +44,6 @@ HttpRequest &HttpRequest::reset()
 }
 
 
-
 /**
  *
  * @brief Retrieves the query string from the request target.
@@ -52,7 +51,7 @@ HttpRequest &HttpRequest::reset()
  * @return A string representing the query string.
  *
  */
-std::string HttpRequest::getQueryString() const
+const std::string &HttpRequest::getQueryString() const
 {
 	return m_queryString;
 }
@@ -102,6 +101,18 @@ const Vec<Accept> &HttpRequest::getAccepts() const
 	return m_accepts;
 }
 
+/**
+ *
+ * @brief Retrieves the total length of the raw HTTP request string.
+ *
+ * @return The total length of the raw HTTP request string.
+ *
+ */
+size_t HttpRequest::getTotalLength() const
+{
+	return m_totalLen;
+}
+
 
 
 /**
@@ -137,27 +148,22 @@ bool HttpRequest::getConnectionKeepAlive() const
 	return m_connectionKeepAlive;
 }
 
+
+
+
 /**
  *
- * @brief Reads data from the given socket file descriptor
- * and appends it to the raw request string.
+ * @brief Checks if a cookie with the specified key exists in the request.
  *
- * @param socketFd The socket file descriptor to read from.
+ * @param key The key of the cookie to check for.
  *
- * @return -1 on error, or the number of bytes read.
+ * @return true if the cookie exists, false otherwise.
  *
  */
-ssize_t HttpRequest::readOnce(int socketFd)
+bool HttpRequest::hasCookieValue(const std::string &key) const
 {
-	char		  buffer[READ_CLIENT_BUFFER_SIZE];
-	const ssize_t bytesRead = recv(socketFd, buffer, READ_CLIENT_BUFFER_SIZE - 1, MSG_DONTWAIT);
-
-	if (bytesRead < 0)
-		return -1;
-	m_rawStr.append(buffer, bytesRead);
-	return bytesRead;
+	return m_cookieValues.has(key);
 }
-
 
 /**
  *
@@ -176,21 +182,7 @@ std::string HttpRequest::getCookieValue(const std::string &key) const
 }
 
 
-/**
- *
- * @brief Checks if a cookie with the specified key exists in the request.
- *
- * @param key The key of the cookie to check for.
- *
- * @return true if the cookie exists, false otherwise.
- *
- */
-#include "Logger.hpp"
-bool HttpRequest::hasCookieValue(const std::string &key) const
-{
-	Logger::error(m_cookieValues);
-	return m_cookieValues.has(key);
-}
+
 
 /**
  *
@@ -294,7 +286,7 @@ void HttpRequest::parseTargetQuery(const std::string &path)
  */
 void HttpRequest::parseAccepts(const std::string &headerValue)
 {
-	const Vec<std::string> parts = String::split(headerValue, ",");
+	const Vec<std::string> &parts = String::split(headerValue, ",");
 	for (Vec<std::string>::size_type i = 0; i < parts.size(); ++i)
 		m_accepts.push(Accept(parts[i]));
 	std::sort(m_accepts.begin(), m_accepts.end(), Accept::compare);
@@ -358,12 +350,8 @@ void HttpRequest::parseActiveLocations(const Config &config)
  * @throws Http501Exception if the HTTP method is not supported.
  *
  */
-size_t HttpRequest::parseFirstLine()
+size_t HttpRequest::parseFirstLine(const size_t lineEnd)
 {
-	const size_t lineEnd = m_rawStr.find(HEADER_LINE_ENDING);
-	if (lineEnd == std::string::npos)
-		throw std::invalid_argument("Invalid Request Line");
-
 	const std::string requestLine = m_rawStr.substr(0, lineEnd);
 	const size_t	  methodEnd	  = requestLine.find(' ');
 	if (methodEnd != std::string::npos)
@@ -714,26 +702,6 @@ const std::string &HttpRequest::getHost() const
 	return m_host.second;
 }
 
-/**
- *
- * @brief Checks if the size of the raw request string exceeds the specified maximum headers size.
- *
- * @param maxHeadersSize The maximum allowed size for the request headers in bytes.
- *
- * @throws Http413Exception if the size of the raw request string exceeds the specified maximum headers size.
- *
- *
- */
-void HttpRequest::checkHeadersSize(const size_t maxHeadersSize) const
-{
-	if (m_rawStr.size() > maxHeadersSize)
-	{
-		if (hasCompleteHeader())
-			throw Http413Exception(REQ_SERVER_MAX_HEADERS_REACHED_MSG + Number::toString(maxHeadersSize) + " bytes");
-		throw Http413Exception(REQ_DEFAULT_MAX_HEADERS_REACHED_MSG + Number::toString(maxHeadersSize) + " bytes");
-	}
-}
-
 
 
 /**
@@ -751,18 +719,16 @@ void HttpRequest::checkHeadersSize(const size_t maxHeadersSize) const
  * @return true if the headers are complete, false otherwise.
  *
  */
-bool HttpRequest::isCompleteHeader(const size_t maxHeadersSize)
+bool HttpRequest::isCompleteHeader()
 {
 	if (!m_isFirstLineParsed)
 	{
-		if (m_rawStr.find(HEADER_LINE_ENDING) == std::string::npos)
-		{
-			checkHeadersSize(maxHeadersSize);
+		const size_t lineEnd = m_rawStr.find(HEADER_LINE_ENDING);
+		if (lineEnd == std::string::npos)
 			return false;
-		}
 		try
 		{
-			m_firstLineEndPos	= parseFirstLine();
+			m_firstLineEndPos	= parseFirstLine(lineEnd);
 			m_isFirstLineParsed = true;
 		}
 		catch (const std::invalid_argument &e)
@@ -783,10 +749,7 @@ bool HttpRequest::isCompleteHeader(const size_t maxHeadersSize)
 		m_host = std::make_pair(true, host);
 	}
 	if (headersEnd == std::string::npos)
-	{
-		checkHeadersSize(maxHeadersSize);
 		return false;
-	}
 	m_headersEndPos = headersEnd;
 	return true;
 }
@@ -822,41 +785,23 @@ bool HttpRequest::isCompleteBody(const size_t maxBodySize)
 
 /**
  *
- * @brief Checks if the HTTP request is complete,
- * meaning it has received all headers and body based on Content-Length.
+ * @brief Reads data from the given socket file descriptor
+ * and appends it to the raw request string.
  *
- * @note Updates m_totalLen member.
- * @note Updates m_isFirstLineParsed member.
- * @note Updates m_firstLineEndPos member.
+ * @param socketFd The socket file descriptor to read from.
  *
- * @note It is meant to be called multiple times as data is read from the socket.
- *
- * @throws AHttpException if the request is malformed.
- *
- * @return true if the request is complete, false otherwise.
+ * @return -1 on error, or the number of bytes read.
  *
  */
-bool HttpRequest::isComplete(const size_t maxBodySize, const size_t maxHeadersSize)
+ssize_t HttpRequest::readOnce(int socketFd)
 {
-	if (m_totalLen)
-		return m_rawStr.size() >= m_totalLen;
-	if (!isCompleteHeader(maxHeadersSize))
-		return false;
-	checkHeadersSize(maxHeadersSize);
-	return isCompleteBody(maxBodySize);
-}
+	char		  buffer[READ_CLIENT_BUFFER_SIZE];
+	const ssize_t bytesRead = recv(socketFd, buffer, READ_CLIENT_BUFFER_SIZE - 1, MSG_DONTWAIT);
 
-
-/**
- *
- * @brief Checks if the end of the HTTP headers has been reached in the raw request string.
- *
- * @return true if the headers are complete, false otherwise.
- *
- */
-bool HttpRequest::hasCompleteHeader() const
-{
-	return m_headersEndPos != 0;
+	if (bytesRead < 0)
+		return -1;
+	m_rawStr.append(buffer, bytesRead);
+	return bytesRead;
 }
 
 

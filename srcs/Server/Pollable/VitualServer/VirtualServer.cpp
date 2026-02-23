@@ -19,10 +19,11 @@
 
 VirtualServer::VirtualServer(const Config &config) :
 	Pollable(-1),
-	m_config(config),
+	m_defaultConf(config),
 	m_bindIp(config.getIp()),
 	m_bindPort(config.getPort())
 {
+	m_configs.push(&config);
 	m_isIPv6 = m_bindIp.find(':') != std::string::npos;
 	setupSocket(m_bindIp, m_bindPort);
 	m_events = POLLIN;
@@ -33,7 +34,7 @@ VirtualServer::~VirtualServer()
 {
 	if (m_fd != -1)
 		close(m_fd);
-	delete &m_config;
+	delete &m_defaultConf;
 }
 
 /**
@@ -69,7 +70,7 @@ unsigned short VirtualServer::getBindPort() const
  */
 const Config &VirtualServer::getConfig() const
 {
-	return m_config;
+	return m_defaultConf;
 }
 
 
@@ -82,7 +83,7 @@ const Config &VirtualServer::getConfig() const
  */
 const Vec<const Config *> &VirtualServer::getConfigs() const
 {
-	return configs;
+	return m_configs;
 }
 
 
@@ -374,7 +375,7 @@ void VirtualServer::createClient(int clientFd)
 		close(clientFd);
 		return;
 	}
-	new Client(clientFd, m_config, *this);
+	new Client(clientFd, m_defaultConf, *this);
 }
 
 bool VirtualServer::isTimedOut(const time_t currentTime) const
@@ -429,7 +430,7 @@ const std::string VirtualServer::createUser(const std::string name, const std::s
 		if (name == it->getName())
 			throw Http409Exception();
 	}
-	HttpUser newUser(name, pswd, m_config.getServerName(), m_config.getPort());
+	HttpUser newUser(name, pswd, m_defaultConf.getServerName(), m_defaultConf.getPort());
 	newUser.stringifyCookie();
 	m_users.push(newUser);
 	return newUser.getStringifiedCookie();

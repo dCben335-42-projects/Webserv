@@ -99,6 +99,7 @@ void Client::reset()
 	m_shouldClose  = false;
 	m_events	   = POLLIN;
 	m_time		   = std::time(0);
+	m_isConfigSet  = false;
 }
 
 /**
@@ -476,15 +477,16 @@ bool Client::prepareResponse()
  * @return A pointer to the Config object that matches the client's request, or the default configuration if no match is found.
  *
  */
-const Config *Client::findHostConfig() const
+const Config *Client::findHostConfig(const std::string &host) const
 {
-	const std::string		  &host	 = m_req.getHost();
-	const Vec<const Config *> &confs = m_server.getConfigs();
+	const size_t	  pos				  = host.find(':');
+	const std::string extractedServerName = pos != std::string::npos ? host.substr(0, pos) : host;
 
+	const Vec<const Config *> &confs = m_server.getConfigs();
 	for (Vec<const Config *>::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
 		const Config &config = *(*it);
-		if (config.hasServerName() && config.getServerName() == host)
+		if (config.hasServerName() && config.getServerName() == extractedServerName)
 			return &config;
 	}
 	return confs.at(0);
@@ -544,6 +546,41 @@ bool Client::determineKeepAlive(unsigned short statusCode)
 	return !m_shouldClose;
 }
 
+
+/**
+ *
+ * @brief Checks if the complete HTTP request has been received from the client.
+ *
+ * This function verifies if the entire HTTP request has been received based on the content length and headers.
+ * It checks if the raw request string has reached the expected total length (if specified) or if the headers and body are complete according to the server configuration.
+ *
+ * @note update m_config
+ *
+ *
+ * @return true if the complete HTTP request has been received, false otherwise.
+ *
+ */
+bool Client::hasReceivedCompleteRequest()
+{
+	const std::string &rawStr	  = m_req.getRawRequest();
+	const size_t	   rawStrSize = rawStr.size();
+	const size_t	   totalLen	  = m_req.getTotalLength();
+
+	if (totalLen)
+		return rawStrSize >= totalLen;
+	const bool isCompleteHeader = m_req.isCompleteHeader();
+	if (!m_isConfigSet && m_req.hasHost())
+	{
+		m_config	  = findHostConfig(m_req.getHost());
+		m_isConfigSet = true;
+	}
+	m_timeoutState = isCompleteHeader ? BODY_TIMEOUT : HEADER_TIMEOUT;
+	if (!isCompleteHeader)
+		return false;
+	const size_t maxBodySize = m_config->getMaxBodySize(m_req.getTarget());
+	return m_req.isCompleteBody(maxBodySize);
+}
+
 /**
  *
  * @brief Handles reading data from the client socket.
@@ -565,19 +602,11 @@ void Client::onPollIn()
 		return onPollErr();
 	if (bytesRead == 0)
 		return onPollHangUp();
-	m_time						= std::time(0);
-	const size_t maxBodySize	= m_config->getMaxBodySize();
-	const size_t maxHeadersSize = m_config->getMaxHeadersSize();
+	m_time = std::time(0);
 	try
 	{
-		const bool hasCompleteRequest = m_req.isComplete(maxBodySize, maxHeadersSize);
-		if (m_req.hasHost())
-			m_config = findHostConfig();
-		if (!hasCompleteRequest)
-		{
-			m_timeoutState = m_req.hasCompleteHeader() ? BODY_TIMEOUT : HEADER_TIMEOUT;
+		if (!hasReceivedCompleteRequest())
 			return;
-		}
 		m_timeoutState = KEEP_ALIVE_TIMEOUT;
 		m_req.parse(*m_config);
 		if (!prepareResponse())

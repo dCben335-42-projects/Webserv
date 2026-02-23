@@ -54,8 +54,11 @@ class Client : public Pollable
 		void handleDelete(const std::string &ressourcePath);
 		void handlePutPatch(const std::string &ressourcePath);
 
-		bool		  prepareResponse();
-		const Config *findHostConfig() const;
+		bool prepareResponse();
+
+		const Config *findHostConfig(const std::string &host) const;
+		bool		  hasReceivedCompleteRequest();
+
 
 	public:
 		Client(int fd, const Config &config, VirtualServer &server);

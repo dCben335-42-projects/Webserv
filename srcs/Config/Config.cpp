@@ -18,7 +18,6 @@ Config::Config(
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
-	m_maxHeadersSize   = FALLBACK_MAX_HEADERS_SIZE;
 	m_serverName	   = std::make_pair(serverName != "", serverName);
 }
 
@@ -127,18 +126,6 @@ void Config::setMaxBodySize(const size_t maxBodySize)
 	m_maxBodySize = maxBodySize;
 }
 
-/**
- *
- * @brief Sets the maximum headers size for the virtual server.
- *
- * @param maxHeadersSize The maximum headers size to be set (in bytes).
- *
- */
-void Config::setMaxHeadersSize(const size_t maxHeadersSize)
-{
-	m_maxHeadersSize = maxHeadersSize;
-}
-
 
 /**
  *
@@ -220,21 +207,10 @@ time_t Config::getBodyTimeout() const
  * @return The maximum body size in bytes.
  *
  */
-size_t Config::getMaxBodySize() const
+size_t Config::getMaxBodySize(const std::string &locationPath) const
 {
+	(void) locationPath;
 	return m_maxBodySize;
-}
-
-/**
- *
- * @brief Gets the maximum headers size for the virtual server.
- *
- * @return The maximum headers size in bytes.
- *
- */
-size_t Config::getMaxHeadersSize() const
-{
-	return m_maxHeadersSize;
 }
 
 

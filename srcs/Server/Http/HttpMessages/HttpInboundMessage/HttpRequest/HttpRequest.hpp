@@ -36,7 +36,7 @@ class HttpRequest : public AHttpInboundMessage
 		std::pair<bool, std::string> m_host;
 
 
-		size_t parseFirstLine();
+		size_t parseFirstLine(const size_t lineEnd);
 		void   parseTargetQuery(const std::string &path);
 		void   parseActiveLocations(const Config &config);
 		void   parseAccepts(const std::string &headerValue);
@@ -47,25 +47,28 @@ class HttpRequest : public AHttpInboundMessage
 		std::string	 readHost(const std::string &headers) const;
 		HttpRequest &parseCookie();
 
-		void checkHeadersSize(const size_t maxHeadersSize) const;
-		bool isCompleteHeader(const size_t maxHeadersSize);
-		bool isCompleteBody(const size_t maxBodySize);
+
 
 		typedef Vec<const Config::Location *>::const_iterator m_locCIt;
 
 	public:
 		HttpRequest();
 
-		std::string							 getQueryString() const;
-		size_t								 getSegmentSize() const;
-		const Vec<std::string>				&getSegments() const;
+		size_t getTotalLength() const;
+
+		size_t					getSegmentSize() const;
+		const Vec<std::string> &getSegments() const;
+		const std::string	   &getQueryString() const;
+
 		const Vec<const Config::Location *> &getActiveLocations() const;
-		const Vec<Accept>					&getAccepts() const;
 		bool								 getActiveAutoIndex() const;
-		bool								 getConnectionKeepAlive() const;
-		const Set<HttpMethod>				*getAllowedMethods() const;
-		bool								 hasHost() const;
-		const std::string					&getHost() const;
+
+		const Vec<Accept>	  &getAccepts() const;
+		bool				   getConnectionKeepAlive() const;
+		const Set<HttpMethod> *getAllowedMethods() const;
+
+		bool			   hasHost() const;
+		const std::string &getHost() const;
 
 		bool		hasUpload() const;
 		std::string getUploadPath() const;
@@ -85,8 +88,8 @@ class HttpRequest : public AHttpInboundMessage
 		std::string buildResourcePath(const ssize_t segmentIndex) const;
 		bool		matchAccept(const std::string &contentType) const;
 
-		bool isComplete(const size_t maxBodySize, const size_t maxHeadersSize);
-		bool hasCompleteHeader() const;
+		bool isCompleteHeader();
+		bool isCompleteBody(const size_t maxBodySize);
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);
