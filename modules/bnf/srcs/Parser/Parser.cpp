@@ -35,16 +35,16 @@ void Parser::addPathPossibility(
 			getPathsTerminalChars(completePath, itemValue, mapPath, conceptPaths);
 		else
 		{
-			PathCacheKey key(conceptName, completePath);
+			// PathCacheKey key(conceptName, completePath);
 			mapPath[rule].push_once(ARulePathInfo(completePath));
 			// m_pathsCache[key][rule].push_once(ARulePathInfo(completePath));
 
-			if (!m_pathsCache.has(key))
-				m_pathsCache.set(key, ARuleMap());
-			ARuleMap &cachedMap = m_pathsCache.get(key);
-			if (!cachedMap.has(rule))
-				cachedMap.set(rule, ARulePaths());
-			cachedMap.get(rule).push_once(ARulePathInfo(completePath));
+			// if (!m_pathsCache.has(key))
+			// 	m_pathsCache.set(key, ARuleMap());
+			// ARuleMap &cachedMap = m_pathsCache.get(key);
+			// if (!cachedMap.has(rule))
+			// 	cachedMap.set(rule, ARulePaths());
+			// cachedMap.get(rule).push_once(ARulePathInfo(completePath));
 		}
 	}
 
@@ -54,15 +54,15 @@ void Parser::addPathPossibility(
 	{
 		if (rule == *it)
 		{
-			PathCacheKey key(conceptName, completePath);
+			// PathCacheKey key(conceptName, completePath);
 			mapPath[rule].push_once(ARulePathInfo(completePath));
 
-			if (!m_pathsCache.has(key))
-				m_pathsCache.set(key, ARuleMap());
-			ARuleMap &cachedMap = m_pathsCache.get(key);
-			if (!cachedMap.has(rule))
-				cachedMap.set(rule, ARulePaths());
-			cachedMap.get(rule).push_once(ARulePathInfo(completePath));
+			// if (!m_pathsCache.has(key))
+			// 	m_pathsCache.set(key, ARuleMap());
+			// ARuleMap &cachedMap = m_pathsCache.get(key);
+			// if (!cachedMap.has(rule))
+			// 	cachedMap.set(rule, ARulePaths());
+			// cachedMap.get(rule).push_once(ARulePathInfo(completePath));
 			// Logger::log(m_pathsCache[key][rule]);
 		}
 	}
@@ -104,24 +104,24 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 	}
 }
 
-PathCacheKey::PathCacheKey()
-{
-}
+// PathCacheKey::PathCacheKey()
+// {
+// }
 
-PathCacheKey::PathCacheKey(const std::string &name, const ARulePath &path) : conceptName(name), pathContext(path)
-{
-}
+// PathCacheKey::PathCacheKey(const std::string &name, const ARulePath &path) : conceptName(name), pathContext(path)
+// {
+// }
 
-bool PathCacheKey::operator==(const PathCacheKey &other) const
-{
-	Logger::debug("Comparing PathCacheKey: " + Logger::get(*this) + " with " + Logger::get(other));
-	return conceptName == other.conceptName && pathContext == other.pathContext;
-}
+// bool PathCacheKey::operator==(const PathCacheKey &other) const
+// {
+// 	Logger::debug("Comparing PathCacheKey: " + Logger::get(*this) + " with " + Logger::get(other));
+// 	return conceptName == other.conceptName && pathContext == other.pathContext;
+// }
 
-bool PathCacheKey::operator<(const PathCacheKey &other) const
-{
-	return (pathContext < other.pathContext);
-}
+// bool PathCacheKey::operator<(const PathCacheKey &other) const
+// {
+// 	return (pathContext < other.pathContext);
+// }
 
 void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> &conceptPaths)
 {
@@ -131,7 +131,7 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string &c
 	// 	mapPath = m_pathsCache[PathCacheKey{conceptName, completePath}];
 	// }
 
-	PathCacheKey key(conceptName, completePath);
+	// PathCacheKey key(conceptName, completePath);
 
 	// Logger::debug("Trying cache for concept: " + conceptName + " path size: " + Logger::get(completePath.size()));
 	// for (size_t i = 0; i < completePath.size(); ++i)
@@ -554,7 +554,6 @@ void Parser::parse(const std::string &stringToParsed)
 		if (i == stringToParsed.size() - 1)
 			break;
 
-
 		std::swap(mapPathCurrent, mapPathNext);
 		mapPathNext.clear();
 	}
@@ -565,8 +564,8 @@ void Parser::parse(const std::string &stringToParsed)
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 }
 
-std::ostream &operator<<(std::ostream &os, const PathCacheKey &key)
-{
-	os << "PathCacheKey(conceptName: " << key.conceptName << ", pathContext size: " << LoggerJson::get(key.pathContext, true) << ")";
-	return os;
-}
+// std::ostream &operator<<(std::ostream &os, const PathCacheKey &key)
+// {
+// 	os << "PathCacheKey(conceptName: " << key.conceptName << ", pathContext size: " << LoggerJson::get(key.pathContext, true) << ")";
+// 	return os;
+// }

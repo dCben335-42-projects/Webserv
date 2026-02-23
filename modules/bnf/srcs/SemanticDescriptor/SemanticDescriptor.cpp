@@ -9,19 +9,34 @@ SemanticDescriptor::SemanticDescriptor() : tree(NULL)
 {
 }
 
-SemanticDescriptor::SemanticDescriptor(const std::string &m_content)
+SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL)
 {
-	std::istringstream iss(m_content);
-	splitBlocks(iss);
-	parseBlocks();
-	Logger::log("Semantic descriptor parsed successfully!");
+	try
+	{
+		std::istringstream iss(m_content);
+		splitBlocks(iss);
+		parseBlocks();
+		Logger::log("Semantic descriptor parsed successfully!");
+	}
+	catch (const SemanticException &e)
+	{
+		std::cout << e;
+		delete tree;
+		for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
+		{
+			Vec<ConceptDef *> &defs = (*it).second->getDefinitions();
+			for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
+				delete *conceptIt;
+			delete (*it).second;
+		}
+		throw std::runtime_error("semantic descriptor is not valid");
+	}
 }
 
 SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &other)
 {
 	if (this != &other)
 	{
-		// Clean up existing resources
 		delete tree;
 		for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 		{
@@ -33,8 +48,6 @@ SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &othe
 	}
 	return *this;
 }
-
-
 
 SemanticDescriptor::~SemanticDescriptor()
 {
@@ -108,7 +121,6 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 		pos += ORRULE.length();
 		return false;
 	}
-
 	throw ConceptHasNotDefinitionException();
 }
 
@@ -116,26 +128,18 @@ void SemanticDescriptor::parseBlocks()
 {
 	size_t pos;
 
-	try
+	for (Vec<std::string>::iterator block = blocks.begin(); block != blocks.end(); ++block)
 	{
-		for (Vec<std::string>::iterator block = blocks.begin(); block != blocks.end(); ++block)
+		if (findSeparator(*block, pos))
 		{
-			if (findSeparator(*block, pos))
-			{
-				parseConceptName(block->substr(0, pos));
-				pos += EQRULE.length();
-			}
-			parseRule(*block, pos);
+			parseConceptName(block->substr(0, pos));
+			pos += EQRULE.length();
 		}
-		checkValidity();
-		addParent();
-		findAllNext();
+		parseRule(*block, pos);
 	}
-	catch (const SemanticException &e)
-	{
-		std::cout << e;
-		throw std::runtime_error("semantic descriptor is not valid");
-	}
+	checkValidity();
+	addParent();
+	findAllNext();
 }
 
 
@@ -247,7 +251,7 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 	return result;
 }
 
-bool parseAndConsumePrefix(std::string &str, int *out)
+bool SemanticDescriptor::parseAndConsumePrefix(std::string &str, int *out)
 {
 	size_t i = 0;
 
@@ -255,7 +259,7 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 		return false;
 
 	if (str[0] == '"')
-		throw std::runtime_error("Error: A token cannot begin with double quotes");
+		throw DoubleQuoteStartException();
 
 	if (!std::isdigit(str[0]))
 		return false;
@@ -269,12 +273,10 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 
 	if (i >= str.size() || str[i] != '>')
 	{
-		throw std::runtime_error("Erreur: nombre non suivi de '>'");
+		throw BadPrefixException();
 	}
 	if (i + 1 >= str.size() || str[i + 1] == '"')
-	{
-		throw std::runtime_error("Error: A token cannot begin with double quotes");
-	}
+		throw DoubleQuoteStartException();
 
 	str.erase(0, i + 1);
 
@@ -284,9 +286,8 @@ bool parseAndConsumePrefix(std::string &str, int *out)
 
 void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 {
-	Concept	   *cpt;
+	Concept	   *cpt		   = NULL;
 	ConceptDef *conceptDef = new ConceptDef(m_lastKey);
-
 	if (!m_concepts.try_get(m_lastKey, cpt))
 	{
 		cpt = new Concept(m_lastKey);
@@ -309,14 +310,17 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		word = words[i];
 		parseAndConsumePrefix(word, &n);
 		if (ARule::isKeyWord(word, true))
-			throw std::runtime_error("Invalid keyword: " + word);
+			throw InvalidKeywordException(word);
 		BnfMap map = ARule::getMap(word);
 		arule	   = map.constructor(m_lastKey, conceptDefIndex, aruleIndex, cpt, conceptDef);
 
 		if (map.hasClosure)
 		{
 			if (i + 1 == words.size())
-				throw std::runtime_error("Unexpected end of rule after " + map.opener);
+			{
+				delete arule;
+				throw UnexpectedEndRuleException(map.opener);
+			}
 			i++;
 			word = words[i];
 		}
@@ -324,12 +328,15 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 		{
 			parseAndConsumePrefix(word, &n);
 			if (ARule::isKeyWord(word, false))
-				throw std::runtime_error("Bad closing keyword: " + word);
+			{
+				delete arule;
+				throw BadClosingKeywordException(word);
+			}
 			if (word != DIVIDER)
 			{
 				if (!validate_string_strict(word))
 				{
-					Logger::log("Invalid concept name: " + word);
+					delete arule;
 					throw InvalidConceptNameException(word);
 				}
 				arule->addItem(TerminalSymbol::specify(word));
@@ -399,7 +406,8 @@ void SemanticDescriptor::ndw(const ARule *rule, Vec<std::string> &conceptPaths)
 		if (!items[i].isTerminalChar())
 		{
 			if (!m_concepts.try_get(items[i].getValue(), conceptPtr))
-				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + items[i].getValue());
+				throw ConceptNotFoundException(items[i].getValue());
+
 			conceptPathsCopy = conceptPaths;
 			conceptPathsCopy.push_back(items[i].getValue());
 
@@ -450,6 +458,7 @@ void SemanticDescriptor::parseConceptName(std::string s)
 bool SemanticDescriptor::hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr)
 {
 	ConceptNode *tempN = new ConceptNode(item, m_concepts[item]->getDefinitions());
+
 	tempN->setPath(parentPtr->getPath())
 		.addSegmentPath(item)
 		.setParent(parentPtr);
@@ -475,10 +484,10 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 				continue;
 
 			if (!isInMap(m_concepts, item.getValue()))
-				throw std::runtime_error(ERR_CONCEPT_NOT_FOUND + item.getValue());
+				throw ConceptNotFoundException(item.getValue());
 
 			if (!m_recursiveConceptAuthorize && (isInContainer(node.getPath(), item.getValue())))
-				throw std::runtime_error("Recursive concept are forbidden: " + item.getValue());
+				throw RecursiveConceptException(item.getValue());
 
 			hasInfRecursivity += isInContainer(node.getPath(), item.getValue()) || hasRecursiveErrorOnNewNode(item.getValue(), &node);
 		}
@@ -490,7 +499,14 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
 
 void SemanticDescriptor::checkValidity()
 {
-	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
+	try
+	{
+		tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
+	}
+	catch (std::bad_alloc &)
+	{
+		throw MemoryAllocationFailedException();
+	}
 	tree->addSegmentPath(CURSOR);
 
 	m_recursiveConceptAuthorize = false;
@@ -510,7 +526,7 @@ void SemanticDescriptor::checkValidity()
 						continue;
 					else if (itemIt->getValue() == conceptName)
 					{
-						throw std::runtime_error("Recursive concept are forbidden: " + conceptName);
+						throw RecursiveConceptException(conceptName);
 					}
 				}
 			}
@@ -518,7 +534,7 @@ void SemanticDescriptor::checkValidity()
 	}
 
 	if (hasRecursiveError(*tree))
-		throw std::runtime_error("Concept recursion loop detected in the configuration !");
+		throw RecursiveLoopConceptException();
 }
 
 Map<Concept *> SemanticDescriptor::getConcepts() const

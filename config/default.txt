@@ -12,6 +12,11 @@ http {
     error_page             413 /var/www/errors/413.html;
     server {
         listen            80;
+        listen            90;
+        listen            1000;
+        listen            100000;
+        listen            0;
+        listen            890;
         server_name        i_am_the_one_who_ports;
         root             /var/www/website/;
         index            index.html index.htm;
@@ -24,6 +29,9 @@ http {
         location /test {
             root   html;
             index  index.html index.htm index2.html shrek.html benoit.html;
+        }
+        location /test {
+            root   asdawdawd;
         }
         location /uploads {
             alias         /var/www/uploads;

@@ -15,6 +15,15 @@
 #include "../Exception/InvalidConceptNameException.hpp"
 #include "../Exception/ConceptHasNotDefinitionException.hpp"
 #include "../Exception/EmptyConceptNameException.hpp"
+#include "../Exception/DoubleQuoteStartException.hpp"
+#include "../Exception/MemoryAllocationFailedException.hpp"
+#include "../Exception/BadClosingKeywordException.hpp"
+#include "../Exception/UnexpectedEndRuleException.hpp"
+#include "../Exception/InvalidKeywordException.hpp"
+#include "../Exception/ConceptNotFoundException.hpp"
+#include "../Exception/BadPrefixException.hpp"
+#include "../Exception/RecursiveConceptException.hpp"
+#include "../Exception/RecursiveLoopConceptException.hpp"
 
 class SemanticDescriptor
 {
@@ -41,6 +50,9 @@ class SemanticDescriptor
 		void parseBlocks();
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void addParent();
+
+
+		bool parseAndConsumePrefix(std::string &str, int *out);
 
 	public:
 		SemanticDescriptor();

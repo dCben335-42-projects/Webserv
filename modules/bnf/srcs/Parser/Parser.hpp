@@ -20,34 +20,34 @@
 
 // typedef Vec<ARulePath> ARulePathsOk;
 
-class PathCacheKey
-{
-	public:
-		std::string conceptName;
-		ARulePath	pathContext;
+// class PathCacheKey
+// {
+// 	public:
+// 		std::string conceptName;
+// 		ARulePath	pathContext;
 
-		PathCacheKey();
-		PathCacheKey(const std::string &name, const ARulePath &path);
+// 		PathCacheKey();
+// 		PathCacheKey(const std::string &name, const ARulePath &path);
 
-		bool operator==(const PathCacheKey &other) const;
+// 		bool operator==(const PathCacheKey &other) const;
 
-		bool operator<(const PathCacheKey &other) const;
-};
+// 		bool operator<(const PathCacheKey &other) const;
+// };
 
-std::ostream &operator<<(std::ostream &os, const PathCacheKey &key);
+// std::ostream &operator<<(std::ostream &os, const PathCacheKey &key);
 
 // subPath, terminalSymbol->getValue()
 
 class Parser
 {
 	private:
-		Set<PathCacheKey>					  m_computing;
+		// Set<PathCacheKey>					  m_computing;
 		mutable std::map<const ARule *, bool> m_optionalCache;
 		mutable std::set<const ARule *>		  m_optionalComputing;
 		// std::map<std::pair<const ARule *, std::string>, ARulePaths> m_pathsCache;
 		// std::map<std::string, ARuleMap> m_pathsCache;
-		Map<PathCacheKey, ARuleMap> m_pathsCache;
-		const SemanticDescriptor   &m_semantic;
+		// Map<PathCacheKey, ARuleMap> m_pathsCache;
+		const SemanticDescriptor &m_semantic;
 
 		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 
