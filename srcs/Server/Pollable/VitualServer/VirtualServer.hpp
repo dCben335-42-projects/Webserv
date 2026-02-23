@@ -107,9 +107,9 @@ class VirtualServer : public Pollable
 		bool isTimedOut(const time_t currentTime) const;
 		void onTimeOut();
 
-		const std::string  createCookie(const std::string name, const std::string pswd);
+		const std::string  createUser(const std::string name, const std::string pswd);
 		bool			   hasUser(const std::string &hash) const;
-		const std::string &findCookie(const std::string &name, const std::string &pswd);
+		const std::string &findUser(const std::string &name, const std::string &pswd, const std::string &authLoc);
 };
 
 #endif

@@ -163,24 +163,25 @@ void Client::setEvents(const short events)
 void Client::handlePost(const std::string &ressourcePath)
 {
 	(void) ressourcePath;
-	const std::string &target = m_req.getTarget();
-	if (target == "/auth/register" || target == "/auth/login")
+	const std::string &target  = m_req.getTarget();
+	const std::string  authloc = "/auth/";
+	if (target == authloc + AUTH_REGISTER_LOC || target == authloc + AUTH_LOGIN_LOC)
 	{
-		HttpAuth auth;
-		if (target == "/auth/register")
+		HttpAuth auth(authloc);
+		if (target == authloc + AUTH_REGISTER_LOC)
 		{
 			auth.parse(m_req.getBody(), HttpAuth::REGISTER);
 			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
-			m_res.setBody("Register Successful !");
-			m_res.setHeader(HEADER_SET_COOKIE, m_server.createCookie(urlEncoded.get(AUTH_REGISTER_NAME_KEY), urlEncoded.get(AUTH_REGISTER_PSWD_KEY)));
+			m_res.setBody(REGISTER_SUCCESS_MSG);
+			m_res.setHeader(HEADER_SET_COOKIE, m_server.createUser(urlEncoded.get(AUTH_REGISTER_NAME_KEY), urlEncoded.get(AUTH_REGISTER_PSWD_KEY)));
 			m_res.setStatusCode(201);
 		}
-		else if (target == "/auth/login")
+		else if (target == authloc + AUTH_LOGIN_LOC)
 		{
 			auth.parse(m_req.getBody(), HttpAuth::LOGIN);
 			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
-			m_res.setBody("Login Successful !");
-			m_res.setHeader(HEADER_SET_COOKIE, m_server.findCookie(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY)));
+			m_res.setBody(LOGIN_SUCCESS_MSG);
+			m_res.setHeader(HEADER_SET_COOKIE, m_server.findUser(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY), authloc));
 			m_res.setStatusCode(200);
 		}
 		return;
@@ -189,8 +190,8 @@ void Client::handlePost(const std::string &ressourcePath)
 	if (!m_req.hasUpload())
 		throw Http403Exception();
 	if (!file.isUploadValid())
-		throw Http400Exception("Invalid file upload data");
-	m_req.setBody("File uploaded successfully.");
+		throw Http400Exception(INVALID_UPLOAD_DATA_MSG);
+	m_req.setBody(UPLOAD_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	m_res.setStatusCode(201);
 }
@@ -219,7 +220,7 @@ void Client::handlePutPatch(const std::string &ressourcePath)
 	FileUpload file(m_req);
 	file.createDiskFile(ressourcePath, m_req.getBody());
 	m_res.setStatusCode(204);
-	m_res.setBody("File edited with a lot of success");
+	m_res.setBody(EDIT_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 }
 
@@ -249,7 +250,7 @@ void Client::handleDelete(const std::string &ressourcePath)
 		throw Http403Exception();
 	std::remove(fullPath);
 	m_res.setStatusCode(204);
-	m_res.setBody("File deleted successfully.");
+	m_res.setBody(DELETE_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 }
 
@@ -358,8 +359,11 @@ void Client::handleGet(const std::string &ressourcePath)
 
 	bool			  isIndexFile = false;
 	const std::string target	  = m_req.getTarget();
+	// TODO change those variables for the config ones
+	const std::string authLoc	= "/auth/";
+	const std::string cgiBinLoc = "/cgi-bin/";
 
-	if (target == "/cgi-bin/")
+	if (target == cgiBinLoc)
 	{
 		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
 			throw Http401Exception();
@@ -367,10 +371,10 @@ void Client::handleGet(const std::string &ressourcePath)
 		if (!m_server.hasUser(token))
 			throw Http401Exception();
 	}
-	if (target == "/auth/")
+	if (target == authLoc)
 	{
-		HttpAuth auth;
-		auth.generatePage("/auth");
+		HttpAuth auth(authLoc);
+		auth.generatePage();
 		m_res.setBody(auth.getPage());
 		m_res.setStatusCode(200);
 		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);

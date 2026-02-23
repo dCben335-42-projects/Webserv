@@ -13,6 +13,8 @@
 #include "Client.hpp"
 #include "HttpUser.hpp"
 
+#include "HttpAuth.hpp"
+
 
 
 VirtualServer::VirtualServer(const Config &config) :
@@ -419,7 +421,7 @@ void VirtualServer::onTimeOut()
 {
 }
 
-const std::string VirtualServer::createCookie(const std::string name, const std::string pswd)
+const std::string VirtualServer::createUser(const std::string name, const std::string pswd)
 {
 	// TODO Check if domain is the right string
 	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
@@ -444,19 +446,16 @@ bool VirtualServer::hasUser(const std::string &hash) const
 	return false;
 }
 
-const std::string &VirtualServer::findCookie(const std::string &name, const std::string &pswd)
+const std::string &VirtualServer::findUser(const std::string &name, const std::string &pswd, const std::string &authLoc)
 {
 	for (UserIt it = m_users.begin(); it != m_users.end(); it++)
 	{
 		if (it->getName() == name && it->getPswd() == Number::toString(AuthToken::computeHash(pswd + it->getSalt())))
 		{
 			if (!it->hasValidToken())
-			{
 				it->refreshToken();
-				Logger::error("Expired Cookie, created a new one");
-			}
 			return it->getStringifiedCookie();
 		}
 	}
-	throw Http401Exception();
+	throw Http301Exception(authLoc + "?" + AUTH_LOGIN_PSWD_KEY + "=" + AUTH_INVALID_CREDENTIALS);
 }

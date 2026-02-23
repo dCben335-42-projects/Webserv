@@ -7,7 +7,7 @@
 </head>
 <body>
 	<?php 
-		echo "fdp de merde";
+		echo "Hello from php script !";
 	?>
 </body>
 </html>
