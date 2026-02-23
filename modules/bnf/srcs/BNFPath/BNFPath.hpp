@@ -27,8 +27,6 @@ class BNFPath
 		~BNFPath();
 
 
-
-
 		static bool compare(const ARulePath &a, const ARulePath &b);
 
 		BNFPath operator=(const BNFPath &other);

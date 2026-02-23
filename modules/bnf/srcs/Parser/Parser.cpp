@@ -1,11 +1,13 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
-#include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
-#include "Json.hpp"
 #include "../BNFPath/BNFPath.hpp"
+#include "Parser.hpp"
 
+
+namespace bnf
+{
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
 }
@@ -457,4 +459,5 @@ void Parser::parse(const std::string &stringToParsed)
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
+}
 }

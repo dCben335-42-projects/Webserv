@@ -2,10 +2,8 @@
 #define SEMANTIC_DESCRIPTOR_HPP
 
 #include "bnf_defs.hpp"
-#include "../Rules/Group/Group.hpp"
-#include "../Rules/Option/Option.hpp"
-#include "../Rules/Sequence/Sequence.hpp"
-#include "../Rules/Symbol/Symbol.hpp"
+#include "../Rules/ARule.hpp"
+
 #include "../Concept/ConceptDef/ConceptDef.hpp"
 #include "../Concept/ConceptNode/ConceptNode.hpp"
 #include "../utils/utils.hpp"
@@ -25,17 +23,20 @@
 #include "../Exception/RecursiveConceptException.hpp"
 #include "../Exception/RecursiveLoopConceptException.hpp"
 
+namespace bnf
+{
 class SemanticDescriptor
 {
 	private:
-		ConceptNode		*tree;
-		Vec<std::string> blocks;
-		Map<ConceptNode> m_data;
-		Vec<Concept>	 m_concepts_data;
-		ARuleMap		 m_startPath;
-		Map<Concept *>	 m_concepts;
-		std::string		 m_lastKey;
-		bool			 m_recursiveConceptAuthorize;
+		const std::string &m_fileContent;
+		ConceptNode		  *tree;
+		Vec<std::string>   blocks;
+		Map<ConceptNode>   m_data;
+		Vec<Concept>	   m_concepts_data;
+		ARuleMap		   m_startPath;
+		Map<Concept *>	   m_concepts;
+		std::string		   m_lastKey;
+		bool			   m_recursiveConceptAuthorize;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);
@@ -51,12 +52,16 @@ class SemanticDescriptor
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void addParent();
 
-
-		bool parseAndConsumePrefix(std::string &str, int *out);
+		bool			 parseAndConsumePrefix(std::string &str, int *out);
+		Vec<std::string> splitwords(const std::string &rule);
+		void			 ndw(const ARule *rule, Vec<std::string> &conceptPaths);
+		void			 findAllNext();
 
 	public:
-		SemanticDescriptor(const std::string &m_content);
+		SemanticDescriptor(const std::string &bfnFileContent);
 		~SemanticDescriptor();
+
+		void parse();
 
 		SemanticDescriptor &operator=(const SemanticDescriptor &other);
 
@@ -66,10 +71,9 @@ class SemanticDescriptor
 		const Concept			*getConcept(const std::string &key) const;
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 		ConceptNode				*getTree() const;
-		void					 ndw(const ARule *rule, Vec<std::string> &conceptPaths);
-		void					 findAllNext();
-		Vec<std::string>		 splitwords(std::string rule);
 };
+} // namespace bnf
+
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);
 

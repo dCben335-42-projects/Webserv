@@ -3,11 +3,6 @@
 
 #include <iostream>
 #include "bnf_defs.hpp"
-#include "../../Rules/ARule.hpp"
-#include "../../Rules/Group/Group.hpp"
-#include "../../Rules/Option/Option.hpp"
-#include "../../Rules/Sequence/Sequence.hpp"
-#include "../../Rules/Symbol/Symbol.hpp"
 #include "../ConceptDef/ConceptDef.hpp"
 #include "../../TreeNode/TreeNode.hpp"
 

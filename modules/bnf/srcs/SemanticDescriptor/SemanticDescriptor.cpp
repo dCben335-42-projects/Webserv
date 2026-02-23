@@ -3,16 +3,22 @@
 #include "./SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
-using namespace bnf;
+namespace bnf
+{
+SemanticDescriptor::SemanticDescriptor(const std::string &m_content) :
+	m_fileContent(m_content),
+	tree(NULL)
+{
+}
 
-SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL)
+
+void SemanticDescriptor::parse()
 {
 	try
 	{
-		std::istringstream iss(m_content);
+		std::istringstream iss(m_fileContent);
 		splitBlocks(iss);
 		parseBlocks();
-		Logger::log("Semantic descriptor parsed successfully!");
 	}
 	catch (const SemanticException &e)
 	{
@@ -27,22 +33,6 @@ SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL
 		}
 		throw std::runtime_error("semantic descriptor is not valid");
 	}
-}
-
-SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &other)
-{
-	if (this != &other)
-	{
-		delete tree;
-		for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
-		{
-			Vec<ConceptDef *> &defs = (*it).second->getDefinitions();
-			for (Vec<ConceptDef *>::iterator conceptIt = defs.begin(); conceptIt != defs.end(); ++conceptIt)
-				delete *conceptIt;
-			delete (*it).second;
-		}
-	}
-	return *this;
 }
 
 SemanticDescriptor::~SemanticDescriptor()
@@ -140,16 +130,7 @@ void SemanticDescriptor::parseBlocks()
 }
 
 
-// Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
-// {
-// 	// Split '(', ')', '{', '}', '[', ']' and '|' if they are not inside simple or double quotes
-// 	// split words that are not inside simple or double quotes, if they are inside quotes, keep them together, the whitespace make part of the word
-
-// }
-
-
-
-Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
+Vec<std::string> SemanticDescriptor::splitwords(const std::string &rule)
 {
 	Vec<std::string> result;
 	std::string		 current;
@@ -562,3 +543,5 @@ std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 	Logger::log(data.getConcepts());
 	return (os);
 }
+
+} // namespace bnf

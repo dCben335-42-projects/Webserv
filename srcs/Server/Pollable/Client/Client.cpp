@@ -623,7 +623,6 @@ void Client::onPollIn()
 
 
 
-
 /**
  *
  * @brief Handles writing data to the client socket.
@@ -637,29 +636,24 @@ void Client::onPollIn()
  */
 void Client::onPollOut()
 {
-	bool hasFullySent = false;
 	try
 	{
-		hasFullySent = m_res.sendOnce(m_fd);
+		if (m_res.sendOnce(m_fd))
+		{
+			if (m_shouldClose)
+			{
+				m_connectionClosed = true;
+				m_events		   = 0;
+				return;
+			}
+			reset();
+			m_count++;
+			return;
+		}
 	}
 	catch (const std::exception &e)
 	{
-		Logger::error("Error sending response to client on fd " + Logger::get(m_fd) + ": " + e.what());
-		m_events		   = 0;
-		m_connectionClosed = true;
-		return;
-	}
-	if (hasFullySent)
-	{
-		if (m_shouldClose)
-		{
-			m_connectionClosed = true;
-			m_events		   = 0;
-			return;
-		}
-		reset();
-		m_count++;
-		return;
+		return onPollErr();
 	}
 	m_time	 = std::time(0);
 	m_events = POLLOUT;

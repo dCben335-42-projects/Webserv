@@ -290,7 +290,7 @@ void VirtualServer::bindAndListen(
 	std::memset(&storage, 0, sizeof(storage));
 	socklen_t addrlen;
 
-	if (ip.find(':') != std::string::npos)
+	if (m_isIPv6)
 	{
 		struct sockaddr_in6 *addr6 = reinterpret_cast<struct sockaddr_in6 *>(&storage);
 		addr6->sin6_family		   = AF_INET6;

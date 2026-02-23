@@ -18,6 +18,9 @@ namespace bnf
 		OPTION
 	};
 
+	class Parser;
+	class SemanticDescriptor;
+
 	static const std::string SEMI						 = ";";
 	static const std::string LBRACKET					 = "{";
 	static const std::string RBRACKET					 = "}";

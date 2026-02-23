@@ -280,6 +280,7 @@ const Map<const Config::Location *> &Config::getLocations() const
 
 
 
+
 #include "LoggerJson.hpp"
 
 std::ostream &operator<<(std::ostream &os, const Config &config)

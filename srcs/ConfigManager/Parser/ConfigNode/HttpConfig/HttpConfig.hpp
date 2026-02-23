@@ -16,6 +16,8 @@ class HttpConfig : public AConfigNode
 
 		const Vec<ServerConfig> &getServers() const;
 		Vec<ServerConfig>		&getServers();
+
+		void addServer(const ServerConfig &server);
 };
 
 std::ostream &operator<<(std::ostream &os, const HttpConfig &data);

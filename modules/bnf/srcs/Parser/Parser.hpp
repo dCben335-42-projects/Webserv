@@ -1,5 +1,6 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#ifndef BNF_PARSER_HPP
+#define BNF_PARSER_HPP
+
 
 #include "Map.hpp"
 #include "bnf_defs.hpp"
@@ -18,6 +19,8 @@
 #include "../Exception/Parser/FileNotFinishedException.hpp"
 #include "../BNFPath/BNFPath.hpp"
 
+namespace bnf
+{
 class Parser
 {
 	private:
@@ -56,5 +59,6 @@ class Parser
 
 		void parse(const std::string &stringToParsed);
 };
+} // namespace bnf
 
 #endif

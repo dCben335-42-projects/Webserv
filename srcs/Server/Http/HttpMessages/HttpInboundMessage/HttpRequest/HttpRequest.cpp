@@ -713,6 +713,7 @@ const std::string &HttpRequest::getHost() const
  * @note Updates m_isFirstLineParsed member.
  * @note Updates m_firstLineEndPos member.
  * @note Updates m_headersEndPos member.
+ * @note Updates m_host member.
  *
  * @throws Http400Exception if the request line is malformed or if the Host header is missing when headers are complete.
  *
