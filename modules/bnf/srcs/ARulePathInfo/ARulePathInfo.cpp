@@ -1,7 +1,18 @@
 #include "ARulePathInfo.hpp"
+#include "../Rules/ARule.hpp"
 
-ARulePathInfo::ARulePathInfo(const ARulePath &path) : path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
+ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
 {
+	Vec<TerminalSymbol> items = m_path.back()->getItems();
+	size_t				val	  = items.size();
+	terminalCharsInfo.reserve(val);
+	for (size_t i = 0; i < val; ++i)
+	{
+		if (items[i].isTerminalChar())
+		{
+			terminalCharsInfo.push_back(TerminalCharInfo(items[i], 0));
+		}
+	}
 }
 
 ARulePathInfo::~ARulePathInfo()
@@ -11,11 +22,11 @@ ARulePathInfo::~ARulePathInfo()
 
 bool ARulePathInfo::operator==(const ARulePathInfo &other) const
 {
-	if (path.size() != other.path.size())
+	if (m_path.size() != other.m_path.size())
 		return false;
-	for (size_t i = 0; i < path.size(); ++i)
+	for (size_t i = 0; i < m_path.size(); ++i)
 	{
-		if (path[i] != other.path[i])
+		if (m_path[i] != other.m_path[i])
 			return false;
 	}
 
@@ -40,10 +51,10 @@ bool ARulePathInfo::operator==(const ARulePathInfo &other) const
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 {
 	os << "ARulePathInfo(path=[";
-	for (size_t i = 0; i < data.path.size(); ++i)
+	for (size_t i = 0; i < data.m_path.size(); ++i)
 	{
-		os << data.path[i];
-		if (i < data.path.size() - 1)
+		os << data.m_path[i];
+		if (i < data.m_path.size() - 1)
 			os << ", ";
 	}
 	os << "], charPtr=[";

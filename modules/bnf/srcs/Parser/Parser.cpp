@@ -51,7 +51,7 @@ void Parser::addPathPossibility(
 			bool		found	= false;
 			for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 			{
-				if (it->path == completePath)
+				if (it->m_path == completePath)
 				{
 					found = true;
 					break;
@@ -112,7 +112,7 @@ void Parser::processTerminalSymbol(
 		bool		found	= false;
 		for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 		{
-			if (it->path == path)
+			if (it->m_path == path)
 			{
 				found = true;
 				break;
@@ -157,7 +157,7 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *c
 					bool		found	= false;
 					for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 					{
-						if (it->path == completePath)
+						if (it->m_path == completePath)
 						{
 							found = true;
 							break;
@@ -217,19 +217,27 @@ bool Parser::word(
 	const ARuleMap	  &mapPathCurrent,
 	ARuleMap		  &mapPathNext)
 {
+	Logger::log("data");
 	if (data.position >= data.length)
 		return false;
 
-	if (data.terminal->getValue()[data.position] != c)
+	Logger::log("data2");
+
+	if (data.terminal.getValue()[data.position] != c)
 		return false;
+
+	Logger::log("data3");
 
 	if (data.position == data.length - 1)
 	{
 		addNextPaths(mapPathCurrent, mapPathNext, path, rule);
 		return true;
 	}
+	Logger::log("data4");
 
 	++data.position;
+
+	Logger::log(data);
 
 	ARulePaths &paths	  = mapPathNext[rule];
 	size_t		pathCount = paths.size();
@@ -237,7 +245,7 @@ bool Parser::word(
 	for (size_t i = 0; i < pathCount; ++i)
 	{
 		ARulePathInfo &it = paths[i];
-		if (it.path == path)
+		if (it.m_path == path)
 		{
 			it.terminalCharsInfo.push_back(data);
 			return true;
@@ -247,6 +255,8 @@ bool Parser::word(
 	paths.push_back(ARulePathInfo(path));
 	paths.back().terminalCharsInfo.reserve(1);
 	paths.back().terminalCharsInfo.push_back(data);
+
+	Logger::log(paths);
 
 	return true;
 }
@@ -264,7 +274,9 @@ bool Parser::parseCurrentChar(
 	ARuleMap	   &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
+	// TerminalCharInfo *data					 = NULL;
 
+	TerminalCharInfo data;
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin();
 		 it != mapPathCurrent.end(); ++it)
 	{
@@ -275,29 +287,38 @@ bool Parser::parseCurrentChar(
 		size_t pathsCount = paths.size();
 		size_t itemsCount = items.size();
 
+		(void) itemsCount;
+		(void) pathsCount;
+		(void) rule;
+		(void) c;
+		(void) mapPathNext;
+		Logger::log(items);
+		Logger::log("----");
+
 		for (size_t pathIndex = 0; pathIndex < pathsCount; ++pathIndex)
 		{
 			size_t				 indexElementTerminalChar = 0;
 			const ARulePathInfo &cpaths					  = paths[pathIndex];
 
+			Logger::log("ok");
 			for (size_t itemIndex = 0; itemIndex < itemsCount; ++itemIndex)
 			{
+				Logger::log("ok2");
+
 				const TerminalSymbol &item = items[itemIndex];
 
 				if (!item.isTerminalChar())
 					continue;
 
-				TerminalCharInfo data;
-				if (cpaths.terminalCharsInfo.has(indexElementTerminalChar))
-				{
-					data = cpaths.terminalCharsInfo[indexElementTerminalChar];
-				}
-				else
-				{
-					data = TerminalCharInfo(&item, 0);
-				}
+				Logger::log("ok3");
 
-				if (word(data, c, rule, cpaths.path, mapPathCurrent, mapPathNext))
+				data = cpaths.terminalCharsInfo[indexElementTerminalChar];
+
+				Logger::log(data);
+
+
+				if (word(data,
+						 c, rule, cpaths.m_path, mapPathCurrent, mapPathNext))
 					isValidWithCurrentPath = true;
 				++indexElementTerminalChar;
 			}
@@ -418,7 +439,7 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 		const ARulePaths &val = it->second;
 		for (ARulePaths::const_iterator path = val.begin(); path != val.end(); ++path)
 		{
-			const ARulePath			  &rules = path->path;
+			const ARulePath			  &rules = path->m_path;
 			const Vec<TerminalSymbol> &items = rules.back()->getItems();
 			for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 				if (item->isTerminalChar() && *(item->getValue().end() - 1) == c && isFullyOptionalEndAdvance(rules))

@@ -41,6 +41,15 @@ const char *TerminalSymbol::getCharOfValue(size_t index) const
 	return &m_str[index];
 }
 
+TerminalSymbol &TerminalSymbol::operator=(const TerminalSymbol &other)
+{
+	if (this == &other)
+		return *this;
+	m_str			 = other.m_str;
+	m_isTerminalChar = other.m_isTerminalChar;
+	return *this;
+}
+
 TerminalSymbol TerminalSymbol::specify(const std::string &val)
 {
 	if (val.length() >= 2 && (val[0] == '\'' && val[val.length() - 1] == '\''))
