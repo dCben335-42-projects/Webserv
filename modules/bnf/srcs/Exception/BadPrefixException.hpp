@@ -1,5 +1,5 @@
-#ifndef BAD_PREFIX_EXCEPTION_HPP
-#define BAD_PREFIX_EXCEPTION_HPP
+#ifndef BNF_BAD_PREFIX_EXCEPTION_HPP
+#define BNF_BAD_PREFIX_EXCEPTION_HPP
 
 #include <stdexcept>
 #include <string>

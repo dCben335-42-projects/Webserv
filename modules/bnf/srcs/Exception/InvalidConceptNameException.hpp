@@ -1,5 +1,5 @@
-#ifndef INVALID_CONCEPT_NAME_EXCEPTION_HPP
-#define INVALID_CONCEPT_NAME_EXCEPTION_HPP
+#ifndef BNF_INVALID_CONCEPT_NAME_EXCEPTION_HPP
+#define BNF_INVALID_CONCEPT_NAME_EXCEPTION_HPP
 
 #include <stdexcept>
 #include <string>
@@ -7,11 +7,9 @@
 
 class InvalidConceptNameException : public SemanticException
 {
-    public:
-        explicit InvalidConceptNameException(const std::string &message)
-            : SemanticException("\"" + message + "\" is an invalid concept name. It must contain only lowercase or uppercase letters.",
-                "InvalidConceptNameException")
-        {};
+	public:
+		explicit InvalidConceptNameException(const std::string &message) : SemanticException("\"" + message + "\" is an invalid concept name. It must contain only lowercase or uppercase letters.",
+																							 "InvalidConceptNameException") {};
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SYMBOL_HPP
-#define SYMBOL_HPP
+#ifndef BNF_SYMBOL_HPP
+#define BNF_SYMBOL_HPP
 
 #include <string>
 #include "../ARule.hpp"

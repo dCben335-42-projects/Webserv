@@ -1,5 +1,5 @@
-#ifndef TERMINAL_SYMBOL_HPP
-#define TERMINAL_SYMBOL_HPP
+#ifndef BNF_TERMINAL_SYMBOL_HPP
+#define BNF_TERMINAL_SYMBOL_HPP
 
 #include <string>
 

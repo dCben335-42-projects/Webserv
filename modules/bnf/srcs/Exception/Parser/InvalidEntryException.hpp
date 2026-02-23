@@ -1,5 +1,5 @@
-#ifndef INVALID_ENTRY_EXCEPTION_HPP
-#define INVALID_ENTRY_EXCEPTION_HPP
+#ifndef BNF_INVALID_ENTRY_EXCEPTION_HPP
+#define BNF_INVALID_ENTRY_EXCEPTION_HPP
 
 #include <string>
 #include <stdexcept>

@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_HPP
-#define SEQUENCE_HPP
+#ifndef BNF_SEQUENCE_HPP
+#define BNF_SEQUENCE_HPP
 
 #include <string>
 #include "bnf_defs.hpp"

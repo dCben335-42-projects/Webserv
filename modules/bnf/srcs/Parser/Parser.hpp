@@ -1,5 +1,5 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#ifndef BNF_PARSER_HPP
+#define BNF_PARSER_HPP
 
 #include "Map.hpp"
 #include "bnf_defs.hpp"
@@ -42,6 +42,11 @@ class Parser
 		void getPathsTerminalChars(ARulePath &completePath, const std::string &conceptName, ARuleMap &mapPath, Vec<std::string> &conceptPaths);
 		void precomputeOptional(const ARule *rule);
 
+		void processTerminalSymbol(
+			const TerminalSymbol &symbol,
+			const ARule			 *rule,
+			ARulePath			 &path,
+			ARuleMap			 &mapPath);
 		bool word(
 			TerminalCharInfo  &data,
 			const char		   c,

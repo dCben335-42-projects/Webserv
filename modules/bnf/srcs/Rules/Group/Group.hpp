@@ -1,5 +1,5 @@
-#ifndef GROUP_HPP
-#define GROUP_HPP
+#ifndef BNF_GROUP_HPP
+#define BNF_GROUP_HPP
 
 #include <string>
 #include "bnf_defs.hpp"

@@ -1,5 +1,5 @@
-#ifndef SEMANTIC_DESCRIPTOR_HPP
-#define SEMANTIC_DESCRIPTOR_HPP
+#ifndef BNF_SEMANTIC_DESCRIPTOR_HPP
+#define BNF_SEMANTIC_DESCRIPTOR_HPP
 
 #include "bnf_defs.hpp"
 #include "../Rules/Group/Group.hpp"

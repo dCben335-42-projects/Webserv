@@ -1,5 +1,5 @@
-#ifndef OPTION_HPP
-#define OPTION_HPP
+#ifndef BNF_OPTION_HPP
+#define BNF_OPTION_HPP
 
 #include <string>
 #include "bnf_defs.hpp"

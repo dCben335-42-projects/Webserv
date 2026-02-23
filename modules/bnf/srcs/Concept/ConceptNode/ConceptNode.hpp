@@ -1,5 +1,5 @@
-#ifndef CONCEPTNODE_HPP
-#define CONCEPTNODE_HPP
+#ifndef BNF_CONCEPTNODE_HPP
+#define BNF_CONCEPTNODE_HPP
 
 #include <iostream>
 #include "bnf_defs.hpp"

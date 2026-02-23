@@ -1,5 +1,5 @@
-#ifndef ARULE_PATH_INFO_HPP
-#define ARULE_PATH_INFO_HPP
+#ifndef BNF_ARULE_PATH_INFO_HPP
+#define BNF_ARULE_PATH_INFO_HPP
 
 #include "bnf_defs.hpp"
 #include "../TerminalSymbol/TerminalSymbol.hpp"

@@ -78,23 +78,11 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 		const ARule *const rule = path[i];
 		if (rule->isSequence())
 		{
-			const Vec<TerminalSymbol>		   &items = rule->getItems();
-			Vec<TerminalSymbol>::const_iterator ite	  = items.end();
+			ARulePath							subPath = path.slice(i + 1);
+			const Vec<TerminalSymbol>		   &items	= rule->getItems();
+			Vec<TerminalSymbol>::const_iterator ite		= items.end();
 			for (Vec<TerminalSymbol>::const_iterator terminalSymbol = items.begin(); terminalSymbol != ite; ++terminalSymbol)
-			{
-				if (terminalSymbol->isTerminalChar())
-				{
-					mapPathNext[rule].push_once(ARulePathInfo(path.slice(i + 1)));
-				}
-				else
-				{
-					Vec<std::string> emptyConceptPaths;
-					emptyConceptPaths.reserve(8);
-					ARulePath subPath = path.slice(i + 1);
-
-					getPathsTerminalChars(subPath, terminalSymbol->getValue(), mapPathNext, emptyConceptPaths);
-				}
-			}
+				processTerminalSymbol(*terminalSymbol, rule, subPath, mapPathNext);
 		}
 
 		const ARule *adjacentRule = rule->tryGetAdjacentRules();
@@ -102,6 +90,29 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 			adjacentRule = adjacentRule->tryGetAdjacentRules();
 		if (adjacentRule)
 			return;
+	}
+}
+
+/**
+ * @brief Processes a terminal symbol and updates the ARuleMap with the corresponding paths.
+ * @param symbol The TerminalSymbol to be processed.
+ * @param rule The ARule associated with the terminal symbol.
+ * @param path The current ARulePath being explored.
+ * @param mapPath The ARuleMap to which the paths will be added based on the terminal symbol.
+ */
+void Parser::processTerminalSymbol(
+	const TerminalSymbol &symbol,
+	const ARule			 *rule,
+	ARulePath			 &path,
+	ARuleMap			 &mapPath)
+{
+	if (symbol.isTerminalChar())
+		mapPath[rule].push_once(ARulePathInfo(path));
+	else
+	{
+		Vec<std::string> emptyConceptPaths;
+		emptyConceptPaths.reserve(8);
+		getPathsTerminalChars(path, symbol.getValue(), mapPath, emptyConceptPaths);
 	}
 }
 
@@ -154,17 +165,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	const Vec<TerminalSymbol> &items	  = lastRule->getItems();
 	size_t					   itemsCount = items.size();
 	for (size_t i = 0; i < itemsCount; ++i)
-	{
-		const TerminalSymbol &terminalSymbol = items[i];
-		if (terminalSymbol.isTerminalChar())
-			mapPathNext[lastRule].push_once(ARulePathInfo(nextRule));
-		else
-		{
-			Vec<std::string> emptyConceptPaths;
-			emptyConceptPaths.reserve(8);
-			getPathsTerminalChars(nextRule, terminalSymbol.getValue(), mapPathNext, emptyConceptPaths);
-		}
-	}
+		processTerminalSymbol(items[i], lastRule, nextRule, mapPathNext);
 }
 
 /**

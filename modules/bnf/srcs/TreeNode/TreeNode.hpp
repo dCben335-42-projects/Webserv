@@ -1,5 +1,5 @@
-#ifndef TREENODE_HPP
-#define TREENODE_HPP
+#ifndef BNF_TREENODE_HPP
+#define BNF_TREENODE_HPP
 
 #include "Vec.hpp"
 #include <string>
