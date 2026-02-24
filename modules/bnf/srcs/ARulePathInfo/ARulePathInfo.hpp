@@ -54,7 +54,7 @@ class ARulePathInfo
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data);
 
 
-typedef Vec<ARulePathInfo>					ARulePaths;
+typedef Vec<ARulePathInfo *>				ARulePaths;
 typedef Map<const ARule *const, ARulePaths> ARuleMap;
 
 #endif

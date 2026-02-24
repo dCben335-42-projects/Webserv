@@ -24,6 +24,8 @@ class Parser
 		mutable std::map<const ARule *, bool> m_optionalCache;
 		mutable std::set<const ARule *>		  m_optionalComputing;
 		Vec<const std::string *>			  m_conceptPaths;
+		Vec<ARulePathInfo>					  m_arulePathInfoList;
+
 
 		const SemanticDescriptor &m_semantic;
 
@@ -40,8 +42,9 @@ class Parser
 		void addPathPossibility(ARulePath &completePath, const ARule *const rule, ARuleMap &mapPath);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
-		void precomputeOptional(const ARule *rule);
+		void		   getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
+		void		   precomputeOptional(const ARule *rule);
+		ARulePathInfo *createARulePathInfo(const ARulePath &path);
 
 		void processTerminalSymbol(
 			const TerminalSymbol &symbol,
@@ -49,12 +52,12 @@ class Parser
 			ARulePath			 &path,
 			ARuleMap			 &mapPath);
 		bool word(
-			const char			 c,
-			const ARule *const	 rule,
-			const ARulePathInfo &path,
-			const ARuleMap		&mapPathCurrent,
-			ARuleMap			&mapPathNext,
-			size_t				 indexElementTerminalChar);
+			const char		   c,
+			const ARule *const rule,
+			ARulePathInfo	  *path,
+			const ARuleMap	  &mapPathCurrent,
+			ARuleMap		  &mapPathNext,
+			size_t			   indexElementTerminalChar);
 
 	public:
 		Parser(const SemanticDescriptor &semantic);

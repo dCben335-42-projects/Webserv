@@ -51,16 +51,22 @@ void Parser::addPathPossibility(
 			bool		found	= false;
 			for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 			{
-				if (it->m_path == completePath)
+				if ((*it)->m_path == completePath)
 				{
 					found = true;
 					break;
 				}
 			}
 			if (!found)
-				element.push_back(ARulePathInfo(completePath));
+				element.push_back(createARulePathInfo(completePath));
 		}
 	}
+}
+
+ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path)
+{
+	m_arulePathInfoList.push_back(ARulePathInfo(path));
+	return &m_arulePathInfoList.back();
 }
 
 /**
@@ -112,14 +118,14 @@ void Parser::processTerminalSymbol(
 		bool		found	= false;
 		for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 		{
-			if (it->m_path == path)
+			if ((*it)->m_path == path)
 			{
 				found = true;
 				break;
 			}
 		}
 		if (!found)
-			element.push_back(ARulePathInfo(path));
+			element.push_back(createARulePathInfo(path));
 	}
 	else
 		getPathsTerminalChars(path, symbol.getValuePtr(), mapPath);
@@ -157,14 +163,14 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *c
 					bool		found	= false;
 					for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 					{
-						if (it->m_path == completePath)
+						if ((*it)->m_path == completePath)
 						{
 							found = true;
 							break;
 						}
 					}
 					if (!found)
-						element.push_back(ARulePathInfo(completePath));
+						element.push_back(createARulePathInfo(completePath));
 				}
 			}
 			completePath.pop_back();
@@ -210,44 +216,43 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
  * @return true if the character is valid for the current path and rule, false otherwise.
  */
 bool Parser::word(
-	const char			 c,
-	const ARule *const	 rule,
-	const ARulePathInfo &pathInfo,
-	const ARuleMap		&mapPathCurrent,
-	ARuleMap			&mapPathNext,
-	size_t				 indexElementTerminalChar)
+	const char		   c,
+	const ARule *const rule,
+	ARulePathInfo	  *pathInfo,
+	const ARuleMap	  &mapPathCurrent,
+	ARuleMap		  &mapPathNext,
+	size_t			   indexElementTerminalChar)
 {
-	TerminalCharInfo data = pathInfo.terminalCharsInfo[indexElementTerminalChar];
+	TerminalCharInfo &data = pathInfo->terminalCharsInfo[indexElementTerminalChar];
 
 	if (data.position >= data.length)
 		return false;
 
-	if (pathInfo.getValue()[indexElementTerminalChar][data.position] != c)
+	if (pathInfo->getValue()[indexElementTerminalChar][data.position] != c)
 		return false;
 
 	if (data.position == data.length - 1)
 	{
-		addNextPaths(mapPathCurrent, mapPathNext, pathInfo.m_path, rule);
+		addNextPaths(mapPathCurrent, mapPathNext, pathInfo->m_path, rule);
 		return true;
 	}
 
-	++data.position;
+	++pathInfo->terminalCharsInfo[indexElementTerminalChar].position;
 
 	ARulePaths &paths	  = mapPathNext[rule];
 	size_t		pathCount = paths.size();
 
 	for (size_t i = 0; i < pathCount; ++i)
 	{
-		ARulePathInfo &it = paths[i];
-		if (it.m_path == pathInfo.m_path)
+		ARulePathInfo *it = paths[i];
+		if (it->m_path == pathInfo->m_path)
 		{
-			it.terminalCharsInfo[indexElementTerminalChar] = data;
+			it->terminalCharsInfo[indexElementTerminalChar] = data;
 			return true;
 		}
 	}
 
 	paths.push_back(pathInfo);
-	paths.back().terminalCharsInfo[indexElementTerminalChar] = data;
 	return true;
 }
 
@@ -277,8 +282,8 @@ bool Parser::parseCurrentChar(
 
 		for (size_t pathIndex = 0; pathIndex < pathsCount; ++pathIndex)
 		{
-			size_t				 indexElementTerminalChar = 0;
-			const ARulePathInfo &cpaths					  = paths[pathIndex];
+			size_t		   indexElementTerminalChar = 0;
+			ARulePathInfo *cpaths					= paths[pathIndex];
 
 			for (size_t itemIndex = 0; itemIndex < itemsCount; ++itemIndex)
 			{
@@ -408,7 +413,7 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 		const ARulePaths &val = it->second;
 		for (ARulePaths::const_iterator path = val.begin(); path != val.end(); ++path)
 		{
-			const ARulePath			  &rules = path->m_path;
+			const ARulePath			  &rules = (*path)->m_path;
 			const Vec<TerminalSymbol> &items = rules.back()->getItems();
 			for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 				if (item->isTerminalChar() && *(item->getValue().end() - 1) == c && isFullyOptionalEndAdvance(rules))
@@ -521,6 +526,7 @@ void Parser::parse(const std::string &stringToParsed)
 			throw FileNotFinishedException("The file must not be empty.");
 		return;
 	}
+	m_arulePathInfoList.reserve(200000);
 
 	const Vec<ConceptDef *> &defs	  = m_semantic.getConceptDefs(CURSOR);
 	const size_t			 defsSize = defs.size();
