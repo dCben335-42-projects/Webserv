@@ -50,7 +50,6 @@ class ARulePathInfo
 
 		void					resetTerminalCharsInfo();
 		const Vec<std::string> &getValue() const;
-		bool					operator==(const ARulePathInfo &other) const;
 		static size_t			createPathHash(const ARulePath &path);
 };
 

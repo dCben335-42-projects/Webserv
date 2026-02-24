@@ -66,17 +66,25 @@ void Parser::createPathInfo(
 	element.push_back(createARulePathInfo(completePath, pathHash));
 }
 
+/**
+ * @brief Creates an ARulePathInfo object for the given path and path hash. If an ARulePathInfo with the same path hash already exists and is not replaceable, it resets its terminal characters info and returns it. Otherwise, it creates a new ARulePathInfo, adds it to the list, and returns it.
+ * @param path The ARulePath for which the ARulePathInfo is being created.
+ * @param pathHash The hash of the ARulePath used for quick lookup.
+ * @return A pointer to the created or existing ARulePathInfo object.
+ */
 ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path, size_t pathHash)
 {
 	size_t n = m_arulePathInfoList.size();
 	for (size_t i = 0; i < n; ++i)
 	{
-		if (m_arulePathInfoList[i].m_pathHash == pathHash && m_arulePathInfoList[i].m_replaceable == 0)
+		ARulePathInfo &an = m_arulePathInfoList[i];
+		if (an.m_pathHash == pathHash && an.m_replaceable == 0)
 		{
-			m_arulePathInfoList[i].resetTerminalCharsInfo();
-			return &m_arulePathInfoList[i];
+			an.resetTerminalCharsInfo();
+			return &an;
 		}
 	}
+
 	m_arulePathInfoList.push_back(ARulePathInfo(path));
 	return &m_arulePathInfoList.back();
 }
@@ -505,7 +513,7 @@ void Parser::parse(const std::string &stringToParsed)
 			throw FileNotFinishedException("The file must not be empty.");
 		return;
 	}
-	m_arulePathInfoList.reserve(200000);
+	m_arulePathInfoList.reserve(5000);
 
 	const Vec<ConceptDef *> &defs	  = m_semantic.getConceptDefs(CURSOR);
 	const size_t			 defsSize = defs.size();

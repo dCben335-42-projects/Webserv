@@ -21,10 +21,8 @@ ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 		const TerminalSymbol &item = items[i];
 
 		if (item.isTerminalChar())
-		{
 			terminalCharsInfo[idx++] =
 				TerminalCharInfo(0, item.getValue().size());
-		}
 	}
 
 	m_pathHash	  = createPathHash(path);
@@ -34,10 +32,7 @@ ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 void ARulePathInfo::resetTerminalCharsInfo()
 {
 	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
-	{
 		terminalCharsInfo[i].position = 0;
-	}
-
 	m_replaceable = terminalCharsInfo.size();
 }
 
@@ -59,34 +54,6 @@ const Vec<std::string> &ARulePathInfo::getValue() const
 	return m_path.back()->getItemsValue();
 }
 
-
-bool ARulePathInfo::operator==(const ARulePathInfo &other) const
-{
-	if (m_path.size() != other.m_path.size())
-		return false;
-	for (size_t i = 0; i < m_path.size(); ++i)
-	{
-		if (m_path[i] != other.m_path[i])
-			return false;
-	}
-
-	if (terminalCharsInfo.size() != other.terminalCharsInfo.size())
-		return false;
-
-	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
-	{
-		const TerminalCharInfo &info1 = terminalCharsInfo[i];
-		const TerminalCharInfo &info2 = other.terminalCharsInfo[i];
-
-		if (info1.position != info2.position ||
-			info1.length != info2.length)
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 {
 	os << "ARulePathInfo(path=[";
@@ -96,13 +63,6 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 		if (i < data.m_path.size() - 1)
 			os << ", ";
 	}
-	// os << "], m_strs=[";
-	// for (size_t i = 0; i < data.m_strs.size(); ++i)
-	// {
-	// 	os << data.m_strs[i];
-	// 	if (i < data.m_strs.size() - 1)
-	// 		os << ", ";
-	// }
 	os << "], charPtr=[";
 	for (size_t i = 0; i < data.terminalCharsInfo.size(); ++i)
 	{
@@ -111,8 +71,6 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 		if (i < data.terminalCharsInfo.size() - 1)
 			os << ", ";
 	}
-
-
 	os << "])";
 	return os;
 }
