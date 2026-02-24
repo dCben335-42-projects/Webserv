@@ -23,10 +23,8 @@ Parser::~Parser()
 
 /**
  * @brief Adds a path possibility to the ARuleMap based on the given rule and concept name.
- * @param rule The ARule for which the path possibility is being added.
- * @param conceptPaths A vector of strings representing the current concept paths being explored.
  * @param mapPath The ARuleMap to which the path possibility will be added.
- * @param conceptName The name of the concept associated with the rule.
+ * @param rule The ARule for which the path possibility is being added.
  * @param completePath The current complete path of ARules being explored.
  */
 void Parser::addPathPossibility(
@@ -46,7 +44,11 @@ void Parser::addPathPossibility(
 		if (!item.isTerminalChar())
 			getPathsTerminalChars(completePath, itemValue, mapPath);
 		else
+		{
+			// m_term->push_back(rule);
+			m_terminalCharToRules[*m_term].push_back(rule);
 			createPathInfo(mapPath[rule], completePath);
+		}
 	}
 }
 
@@ -135,7 +137,11 @@ void Parser::processTerminalSymbol(
 	if (symbol.isTerminalChar())
 		createPathInfo(mapPath[rule], path);
 	else
+	{
+		m_term = symbol.getValuePtr();
 		getPathsTerminalChars(path, symbol.getValuePtr(), mapPath);
+		m_term = NULL;
+	}
 }
 
 /**
@@ -143,34 +149,61 @@ void Parser::processTerminalSymbol(
  * @param completePath The current complete path of ARules being explored.
  * @param conceptName The name of the concept for which terminal characters are being retrieved.
  * @param mapPath The ARuleMap to which the terminal character paths will be added.
- * @param conceptPaths A vector of strings representing the current concept paths being explored to avoid cycles.
  */
 void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
 {
+	Logger::log("m_term ptr: " + LoggerJson::get(m_term, true) + ", m_term value: " + *m_term);
+	Logger::log("getPathsTerminalChars: " + *conceptName);
+	if (m_terminalCharToRules.has(*conceptName) && m_terminalCharToRules[*conceptName].size() > 0)
+	{
+		Logger::log("Terminal char already computed for concept: " + *conceptName);
+		for (size_t i = 0; i < m_terminalCharToRules[*conceptName].size(); ++i)
+		{
+			const ARule *const rule = m_terminalCharToRules[*conceptName][i];
+			createPathInfo(mapPath[rule], completePath);
+		}
+		return;
+	}
+
 	m_conceptPaths.push_back(conceptName);
+	Logger::log("ok1");
 	const Vec<ConceptDef *> &defs			 = m_semantic.getConceptDefs(*conceptName);
 	size_t					 conceptDefCount = defs.size();
 	for (size_t i = 0; i < conceptDefCount; ++i)
 	{
+		Logger::log("ok2");
 		const ConceptDef *def  = defs[i];
 		size_t			  size = def->size();
 		size_t			  k	   = 0;
 		while (k < size)
 		{
-			const ARule *subRule = def->getARule(k);
+			Logger::log("ok3");
+			const ARule *const subRule = def->getARule(k);
 			completePath.push_back(subRule);
 			addPathPossibility(completePath, subRule, mapPath);
 			const Set<const ARule *>		  &terminalChars = m_semantic.getConcept(*conceptName)->getTerminalChars();
 			Set<const ARule *>::const_iterator ite			 = terminalChars.end();
+			Logger::log("ok4");
 			for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != ite; ++it)
+			{
+				Logger::log("ok5");
+
 				if (subRule == *it)
+				{
+					// m_term->push_back(subRule);
+					m_terminalCharToRules[*m_term].push_back(subRule);
 					createPathInfo(mapPath[subRule], completePath);
+				}
+			}
 			completePath.pop_back();
+			Logger::log("ok6");
+
 			if (!isFullyOptional(*subRule))
 				break;
 			++k;
 		}
 	}
+
 	m_conceptPaths.pop_back();
 }
 
@@ -532,7 +565,11 @@ void Parser::parse(const std::string &stringToParsed)
 	ARulePath completePath;
 	completePath.reserve(8);
 
+	// m_currentConceptName = &CURSOR;
+	// m_term = &m_terminalCharToRules[CURSOR];
+	m_term = &CURSOR;
 	getPathsTerminalChars(completePath, &CURSOR, mapPathCurrent);
+	m_term = NULL;
 
 	for (size_t i = 0; i < stringToParsed.size(); ++i)
 	{

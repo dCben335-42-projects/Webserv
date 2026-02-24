@@ -26,6 +26,10 @@ class Parser
 		Vec<const std::string *>			  m_conceptPaths;
 		Vec<ARulePathInfo>					  m_arulePathInfoList;
 		ARulePath							  m_tmpPath;
+		const std::string					 *m_term;
+		// clang-format off
+		Map<std::string, Vec<const ARule *> >  m_terminalCharToRules;
+		// clang-format on
 
 
 		const SemanticDescriptor &m_semantic;
