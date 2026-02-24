@@ -63,11 +63,20 @@ void Parser::createPathInfo(
 	for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
 		if ((*it)->m_pathHash == pathHash)
 			return;
-	element.push_back(createARulePathInfo(completePath));
+	element.push_back(createARulePathInfo(completePath, pathHash));
 }
 
-ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path)
+ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path, size_t pathHash)
 {
+	size_t n = m_arulePathInfoList.size();
+	for (size_t i = 0; i < n; ++i)
+	{
+		if (m_arulePathInfoList[i].m_pathHash == pathHash && m_arulePathInfoList[i].m_replaceable == 0)
+		{
+			m_arulePathInfoList[i].resetTerminalCharsInfo();
+			return &m_arulePathInfoList[i];
+		}
+	}
 	m_arulePathInfoList.push_back(ARulePathInfo(path));
 	return &m_arulePathInfoList.back();
 }
@@ -200,19 +209,18 @@ bool Parser::word(
 {
 	TerminalCharInfo &data = pathInfo->terminalCharsInfo[indexElementTerminalChar];
 
-	if (data.position >= data.length)
-		return false;
-
-	if (pathInfo->getValue()[indexElementTerminalChar][data.position] != c)
-		return false;
-
-	if (data.position == data.length - 1)
+	if (data.position >= data.length || pathInfo->getValue()[indexElementTerminalChar][data.position] != c)
 	{
+		pathInfo->m_replaceable -= 1;
+		return false;
+	}
+
+	if (data.position++ == data.length - 1)
+	{
+		pathInfo->m_replaceable -= 1;
 		addNextPaths(mapPathCurrent, mapPathNext, pathInfo->m_path, rule);
 		return true;
 	}
-
-	++data.position;
 
 	ARulePaths &paths	  = mapPathNext[rule];
 	size_t		pathCount = paths.size();
@@ -222,7 +230,7 @@ bool Parser::word(
 		ARulePathInfo *it = paths[i];
 		if (it->m_path == pathInfo->m_path)
 		{
-			it->terminalCharsInfo[indexElementTerminalChar] = data;
+			it->terminalCharsInfo[indexElementTerminalChar].position = data.position;
 			return true;
 		}
 	}
@@ -248,26 +256,22 @@ bool Parser::parseCurrentChar(
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin();
 		 it != mapPathCurrent.end(); ++it)
 	{
-		const ARule				  *rule	 = it->first;
-		const ARulePaths		  &paths = it->second;
-		const Vec<TerminalSymbol> &items = rule->getItems();
-
-		size_t pathsCount = paths.size();
-		size_t itemsCount = items.size();
+		const ARule				  *rule		  = it->first;
+		const ARulePaths		  &paths	  = it->second;
+		const Vec<TerminalSymbol> &items	  = rule->getItems();
+		size_t					   pathsCount = paths.size();
+		size_t					   itemsCount = items.size();
 
 		for (size_t pathIndex = 0; pathIndex < pathsCount; ++pathIndex)
 		{
-			size_t		   indexElementTerminalChar = 0;
-			ARulePathInfo *cpaths					= paths[pathIndex];
+			size_t indexElementTerminalChar = 0;
 
 			for (size_t itemIndex = 0; itemIndex < itemsCount; ++itemIndex)
 			{
-				const TerminalSymbol &item = items[itemIndex];
-
-				if (!item.isTerminalChar())
+				if (!items[itemIndex].isTerminalChar())
 					continue;
 
-				if (word(c, rule, cpaths, mapPathCurrent, mapPathNext, indexElementTerminalChar))
+				if (word(c, rule, paths[pathIndex], mapPathCurrent, mapPathNext, indexElementTerminalChar))
 					isValidWithCurrentPath = true;
 				++indexElementTerminalChar;
 			}

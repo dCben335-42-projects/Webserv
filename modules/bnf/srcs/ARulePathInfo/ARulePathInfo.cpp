@@ -27,7 +27,18 @@ ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 		}
 	}
 
-	m_pathHash = createPathHash(path);
+	m_pathHash	  = createPathHash(path);
+	m_replaceable = terminalCount;
+}
+
+void ARulePathInfo::resetTerminalCharsInfo()
+{
+	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
+	{
+		terminalCharsInfo[i].position = 0;
+	}
+
+	m_replaceable = terminalCharsInfo.size();
 }
 
 ARulePathInfo::~ARulePathInfo()

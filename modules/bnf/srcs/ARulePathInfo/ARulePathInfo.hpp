@@ -43,11 +43,12 @@ class ARulePathInfo
 		ARulePath			  m_path;
 		Vec<TerminalCharInfo> terminalCharsInfo;
 		size_t				  m_pathHash;
+		unsigned int		  m_replaceable;
 
 		ARulePathInfo(const ARulePath &path);
 		~ARulePathInfo();
 
-
+		void					resetTerminalCharsInfo();
 		const Vec<std::string> &getValue() const;
 		bool					operator==(const ARulePathInfo &other) const;
 		static size_t			createPathHash(const ARulePath &path);

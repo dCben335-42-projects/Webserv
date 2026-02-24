@@ -45,7 +45,7 @@ class Parser
 
 		void		   getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
 		void		   precomputeOptional(const ARule *rule);
-		ARulePathInfo *createARulePathInfo(const ARulePath &path);
+		ARulePathInfo *createARulePathInfo(const ARulePath &path, size_t pathHash);
 		void		   createPathInfo(
 					  ARulePaths	  &element,
 					  const ARulePath &completePath);
