@@ -31,7 +31,6 @@ class Parser
 
 		bool isFullyOptional(const ARule &rule) const;
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
-		// bool isFullyOptionalEnd(ARulePath path);
 		bool isFullyOptionalEnd(const ARulePath &path);
 
 		bool isValidEmptyFile();
@@ -50,12 +49,12 @@ class Parser
 			ARulePath			 &path,
 			ARuleMap			 &mapPath);
 		bool word(
-			TerminalCharInfo  &data,
-			const char		   c,
-			const ARule *const rule,
-			const ARulePath	  &path,
-			const ARuleMap	  &mapPathCurrent,
-			ARuleMap		  &mapPathNext);
+			const char			 c,
+			const ARule *const	 rule,
+			const ARulePathInfo &path,
+			const ARuleMap		&mapPathCurrent,
+			ARuleMap			&mapPathNext,
+			size_t				 indexElementTerminalChar);
 
 	public:
 		Parser(const SemanticDescriptor &semantic);

@@ -17,11 +17,18 @@ Group::~Group()
 void Group::addItem(const TerminalSymbol &val)
 {
 	m_items.push_back(val);
+	if (val.isTerminalChar())
+		m_itemsValue.push_back(val.getValue());
 }
 
 const Vec<TerminalSymbol> &Group::getItems() const
 {
 	return m_items;
+}
+
+const Vec<std::string> &Group::getItemsValue() const
+{
+	return m_itemsValue;
 }
 
 const std::string Group::getTypeName() const

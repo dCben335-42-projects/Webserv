@@ -1,22 +1,40 @@
 #include "ARulePathInfo.hpp"
 #include "../Rules/ARule.hpp"
+#include "Logger.hpp"
 
-ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
+ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 {
-	Vec<TerminalSymbol> items = m_path.back()->getItems();
-	size_t				val	  = items.size();
-	terminalCharsInfo.reserve(val);
-	for (size_t i = 0; i < val; ++i)
-	{
+	const Vec<TerminalSymbol> &items = m_path.back()->getItems();
+
+	size_t		 terminalCount = 0;
+	const size_t n			   = items.size();
+
+	for (size_t i = 0; i < n; ++i)
 		if (items[i].isTerminalChar())
+			++terminalCount;
+
+	terminalCharsInfo.resize(terminalCount);
+
+	size_t idx = 0;
+	for (size_t i = 0; i < n; ++i)
+	{
+		const TerminalSymbol &item = items[i];
+
+		if (item.isTerminalChar())
 		{
-			terminalCharsInfo.push_back(TerminalCharInfo(items[i], 0));
+			terminalCharsInfo[idx++] =
+				TerminalCharInfo(0, item.getValue().size());
 		}
 	}
 }
 
 ARulePathInfo::~ARulePathInfo()
 {
+}
+
+const Vec<std::string> &ARulePathInfo::getValue() const
+{
+	return m_path.back()->getItemsValue();
 }
 
 
@@ -38,8 +56,7 @@ bool ARulePathInfo::operator==(const ARulePathInfo &other) const
 		const TerminalCharInfo &info1 = terminalCharsInfo[i];
 		const TerminalCharInfo &info2 = other.terminalCharsInfo[i];
 
-		if (&info1.terminal != &info2.terminal ||
-			info1.position != info2.position ||
+		if (info1.position != info2.position ||
 			info1.length != info2.length)
 		{
 			return false;
@@ -57,13 +74,18 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 		if (i < data.m_path.size() - 1)
 			os << ", ";
 	}
+	// os << "], m_strs=[";
+	// for (size_t i = 0; i < data.m_strs.size(); ++i)
+	// {
+	// 	os << data.m_strs[i];
+	// 	if (i < data.m_strs.size() - 1)
+	// 		os << ", ";
+	// }
 	os << "], charPtr=[";
-
-
 	for (size_t i = 0; i < data.terminalCharsInfo.size(); ++i)
 	{
 		const TerminalCharInfo &info = data.terminalCharsInfo[i];
-		os << "{terminal: \"" << info.terminal << "\", position: " << info.position << ", length: " << info.length << "}";
+		os << "{position: " << info.position << ", length: " << info.length << "}";
 		if (i < data.terminalCharsInfo.size() - 1)
 			os << ", ";
 	}
@@ -76,6 +98,6 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 
 std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data)
 {
-	os << "{terminal: \"" << data.terminal << "\", position: " << data.position << ", length: " << data.length << "}";
+	os << "{position: " << data.position << ", length: " << data.length << "}";
 	return os;
 }

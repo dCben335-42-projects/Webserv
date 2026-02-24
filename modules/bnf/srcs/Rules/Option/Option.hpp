@@ -14,6 +14,7 @@ class Option : public ARule
 		~Option();
 		void					   addItem(const TerminalSymbol &val);
 		const Vec<TerminalSymbol> &getItems() const;
+		const Vec<std::string>	  &getItemsValue() const;
 		const std::string		   getTypeName() const;
 		std::string				   getPrintableValue() const;
 

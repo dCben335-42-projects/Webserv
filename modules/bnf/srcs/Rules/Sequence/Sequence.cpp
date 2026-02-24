@@ -18,11 +18,18 @@ Sequence::~Sequence()
 void Sequence::addItem(const TerminalSymbol &val)
 {
 	m_items.push_back(val);
+	if (val.isTerminalChar())
+		m_itemsValue.push_back(val.getValue());
 }
 
 const Vec<TerminalSymbol> &Sequence::getItems() const
 {
 	return m_items;
+}
+
+const Vec<std::string> &Sequence::getItemsValue() const
+{
+	return m_itemsValue;
 }
 
 const std::string Sequence::getTypeName() const

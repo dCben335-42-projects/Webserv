@@ -11,11 +11,11 @@ typedef Vec<const ARule *> ARulePath;
 struct TerminalCharInfo
 {
 	public:
-		TerminalCharInfo() : terminal(TerminalSymbol("dd", false)), position(0), length(0)
+		TerminalCharInfo() : position(0), length(0)
 		{
 		}
 
-		TerminalCharInfo(const TerminalSymbol terminal, size_t position) : terminal(terminal), position(position), length(terminal.getValue().size())
+		TerminalCharInfo(size_t position, size_t length) : position(position), length(length)
 		{
 		}
 		~TerminalCharInfo()
@@ -26,15 +26,13 @@ struct TerminalCharInfo
 		{
 			if (this == &other)
 				return *this;
-			terminal = other.terminal;
 			position = other.position;
 			length	 = other.length;
 			return *this;
 		}
 
-		TerminalSymbol terminal;
-		size_t		   position;
-		size_t		   length;
+		size_t position;
+		size_t length;
 };
 
 std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data);
@@ -47,6 +45,8 @@ class ARulePathInfo
 
 		ARulePathInfo(const ARulePath &path);
 		~ARulePathInfo();
+
+		const Vec<std::string> &getValue() const;
 
 		bool operator==(const ARulePathInfo &other) const;
 };

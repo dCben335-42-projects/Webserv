@@ -210,34 +210,28 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
  * @return true if the character is valid for the current path and rule, false otherwise.
  */
 bool Parser::word(
-	TerminalCharInfo  &data,
-	const char		   c,
-	const ARule *const rule,
-	const ARulePath	  &path,
-	const ARuleMap	  &mapPathCurrent,
-	ARuleMap		  &mapPathNext)
+	const char			 c,
+	const ARule *const	 rule,
+	const ARulePathInfo &pathInfo,
+	const ARuleMap		&mapPathCurrent,
+	ARuleMap			&mapPathNext,
+	size_t				 indexElementTerminalChar)
 {
-	Logger::log("data");
+	TerminalCharInfo data = pathInfo.terminalCharsInfo[indexElementTerminalChar];
+
 	if (data.position >= data.length)
 		return false;
 
-	Logger::log("data2");
-
-	if (data.terminal.getValue()[data.position] != c)
+	if (pathInfo.getValue()[indexElementTerminalChar][data.position] != c)
 		return false;
-
-	Logger::log("data3");
 
 	if (data.position == data.length - 1)
 	{
-		addNextPaths(mapPathCurrent, mapPathNext, path, rule);
+		addNextPaths(mapPathCurrent, mapPathNext, pathInfo.m_path, rule);
 		return true;
 	}
-	Logger::log("data4");
 
 	++data.position;
-
-	Logger::log(data);
 
 	ARulePaths &paths	  = mapPathNext[rule];
 	size_t		pathCount = paths.size();
@@ -245,19 +239,15 @@ bool Parser::word(
 	for (size_t i = 0; i < pathCount; ++i)
 	{
 		ARulePathInfo &it = paths[i];
-		if (it.m_path == path)
+		if (it.m_path == pathInfo.m_path)
 		{
-			it.terminalCharsInfo.push_back(data);
+			it.terminalCharsInfo[indexElementTerminalChar] = data;
 			return true;
 		}
 	}
 
-	paths.push_back(ARulePathInfo(path));
-	paths.back().terminalCharsInfo.reserve(1);
-	paths.back().terminalCharsInfo.push_back(data);
-
-	Logger::log(paths);
-
+	paths.push_back(pathInfo);
+	paths.back().terminalCharsInfo[indexElementTerminalChar] = data;
 	return true;
 }
 
@@ -274,9 +264,7 @@ bool Parser::parseCurrentChar(
 	ARuleMap	   &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
-	// TerminalCharInfo *data					 = NULL;
 
-	TerminalCharInfo data;
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin();
 		 it != mapPathCurrent.end(); ++it)
 	{
@@ -287,38 +275,19 @@ bool Parser::parseCurrentChar(
 		size_t pathsCount = paths.size();
 		size_t itemsCount = items.size();
 
-		(void) itemsCount;
-		(void) pathsCount;
-		(void) rule;
-		(void) c;
-		(void) mapPathNext;
-		Logger::log(items);
-		Logger::log("----");
-
 		for (size_t pathIndex = 0; pathIndex < pathsCount; ++pathIndex)
 		{
 			size_t				 indexElementTerminalChar = 0;
 			const ARulePathInfo &cpaths					  = paths[pathIndex];
 
-			Logger::log("ok");
 			for (size_t itemIndex = 0; itemIndex < itemsCount; ++itemIndex)
 			{
-				Logger::log("ok2");
-
 				const TerminalSymbol &item = items[itemIndex];
 
 				if (!item.isTerminalChar())
 					continue;
 
-				Logger::log("ok3");
-
-				data = cpaths.terminalCharsInfo[indexElementTerminalChar];
-
-				Logger::log(data);
-
-
-				if (word(data,
-						 c, rule, cpaths.m_path, mapPathCurrent, mapPathNext))
+				if (word(c, rule, cpaths, mapPathCurrent, mapPathNext, indexElementTerminalChar))
 					isValidWithCurrentPath = true;
 				++indexElementTerminalChar;
 			}
