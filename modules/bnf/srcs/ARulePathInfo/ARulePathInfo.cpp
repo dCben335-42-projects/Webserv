@@ -26,10 +26,21 @@ ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 				TerminalCharInfo(0, item.getValue().size());
 		}
 	}
+
+	m_pathHash = createPathHash(path);
 }
 
 ARulePathInfo::~ARulePathInfo()
 {
+}
+
+size_t ARulePathInfo::createPathHash(const ARulePath &path)
+{
+	size_t pathHash = 0;
+	size_t size		= path.size();
+	for (size_t i = 0; i < size; ++i)
+		pathHash ^= reinterpret_cast<size_t>(path[i]) + (pathHash << 5) + (pathHash >> 2);
+	return pathHash;
 }
 
 const Vec<std::string> &ARulePathInfo::getValue() const

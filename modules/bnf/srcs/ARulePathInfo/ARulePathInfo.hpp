@@ -42,13 +42,15 @@ class ARulePathInfo
 	public:
 		ARulePath			  m_path;
 		Vec<TerminalCharInfo> terminalCharsInfo;
+		size_t				  m_pathHash;
 
 		ARulePathInfo(const ARulePath &path);
 		~ARulePathInfo();
 
-		const Vec<std::string> &getValue() const;
 
-		bool operator==(const ARulePathInfo &other) const;
+		const Vec<std::string> &getValue() const;
+		bool					operator==(const ARulePathInfo &other) const;
+		static size_t			createPathHash(const ARulePath &path);
 };
 
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data);

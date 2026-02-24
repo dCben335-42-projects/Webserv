@@ -25,6 +25,7 @@ class Parser
 		mutable std::set<const ARule *>		  m_optionalComputing;
 		Vec<const std::string *>			  m_conceptPaths;
 		Vec<ARulePathInfo>					  m_arulePathInfoList;
+		ARulePath							  m_tmpPath;
 
 
 		const SemanticDescriptor &m_semantic;
@@ -45,6 +46,9 @@ class Parser
 		void		   getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
 		void		   precomputeOptional(const ARule *rule);
 		ARulePathInfo *createARulePathInfo(const ARulePath &path);
+		void		   createPathInfo(
+					  ARulePaths	  &element,
+					  const ARulePath &completePath);
 
 		void processTerminalSymbol(
 			const TerminalSymbol &symbol,

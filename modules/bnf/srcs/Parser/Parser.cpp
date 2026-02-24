@@ -46,21 +46,24 @@ void Parser::addPathPossibility(
 		if (!item.isTerminalChar())
 			getPathsTerminalChars(completePath, itemValue, mapPath);
 		else
-		{
-			ARulePaths &element = mapPath[rule];
-			bool		found	= false;
-			for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
-			{
-				if ((*it)->m_path == completePath)
-				{
-					found = true;
-					break;
-				}
-			}
-			if (!found)
-				element.push_back(createARulePathInfo(completePath));
-		}
+			createPathInfo(mapPath[rule], completePath);
 	}
+}
+
+/**
+ * @brief Creates an ARulePathInfo object for the given complete path and adds it to the ARuleMap if it doesn't already exist.
+ * @param element The ARulePaths vector to which the ARulePathInfo will be added if it doesn't already exist.
+ * @param completePath The complete path of ARules for which the ARulePathInfo is being created.
+ */
+void Parser::createPathInfo(
+	ARulePaths		&element,
+	const ARulePath &completePath)
+{
+	size_t pathHash = ARulePathInfo::createPathHash(completePath);
+	for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
+		if ((*it)->m_pathHash == pathHash)
+			return;
+	element.push_back(createARulePathInfo(completePath));
 }
 
 ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path)
@@ -113,20 +116,7 @@ void Parser::processTerminalSymbol(
 	ARuleMap			 &mapPath)
 {
 	if (symbol.isTerminalChar())
-	{
-		ARulePaths &element = mapPath[rule];
-		bool		found	= false;
-		for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
-		{
-			if ((*it)->m_path == path)
-			{
-				found = true;
-				break;
-			}
-		}
-		if (!found)
-			element.push_back(createARulePathInfo(path));
-	}
+		createPathInfo(mapPath[rule], path);
 	else
 		getPathsTerminalChars(path, symbol.getValuePtr(), mapPath);
 }
@@ -156,23 +146,8 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *c
 			const Set<const ARule *>		  &terminalChars = m_semantic.getConcept(*conceptName)->getTerminalChars();
 			Set<const ARule *>::const_iterator ite			 = terminalChars.end();
 			for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != ite; ++it)
-			{
 				if (subRule == *it)
-				{
-					ARulePaths &element = mapPath[subRule];
-					bool		found	= false;
-					for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
-					{
-						if ((*it)->m_path == completePath)
-						{
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-						element.push_back(createARulePathInfo(completePath));
-				}
-			}
+					createPathInfo(mapPath[subRule], completePath);
 			completePath.pop_back();
 			if (!isFullyOptional(*subRule))
 				break;
@@ -237,7 +212,7 @@ bool Parser::word(
 		return true;
 	}
 
-	++pathInfo->terminalCharsInfo[indexElementTerminalChar].position;
+	++data.position;
 
 	ARulePaths &paths	  = mapPathNext[rule];
 	size_t		pathCount = paths.size();
