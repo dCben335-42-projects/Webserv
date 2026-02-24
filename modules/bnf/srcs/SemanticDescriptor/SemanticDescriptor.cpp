@@ -312,6 +312,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			{
 				if (!validate_string_strict(word))
 				{
+					Logger::log("Error: Invalid concept name: " + word + " at index " + Logger::get(i) + " in rule: " + m_content.substr(cursor));
 					delete arule;
 					throw InvalidConceptNameException(word);
 				}

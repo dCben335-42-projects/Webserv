@@ -16,24 +16,23 @@ const Map<LocationConfig> &ServerConfig::getLocations() const
 }
 
 
-
-const std::string &ServerConfig::getIp() const
+const SocketAddress &ServerConfig::getSocketAddress() const
 {
-	return m_ip;
+	return m_socketAddress;
 }
 
-const std::string &ServerConfig::getPort() const
+unsigned short ServerConfig::getPort() const
 {
 	return m_port;
 }
 
 
-void ServerConfig::setIp(const std::string &ip)
+void ServerConfig::setSocketAddress(const SocketAddress &socketAddress)
 {
-	m_ip = ip;
+	m_socketAddress = socketAddress;
 }
 
-void ServerConfig::setPort(const std::string &port)
+void ServerConfig::setPort(const unsigned short &port)
 {
 	m_port = port;
 }

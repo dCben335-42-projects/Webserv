@@ -6,6 +6,24 @@
 
 
 
+#define DQUOTE '"'
+#define SQUOTE '\''
+#define SPACE ' '
+
+#define PARSER_BLOCK_START "{"
+#define PARSER_BLOCK_END "}"
+
+#define PARSER_BLOCK_HTTP "http"
+#define PARSER_BLOCK_SERVER "server"
+#define PARSER_BLOCK_LOCATION "location"
+
+#define PARSER_KEY_ADDHEADER "add_header"
+#define PARSER_KEY_CGI_PASS "cgi_pass"
+#define PARSER_KEY_ERROR_PAGE "error_page"
+
+#define PARSER_KEY_LISTEN "listen"
+#define PARSER_KEY_HOST "host"
+#define PARSER_KEY_PORT "port"
 
 struct DirectiveKeyWord
 {
@@ -23,8 +41,6 @@ struct DirectiveKeyWord
 
 
 const DirectiveKeyWord configKeyWords[] = {
-	{"host", DirectiveKeyWord::STRING},
-	{"port", DirectiveKeyWord::NUMBER},
 	{"listen", DirectiveKeyWord::STRING},
 	{"server_name", DirectiveKeyWord::STRING},
 	{"root", DirectiveKeyWord::STRING},
@@ -51,6 +67,10 @@ class Parser
 
 		void set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node);
 		void resolveListen(ServerConfig &server);
+
+		bool isDuplicate(const ServerConfig &server, const Vec<ServerConfig> &servers, const size_t start = 0);
+		void removeDuplicateSocketAddresses(Vec<ServerConfig> &servers);
+
 
 	public:
 		Parser(const std::string &fileContent);

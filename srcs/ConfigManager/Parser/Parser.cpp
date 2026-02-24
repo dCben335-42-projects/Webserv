@@ -3,24 +3,6 @@
 #include "Logger.hpp"
 
 
-#define DQUOTE '"'
-#define SQUOTE '\''
-#define SPACE ' '
-
-#define PARSER_BLOCK_START "{"
-#define PARSER_BLOCK_END "}"
-
-#define PARSER_BLOCK_HTTP "http"
-#define PARSER_BLOCK_SERVER "server"
-#define PARSER_BLOCK_LOCATION "location"
-
-#define PARSER_KEY_ADDHEADER "add_header"
-#define PARSER_KEY_CGI_PASS "cgi_pass"
-#define PARSER_KEY_ERROR_PAGE "error_page"
-
-#define PARSER_KEY_LISTEN "listen"
-#define PARSER_KEY_HOST "host"
-#define PARSER_KEY_PORT "port"
 
 Parser::Parser(const std::string &fileContent) : m_content(fileContent)
 {
@@ -227,11 +209,37 @@ void Parser::resolveListen(ServerConfig &server)
 	const std::string &listen = server.getDirective(PARSER_KEY_LISTEN).at(0);
 	const size_t	   pos	  = listen.rfind(':');
 	const std::string  ip	  = listen.substr(0, pos);
-	bool			   isIPv6 = ip.front() == '[' && ip.back() == ']';
+	const std::string  port	  = listen.substr(pos + 1);
 
-	const std::string port = listen.substr(pos + 1);
-	server.setIp(ip);
-	server.setPort(port);
+	server.setSocketAddress(SocketAddress(ip, Number::toUShort(port)));
+}
+
+
+bool Parser::isDuplicate(
+	const ServerConfig		&server,
+	const Vec<ServerConfig> &servers,
+	const size_t			 start)
+{
+	for (size_t i = start; i < servers.size(); ++i)
+	{
+		if (server.getSocketAddress() == servers[i].getSocketAddress())
+			return true;
+	}
+	return false;
+}
+
+
+void Parser::removeDuplicateSocketAddresses(Vec<ServerConfig> &servers)
+{
+	for (size_t i = 0; i < servers.size(); ++i)
+	{
+		if (isDuplicate(servers[i], servers, i + 1))
+		{
+			Logger::warn("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()));
+			servers.remove(i);
+			--i;
+		}
+	}
 }
 
 
@@ -242,4 +250,7 @@ void Parser::parse()
 
 	for (size_t i = 0; i < numServers; ++i)
 		resolveListen(servers[i]);
+	removeDuplicateSocketAddresses(servers);
+	Logger::debug("Parsed HTTP config: \n" + Logger::get(m_http));
+	// Logger::debug("Parsed HTTP config: \n" + Logger::get(m_http));
 }

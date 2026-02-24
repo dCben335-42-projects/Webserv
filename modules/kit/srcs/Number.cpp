@@ -65,6 +65,11 @@ size_t Number::toSizeT(const std::string &str)
 	return static_cast<size_t>(std::atoi(str.c_str()));
 }
 
+unsigned short Number::toUShort(const std::string &str)
+{
+	return static_cast<unsigned short>(std::atoi(str.c_str()));
+}
+
 int Number::toInt(const std::string &str)
 {
 	return std::atoi(str.c_str());

@@ -4,23 +4,24 @@
 #include <iostream>
 #include "AConfigNode.hpp"
 #include "LocationConfig.hpp"
+#include "SocketAddress.hpp"
 
 class ServerConfig : public AConfigNode
 {
 	private:
-		std::string			m_ip;
-		std::string			m_port;
+		SocketAddress		m_socketAddress;
+		unsigned short		m_port;
 		Map<LocationConfig> m_locations;
 
 	public:
 		ServerConfig();
 		~ServerConfig();
 
-		const std::string &getIp() const;
-		const std::string &getPort() const;
+		const SocketAddress &getSocketAddress() const;
+		unsigned short		 getPort() const;
 
-		void setIp(const std::string &ip);
-		void setPort(const std::string &port);
+		void setSocketAddress(const SocketAddress &socketAddress);
+		void setPort(const unsigned short &port);
 
 		const Map<LocationConfig> &getLocations() const;
 		Map<LocationConfig>		  &getLocations();
