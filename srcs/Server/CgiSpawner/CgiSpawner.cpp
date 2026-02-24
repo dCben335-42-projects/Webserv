@@ -155,7 +155,7 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
 		if (!FileManager::hasXPerm(m_binPath))
-			throw Http500Exception();
+			throw FileManager::FilePermissionException(m_binPath);
 		m_scriptPath = m_req.buildResourcePath(i);
 		return i;
 	}
@@ -212,9 +212,9 @@ bool CgiSpawner::isValidScript()
 	{
 		struct stat st = FileManager::getStat(m_scriptPath);
 		if (!FileManager::isFile(st))
-			throw Http404Exception();
+			throw FileManager::FileDoesNotExistException(m_scriptPath);
 		if (!FileManager::hasRPerm(m_scriptPath))
-			throw Http403Exception();
+			throw FileManager::FilePermissionException(m_scriptPath);
 		return true;
 	}
 	return false;
@@ -242,8 +242,6 @@ bool CgiSpawner::isCgi()
 	}
 	catch (const FileManager::FileException &e)
 	{
-		// TODO
-		//  std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
 	return true;

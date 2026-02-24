@@ -429,7 +429,6 @@ void VirtualServer::onTimeOut()
 
 const std::string VirtualServer::createUser(const std::string name, const std::string pswd)
 {
-	// TODO Check if domain is the right string
 	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
 	{
 		if (name == it->getName())

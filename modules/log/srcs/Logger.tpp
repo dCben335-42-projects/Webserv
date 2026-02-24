@@ -221,7 +221,7 @@ Logger &Logger::debug(V *ptr)
 template <typename V>
 Logger &Logger::custom(const V &v)
 {
-	return Logger::log(m_customColor + m_customPrefix + Logger::get(v) + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + Logger::get(v));
 }
 /**
  *

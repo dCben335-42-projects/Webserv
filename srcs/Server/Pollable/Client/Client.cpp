@@ -13,8 +13,10 @@
 #include "httpHeaders.hpp"
 #include "Logger.hpp"
 
-const std::string errorFile	 = "error.log";
+const std::string errorFile	 = "errors.log";
 const std::string accessFile = "access.log";
+// TODO HOST OU IP DANS LES LOGS
+
 
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
@@ -24,14 +26,14 @@ Client::Client(int fd, const Config &config, VirtualServer &server) :
 	m_count = 0;
 	reset();
 	EventLoop::addHandler(this);
-	Logger::openFile(accessFile).custom("Client connected");
+	Logger::openFile(accessFile).custom(LOG_MSG_CLIENT_CONNECTED);
 }
 
 Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
-	Logger::openFile(accessFile).custom("Client disconnected");
+	Logger::openFile(accessFile).custom(LOG_MSG_CLIENT_DISCONNECTED);
 }
 
 
@@ -169,8 +171,9 @@ void Client::setEvents(const short events)
 void Client::handlePost(const std::string &ressourcePath)
 {
 	(void) ressourcePath;
-	const std::string &target  = m_req.getTarget();
-	const std::string  authloc = "/auth/";
+	const std::string &target = m_req.getTarget();
+	// TODO take the auth loc from the config
+	const std::string authloc = "/auth/";
 	if (target == authloc + AUTH_REGISTER_LOC || target == authloc + AUTH_LOGIN_LOC)
 	{
 		HttpAuth auth(authloc);
@@ -408,7 +411,6 @@ void Client::handleGet(const std::string &ressourcePath)
 	}
 	catch (const FileManager::FileException &e)
 	{
-		// TODO
 		Logger::openFile(errorFile).custom(m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + e.what());
 		throw e.getHttpException();
 	}
@@ -514,6 +516,10 @@ const Config *Client::findHostConfig(const std::string &host) const
  */
 void Client::onHttpException(const AHttpException &e)
 {
+	Logger::openFile(errorFile).custom(
+		LOG_MSG_REPONSE_READY " " + m_req.getMethod().getStrType() + " " +
+		m_req.getTarget() + " " + PROTOCOL + " " + Logger::get(e.getStatusCode()) +
+		" " + e.what() + " " + e.getExtraMessage());
 	m_res.reset();
 	m_res.setStatusCode(e.getStatusCode());
 	if (e.isRedirection())
@@ -621,15 +627,10 @@ void Client::onPollIn()
 	catch (const AHttpException &e)
 	{
 		onHttpException(e);
-		Logger::openFile(errorFile).custom("Response ready"
-										   " " +
-										   m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(e.getStatusCode()) + " " + e.what() + " " + e.getExtraMessage());
 	}
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
 	determineKeepAlive(m_res.getStatusCode());
-	Logger::openFile(accessFile).custom("Reponse ready"
-										" " +
-										m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
+	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
 	m_events = POLLOUT;
 }
 
@@ -655,17 +656,14 @@ void Client::onPollOut()
 	}
 	catch (const std::exception &e)
 	{
-		// TODO
-		//  Logger::error("Error sending response to client on fd " + Logger::get(m_fd) + ": " + e.what());
+		Logger::openFile(accessFile).custom(ERROR_MSG_RESPONSE_SENDING_FAILED " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()) + " " + e.what());
 		m_events		   = 0;
 		m_connectionClosed = true;
 		return;
 	}
 	if (hasFullySent)
 	{
-		Logger::openFile(accessFile).custom("Reponse sent"
-											" " +
-											m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
+		Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_SENT " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
 		if (m_shouldClose)
 		{
 			m_connectionClosed = true;
@@ -693,8 +691,7 @@ void Client::onPollOut()
  */
 void Client::onPollErr()
 {
-	// TODO
-	//  Logger::error("Poll error on client socket fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
+	Logger::openFile(errorFile).custom(ERROR_MSG_UNKNOWN " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL);
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
@@ -713,9 +710,7 @@ void Client::onPollErr()
  */
 void Client::onPollHangUp()
 {
-	// TODO
-	// Logger::info("client disconnected on fd " + Logger::get(m_fd) + ", errno: " + Logger::get(errno) + ", strerror: " + strerror(errno));
-	Logger::openFile(accessFile).custom("Connection terminated by a peer");
+	Logger::openFile(accessFile).custom(LOG_MSG_CONNECTION_TERMINATED);
 	m_events		   = 0;
 	m_connectionClosed = true;
 }

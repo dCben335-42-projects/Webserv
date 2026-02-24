@@ -7,6 +7,15 @@
 #include "Config.hpp"
 #include <ctime>
 
+#define ERROR_MSG_RESPONSE_SENDING_FAILED "An error occured while sending response to the client"
+#define ERROR_MSG_UNKNOWN "An Unknown error occured"
+#define LOG_MSG_CLIENT_PREFIX "Client - "
+#define LOG_MSG_REPONSE_SENT LOG_MSG_CLIENT_PREFIX "Response sent"
+#define LOG_MSG_REPONSE_READY LOG_MSG_CLIENT_PREFIX "Response ready"
+#define LOG_MSG_CONNECTION_TERMINATED LOG_MSG_CLIENT_PREFIX "Connection terminated by a peer"
+#define LOG_MSG_CLIENT_CONNECTED LOG_MSG_CLIENT_PREFIX "Client connected"
+#define LOG_MSG_CLIENT_DISCONNECTED LOG_MSG_CLIENT_PREFIX "Client disconnected"
+
 class VirtualServer;
 class AHttpException;
 

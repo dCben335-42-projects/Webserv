@@ -213,8 +213,6 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 			if (contentLength != m_body.size())
 				throw std::invalid_argument(REQ_CONTENT_LENGTH_MISMATCH_MSG);
 		}
-		// TODO
-		//  std::cout << *this << std::endl;
 		m_connectionKeepAlive = determineConnectionKeepAlive();
 		parseCookie();
 	}
