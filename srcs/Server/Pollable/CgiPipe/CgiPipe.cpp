@@ -7,6 +7,8 @@
 #include "CgiOutput.hpp"
 #include "httpExceptions.hpp"
 #include "Logger.hpp"
+#include "log.hpp"
+
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,

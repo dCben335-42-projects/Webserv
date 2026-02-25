@@ -14,6 +14,7 @@
 #include "HttpUser.hpp"
 
 #include "HttpAuth.hpp"
+#include "log.hpp"
 
 
 

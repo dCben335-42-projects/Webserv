@@ -6,10 +6,6 @@
 #include "CgiOutput.hpp"
 #include <sys/types.h>
 
-#define LOG_MSG_CGIPIPE_PREFIX "CGIPipe - "
-#define LOG_MSG_PIPE_CLOSED LOG_MSG_CGIPIPE_PREFIX "Pipe closed from the other end, stream closed"
-#define ERROR_MSG_CGI_TIMEOUT LOG_MSG_CGIPIPE_PREFIX "CGI timed out"
-
 class CgiPipe : public Pollable
 {
 	private:

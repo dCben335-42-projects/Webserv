@@ -5,10 +5,6 @@
 #include "Config.hpp"
 #include <netinet/in.h>
 
-#define LOG_MSG_SERVER_PREFIX "Virtual_Server - "
-#define ERROR_MSG_FCNTL_FAILED LOG_MSG_SERVER_PREFIX "Fcntl failed to set the fd to non-blocking mode"
-#define ERROR_MSG_ACCEPT_FAILED LOG_MSG_SERVER_PREFIX "Accept failed on the client fd"
-
 class Client;
 class HttpUser;
 

@@ -12,6 +12,7 @@
 #include "HttpAuth.hpp"
 #include "httpHeaders.hpp"
 #include "Logger.hpp"
+#include "log.hpp"
 
 const std::string errorFile	 = "errors.log";
 const std::string accessFile = "access.log";
@@ -410,7 +411,7 @@ void Client::handleGet(const std::string &ressourcePath)
 	}
 	catch (const FileManager::FileException &e)
 	{
-		Logger::openFile(errorFile).custom(m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + e.what());
+		Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + e.what());
 		throw e.getHttpException();
 	}
 }
