@@ -430,7 +430,7 @@ const std::string VirtualServer::createUser(const std::string name, const std::s
 		if (name == it->getName())
 			throw Http409Exception();
 	}
-	HttpUser newUser(name, pswd, m_defaultConf.getServerName(), m_defaultConf.getPort());
+	HttpUser newUser(name, pswd, m_defaultConf.getServerNames()[0], m_defaultConf.getPort());
 	newUser.stringifyCookie();
 	m_users.push(newUser);
 	return newUser.getStringifiedCookie();

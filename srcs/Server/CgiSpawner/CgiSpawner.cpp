@@ -185,15 +185,15 @@ void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t sc
 
 void CgiSpawner::fillActiveBinMap()
 {
-	Vec<const Config::CgiParams *>		 cgiParams;
-	const Vec<const Config::Location *> &locations = m_req.getActiveLocations();
+	Vec<const CgiParams *>		 cgiParams;
+	const Vec<const Location *> &locations = m_req.getActiveLocations();
 
-	for (Vec<const Config::Location *>::const_iterator it = locations.begin(); it != locations.end(); it++)
+	for (Vec<const Location *>::const_iterator it = locations.begin(); it != locations.end(); it++)
 	{
 		if ((*it)->getCgiParams())
 			cgiParams.push((*it)->getCgiParams());
 	}
-	for (Vec<const Config::CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
+	for (Vec<const CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
 	{
 		const Map<std::string> binMap = (*it)->getBinMap();
 		for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)

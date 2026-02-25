@@ -1,27 +1,29 @@
-#include "LocationConfig.hpp"
+
+
+#include "LocationNode.hpp"
 #include "Logger.hpp"
 
-LocationConfig::LocationConfig()
+LocationNode::LocationNode()
 {
 }
 
-LocationConfig::~LocationConfig()
+LocationNode::~LocationNode()
 {
 }
 
 // ===== GETTERS =====
-const std::string &LocationConfig::getPath() const
+const std::string &LocationNode::getPath() const
 {
 	return path;
 }
 
-std::string &LocationConfig::getPath()
+std::string &LocationNode::getPath()
 {
 	return path;
 }
 
 
-std::ostream &operator<<(std::ostream &os, const LocationConfig &data)
+std::ostream &operator<<(std::ostream &os, const LocationNode &data)
 {
 	Logger::incrementIndent();
 	os << Logger::get(data.getDirectives()) << "\n";

@@ -12,15 +12,6 @@
 
 class IPAddress
 {
-	public:
-		static bool isIPv6(const std::string &ip);
-
-		static struct in6_addr convertIPv6(const std::string &ip);
-		static struct in6_addr resolveIPv6(const std::string &hostname);
-
-		static uint32_t resolveIPv4(const std::string &hostname);
-		static uint32_t convertIPv4(const std::string &ip);
-
 	private:
 		IPAddress();
 
@@ -35,6 +26,16 @@ class IPAddress
 			uint16_t (&parts)[8],
 			int &partIndex,
 			int &compressIndex);
+
+	public:
+		static bool isHostname(const std::string &ip);
+		static bool isIPv4(const std::string &ip);
+		static bool isIPv6(const std::string &ip);
+
+		static struct in6_addr convertIPv6(const std::string &ip);
+		static uint32_t		   convertIPv4(const std::string &ip);
+
+		static struct addrinfo *resolveHost(const std::string &hostname);
 };
 
 #endif // KIT_IP_ADDRESS_HPP

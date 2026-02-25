@@ -486,7 +486,7 @@ const Config *Client::findHostConfig(const std::string &host) const
 	for (Vec<const Config *>::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
 		const Config &config = *(*it);
-		if (config.hasServerName() && config.getServerName() == extractedServerName)
+		if (config.hasServerName() && config.getServerNames().contains(extractedServerName))
 			return &config;
 	}
 	return confs.at(0);

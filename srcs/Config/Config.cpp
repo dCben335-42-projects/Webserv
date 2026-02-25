@@ -3,10 +3,20 @@
 #include "CgiParams.hpp"
 #include "webserv.hpp"
 
+Config::Config() :
+	m_ip(""),
+	m_port(0),
+	m_defaultLocation(NULL)
+{
+	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
+	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
+	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
+	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
+}
+
 Config::Config(
 	const std::string			&ip,
 	unsigned short				 port,
-	const std::string			&serverName,
 	Location					*defaultLoc,
 	const Map<const Location *> &locs) :
 	m_ip(ip),
@@ -18,7 +28,6 @@ Config::Config(
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
-	m_serverName	   = std::make_pair(serverName != "", serverName);
 }
 
 Config::~Config()
@@ -53,6 +62,20 @@ unsigned short Config::getPort() const
 	return m_port;
 }
 
+
+/**
+ *
+ * @brief Adds a location configuration to the virtual server.
+ *
+ * @param path The path of the location.
+ * @param location The Location object containing the configuration for the specified path.
+ *
+ */
+void Config::setLocation(const std::string &path, const Location &location)
+{
+	Location *loc = new Location(location);
+	m_locations.set(path, loc);
+}
 
 
 /**
@@ -221,10 +244,9 @@ size_t Config::getMaxBodySize(const std::string &locationPath) const
  * @param serverName The server name to be set.
  *
  */
-void Config::setServerName(const std::string &serverName)
+void Config::setServerNames(const Vec<std::string> &serverNames)
 {
-	m_serverName.first	= true;
-	m_serverName.second = serverName;
+	m_serverNames = serverNames;
 }
 
 
@@ -237,7 +259,7 @@ void Config::setServerName(const std::string &serverName)
  */
 bool Config::hasServerName() const
 {
-	return m_serverName.first;
+	return m_serverNames.size() > 0;
 }
 
 
@@ -248,9 +270,9 @@ bool Config::hasServerName() const
  * @return The server name as a constant reference to a string.
  *
  */
-const std::string &Config::getServerName() const
+const Vec<std::string> &Config::getServerNames() const
 {
-	return m_serverName.second;
+	return m_serverNames;
 }
 
 /**
@@ -260,7 +282,7 @@ const std::string &Config::getServerName() const
  * @return A pointer to the default Location object.
  *
  */
-Config::Location const *Config::getDefaultLocation() const
+Location const *Config::getDefaultLocation() const
 {
 	return m_defaultLocation;
 }
@@ -272,7 +294,7 @@ Config::Location const *Config::getDefaultLocation() const
  * @return A constant reference to the map of locations.
  *
  */
-const Map<const Config::Location *> &Config::getLocations() const
+const Map<const Location *> &Config::getLocations() const
 {
 	return m_locations;
 }
@@ -287,7 +309,7 @@ std::ostream &operator<<(std::ostream &os, const Config &config)
 {
 	os << "Config(ip=" << config.getIp()
 	   << ", port=" << config.getPort()
-	   << ", serverName=" << config.getServerName()
+	   << ", serverName=" << LoggerJson::get(config.getServerNames())
 	   << ", defaultLocation=" << LoggerJson::get(config.getDefaultLocation())
 	   << ")";
 	return os;

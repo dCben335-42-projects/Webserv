@@ -7,11 +7,13 @@
 
 class AConfigNode
 {
-	protected:
+	public:
 		// clang-format off
 		typedef Map<Vec<std::string> > Directives;
+		typedef Directives::const_iterator DirectivesConstIt;
 		// clang-format on
 
+	protected:
 		Directives m_directives;
 
 		Map<std::string> m_addHeaders;

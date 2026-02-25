@@ -1,8 +1,19 @@
 #include "Parser.hpp"
 #include <stack>
 #include "Logger.hpp"
+#include "Number.hpp"
 
+const Parser::ServerDirective Parser::m_serverDirectives[] = {
+	{PARSER_KEY_LISTEN, Parser::STRING, &Config::setIp, NULL, NULL, NULL},
+	{PARSER_KEY_SERVER_NAME, Parser::ARRAY, NULL, NULL, &Config::setServerNames, NULL}};
 
+const Parser::LocationDirective Parser::m_locationDirectives[] = {
+	{PARSER_KEY_ROOT, Parser::STRING, &Location::setRoot, NULL, NULL, NULL},
+	{PARSER_KEY_ALIAS, Parser::STRING, &Location::setAlias, NULL, NULL, NULL},
+	{PARSER_KEY_AUTOINDEX, Parser::BOOL, NULL, &Location::setAutoIndex, NULL, NULL},
+	{PARSER_KEY_UPLOAD, Parser::STRING, &Location::setUpload, NULL, NULL, NULL},
+	{PARSER_KEY_INDEX, Parser::ARRAY, NULL, NULL, &Location::setIndexes, NULL},
+	{PARSER_KEY_METHODS, Parser::ARRAY, NULL, NULL, &Location::setMethods, NULL}};
 
 Parser::Parser(const std::string &fileContent) : m_content(fileContent)
 {
@@ -13,7 +24,7 @@ Parser::~Parser()
 }
 
 
-const HttpConfig &Parser::getHttpConfig() const
+const HttpNode &Parser::getHttpConfig() const
 {
 	return m_http;
 }
@@ -119,7 +130,7 @@ void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfig
 
 /**
  *
- * @brief Parses the configuration content and populates the HttpConfig object.
+ * @brief Parses the configuration content and populates the HttpNode object.
  *
  * @note Updates m_http member.
  *
@@ -128,7 +139,7 @@ void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfig
  * (http, server, location).
  *
  * It uses a stack to keep track of the current context and
- * updates the HttpConfig, ServerConfig, and LocationConfig objects accordingly.
+ * updates the HttpNode, ServerNode, and LocationNode objects accordingly.
  *
  */
 void Parser::retreive()
@@ -137,8 +148,8 @@ void Parser::retreive()
 	std::string				line;
 	std::stack<std::string> context;
 
-	ServerConfig   currentServer;
-	LocationConfig currentLocation;
+	ServerNode	 currentServer;
+	LocationNode currentLocation;
 
 	while (std::getline(input, line))
 	{
@@ -159,13 +170,13 @@ void Parser::retreive()
 		if (key == PARSER_BLOCK_SERVER)
 		{
 			context.push(PARSER_BLOCK_SERVER);
-			currentServer = ServerConfig();
+			currentServer = ServerNode();
 			continue;
 		}
 		if (key == PARSER_BLOCK_LOCATION)
 		{
 			context.push(PARSER_BLOCK_LOCATION);
-			currentLocation = LocationConfig();
+			currentLocation = LocationNode();
 			if (tokens.size() > 1)
 				currentLocation.getPath() = tokens[1];
 			continue;
@@ -195,13 +206,13 @@ void Parser::retreive()
  *
  * @brief Resolves the "listen" directive for a server configuration, extracting the IP and port.
  *
- * @param server The ServerConfig object for which to resolve the "listen" directive.
+ * @param server The ServerNode object for which to resolve the "listen" directive.
  *
  * @note This function checks if the "listen" directive is present in the server configuration.
- * If it exists, it extracts the host and port from the directive value and sets them in the ServerConfig object.
+ * If it exists, it extracts the host and port from the directive value and sets them in the ServerNode object.
  *
  */
-void Parser::resolveListen(ServerConfig &server)
+void Parser::resolveListen(ServerNode &server)
 {
 	if (!server.hasDirective(PARSER_KEY_LISTEN))
 		return;
@@ -212,45 +223,206 @@ void Parser::resolveListen(ServerConfig &server)
 	const std::string  port	  = listen.substr(pos + 1);
 
 	server.setSocketAddress(SocketAddress(ip, Number::toUShort(port)));
+	Logger::debug("ip: " + ip + " and port: " + port + " resolved as: " + Logger::get(server.getSocketAddress()));
 }
 
 
 bool Parser::isDuplicate(
-	const ServerConfig		&server,
-	const Vec<ServerConfig> &servers,
-	const size_t			 start)
+	const ServerNode	  &server,
+	const Vec<ServerNode> &servers,
+	const size_t		   start)
 {
+	const bool				hasServerName = server.hasDirective(PARSER_KEY_SERVER_NAME);
+	const Vec<std::string> &serverNames	  = hasServerName ? server.getDirective(PARSER_KEY_SERVER_NAME) : Vec<std::string>();
+
 	for (size_t i = start; i < servers.size(); ++i)
 	{
-		if (server.getSocketAddress() == servers[i].getSocketAddress())
-			return true;
+		const ServerNode &current = servers[i];
+		if (server.getSocketAddress() == current.getSocketAddress())
+		{
+			if (!hasServerName)
+			{
+				if (!current.hasDirective(PARSER_KEY_SERVER_NAME))
+					return true;
+				continue;
+			}
+			if (!current.hasDirective(PARSER_KEY_SERVER_NAME))
+				continue;
+			const Vec<std::string> &currentNames = current.getDirective(PARSER_KEY_SERVER_NAME);
+			for (size_t j = 0; j < serverNames.size(); ++j)
+			{
+				if (currentNames.contains(serverNames[j]))
+					return true;
+			}
+		}
 	}
 	return false;
 }
 
 
-void Parser::removeDuplicateSocketAddresses(Vec<ServerConfig> &servers)
+void Parser::removeDuplicateSocketAddresses(Vec<ServerNode> &servers)
 {
-	for (size_t i = 0; i < servers.size(); ++i)
+	size_t i = 0;
+	while (i < servers.size())
 	{
 		if (isDuplicate(servers[i], servers, i + 1))
 		{
 			Logger::warn("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()));
 			servers.remove(i);
-			--i;
+			continue;
+		}
+		++i;
+	}
+}
+
+
+bool Parser::applyStringDirective(Config &config, const ServerDirective &directive, const std::string &value)
+{
+	(config.*directive.setString)(value);
+	return true;
+}
+
+bool Parser::applyBoolDirective(Config &config, const ServerDirective &directive, const std::string &value)
+{
+	if (value == "on" || value == "true" || value == "1")
+	{
+		(config.*directive.setBool)(true);
+		return true;
+	}
+	else if (value == "off" || value == "false" || value == "0")
+	{
+		(config.*directive.setBool)(false);
+		return true;
+	}
+	return false;
+}
+
+bool Parser::applyArrayDirective(Config &config, const ServerDirective &directive, const Vec<std::string> &values)
+{
+	(config.*directive.setArray)(values);
+	return true;
+}
+
+bool Parser::applyNumberDirective(Config &config, const ServerDirective &directive, const std::string &value)
+{
+	(config.*directive.setNumber)(Number::toSizeT(value));
+	return true;
+}
+
+
+bool Parser::applyDirective(Config &config, const std::string &key, const Vec<std::string> &values)
+{
+	for (size_t i = 0; i < sizeof(m_serverDirectives) / sizeof(ServerDirective); ++i)
+	{
+		const ServerDirective &directive = m_serverDirectives[i];
+		if (key == directive.key)
+		{
+			if (directive.setString && values.size() == 1)
+				return applyStringDirective(config, directive, values[0]);
+			if (directive.setBool && values.size() == 1)
+				return applyBoolDirective(config, directive, values[0]);
+			if (directive.setArray)
+				return applyArrayDirective(config, directive, values);
+			if (directive.setNumber && values.size() == 1)
+				return applyNumberDirective(config, directive, values[0]);
+			return true;
 		}
 	}
+	return false;
+}
+
+bool Parser::applyStringDirective(Location &location, const LocationDirective &directive, const std::string &value)
+{
+	(location.*directive.setString)(value);
+	return true;
+}
+
+bool Parser::applyBoolDirective(Location &location, const LocationDirective &directive, const std::string &value)
+{
+	if (value == "on" || value == "true" || value == "1")
+	{
+		(location.*directive.setBool)(true);
+		return true;
+	}
+	else if (value == "off" || value == "false" || value == "0")
+	{
+		(location.*directive.setBool)(false);
+		return true;
+	}
+	return false;
+}
+
+bool Parser::applyArrayDirective(Location &location, const LocationDirective &directive, const Vec<std::string> &values)
+{
+	(location.*directive.setArray)(values);
+	return true;
+}
+
+bool Parser::applyNumberDirective(Location &location, const LocationDirective &directive, const std::string &value)
+{
+	(location.*directive.setNumber)(Number::toSizeT(value));
+	return true;
+}
+
+bool Parser::applyDirective(Location &location, const std::string &key, const Vec<std::string> &values)
+{
+	for (size_t i = 0; i < sizeof(m_locationDirectives) / sizeof(LocationDirective); ++i)
+	{
+		const LocationDirective &directive = m_locationDirectives[i];
+		if (key == directive.key)
+		{
+			if (directive.setString && values.size() == 1)
+				return applyStringDirective(location, directive, values[0]);
+			if (directive.setBool && values.size() == 1)
+				return applyBoolDirective(location, directive, values[0]);
+			if (directive.setArray)
+				return applyArrayDirective(location, directive, values);
+			if (directive.setNumber && values.size() == 1)
+				return applyNumberDirective(location, directive, values[0]);
+			return true;
+		}
+	}
+	return false;
 }
 
 
 void Parser::parse()
 {
-	Vec<ServerConfig> servers	 = m_http.getServers();
-	const size_t	  numServers = servers.size();
+	Vec<ServerNode> &servers	= m_http.getServers();
+	size_t			 numServers = servers.size();
 
 	for (size_t i = 0; i < numServers; ++i)
 		resolveListen(servers[i]);
 	removeDuplicateSocketAddresses(servers);
+	numServers = servers.size();
+	Logger::debug("Number of servers after removing duplicates: " + Logger::get(numServers));
+	for (size_t i = 0; i < numServers; i++)
+	{
+		const ServerNode		&server	   = servers[i];
+		const Map<LocationNode> &locations = server.getLocations();
+		Config					 serverconf;
+		for (Map<LocationNode>::const_iterator it = locations.begin(); it != locations.end(); ++it)
+		{
+			const LocationNode					&locationNode = it->second;
+			const AConfigNode::Directives		&directives	  = locationNode.getDirectives();
+			AConfigNode::DirectivesConstIt		 dit		  = directives.begin();
+			const AConfigNode::DirectivesConstIt end		  = directives.end();
+
+			Location location;
+			while (dit != end)
+			{
+				applyDirective(location, dit->first, dit->second);
+				Logger::debug("Applied directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
+				++dit;
+			}
+			serverconf.setLocation(it->first, location);
+		}
+
+		ServerConfigs serverConfigs;
+		serverConfigs.push(serverconf);
+		m_serversConfigs.push(serverConfigs);
+	}
+	Logger::log("servers configs: " + Logger::get(m_serversConfigs));
+
 	Logger::debug("Parsed HTTP config: \n" + Logger::get(m_http));
-	// Logger::debug("Parsed HTTP config: \n" + Logger::get(m_http));
 }

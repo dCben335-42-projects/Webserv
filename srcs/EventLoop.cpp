@@ -13,46 +13,46 @@ size_t				 EventLoop::m_nfds = 0;
 
 void EventLoop::init()
 {
-	const std::string ip = "localhost";
+	// const std::string ip = "localhost";
 
-	Config::Location *defaultLocation = new Config::Location("");
-	defaultLocation->setRoot("files/www/website");
+	// Location *defaultLocation = new Location("");
+	// defaultLocation->setRoot("files/www/website");
 
-	Config::Location *slashLoc = new Config::Location("/");
-	Map<std::string>  binSlash;
-	binSlash.set(".py", "/usr/bin/python3");
-	slashLoc->setAutoIndex(true);
-	Config::CgiParams *py = new Config::CgiParams(binSlash);
-	slashLoc->setCgiParams(py);
+	// Location		*slashLoc = new Location("/");
+	// Map<std::string> binSlash;
+	// binSlash.set(".py", "/usr/bin/python3");
+	// slashLoc->setAutoIndex(true);
+	// CgiParams *py = new CgiParams(binSlash);
+	// slashLoc->setCgiParams(py);
 
-	Config::Location *bin = new Config::Location("/cgi-bin");
-	Map<std::string>  binmap1;
-	binmap1.set(".php", "/usr/bin/php");
-	Config::CgiParams *cgi = new Config::CgiParams(binmap1);
-	bin->setCgiParams(cgi);
-	bin->setAlias("files/www/usr/bin/");
-	bin->setAutoIndex(true);
+	// Location		*bin = new Location("/cgi-bin");
+	// Map<std::string> binmap1;
+	// binmap1.set(".php", "/usr/bin/php");
+	// CgiParams *cgi = new CgiParams(binmap1);
+	// bin->setCgiParams(cgi);
+	// bin->setAlias("files/www/usr/bin/");
+	// bin->setAutoIndex(true);
 
 
-	Config::Location *uploadLocation = new Config::Location("/uploads");
-	uploadLocation->setAutoIndex(true);
-	uploadLocation->setUpload("files/www/uploads");
-	uploadLocation->setAlias("files/www/uploads");
-	Set<HttpMethod> methods;
-	methods.push(HttpMethod::GET);
-	methods.push(HttpMethod::POST);
-	methods.push(HttpMethod::PUT);
+	// Location *uploadLocation = new Location("/uploads");
+	// uploadLocation->setAutoIndex(true);
+	// uploadLocation->setUpload("files/www/uploads");
+	// uploadLocation->setAlias("files/www/uploads");
+	// Set<HttpMethod> methods;
+	// methods.push(HttpMethod::GET);
 	// methods.push(HttpMethod::POST);
-	uploadLocation->setMethods(methods);
+	// methods.push(HttpMethod::PUT);
+	// // methods.push(HttpMethod::POST);
+	// uploadLocation->setMethods(methods);
 
-	Map<const Config::Location *> locations;
-	locations.set("/", slashLoc);
-	locations.set("/cgi-bin", bin);
-	locations.set("/uploads", uploadLocation);
+	// Map<const Location *> locations;
+	// locations.set("/", slashLoc);
+	// locations.set("/cgi-bin", bin);
+	// locations.set("/uploads", uploadLocation);
 
-	Config *config1 = new Config(ip, 8080, "localhost", defaultLocation, locations);
-	new VirtualServer(*(config1));
-	Signals::catchSigs();
+	// Config *config1 = new Config(ip, 8080, "localhost", defaultLocation, locations);
+	// new VirtualServer(*(config1));
+	// Signals::catchSigs();
 }
 
 

@@ -19,7 +19,7 @@ class ConfigManager
 		void lex();
 		void parse();
 
-		HttpConfig parseConfigFile(std::string const &filepath);
+		HttpNode parseConfigFile(std::string const &filepath);
 };
 
 #endif

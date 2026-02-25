@@ -1,20 +1,18 @@
-#ifndef VIRTUALSERVER_CONFIG_HPP
-#define VIRTUALSERVER_CONFIG_HPP
+#ifndef SERVER_CONFIG_HPP
+#define SERVER_CONFIG_HPP
 
 #include "Vec.hpp"
 #include "Map.hpp"
+#include "Location.hpp"
+
 
 class Config
 {
-	public:
-		class Location;
-		class CgiParams;
-
 	private:
 		std::string	   m_ip;
 		unsigned short m_port;
 
-		std::pair<bool, std::string> m_serverName;
+		Vec<std::string> m_serverNames;
 
 		Location			 *m_defaultLocation;
 		Map<const Location *> m_locations;
@@ -26,14 +24,14 @@ class Config
 		size_t m_maxBodySize;
 
 	public:
+		Config();
 		Config(const std::string		   &ip,
 			   unsigned short				port,
-			   const std::string		   &serverName,
 			   Location					   *defaultLoc,
 			   const Map<const Location *> &locs);
-
 		~Config();
 
+		void setLocation(const std::string &path, const Location &location);
 
 		void setIp(const std::string &ip);
 		void setPort(unsigned short port);
@@ -41,15 +39,15 @@ class Config
 		void setHeaderTimeout(const time_t timeout);
 		void setBodyTimeout(const time_t timeout);
 		void setMaxBodySize(const size_t maxBodySize);
-		void setServerName(const std::string &serverName);
+		void setServerNames(const Vec<std::string> &serverNames);
 
 		const std::string			&getIp() const;
 		unsigned short				 getPort() const;
 		const Location				*getDefaultLocation() const;
 		const Map<const Location *> &getLocations() const;
 
-		bool			   hasServerName() const;
-		const std::string &getServerName() const;
+		bool					hasServerName() const;
+		const Vec<std::string> &getServerNames() const;
 
 		time_t getKeepAliveTimeout() const;
 		time_t getHeaderTimeout() const;

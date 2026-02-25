@@ -1,33 +1,33 @@
-#include "HttpConfig.hpp"
+#include "HttpNode.hpp"
 #include "Logger.hpp"
 
-HttpConfig::HttpConfig()
+HttpNode::HttpNode()
 {
 }
 
-HttpConfig::~HttpConfig()
+HttpNode::~HttpNode()
 {
 }
 
-const Vec<ServerConfig> &HttpConfig::getServers() const
-{
-	return servers;
-}
-
-Vec<ServerConfig> &HttpConfig::getServers()
+const Vec<ServerNode> &HttpNode::getServers() const
 {
 	return servers;
 }
 
-void HttpConfig::addServer(const ServerConfig &server)
+Vec<ServerNode> &HttpNode::getServers()
+{
+	return servers;
+}
+
+void HttpNode::addServer(const ServerNode &server)
 {
 	servers.push_back(server);
 }
 
 
-std::ostream &operator<<(std::ostream &os, const HttpConfig &data)
+std::ostream &operator<<(std::ostream &os, const HttpNode &data)
 {
-	os << "HttpConfig:\n";
+	os << "HttpNode:\n";
 	os << Logger::get(data.getDirectives()) << "\n";
 	os << Logger::indent() << "servers: " << Logger::get(data.getServers()) << "\n";
 	if (!data.getAddHeaders().empty())

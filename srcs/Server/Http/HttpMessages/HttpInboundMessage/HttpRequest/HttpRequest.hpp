@@ -21,12 +21,12 @@
 class HttpRequest : public AHttpInboundMessage
 {
 	private:
-		std::string					  m_queryString;
-		Vec<std::string>			  m_segments;
-		Vec<const Config::Location *> m_activeLocations;
-		Vec<Accept>					  m_accepts;
-		bool						  m_connectionKeepAlive;
-		Map<std::string>			  m_cookieValues;
+		std::string			  m_queryString;
+		Vec<std::string>	  m_segments;
+		Vec<const Location *> m_activeLocations;
+		Vec<Accept>			  m_accepts;
+		bool				  m_connectionKeepAlive;
+		Map<std::string>	  m_cookieValues;
 
 		size_t m_firstLineEndPos;
 		size_t m_headersEndPos;
@@ -49,7 +49,7 @@ class HttpRequest : public AHttpInboundMessage
 
 
 
-		typedef Vec<const Config::Location *>::const_iterator m_locCIt;
+		typedef Vec<const Location *>::const_iterator m_locCIt;
 
 	public:
 		HttpRequest();
@@ -60,8 +60,8 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<std::string> &getSegments() const;
 		const std::string	   &getQueryString() const;
 
-		const Vec<const Config::Location *> &getActiveLocations() const;
-		bool								 getActiveAutoIndex() const;
+		const Vec<const Location *> &getActiveLocations() const;
+		bool						 getActiveAutoIndex() const;
 
 		const Vec<Accept>	  &getAccepts() const;
 		bool				   getConnectionKeepAlive() const;

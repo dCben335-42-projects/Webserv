@@ -1,6 +1,25 @@
 #include "IPAddress.hpp"
 #include "Number.hpp"
+#include <cctype>
 
+
+/**
+ *
+ * @brief Determines if the given IP address string is a hostname.
+ *
+ * @param ip The IP address string to check.
+ * @return true if the IP address is a hostname, false otherwise.
+ *
+ * @note This function checks for the presence of a dot ('.') in the IP address string,
+ * which is a characteristic of hostnames. If a dot is found, it returns true,
+ * indicating that the IP address is likely a hostname. If no dot is found, it returns false,
+ * indicating that the IP address is likely an IP address (either IPv4 or IPv6).
+ *
+ */
+bool IPAddress::isHostname(const std::string &ip)
+{
+	return !ip.empty() && std::isalpha(static_cast<unsigned char>(ip[0]));
+}
 
 /**
  *
@@ -141,41 +160,6 @@ struct in6_addr IPAddress::convertIPv6(const std::string &ip)
 	return buildIPv6(parts);
 }
 
-
-/**
- *
- * @brief Resolves a hostname to an IPv6 address and returns it as a struct in6_addr.
- *
- * @param hostname The hostname to resolve (e.g., "example.com").
- * @return The resolved IPv6 address as a struct in6_addr.
- * @note This function uses the getaddrinfo system call to resolve the hostname to an IPv6 address.
- * It sets up the appropriate hints for IPv6 and SOCK_STREAM, and retrieves the first result.
- *
- * @throws std::runtime_error if the hostname cannot be resolved or if getaddrinfo fails.
- *
- */
-struct in6_addr IPAddress::resolveIPv6(const std::string &hostname)
-{
-	struct addrinfo	 hints;
-	struct addrinfo *result;
-
-	std::memset(&hints, 0, sizeof(hints));
-	hints.ai_family	  = AF_INET6;
-	hints.ai_socktype = SOCK_STREAM;
-
-	if (getaddrinfo(hostname.c_str(), NULL, &hints, &result) != 0)
-		throw std::runtime_error("Failed to resolve IPv6 address");
-
-	struct sockaddr_in6 *addr =
-		reinterpret_cast<struct sockaddr_in6 *>(result->ai_addr);
-
-	struct in6_addr ip = addr->sin6_addr;
-
-	freeaddrinfo(result);
-	return ip;
-}
-
-
 /**
  *
  * @brief Converts a string representation of an IPv4 address to a 32-bit integer in network byte order.
@@ -207,36 +191,30 @@ uint32_t IPAddress::convertIPv4(const std::string &ip)
 	return htonl(addr);
 }
 
-
 /**
  *
- * @brief Resolves a hostname to an IPv4 address and returns it as a 32-bit integer in network byte order.
+ * @brief Resolves a hostname to an address using getaddrinfo.
  *
- * @param hostname The hostname to resolve (e.g., "example.com").
- * @return The resolved IPv4 address as a 32-bit integer in network byte order.
- * @note This function uses the getaddrinfo system call to resolve the hostname to an IPv4 address.
- * It sets up the appropriate hints for IPv4 and SOCK_STREAM, and retrieves the first result.
+ * @param hostname The hostname to resolve (e.g., "www.example.com").
+ * @param port The port number to use for the resolution.
+ * @return A pointer to a struct addrinfo containing the resolved address information.
  *
  * @throws std::runtime_error if the hostname cannot be resolved or if getaddrinfo fails.
  *
+ * @note This function uses getaddrinfo to resolve the provided hostname. It sets up the hints for the resolution
+ * to allow for both IPv4 and IPv6 addresses and specifies that it is looking for stream sockets (TCP). If the resolution
+ * fails, it throws a runtime error with an appropriate message. The caller is responsible for freeing the returned addrinfo
+ * structure using freeaddrinfo when it is no longer needed.
+ *
  */
-uint32_t IPAddress::resolveIPv4(const std::string &hostname)
+struct addrinfo *IPAddress::resolveHost(const std::string &hostname)
 {
-	struct addrinfo	 hints;
-	struct addrinfo *result;
+	struct addrinfo	 hints	= {};
+	struct addrinfo *result = NULL;
 
-	std::memset(&hints, 0, sizeof(hints));
-	hints.ai_family	  = AF_INET;
+	hints.ai_family	  = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-
-	if (getaddrinfo(hostname.c_str(), NULL, &hints, &result) != 0)
-		throw std::runtime_error("Failed to resolve IPv4 address");
-
-	struct sockaddr_in *addr =
-		reinterpret_cast<struct sockaddr_in *>(result->ai_addr);
-
-	uint32_t ip = addr->sin_addr.s_addr;
-
-	freeaddrinfo(result);
-	return ip;
+	if (getaddrinfo(hostname.c_str(), NULL, &hints, &result) != 0 || !result)
+		throw std::runtime_error("Failed to resolve host: " + hostname);
+	return result;
 }

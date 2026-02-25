@@ -81,10 +81,10 @@ size_t HttpRequest::getSegmentSize() const
  *
  * @brief Retrieves the active locations matched for the request.
  *
- * @return A constant reference to a vector of pointers to the active Config::Location objects.
+ * @return A constant reference to a vector of pointers to the active Location objects.
  *
  */
-const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
+const Vec<const Location *> &HttpRequest::getActiveLocations() const
 {
 	return m_activeLocations;
 }
@@ -303,8 +303,8 @@ void HttpRequest::parseAccepts(const std::string &headerValue)
  */
 void HttpRequest::parseActiveLocations(const Config &config)
 {
-	const Map<const Config::Location *> &locs = config.getLocations();
-	Vec<const Config::Location *>		 locations;
+	const Map<const Location *> &locs = config.getLocations();
+	Vec<const Location *>		 locations;
 	m_activeLocations.push(config.getDefaultLocation());
 
 	if (locs.has("/"))
@@ -333,7 +333,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		m_activeLocations += locations;
 	else if (locations.size() > 0)
 		m_activeLocations.push(locations.back());
-	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Config::Location::compare);
+	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Location::compare);
 }
 
 
@@ -484,8 +484,8 @@ std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
 {
 	if (segmentIndex >= static_cast<ssize_t>(m_segments.size()) || segmentIndex < -1)
 		return "";
-	const Config::Location *validLocation = NULL;
-	bool					isRoot		  = true;
+	const Location *validLocation = NULL;
+	bool			isRoot		  = true;
 
 	m_locCIt end = segmentIndex == -1 ? m_activeLocations.begin() + 1 : m_activeLocations.end();
 	for (m_locCIt loc = m_activeLocations.begin(); loc != end; ++loc)
