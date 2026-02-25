@@ -44,11 +44,7 @@ void Parser::addPathPossibility(
 		if (!item.isTerminalChar())
 			getPathsTerminalChars(completePath, itemValue, mapPath);
 		else
-		{
-			// m_term->push_back(rule);
-			// m_terminalCharToRules[*m_term].push_once(rule);
 			createPathInfo(mapPath[rule], completePath);
-		}
 	}
 }
 
@@ -86,7 +82,8 @@ ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path, size_t pathHas
 			return &an;
 		}
 	}
-
+	if (m_arulePathInfoList.size() >= BNF_CACHE_SIZE)
+		throw CacheFullException();
 	m_arulePathInfoList.push_back(ARulePathInfo(path));
 	return &m_arulePathInfoList.back();
 }
@@ -136,12 +133,7 @@ void Parser::processTerminalSymbol(
 		if (items[i].isTerminalChar())
 			createPathInfo(mapPath[rule], path);
 		else
-		{
-			// m_term = symbol.getValuePtr();
-			// Logger::log("Processing terminal symbol: " + *m_term);
 			getPathsTerminalChars(path, items[i].getValuePtr(), mapPath);
-			// m_term = NULL;
-		}
 	}
 }
 
@@ -153,21 +145,6 @@ void Parser::processTerminalSymbol(
  */
 void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
 {
-	// Logger::log("m_term ptr: " + LoggerJson::get(m_term, true) + ", m_term value: " + *m_term);
-	// Logger::log("getPathsTerminalChars: " + *conceptName);
-	// if (m_terminalCharToRules.has(*m_term) && m_terminalCharToRules[*m_term].size() > 0)
-	// {
-
-	// 	Logger::log(m_terminalCharToRules);
-	// 	// Logger::log("Terminal char already computed for concept: " + *conceptName);
-	// 	for (size_t i = 0; i < m_terminalCharToRules[*m_term].size(); ++i)
-	// 	{
-	// 		const ARule *const rule = m_terminalCharToRules[*m_term][i];
-	// 		createPathInfo(mapPath[rule], completePath);
-	// 	}
-	// 	return;
-	// }
-
 	m_conceptPaths.push_back(conceptName);
 	const Vec<ConceptDef *>			  &defs			   = m_semantic.getConceptDefs(*conceptName);
 	const Set<const ARule *>		  &terminalChars   = m_semantic.getConcept(*conceptName)->getTerminalChars();
@@ -277,8 +254,6 @@ bool Parser::parseCurrentChar(
 	ARuleMap	   &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
-	// Logger::log("---------------------------------------");
-	// Logger::log("parseCurrentChar: '" + LoggerJson::get(c) + "'");
 
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin();
 		 it != mapPathCurrent.end(); ++it)
@@ -433,11 +408,12 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 bool Parser::isValidEmptyFile()
 {
 	ARulePath				 startPath;
-	const Vec<ConceptDef *> &defs = m_semantic.getConceptDefs(CURSOR);
-	for (Vec<ConceptDef *>::const_iterator defIt = defs.begin(); defIt != defs.end(); ++defIt)
+	const Vec<ConceptDef *> &defs	   = m_semantic.getConceptDefs(CURSOR);
+	const size_t			 defsCount = defs.size();
+	for (size_t i = 0; i < defsCount; ++i)
 	{
 		startPath.clear();
-		startPath.push_back((*defIt)->getARule(0));
+		startPath.push_back(defs[i]->getARule(0));
 		if (isFullyOptionalEnd(startPath))
 			return true;
 	}
@@ -456,34 +432,32 @@ void Parser::parse(const std::string &stringToParsed)
 			throw FileNotFinishedException("The file must not be empty.");
 		return;
 	}
-	m_arulePathInfoList.reserve(5000);
 
-	ARuleMap mapPathCurrent;
-	ARuleMap mapPathNext;
-	char	 c;
-
-	m_conceptPaths.reserve(8);
-
+	ARuleMap  mapPathCurrent;
+	ARuleMap  mapPathNext;
 	ARulePath completePath;
+	char	  c;
+
+	m_arulePathInfoList.reserve(BNF_CACHE_SIZE);
+	m_conceptPaths.reserve(8);
 	completePath.reserve(8);
 
-	// m_currentConceptName = &CURSOR;
-	// m_term = &m_terminalCharToRules[CURSOR];
-	m_term = &CURSOR;
 	getPathsTerminalChars(completePath, &CURSOR, mapPathCurrent);
-	m_term = NULL;
+	size_t size		 = stringToParsed.size();
+	size_t lastIndex = size - 1;
 
-	for (size_t i = 0; i < stringToParsed.size(); ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throw InvalidEntryException(std::string("Invalid character '") + c + "' at position " + Logger::get(i) + ".");
-		if (i == stringToParsed.size() - 1)
+		if (i == lastIndex)
 			break;
 
-		std::swap(mapPathCurrent, mapPathNext);
+		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();
 	}
+	Logger::log("ARulePathInfoList size: " + Logger::get(m_arulePathInfoList.size()));
 
 	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c))
 		Logger::log("Parsing complete ✅");

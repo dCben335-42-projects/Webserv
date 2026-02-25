@@ -16,6 +16,7 @@
 
 #include "../Exception/Parser/InvalidEntryException.hpp"
 #include "../Exception/Parser/FileNotFinishedException.hpp"
+#include "../Exception/Parser/CacheFullException.hpp"
 #include "../BNFPath/BNFPath.hpp"
 
 class Parser
@@ -25,16 +26,11 @@ class Parser
 		mutable std::set<const ARule *>		  m_optionalComputing;
 		Vec<const std::string *>			  m_conceptPaths;
 		Vec<ARulePathInfo>					  m_arulePathInfoList;
-		ARulePath							  m_tmpPath;
-		const std::string					 *m_term;
-		// clang-format off
-		Map<std::string, Vec<const ARule *> >  m_terminalCharToRules;
-		// clang-format on
-
 
 		const SemanticDescriptor &m_semantic;
 
 		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+		bool word(const char c, const ARule *const rule, ARulePathInfo *path, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t indexElementTerminalChar);
 
 		bool isFullyOptional(const ARule &rule) const;
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
@@ -47,29 +43,11 @@ class Parser
 		void addPathPossibility(ARulePath &completePath, const ARule *const rule, ARuleMap &mapPath);
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
-		void		   getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
-		void		   precomputeOptional(const ARule *rule);
+		void getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
+		void processTerminalSymbol(const ARule *rule, ARulePath &path, ARuleMap &mapPath);
+		void createPathInfo(ARulePaths &element, const ARulePath &completePath);
+
 		ARulePathInfo *createARulePathInfo(const ARulePath &path, size_t pathHash);
-		void		   createPathInfo(
-					  ARulePaths	  &element,
-					  const ARulePath &completePath);
-
-		// void processTerminalSymbol(
-		// 	const TerminalSymbol &symbol,
-		// 	const ARule			 *rule,
-		// 	ARulePath			 &path,
-		// 	ARuleMap			 &mapPath);
-
-		void processTerminalSymbol(
-			const ARule *rule,
-			ARulePath	&path,
-			ARuleMap	&mapPath);
-		bool word(const char		 c,
-				  const ARule *const rule,
-				  ARulePathInfo		*path,
-				  const ARuleMap	&mapPathCurrent,
-				  ARuleMap			&mapPathNext,
-				  size_t			 indexElementTerminalChar);
 
 	public:
 		Parser(const SemanticDescriptor &semantic);

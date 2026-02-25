@@ -8,7 +8,7 @@ class ARule;
 
 typedef Vec<const ARule *> ARulePath;
 
-struct TerminalCharInfo
+class TerminalCharInfo
 {
 	public:
 		TerminalCharInfo() : position(0), length(0)
@@ -54,7 +54,6 @@ class ARulePathInfo
 };
 
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data);
-
 
 typedef Vec<ARulePathInfo *>				ARulePaths;
 typedef Map<const ARule *const, ARulePaths> ARuleMap;
