@@ -226,13 +226,11 @@ void Client::handlePutPatch(const std::string &ressourcePath)
 		throw Http404Exception();
 	if (!FileManager::hasRWPerm(fullPath))
 		throw Http403Exception();
-	FileUpload file(m_req);
-	file.createDiskFile(ressourcePath, m_req.getBody());
+	FileManager::createDiskFile(ressourcePath, m_req.getBody());
 	m_res.setStatusCode(204);
 	m_res.setBody(EDIT_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 }
-
 
 
 /**
@@ -257,7 +255,8 @@ void Client::handleDelete(const std::string &ressourcePath)
 		throw Http403Exception();
 	if (!FileManager::hasRWPerm(fullPath))
 		throw Http403Exception();
-	std::remove(fullPath);
+	if (std::remove(fullPath) == -1)
+		throw Http500Exception();
 	m_res.setStatusCode(204);
 	m_res.setBody(DELETE_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
@@ -628,13 +627,16 @@ void Client::onPollIn()
 	{
 		onHttpException(e);
 	}
-	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
-	determineKeepAlive(m_res.getStatusCode());
-	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
+	buildResponse();
 	m_events = POLLOUT;
 }
 
-
+void Client::buildResponse()
+{
+	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
+	determineKeepAlive(m_res.getStatusCode());
+	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
+}
 
 /**
  *

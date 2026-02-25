@@ -118,6 +118,7 @@ void CgiPipe::onPollHangUp()
 	catch (const AHttpException &e)
 	{
 		m_client->onHttpException(e);
+		m_client->buildResponse();
 	}
 	m_events = 0;
 	m_client->setEvents(POLLOUT);

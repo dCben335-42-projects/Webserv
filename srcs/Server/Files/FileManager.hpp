@@ -53,6 +53,7 @@ class FileManager
 		static std::string getIcon(const File &file);
 
 		static std::string determineExtension(const std::string &fileName, size_t *extPos);
+		static void		   createDiskFile(const std::string &fullPath, const std::string &body);
 
 	public:
 		class FileException : public std::exception
@@ -81,7 +82,7 @@ class FileManager
 				{
 					return m_httpException;
 				}
-				};
+		};
 
 
 		class FileReadException : public FileException

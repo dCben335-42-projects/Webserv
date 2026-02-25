@@ -472,3 +472,22 @@ std::string FileManager::determineExtension(const std::string &fileName, size_t 
 		return String::toLower(fileName.substr(dotPos));
 	return "";
 }
+
+/**
+ *
+ * @brief Creates a disk file and fills it with the given content
+ *
+ * @param fullPath The path of the file that should be created and filled
+ * @param body The content to write to the file
+ *
+ * @throw Http500Exception in case open() fails
+ */
+void FileManager::createDiskFile(const std::string &fullPath, const std::string &body)
+{
+	std::ofstream file;
+	file.open(fullPath.c_str(), std::ofstream::trunc);
+	if (!file.is_open())
+		throw Http500Exception();
+	file << body;
+	file.close();
+}

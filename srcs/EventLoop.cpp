@@ -20,7 +20,7 @@ void EventLoop::init()
 
 	Config::Location *slashLoc = new Config::Location("/");
 	Map<std::string>  binSlash;
-	binSlash.set(".py", "/usr/bin/python3");
+	binSlash.set(".py", "./python3");
 	slashLoc->setAutoIndex(true);
 	Config::CgiParams *py = new Config::CgiParams(binSlash);
 	slashLoc->setCgiParams(py);
@@ -75,7 +75,6 @@ void EventLoop::destroy()
 }
 
 
-#include "Logger.hpp"
 /**
  *
  * @brief Runs the event loop to handle I/O events.

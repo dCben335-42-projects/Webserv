@@ -22,12 +22,12 @@ class FileUpload
 	public:
 		FileUpload(HttpRequest &req);
 		~FileUpload();
+
 		bool isUploadValid();
 		void fetchBoundaries(size_t boundaryPos, std::string contentType);
 		void parseSubTypes();
 		void fillSubRequests(const Vec<std::string> &subTypes);
 		void parseSubRequests();
-		void createDiskFile(const std::string &fullPath, const std::string &body);
 };
 
 #endif

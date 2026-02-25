@@ -2,7 +2,7 @@
 #include "httpMimes.hpp"
 #include "httpExceptions.hpp"
 #include "unistd.h"
-#include <fstream>
+#include "FileManager.hpp"
 
 FileUpload::FileUpload(HttpRequest &req) : m_req(req)
 {
@@ -66,18 +66,8 @@ void FileUpload::parseSubRequests()
 	{
 		(*it).parseSubRequest();
 		const std::string &fullPath = String::removeDuplicateSlashes(uploadPath + "/" + it->getFileName());
-		if (access(fullPath.c_str(), F_OK) == 0)
+		if (FileManager::exists(fullPath))
 			throw Http409Exception();
-		createDiskFile(fullPath, it->getBody());
+		FileManager::createDiskFile(fullPath, it->getBody());
 	}
-}
-
-void FileUpload::createDiskFile(const std::string &fullPath, const std::string &body)
-{
-	std::ofstream file;
-	file.open(fullPath.c_str(), std::ofstream::trunc);
-	if (!file.is_open())
-		throw Http500Exception();
-	file << body;
-	file.close();
 }

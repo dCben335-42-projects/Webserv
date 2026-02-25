@@ -7,19 +7,19 @@
 
 int main()
 {
-	try
-	{
-		const std::string content = FileManager::readFile("config/conf_test.txt");
-		Lexer			  lexer(content);
+	// try
+	// {
+	// 	const std::string content = FileManager::readFile("config/conf_test.txt");
+	// 	Lexer			  lexer(content);
 
-		const HttpConfig config = lexer.parseConfigFile("config/default.txt");
-		Logger::log(config);
-	}
-	catch (const std::exception &e)
-	{
-		Logger::log("Fatal error: " + std::string(e.what()));
-		return 1;
-	}
+	// 	const HttpConfig config = lexer.parseConfigFile("config/default.txt");
+	// 	Logger::log(config);
+	// }
+	// catch (const std::exception &e)
+	// {
+	// 	Logger::log("Fatal error: " + std::string(e.what()));
+	// 	return 1;
+	// }
 	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ");
 	EventLoop::init();
 	EventLoop::run();
