@@ -46,14 +46,16 @@ class FileManager
 		static bool hasRWPerm(const std::string &path);
 		static bool hasRWXPerm(const std::string &path);
 
+
+		static void		   deleteFile(const char *fullPath);
 		static std::string readFile(const std::string &path);
+		static void		   createDiskFile(const std::string &fullPath, const std::string &body);
 
 		static std::string getMime(const std::string &filePath);
 		static std::string getMime(const File &file);
 		static std::string getIcon(const File &file);
 
 		static std::string determineExtension(const std::string &fileName, size_t *extPos);
-		static void		   createDiskFile(const std::string &fullPath, const std::string &body);
 
 	public:
 		class FileException : public std::exception
@@ -90,6 +92,26 @@ class FileManager
 			public:
 				FileReadException(const std::string &fileName) throw() :
 					FileException("Failed to read file: " + fileName)
+				{
+					m_httpException = Http500Exception();
+				}
+		};
+
+		class FileOpenException : public FileException
+		{
+			public:
+				FileOpenException(const std::string &fileName) throw() :
+					FileException("Failed to open file: " + fileName)
+				{
+					m_httpException = Http500Exception();
+				}
+		};
+
+		class FileDeleteException : public FileException
+		{
+			public:
+				FileDeleteException(const std::string &fileName) throw() :
+					FileException("Failed to delete file: " + fileName)
 				{
 					m_httpException = Http500Exception();
 				}

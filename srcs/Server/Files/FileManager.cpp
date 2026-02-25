@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <cstdio>
+
 #include <limits.h>
 #include "webserv.hpp"
 #include "httpHeaders.hpp"
@@ -487,7 +489,25 @@ void FileManager::createDiskFile(const std::string &fullPath, const std::string 
 	std::ofstream file;
 	file.open(fullPath.c_str(), std::ofstream::trunc);
 	if (!file.is_open())
-		throw Http500Exception();
+		throw FileOpenException(fullPath);
 	file << body;
 	file.close();
+}
+
+/**
+ *
+ * @brief Delete a file using std::remove()
+ *
+ * @throw FileDeleteException() if std::remove() fails
+ */
+void FileManager::deleteFile(const char *fullPath)
+{
+	if (!FileManager::exists(fullPath))
+		throw FileDoesNotExistException(fullPath);
+	if (FileManager::isFolder(fullPath))
+		throw FilePermissionException(fullPath);
+	if (!FileManager::hasRWPerm(fullPath))
+		throw FilePermissionException(fullPath);
+	if (std::remove(fullPath) == -1)
+		throw FileDeleteException(fullPath);
 }

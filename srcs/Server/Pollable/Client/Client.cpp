@@ -250,14 +250,15 @@ void Client::handlePutPatch(const std::string &ressourcePath)
 void Client::handleDelete(const std::string &ressourcePath)
 {
 	const char *fullPath = ressourcePath.c_str();
-	if (!FileManager::exists(fullPath))
-		throw Http404Exception();
-	if (FileManager::isFolder(fullPath))
-		throw Http403Exception();
-	if (!FileManager::hasRWPerm(fullPath))
-		throw Http403Exception();
-	if (std::remove(fullPath) == -1)
-		throw Http500Exception();
+	try
+	{
+		FileManager::deleteFile(fullPath);
+	}
+	catch (const FileManager::FileException &e)
+	{
+		Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what());
+		throw e.getHttpException();
+	}
 	m_res.setStatusCode(204);
 	m_res.setBody(DELETE_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
@@ -411,7 +412,7 @@ void Client::handleGet(const std::string &ressourcePath)
 	}
 	catch (const FileManager::FileException &e)
 	{
-		Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + e.what());
+		Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what());
 		throw e.getHttpException();
 	}
 }
@@ -517,9 +518,9 @@ const Config *Client::findHostConfig(const std::string &host) const
 void Client::onHttpException(const AHttpException &e)
 {
 	Logger::openFile(errorFile).custom(
-		LOG_MSG_REPONSE_READY " " + m_req.getMethod().getStrType() + " " +
-		m_req.getTarget() + " " + PROTOCOL + " " + Logger::get(e.getStatusCode()) +
-		" " + e.what() + " " + e.getExtraMessage());
+		LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR +
+		m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Logger::get(e.getStatusCode()) +
+		LOG_GLOBAL_SEPARATOR + e.what() + LOG_GLOBAL_SEPARATOR + e.getExtraMessage());
 	m_res.reset();
 	m_res.setStatusCode(e.getStatusCode());
 	if (e.isRedirection())
@@ -636,7 +637,7 @@ void Client::buildResponse()
 {
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
 	determineKeepAlive(m_res.getStatusCode());
-	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
+	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()));
 }
 
 /**
@@ -659,14 +660,14 @@ void Client::onPollOut()
 	}
 	catch (const std::exception &e)
 	{
-		Logger::openFile(accessFile).custom(ERROR_MSG_RESPONSE_SENDING_FAILED " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()) + " " + e.what());
+		Logger::openFile(accessFile).custom(ERROR_MSG_RESPONSE_SENDING_FAILED LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()) + LOG_GLOBAL_SEPARATOR + e.what());
 		m_events		   = 0;
 		m_connectionClosed = true;
 		return;
 	}
 	if (hasFullySent)
 	{
-		Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_SENT " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL + " " + Number::toString(m_res.getStatusCode()));
+		Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_SENT LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()));
 		if (m_shouldClose)
 		{
 			m_connectionClosed = true;
@@ -694,7 +695,7 @@ void Client::onPollOut()
  */
 void Client::onPollErr()
 {
-	Logger::openFile(errorFile).custom(ERROR_MSG_UNKNOWN " " + m_req.getMethod().getStrType() + " " + m_req.getTarget() + " " + PROTOCOL);
+	Logger::openFile(errorFile).custom(ERROR_MSG_UNKNOWN LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL);
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
@@ -760,6 +761,17 @@ bool Client::isTimedOut(const time_t currentTime) const
  */
 void Client::onTimeOut()
 {
+	switch (m_timeoutState)
+	{
+		case HEADER_TIMEOUT:
+			Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_HEADERS_TIMED_OUT);
+			break;
+		case BODY_TIMEOUT:
+			Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_BODY_TIMED_OUT);
+			break;
+		default:
+			Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_TIMED_OUT);
+	}
 	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)
 	{
 		m_res.reset();
