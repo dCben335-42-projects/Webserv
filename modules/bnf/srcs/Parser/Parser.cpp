@@ -46,7 +46,7 @@ void Parser::addPathPossibility(
 		else
 		{
 			// m_term->push_back(rule);
-			m_terminalCharToRules[*m_term].push_back(rule);
+			// m_terminalCharToRules[*m_term].push_once(rule);
 			createPathInfo(mapPath[rule], completePath);
 		}
 	}
@@ -107,10 +107,7 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 			ARulePath subPath = path;
 			if (i != lastIndex)
 				subPath.resize(i + 1);
-			const Vec<TerminalSymbol> &items = rule->getItems();
-			size_t					   n	 = items.size();
-			for (size_t i = 0; i < n; ++i)
-				processTerminalSymbol(items[i], rule, subPath, mapPathNext);
+			processTerminalSymbol(rule, subPath, mapPathNext);
 		}
 
 		const ARule *adjacentRule = rule->tryGetAdjacentRules();
@@ -123,24 +120,28 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 
 /**
  * @brief Processes a terminal symbol and updates the ARuleMap with the corresponding paths.
- * @param symbol The TerminalSymbol to be processed.
  * @param rule The ARule associated with the terminal symbol.
  * @param path The current ARulePath being explored.
  * @param mapPath The ARuleMap to which the paths will be added based on the terminal symbol.
  */
 void Parser::processTerminalSymbol(
-	const TerminalSymbol &symbol,
-	const ARule			 *rule,
-	ARulePath			 &path,
-	ARuleMap			 &mapPath)
+	const ARule *rule,
+	ARulePath	&path,
+	ARuleMap	&mapPath)
 {
-	if (symbol.isTerminalChar())
-		createPathInfo(mapPath[rule], path);
-	else
+	const Vec<TerminalSymbol> &items = rule->getItems();
+	size_t					   n	 = items.size();
+	for (size_t i = 0; i < n; ++i)
 	{
-		m_term = symbol.getValuePtr();
-		getPathsTerminalChars(path, symbol.getValuePtr(), mapPath);
-		m_term = NULL;
+		if (items[i].isTerminalChar())
+			createPathInfo(mapPath[rule], path);
+		else
+		{
+			// m_term = symbol.getValuePtr();
+			// Logger::log("Processing terminal symbol: " + *m_term);
+			getPathsTerminalChars(path, items[i].getValuePtr(), mapPath);
+			// m_term = NULL;
+		}
 	}
 }
 
@@ -152,58 +153,45 @@ void Parser::processTerminalSymbol(
  */
 void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
 {
-	Logger::log("m_term ptr: " + LoggerJson::get(m_term, true) + ", m_term value: " + *m_term);
-	Logger::log("getPathsTerminalChars: " + *conceptName);
-	if (m_terminalCharToRules.has(*conceptName) && m_terminalCharToRules[*conceptName].size() > 0)
-	{
-		Logger::log("Terminal char already computed for concept: " + *conceptName);
-		for (size_t i = 0; i < m_terminalCharToRules[*conceptName].size(); ++i)
-		{
-			const ARule *const rule = m_terminalCharToRules[*conceptName][i];
-			createPathInfo(mapPath[rule], completePath);
-		}
-		return;
-	}
+	// Logger::log("m_term ptr: " + LoggerJson::get(m_term, true) + ", m_term value: " + *m_term);
+	// Logger::log("getPathsTerminalChars: " + *conceptName);
+	// if (m_terminalCharToRules.has(*m_term) && m_terminalCharToRules[*m_term].size() > 0)
+	// {
+
+	// 	Logger::log(m_terminalCharToRules);
+	// 	// Logger::log("Terminal char already computed for concept: " + *conceptName);
+	// 	for (size_t i = 0; i < m_terminalCharToRules[*m_term].size(); ++i)
+	// 	{
+	// 		const ARule *const rule = m_terminalCharToRules[*m_term][i];
+	// 		createPathInfo(mapPath[rule], completePath);
+	// 	}
+	// 	return;
+	// }
 
 	m_conceptPaths.push_back(conceptName);
-	Logger::log("ok1");
-	const Vec<ConceptDef *> &defs			 = m_semantic.getConceptDefs(*conceptName);
-	size_t					 conceptDefCount = defs.size();
+	const Vec<ConceptDef *>			  &defs			   = m_semantic.getConceptDefs(*conceptName);
+	const Set<const ARule *>		  &terminalChars   = m_semantic.getConcept(*conceptName)->getTerminalChars();
+	Set<const ARule *>::const_iterator ite			   = terminalChars.end();
+	size_t							   conceptDefCount = defs.size();
+
 	for (size_t i = 0; i < conceptDefCount; ++i)
 	{
-		Logger::log("ok2");
 		const ConceptDef *def  = defs[i];
 		size_t			  size = def->size();
 		size_t			  k	   = 0;
 		while (k < size)
 		{
-			Logger::log("ok3");
 			const ARule *const subRule = def->getARule(k);
 			completePath.push_back(subRule);
 			addPathPossibility(completePath, subRule, mapPath);
-			const Set<const ARule *>		  &terminalChars = m_semantic.getConcept(*conceptName)->getTerminalChars();
-			Set<const ARule *>::const_iterator ite			 = terminalChars.end();
-			Logger::log("ok4");
-			for (Set<const ARule *>::const_iterator it = terminalChars.begin(); it != ite; ++it)
-			{
-				Logger::log("ok5");
-
-				if (subRule == *it)
-				{
-					// m_term->push_back(subRule);
-					m_terminalCharToRules[*m_term].push_back(subRule);
-					createPathInfo(mapPath[subRule], completePath);
-				}
-			}
+			if (terminalChars.find(subRule) != ite)
+				createPathInfo(mapPath[subRule], completePath);
 			completePath.pop_back();
-			Logger::log("ok6");
-
 			if (!isFullyOptional(*subRule))
 				break;
 			++k;
 		}
 	}
-
 	m_conceptPaths.pop_back();
 }
 
@@ -223,11 +211,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 	const ARule *const lastRule = nextRule.back();
 	if (isFullyOptional(*lastRule))
 		addNextPaths(mapPathCurrent, mapPathNext, nextRule, lastRule);
-
-	const Vec<TerminalSymbol> &items	  = lastRule->getItems();
-	size_t					   itemsCount = items.size();
-	for (size_t i = 0; i < itemsCount; ++i)
-		processTerminalSymbol(items[i], lastRule, nextRule, mapPathNext);
+	processTerminalSymbol(lastRule, nextRule, mapPathNext);
 }
 
 /**
@@ -293,6 +277,8 @@ bool Parser::parseCurrentChar(
 	ARuleMap	   &mapPathNext)
 {
 	bool isValidWithCurrentPath = false;
+	// Logger::log("---------------------------------------");
+	// Logger::log("parseCurrentChar: '" + LoggerJson::get(c) + "'");
 
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin();
 		 it != mapPathCurrent.end(); ++it)
@@ -340,32 +326,28 @@ bool Parser::isFullyOptional(const ARule &rule) const
 	bool result = false;
 
 	if (rule.isOption())
-	{
 		result = true;
-	}
 	else
 	{
 		const Vec<TerminalSymbol> &items = rule.getItems();
+		const size_t			   n	 = items.size();
 
-		for (Vec<TerminalSymbol>::const_iterator item = items.begin();
-			 item != items.end();
-			 ++item)
+		for (size_t i = 0; i < n; ++i)
 		{
-			if (item->isTerminalChar())
+			if (items[i].isTerminalChar())
 				continue;
 
-			Concept					*cpt  = m_semantic.getConcepts().get(item->getValue());
-			const Vec<ConceptDef *> &defs = cpt->getDefinitions();
+			const Vec<ConceptDef *> &defs  = m_semantic.getConceptDefs(items[i].getValue());
+			const size_t			 j_max = defs.size();
 
-			for (Vec<ConceptDef *>::const_iterator cdef = defs.begin();
-				 cdef != defs.end();
-				 ++cdef)
+			for (size_t j = 0; j < j_max; ++j)
 			{
-				const ARulePath &rules = (*cdef)->getRules();
+				const ARulePath &rules		= defs[j]->getRules();
+				const size_t	 rulesCount = rules.size();
 
 				bool allOptional = true;
 
-				for (size_t k = 0; k < rules.size(); ++k)
+				for (size_t k = 0; k < rulesCount; ++k)
 				{
 					if (!isFullyOptional(*(rules[k])))
 					{
@@ -463,78 +445,6 @@ bool Parser::isValidEmptyFile()
 }
 
 /**
- * @brief Precomputes whether the given ARule is optional and caches the result for future reference.
- * @param rule The ARule for which optionality is being precomputed.
- */
-void Parser::precomputeOptional(const ARule *rule)
-{
-	if (m_optionalCache.find(rule) != m_optionalCache.end())
-		return;
-
-	if (m_optionalComputing.find(rule) != m_optionalComputing.end())
-	{
-		m_optionalCache[rule] = false;
-		return;
-	}
-	m_optionalComputing.insert(rule);
-
-	bool result = false;
-
-	if (rule->isOption())
-	{
-		result = true;
-	}
-	else
-	{
-		const Vec<TerminalSymbol> &items = rule->getItems();
-		result							 = true;
-		for (size_t i = 0; i < items.size(); ++i)
-		{
-			const TerminalSymbol &item = items[i];
-
-			if (item.isTerminalChar())
-			{
-				result = false;
-				break;
-			}
-
-			Concept					*cpt  = m_semantic.getConcepts().get(item.getValue());
-			const Vec<ConceptDef *> &defs = cpt->getDefinitions();
-
-			bool anyDefOptional = false;
-			for (size_t j = 0; j < defs.size(); ++j)
-			{
-				const ARulePath &rules			  = defs[j]->getRules();
-				bool			 allRulesOptional = true;
-				for (size_t k = 0; k < rules.size(); ++k)
-				{
-					precomputeOptional(rules[k]);
-					if (!m_optionalCache[rules[k]])
-					{
-						allRulesOptional = false;
-						break;
-					}
-				}
-				if (allRulesOptional)
-				{
-					anyDefOptional = true;
-					break;
-				}
-			}
-
-			if (!anyDefOptional)
-			{
-				result = false;
-				break;
-			}
-		}
-	}
-
-	m_optionalCache[rule] = result;
-	m_optionalComputing.erase(rule);
-}
-
-/**
  * @brief Parses the given string according to the grammar rules defined in the SemanticDescriptor.
  * @param stringToParsed The string to be parsed.
  */
@@ -547,14 +457,6 @@ void Parser::parse(const std::string &stringToParsed)
 		return;
 	}
 	m_arulePathInfoList.reserve(5000);
-
-	const Vec<ConceptDef *> &defs	  = m_semantic.getConceptDefs(CURSOR);
-	const size_t			 defsSize = defs.size();
-	for (size_t i = 0; i < defsSize; ++i)
-	{
-		const ARule *startRule = defs[i]->getARule(0);
-		precomputeOptional(startRule);
-	}
 
 	ARuleMap mapPathCurrent;
 	ARuleMap mapPathNext;

@@ -54,18 +54,22 @@ class Parser
 					  ARulePaths	  &element,
 					  const ARulePath &completePath);
 
+		// void processTerminalSymbol(
+		// 	const TerminalSymbol &symbol,
+		// 	const ARule			 *rule,
+		// 	ARulePath			 &path,
+		// 	ARuleMap			 &mapPath);
+
 		void processTerminalSymbol(
-			const TerminalSymbol &symbol,
-			const ARule			 *rule,
-			ARulePath			 &path,
-			ARuleMap			 &mapPath);
-		bool word(
-			const char		   c,
-			const ARule *const rule,
-			ARulePathInfo	  *path,
-			const ARuleMap	  &mapPathCurrent,
-			ARuleMap		  &mapPathNext,
-			size_t			   indexElementTerminalChar);
+			const ARule *rule,
+			ARulePath	&path,
+			ARuleMap	&mapPath);
+		bool word(const char		 c,
+				  const ARule *const rule,
+				  ARulePathInfo		*path,
+				  const ARuleMap	&mapPathCurrent,
+				  ARuleMap			&mapPathNext,
+				  size_t			 indexElementTerminalChar);
 
 	public:
 		Parser(const SemanticDescriptor &semantic);
