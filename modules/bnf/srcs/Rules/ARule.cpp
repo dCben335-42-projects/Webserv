@@ -35,6 +35,11 @@ ERuleType ARule::getType() const
 	return m_type;
 }
 
+bool ARule::is(const ERuleType type) const
+{
+	return m_type == type;
+}
+
 ARule *createGroup(const std::string &conceptName, size_t conceptDefIndex, size_t ruleIndex, Concept *conceptPtr, ConceptDef *conceptDefPtr)
 {
 	return new Group(conceptName, conceptDefIndex, ruleIndex, conceptPtr, conceptDefPtr);

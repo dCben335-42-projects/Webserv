@@ -12,7 +12,6 @@ class Concept
 		~Concept();
 
 		void					  pushDef(ConceptDef *definition);
-		Vec<ConceptDef *>		 &getDefinitions();
 		const Vec<ConceptDef *>	 &getDefinitions() const;
 		const std::string		  getConceptName() const;
 		void					  addParent(const ARule *parent);

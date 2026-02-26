@@ -30,11 +30,6 @@ void Concept::pushDef(ConceptDef *definition)
 	definitions.push_back(definition);
 }
 
-Vec<ConceptDef *> &Concept::getDefinitions()
-{
-	return definitions;
-}
-
 const Vec<ConceptDef *> &Concept::getDefinitions() const
 {
 	return definitions;

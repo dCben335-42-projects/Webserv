@@ -44,12 +44,13 @@ class SemanticDescriptor
 		void parseConceptName(std::string);
 		void parseRule(const std::string &, size_t);
 
-		void checkValidity();
+		void checkForRecursion();
 		bool hasRecursiveError(ConceptNode &node);
 
 		void parseBlocks();
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
-		void addParent();
+		void assignParentRules();
+		void clear();
 
 
 		bool parseAndConsumePrefix(std::string &str, int *out);
@@ -58,8 +59,6 @@ class SemanticDescriptor
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		SemanticDescriptor &operator=(const SemanticDescriptor &other);
-
 		ARuleMap				 getStartPath() const;
 		Map<Concept *>			 getConcepts() const;
 		Concept				   *&getConcept(const std::string &key);
@@ -67,7 +66,7 @@ class SemanticDescriptor
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 		ConceptNode				*getTree() const;
 		void					 findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
-		void					 findAllNext();
+		void					 assignTerminalChar();
 		Vec<std::string>		 splitwords(std::string rule);
 };
 

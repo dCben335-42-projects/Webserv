@@ -158,7 +158,7 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *c
 		size_t			  k	   = 0;
 		while (k < size)
 		{
-			const ARule *const subRule = def->getARule(k);
+			const ARule *const subRule = def->getARuleUnsafe(k);
 			completePath.push_back(subRule);
 			addPathPossibility(completePath, subRule, mapPath);
 			if (terminalChars.find(subRule) != ite)
@@ -413,7 +413,7 @@ bool Parser::isValidEmptyFile()
 	for (size_t i = 0; i < defsCount; ++i)
 	{
 		startPath.clear();
-		startPath.push_back(defs[i]->getARule(0));
+		startPath.push_back(defs[i]->getARuleUnsafe(0));
 		if (isFullyOptionalEnd(startPath))
 			return true;
 	}

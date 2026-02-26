@@ -47,22 +47,28 @@ OCTET              ::= DIGIT
                     |= DIGIT DIGIT DIGIT
 
 IPV_SIX            ::= BRACKET_OPEN IPV_SIX_CORE BRACKET_CLOSE
+
 BRACKET_OPEN       ::= '['
 BRACKET_CLOSE      ::= ']'
 
 IPV_SIX_CORE       ::= IPV_SIX_FULL
                     |= IPV_SIX_LEADING
-                    |= IPV_SIX_MIDDLE
                     |= IPV_SIX_TRAILING
+                    |= IPV_SIX_MIDDLE
+
 
 IPV_SIX_FULL       ::= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
 
-IPV_SIX_LEADING    ::= '::' IPV_SIX_H
+
+IPV_SIX_LEADING    ::= '::'
+                    |= '::' IPV_SIX_H
                     |= '::' IPV_SIX_H ':' IPV_SIX_H
                     |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
                     |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
                     |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
                     |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+
 
 IPV_SIX_TRAILING   ::= IPV_SIX_H '::'
                     |= IPV_SIX_H ':' IPV_SIX_H '::'
@@ -70,6 +76,8 @@ IPV_SIX_TRAILING   ::= IPV_SIX_H '::'
                     |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
                     |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
                     |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+
 
 IPV_SIX_MIDDLE     ::= IPV_SIX_H '::' IPV_SIX_H
                     |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
@@ -77,11 +85,28 @@ IPV_SIX_MIDDLE     ::= IPV_SIX_H '::' IPV_SIX_H
                     |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
                     |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
                     |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
 
-IPV_SIX_H          ::= HEX_DIGIT [HEX_DIGIT] [HEX_DIGIT] 
+
+IPV_SIX_H          ::= HEX_DIGIT
                     |= HEX_DIGIT HEX_DIGIT
                     |= HEX_DIGIT HEX_DIGIT HEX_DIGIT
                     |= HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+
 
 HEX_DIGIT          ::= (DIGIT | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F')
 
