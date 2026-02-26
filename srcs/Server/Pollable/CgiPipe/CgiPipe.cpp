@@ -21,6 +21,13 @@ CgiPipe::CgiPipe(
 {
 }
 
+
+/**
+ *
+ * @brief CgiPipe destructor, if called inside the parent process, kill the child
+ * and wait for the kill() call to take effect
+ *
+ */
 CgiPipe::~CgiPipe()
 {
 	if (m_pid > 0 && !Signals::getIsChild())
@@ -33,6 +40,14 @@ CgiPipe::~CgiPipe()
 		close(m_fd);
 }
 
+/**
+ *
+ * @brief Waits for the child to end, without blocking, and reacts differently
+ * depending on the exit status of the child process
+ *
+ * @throw Http500Exception() if the child exited unexpectedly
+ *
+ */
 void CgiPipe::waitChild()
 {
 	int	  exit_status;
@@ -63,6 +78,15 @@ void CgiPipe::onPollIn()
 	onPollHangUp();
 }
 
+
+/**
+ *
+ * @brief Function to handle reaction when the poll() call on the CgiPipe
+ * returns a POLLOUT event
+ *
+ * @throw Http500Exception() if write() fails
+ *
+ */
 void CgiPipe::onPollOut()
 {
 	const std::string &body			= m_client->getRequest().getBody();
@@ -86,6 +110,13 @@ void CgiPipe::onPollOut()
 	m_connectionClosed = true;
 }
 
+
+/**
+ *
+ * @brief Function to handle reaction when the poll() call on the CgiPipe
+ * returns a POLLERR event
+ *
+ */
 void CgiPipe::onPollErr()
 {
 	m_client->onHttpException(Http500Exception());
@@ -127,6 +158,11 @@ void CgiPipe::onPollHangUp()
 	m_connectionClosed = true;
 }
 
+/**
+ *
+ * @brief Util function to detect if the Cgi timed out
+ *
+ */
 // TODO CGI timeout
 bool CgiPipe::isTimedOut(const time_t currentTime) const
 {
@@ -134,6 +170,12 @@ bool CgiPipe::isTimedOut(const time_t currentTime) const
 	return false;
 }
 
+
+/**
+ *
+ * @brief Function to handle reaction when the Cgi Time out
+ *
+ */
 void CgiPipe::onTimeOut()
 {
 	HttpResponse &res = m_client->getResponse();
