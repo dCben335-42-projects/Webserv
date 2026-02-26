@@ -19,15 +19,16 @@ class FileUpload
 		HttpRequest		   &m_req;
 		Vec<HttpSubRequest> m_subRequests;
 
+		void fetchBoundaries(size_t boundaryPos, std::string contentType);
+		void parseSubTypes();
+		void fillSubRequests(const Vec<std::string> &subTypes);
+
 	public:
 		FileUpload(HttpRequest &req);
 		~FileUpload();
 
+		void parseAndUpload();
 		bool isUploadValid();
-		void fetchBoundaries(size_t boundaryPos, std::string contentType);
-		void parseSubTypes();
-		void fillSubRequests(const Vec<std::string> &subTypes);
-		void parseSubRequests();
 };
 
 #endif

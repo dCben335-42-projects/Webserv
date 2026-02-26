@@ -201,6 +201,7 @@ void Client::handlePost(const std::string &ressourcePath)
 		throw Http403Exception();
 	if (!file.isUploadValid())
 		throw Http400Exception(INVALID_UPLOAD_DATA_MSG);
+	file.parseAndUpload();
 	m_req.setBody(UPLOAD_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	m_res.setStatusCode(201);
