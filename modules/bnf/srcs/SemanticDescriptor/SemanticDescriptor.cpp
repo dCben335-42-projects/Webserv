@@ -485,10 +485,8 @@ ARuleMap SemanticDescriptor::getStartPath() const
  */
 void SemanticDescriptor::parseConceptName(std::string s)
 {
-	Logger::log("Parsing concept name from: " + s);
 	std::istringstream iss(erasePaternWrapper(s, WS));
-	std::cout << "Concept name after trimming: '" << iss.str() << "'" << std::endl;
-	std::string w;
+	std::string		   w;
 	if (!(iss >> w))
 		throw EmptyConceptNameException();
 	if (iss >> w)
