@@ -9,7 +9,7 @@ http_directives   ::= { default_type | keepalive_timeout | client_header_timeout
                      | error_page | server }
 
 server            ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
-server_directives ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc }
+server_directives ::= { listen | server_name | root | index | alias | location | sendfile | add_header | auth_loc }
 					|= [LINE_JUMP]
 
 default_type      			::= IDENT 'default_type' 			IDENT PATH 			SEMI LINE_JUMP
@@ -33,7 +33,8 @@ allowed_methods    			::= IDENT 'allowed_methods' IDENT { HTTP_METHOD | IDENT } 
 auth_required      			::= IDENT 'auth_required' IDENT BOOL SEMI LINE_JUMP
 cgi_pass           			::= IDENT 'cgi_pass' IDENT EXT IDENT PATH SEMI LINE_JUMP
 
-location           	::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT LINE_JUMP
+location           	::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [LINE_JUMP]
+                    |= [LINE_JUMP]
 location_directives ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass }
 
 HTTP_METHOD        ::= ( 'GET' | 'POST' )

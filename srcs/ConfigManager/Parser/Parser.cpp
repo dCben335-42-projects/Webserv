@@ -3,17 +3,21 @@
 #include "Logger.hpp"
 #include "Number.hpp"
 
-const Parser::ServerDirective Parser::m_serverDirectives[] = {
-	{PARSER_KEY_LISTEN, Parser::STRING, &Config::setIp, NULL, NULL, NULL},
-	{PARSER_KEY_SERVER_NAME, Parser::ARRAY, NULL, NULL, &Config::setServerNames, NULL}};
+const Parser::Directive<Config> Parser::m_serverDirectives[] = {
+	{PARSER_KEY_LISTEN, &Config::setIp, NULL, NULL, NULL},
+	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL}};
 
-const Parser::LocationDirective Parser::m_locationDirectives[] = {
-	{PARSER_KEY_ROOT, Parser::STRING, &Location::setRoot, NULL, NULL, NULL},
-	{PARSER_KEY_ALIAS, Parser::STRING, &Location::setAlias, NULL, NULL, NULL},
-	{PARSER_KEY_AUTOINDEX, Parser::BOOL, NULL, &Location::setAutoIndex, NULL, NULL},
-	{PARSER_KEY_UPLOAD, Parser::STRING, &Location::setUpload, NULL, NULL, NULL},
-	{PARSER_KEY_INDEX, Parser::ARRAY, NULL, NULL, &Location::setIndexes, NULL},
-	{PARSER_KEY_METHODS, Parser::ARRAY, NULL, NULL, &Location::setMethods, NULL}};
+const Parser::Directive<Location> Parser::m_locationDirectives[] = {
+	{PARSER_KEY_ROOT, &Location::setRoot, NULL, NULL, NULL},
+	{PARSER_KEY_ALIAS, &Location::setAlias, NULL, NULL, NULL},
+	{PARSER_KEY_AUTOINDEX, NULL, &Location::setAutoIndex, NULL, NULL},
+	{PARSER_KEY_UPLOAD, &Location::setUpload, NULL, NULL, NULL},
+	{PARSER_KEY_INDEX, NULL, NULL, &Location::setIndexes, NULL},
+	{PARSER_KEY_METHODS, NULL, NULL, &Location::setMethods, NULL},
+	{PARSER_KEY_RETURN, NULL, NULL, &Location::setReturn, NULL}};
+
+const size_t Parser::m_serverDirectivesCount   = sizeof(m_serverDirectives) / sizeof(m_serverDirectives[0]);
+const size_t Parser::m_locationDirectivesCount = sizeof(m_locationDirectives) / sizeof(m_locationDirectives[0]);
 
 Parser::Parser(const std::string &fileContent) : m_content(fileContent)
 {
@@ -24,11 +28,29 @@ Parser::~Parser()
 }
 
 
-const HttpNode &Parser::getHttpConfig() const
+/**
+ *
+ * @brief Retrieves the parsed HTTP configuration.
+ *
+ * @return A constant reference to the HttpNode representing the HTTP configuration.
+ *
+ */
+const Config &Parser::getHttpConfig() const
 {
-	return m_http;
+	return m_httpConfig;
 }
 
+/**
+ *
+ * @brief Retrieves the parsed server configurations.
+ *
+ * @return A constant reference to the vector of server configurations.
+ *
+ */
+const Parser::VServerConfigs &Parser::getServersConfigs() const
+{
+	return m_serversConfigs;
+}
 
 /**
  *
@@ -217,14 +239,21 @@ void Parser::resolveListen(ServerNode &server)
 	if (!server.hasDirective(PARSER_KEY_LISTEN))
 		return;
 
-	const std::string &listen = server.getDirective(PARSER_KEY_LISTEN).at(0);
-	const size_t	   pos	  = listen.rfind(':');
-	const std::string  ip	  = listen.substr(0, pos);
-	const std::string  port	  = listen.substr(pos + 1);
+	const std::string	&listen	 = server.getDirective(PARSER_KEY_LISTEN).at(0);
+	const size_t		 pos	 = listen.rfind(':');
+	const std::string	 ip		 = listen.substr(0, pos);
+	const std::string	 port	 = listen.substr(pos + 1);
+	const unsigned short portNum = Number::toUShort(port);
 
-	server.setSocketAddress(SocketAddress(ip, Number::toUShort(port)));
-	Logger::debug("ip: " + ip + " and port: " + port + " resolved as: " + Logger::get(server.getSocketAddress()));
+	if (portNum == 0 || portNum > MAX_PORT_NUMBER)
+	{
+		Logger::error("Invalid port number in listen directive: " + Logger::get(port));
+		return;
+	}
+	server.setSocketAddress(SocketAddress(ip, portNum));
 }
+
+
 
 
 bool Parser::isDuplicate(
@@ -260,11 +289,233 @@ bool Parser::isDuplicate(
 }
 
 
-void Parser::removeDuplicateSocketAddresses(Vec<ServerNode> &servers)
+
+
+
+void Parser::fillIpAnyMaps(
+	Map<unsigned short, SocketAddress> &ipv4AnyPorts,
+	Map<unsigned short, SocketAddress> &ipv6AnyPorts) const
 {
-	size_t i = 0;
+	const Vec<ServerNode> &servers = m_http.getServers();
+	for (size_t i = 0; i < servers.size(); ++i)
+	{
+		const SocketAddress &addr	= servers[i].getSocketAddress();
+		const bool			 isIPv6 = addr.isIPv6();
+
+		if (!isIPv6 && addr.isAnyIPv4())
+			ipv4AnyPorts.set(addr.getPort(), SocketAddress::any(false, addr.getPort()));
+		else if (isIPv6 && addr.isAnyIPv6())
+			ipv6AnyPorts.set(addr.getPort(), SocketAddress::any(true, addr.getPort()));
+	}
+}
+
+Parser::VServersNodes Parser::groupServersNodes() const
+{
+	VServersNodes		   grouped;
+	const Vec<ServerNode> &servers = m_http.getServers();
+
+	Map<unsigned short, SocketAddress> ipv4AnyPorts;
+	Map<unsigned short, SocketAddress> ipv6AnyPorts;
+	fillIpAnyMaps(ipv4AnyPorts, ipv6AnyPorts);
+
+	for (size_t i = 0; i < servers.size(); ++i)
+	{
+		const ServerNode	&server = servers[i];
+		const SocketAddress &addr	= server.getSocketAddress();
+		const bool			 isIPv6 = addr.isIPv6();
+		SocketAddress		 key	= addr;
+
+		if (isIPv6 && ipv6AnyPorts.has(addr.getPort()))
+			key = ipv6AnyPorts.get(addr.getPort());
+		else if (!isIPv6 && ipv4AnyPorts.has(addr.getPort()))
+			key = ipv4AnyPorts.get(addr.getPort());
+
+		if (!grouped.has(key))
+			grouped.set(key, VServerNodes());
+		grouped.get(key).push(server);
+	}
+	return grouped;
+}
+
+
+void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator &locIt)
+{
+	const LocationNode					&locationNode = locIt->second;
+	const AConfigNode::Directives		&directives	  = locationNode.getDirectives();
+	AConfigNode::DirectivesConstIt		 dit		  = directives.begin();
+	const AConfigNode::DirectivesConstIt end		  = directives.end();
+
+	Location location;
+	while (dit != end)
+	{
+		applyDirective(location, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount);
+		Logger::debug("Applied directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
+		++dit;
+	}
+	config.setLocation(locIt->first, location);
+}
+
+
+/**
+ *
+ * @brief Adds a server configuration to the list of server configurations for a given socket address.
+ *
+ * @param configs The list of server configurations to which the new configuration will be added.
+ * @param serverNode The ServerNode object containing the directives and locations for the server configuration.
+ *
+ * @note This function creates a Config object based on the directives in the ServerNode, applies the directives to it,
+ * and then adds it to the provided list of server configurations. It also processes any location blocks within the server node
+ * and adds them to the Config object before adding it to the list.
+ *
+ */
+void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
+{
+	Config	 serverConfig;
+	Location defaultLocation;
+
+	const AConfigNode::Directives		&directives = serverNode.getDirectives();
+	AConfigNode::DirectivesConstIt		 dit		= directives.begin();
+	const AConfigNode::DirectivesConstIt end		= directives.end();
+
+	while (dit != end)
+	{
+		if (!applyDirective(serverConfig, dit->first, dit->second, m_serverDirectives, m_serverDirectivesCount))
+		{
+			if (!applyDirective(defaultLocation, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount))
+			{
+				Logger::warn("Unknown directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
+			}
+		}
+		++dit;
+	}
+
+	serverConfig.setDefaultLocation(defaultLocation);
+	const Map<LocationNode> &locations = serverNode.getLocations();
+	for (Map<LocationNode>::const_iterator locIt = locations.begin(); locIt != locations.end(); ++locIt)
+		addLocation(serverConfig, locIt);
+	configs.push(serverConfig);
+}
+
+
+
+/**
+ *
+ * @brief Creates the HTTP configuration based on the directives in the HttpNode.
+ *
+ * @note This function iterates through the directives in the HttpNode and applies them to the m_httpConfig object.
+ * It also handles any directives that are applicable to locations and applies them to a default location configuration.
+ * Finally, it sets the default location in the m_httpConfig object.
+ *
+ */
+void Parser::createHttpConfig()
+{
+	const AConfigNode::Directives		&directives = m_http.getDirectives();
+	AConfigNode::DirectivesConstIt		 dit		= directives.begin();
+	const AConfigNode::DirectivesConstIt end		= directives.end();
+
+	Logger::debug("m_serverDirectivesCount: " + Logger::get(m_serverDirectivesCount));
+	Logger::debug("m_locationDirectivesCount: " + Logger::get(m_locationDirectivesCount));
+	Location defaultLocation;
+	while (dit != end)
+	{
+		if (!applyDirective(m_httpConfig, dit->first, dit->second, m_serverDirectives, m_serverDirectivesCount))
+		{
+			if (!applyDirective(defaultLocation, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount))
+			{
+				Logger::warn("Unknown directive \'" + Logger::get(dit->first) + "\' with value: " + Logger::get(dit->second));
+			}
+		}
+		++dit;
+	}
+	m_httpConfig.setDefaultLocation(defaultLocation);
+	Logger::error(defaultLocation);
+}
+
+
+/**
+ *
+ * @brief Creates the server configurations based on the grouped server nodes.
+ *
+ * @note This function groups the server nodes by their socket addresses and then creates a list of server configurations for each unique socket address.
+ * It iterates through the grouped server nodes, applies the directives to create Config objects, and adds them to the m_serversConfigs map with the corresponding socket address as the key.
+ *
+ */
+void Parser::createServersConfigs()
+{
+	const VServersNodes groupedServers = groupServersNodes();
+	for (VServersNodes::const_iterator it = groupedServers.begin(); it != groupedServers.end(); ++it)
+	{
+		const SocketAddress &socketAddress = it->first;
+		const VServerNodes	&serverNodes   = it->second;
+
+		ServerConfigs serverConfigs;
+		for (size_t i = 0; i < serverNodes.size(); ++i)
+			addConfig(serverConfigs, serverNodes[i]);
+		m_serversConfigs.set(socketAddress, serverConfigs);
+	}
+}
+
+
+/**
+ *
+ * @brief Creates the HTTP and server configurations based on the parsed configuration data.
+ *
+ * @note This function first creates the HTTP configuration by applying the directives from the HttpNode,
+ * and then creates the server configurations by grouping the server nodes and applying their directives to create Config objects.
+ *
+ */
+void Parser::createConfigs()
+{
+	createHttpConfig();
+	createServersConfigs();
+}
+
+
+
+
+/**
+ *
+ * @brief Resolves the "listen" directive for all server configurations, ensuring that socket addresses are properly set.
+ *
+ * @note This function iterates through all server nodes in the HttpNode configuration
+ * and calls resolveListen on each one to ensure that
+ * the socket addresses are correctly set based on the "listen" directive.
+ *
+ */
+void Parser::resolve()
+{
+	Vec<ServerNode> &servers	= m_http.getServers();
+	size_t			 numServers = servers.size();
+
+	for (size_t i = 0; i < numServers; ++i)
+		resolveListen(servers[i]);
+}
+
+
+/**
+ *
+ * @brief Removes duplicate server configurations based on their socket addresses and server names.
+ *
+ * @note It Logs warnings when duplicates are found or when a server configuration is missing a "listen" directive.
+ *
+ */
+void Parser::removeDuplicate()
+{
+	Vec<ServerNode> &servers = m_http.getServers();
+	size_t			 i		 = 0;
 	while (i < servers.size())
 	{
+		if (!servers[i].hasDirective(PARSER_KEY_LISTEN))
+		{
+			Logger::warn("Server without listen directive found. This server will be ignored: " + Logger::get(servers[i]));
+			servers.remove(i);
+			continue;
+		}
+		if (!servers[i].getSocketAddress().getLength())
+		{
+			servers.remove(i);
+			continue;
+		}
 		if (isDuplicate(servers[i], servers, i + 1))
 		{
 			Logger::warn("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()));
@@ -273,156 +524,4 @@ void Parser::removeDuplicateSocketAddresses(Vec<ServerNode> &servers)
 		}
 		++i;
 	}
-}
-
-
-bool Parser::applyStringDirective(Config &config, const ServerDirective &directive, const std::string &value)
-{
-	(config.*directive.setString)(value);
-	return true;
-}
-
-bool Parser::applyBoolDirective(Config &config, const ServerDirective &directive, const std::string &value)
-{
-	if (value == "on" || value == "true" || value == "1")
-	{
-		(config.*directive.setBool)(true);
-		return true;
-	}
-	else if (value == "off" || value == "false" || value == "0")
-	{
-		(config.*directive.setBool)(false);
-		return true;
-	}
-	return false;
-}
-
-bool Parser::applyArrayDirective(Config &config, const ServerDirective &directive, const Vec<std::string> &values)
-{
-	(config.*directive.setArray)(values);
-	return true;
-}
-
-bool Parser::applyNumberDirective(Config &config, const ServerDirective &directive, const std::string &value)
-{
-	(config.*directive.setNumber)(Number::toSizeT(value));
-	return true;
-}
-
-
-bool Parser::applyDirective(Config &config, const std::string &key, const Vec<std::string> &values)
-{
-	for (size_t i = 0; i < sizeof(m_serverDirectives) / sizeof(ServerDirective); ++i)
-	{
-		const ServerDirective &directive = m_serverDirectives[i];
-		if (key == directive.key)
-		{
-			if (directive.setString && values.size() == 1)
-				return applyStringDirective(config, directive, values[0]);
-			if (directive.setBool && values.size() == 1)
-				return applyBoolDirective(config, directive, values[0]);
-			if (directive.setArray)
-				return applyArrayDirective(config, directive, values);
-			if (directive.setNumber && values.size() == 1)
-				return applyNumberDirective(config, directive, values[0]);
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Parser::applyStringDirective(Location &location, const LocationDirective &directive, const std::string &value)
-{
-	(location.*directive.setString)(value);
-	return true;
-}
-
-bool Parser::applyBoolDirective(Location &location, const LocationDirective &directive, const std::string &value)
-{
-	if (value == "on" || value == "true" || value == "1")
-	{
-		(location.*directive.setBool)(true);
-		return true;
-	}
-	else if (value == "off" || value == "false" || value == "0")
-	{
-		(location.*directive.setBool)(false);
-		return true;
-	}
-	return false;
-}
-
-bool Parser::applyArrayDirective(Location &location, const LocationDirective &directive, const Vec<std::string> &values)
-{
-	(location.*directive.setArray)(values);
-	return true;
-}
-
-bool Parser::applyNumberDirective(Location &location, const LocationDirective &directive, const std::string &value)
-{
-	(location.*directive.setNumber)(Number::toSizeT(value));
-	return true;
-}
-
-bool Parser::applyDirective(Location &location, const std::string &key, const Vec<std::string> &values)
-{
-	for (size_t i = 0; i < sizeof(m_locationDirectives) / sizeof(LocationDirective); ++i)
-	{
-		const LocationDirective &directive = m_locationDirectives[i];
-		if (key == directive.key)
-		{
-			if (directive.setString && values.size() == 1)
-				return applyStringDirective(location, directive, values[0]);
-			if (directive.setBool && values.size() == 1)
-				return applyBoolDirective(location, directive, values[0]);
-			if (directive.setArray)
-				return applyArrayDirective(location, directive, values);
-			if (directive.setNumber && values.size() == 1)
-				return applyNumberDirective(location, directive, values[0]);
-			return true;
-		}
-	}
-	return false;
-}
-
-
-void Parser::parse()
-{
-	Vec<ServerNode> &servers	= m_http.getServers();
-	size_t			 numServers = servers.size();
-
-	for (size_t i = 0; i < numServers; ++i)
-		resolveListen(servers[i]);
-	removeDuplicateSocketAddresses(servers);
-	numServers = servers.size();
-	Logger::debug("Number of servers after removing duplicates: " + Logger::get(numServers));
-	for (size_t i = 0; i < numServers; i++)
-	{
-		const ServerNode		&server	   = servers[i];
-		const Map<LocationNode> &locations = server.getLocations();
-		Config					 serverconf;
-		for (Map<LocationNode>::const_iterator it = locations.begin(); it != locations.end(); ++it)
-		{
-			const LocationNode					&locationNode = it->second;
-			const AConfigNode::Directives		&directives	  = locationNode.getDirectives();
-			AConfigNode::DirectivesConstIt		 dit		  = directives.begin();
-			const AConfigNode::DirectivesConstIt end		  = directives.end();
-
-			Location location;
-			while (dit != end)
-			{
-				applyDirective(location, dit->first, dit->second);
-				Logger::debug("Applied directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
-				++dit;
-			}
-			serverconf.setLocation(it->first, location);
-		}
-
-		ServerConfigs serverConfigs;
-		serverConfigs.push(serverconf);
-		m_serversConfigs.push(serverConfigs);
-	}
-	Logger::log("servers configs: " + Logger::get(m_serversConfigs));
-
-	Logger::debug("Parsed HTTP config: \n" + Logger::get(m_http));
 }

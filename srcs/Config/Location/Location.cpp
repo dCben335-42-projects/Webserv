@@ -1,4 +1,5 @@
 #include "Location.hpp"
+#include "Number.hpp"
 
 
 Location::Location()
@@ -59,9 +60,9 @@ Location::~Location()
  * @return true if the path of the first Location is less than that of the second, false otherwise.
  *
  */
-bool Location::compare(const Location *a, const Location *b)
+bool Location::compare(const Location &a, const Location &b)
 {
-	return a->m_path < b->m_path;
+	return a.m_path < b.m_path;
 }
 
 
@@ -226,7 +227,7 @@ bool Location::hasRoot() const
  * @return true if the auto-index setting has been set, false otherwise.
  *
  */
-bool Location::hasAutoIndexSet() const
+bool Location::hasAutoIndex() const
 {
 	return m_autoIndex.first;
 }
@@ -279,6 +280,18 @@ bool Location::hasReturn() const
 	return m_return.first;
 }
 
+
+/**
+ *
+ * @brief Checks if the location has index files set.
+ *
+ * @return true if index files are set, false otherwise.
+ *
+ */
+bool Location::hasIndexes() const
+{
+	return m_indexFiles.first;
+}
 
 
 
@@ -394,6 +407,23 @@ void Location::setReturn(const LocationReturn &returnVal)
 	m_return.second = returnVal;
 }
 
+/**
+ *
+ * @brief Sets the return value for the location using a vector of strings.
+ *
+ * @param returnVal A vector of strings representing the return value to be set.
+ *
+ */
+void Location::setReturn(const Vec<std::string> &returnVal)
+{
+	m_return.first = true;
+	if (returnVal.size() >= 2)
+	{
+		m_return.second.setStatusCode(Number::toInt(returnVal[0]));
+		m_return.second.setTarget(returnVal[1]);
+	}
+}
+
 
 /**
  *
@@ -428,11 +458,22 @@ void Location::addIndexFile(const std::string &indexFile)
 std::ostream &operator<<(std::ostream &os, const Location &location)
 {
 	os << "Location(path: " << location.getPath();
-	os << ", root: " << location.getRoot();
-	os << ", alias: " << location.getAlias();
-	os << ", indexFiles: " << Logger::get(location.getIndexFiles());
-	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
-	os << ", cgiParams: " << Logger::get(location.getCgiParams());
+	if (location.hasRoot())
+		os << ", root: " << location.getRoot();
+	if (location.hasAlias())
+		os << ", alias: " << location.getAlias();
+	if (location.hasAutoIndex())
+		os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
+	if (location.hasMethods())
+		os << ", allowedMethods: " << Logger::get(location.getAllowedMethods());
+	if (location.hasUpload())
+		os << ", uploadDir: " << location.getUpload();
+	if (location.hasReturn())
+		os << ", return: " << Logger::get(location.getReturn());
+	if (location.hasIndexes())
+		os << ", indexes: " << Logger::get(location.getIndexFiles());
+	if (location.hasCgi())
+		os << ", cgiParams: " << Logger::get(location.getCgiParams());
 	os << ")";
 	return os;
 }

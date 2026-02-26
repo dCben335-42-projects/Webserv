@@ -11,12 +11,13 @@ SocketAddress::SocketAddress()
 	m_isIPv6 = false;
 }
 
-SocketAddress::SocketAddress(const std::string &ip, unsigned short port)
+SocketAddress::SocketAddress(const std::string &ip, const unsigned short port)
 {
+	m_port = port;
 	initIP(ip, port);
 }
 
-void SocketAddress::initIP(const std::string &ip, unsigned short port)
+void SocketAddress::initIP(const std::string &ip, const unsigned short port)
 {
 	std::memset(&m_storage, 0, sizeof(m_storage));
 
@@ -38,15 +39,13 @@ void SocketAddress::initIP(const std::string &ip, unsigned short port)
 	{
 		const std::string ipWithoutBrackets = ip.substr(1, ip.size() - 2);
 		initIPv6(port, IPAddress::convertIPv6(ipWithoutBrackets));
+		return;
 	}
-	else
-	{
-		initIPv4(port, IPAddress::convertIPv4(ip));
-	}
+	initIPv4(port, IPAddress::convertIPv4(ip));
 }
 
 
-void SocketAddress::initIPv4(unsigned short port, uint32_t sin_addr)
+void SocketAddress::initIPv4(const unsigned short port, const uint32_t sin_addr)
 {
 	struct sockaddr_in *addr = reinterpret_cast<struct sockaddr_in *>(&m_storage);
 
@@ -57,7 +56,7 @@ void SocketAddress::initIPv4(unsigned short port, uint32_t sin_addr)
 }
 
 
-void SocketAddress::initIPv6(unsigned short port, in6_addr sin6_addr)
+void SocketAddress::initIPv6(const unsigned short port, const in6_addr sin6_addr)
 {
 	struct sockaddr_in6 *addr = reinterpret_cast<struct sockaddr_in6 *>(&m_storage);
 
@@ -68,9 +67,28 @@ void SocketAddress::initIPv6(unsigned short port, in6_addr sin6_addr)
 	m_length = sizeof(struct sockaddr_in6);
 }
 
+SocketAddress SocketAddress::any(const bool ipv6, const unsigned short port)
+{
+	SocketAddress addr;
+
+	if (ipv6)
+	{
+		struct in6_addr anyAddr = IN6ADDR_ANY_INIT;
+		addr.initIPv6(port, anyAddr);
+		return addr;
+	}
+	addr.initIPv4(port, htonl(INADDR_ANY));
+	return addr;
+}
+
 const struct sockaddr *SocketAddress::getAddr() const
 {
 	return reinterpret_cast<const struct sockaddr *>(&m_storage);
+}
+
+unsigned short SocketAddress::getPort() const
+{
+	return m_port;
 }
 
 socklen_t SocketAddress::getLength() const
@@ -84,9 +102,33 @@ bool SocketAddress::isIPv6() const
 }
 
 
+
+bool SocketAddress::isAnyIPv4() const
+{
+	if (!m_isIPv6)
+	{
+		const struct sockaddr_in *addr = reinterpret_cast<const struct sockaddr_in *>(&m_storage);
+		return addr->sin_addr.s_addr == htonl(INADDR_ANY);
+	}
+	return false;
+}
+
+bool SocketAddress::isAnyIPv6() const
+{
+	if (m_isIPv6)
+	{
+		const struct sockaddr_in6	*addr = reinterpret_cast<const struct sockaddr_in6 *>(&m_storage);
+		static const struct in6_addr any  = IN6ADDR_ANY_INIT;
+
+		return std::memcmp(&addr->sin6_addr, &any, sizeof(in6_addr)) == 0;
+	}
+	return false;
+}
+
+
+
 bool SocketAddress::operator==(const SocketAddress &other) const
 {
-	Logger::debug("Comparing SocketAddress: " + Logger::get(*this) + " with " + Logger::get(other));
 	if (m_isIPv6 != other.m_isIPv6)
 		return false;
 	if (m_isIPv6)
@@ -105,6 +147,26 @@ bool SocketAddress::operator!=(const SocketAddress &other) const
 	return !(*this == other);
 }
 
+bool SocketAddress::operator<(const SocketAddress &other) const
+{
+	if (m_isIPv6 != other.m_isIPv6)
+		return m_isIPv6 < other.m_isIPv6;
+	if (m_isIPv6)
+	{
+		const sockaddr_in6 *a	= reinterpret_cast<const sockaddr_in6 *>(&m_storage);
+		const sockaddr_in6 *b	= reinterpret_cast<const sockaddr_in6 *>(&other.m_storage);
+		int					cmp = std::memcmp(&a->sin6_addr, &b->sin6_addr, sizeof(in6_addr));
+		if (cmp != 0)
+			return cmp < 0;
+		return a->sin6_port < b->sin6_port;
+	}
+	const sockaddr_in *a = reinterpret_cast<const sockaddr_in *>(&m_storage);
+	const sockaddr_in *b = reinterpret_cast<const sockaddr_in *>(&other.m_storage);
+	if (a->sin_addr.s_addr != b->sin_addr.s_addr)
+		return a->sin_addr.s_addr < b->sin_addr.s_addr;
+	return a->sin_port < b->sin_port;
+}
+
 #include <ostream>
 
 std::ostream &operator<<(std::ostream &os, const SocketAddress &data)
@@ -113,11 +175,9 @@ std::ostream &operator<<(std::ostream &os, const SocketAddress &data)
 
 	if (data.isIPv6())
 	{
-		const struct sockaddr_in6 *addr6 =
-			reinterpret_cast<const struct sockaddr_in6 *>(addr);
+		const struct sockaddr_in6 *addr6 = reinterpret_cast<const struct sockaddr_in6 *>(addr);
 
 		os << "[";
-
 		for (int i = 0; i < 8; ++i)
 		{
 			uint16_t part = ntohs(addr6->sin6_addr.s6_addr16[i]);
@@ -127,7 +187,6 @@ std::ostream &operator<<(std::ostream &os, const SocketAddress &data)
 			if (i < 7)
 				os << ":";
 		}
-
 		os << "]:";
 
 		os << std::dec << ntohs(addr6->sin6_port);

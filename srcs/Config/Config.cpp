@@ -5,8 +5,7 @@
 
 Config::Config() :
 	m_ip(""),
-	m_port(0),
-	m_defaultLocation(NULL)
+	m_port(0)
 {
 	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
@@ -14,27 +13,9 @@ Config::Config() :
 	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
 }
 
-Config::Config(
-	const std::string			&ip,
-	unsigned short				 port,
-	Location					*defaultLoc,
-	const Map<const Location *> &locs) :
-	m_ip(ip),
-	m_port(port),
-	m_defaultLocation(defaultLoc),
-	m_locations(locs)
-{
-	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
-	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
-	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
-	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
-}
 
 Config::~Config()
 {
-	for (Map<const Location *>::iterator it = m_locations.begin(); it != m_locations.end(); ++it)
-		delete it->second;
-	delete m_defaultLocation;
 	m_locations.clear();
 }
 
@@ -73,8 +54,19 @@ unsigned short Config::getPort() const
  */
 void Config::setLocation(const std::string &path, const Location &location)
 {
-	Location *loc = new Location(location);
-	m_locations.set(path, loc);
+	m_locations.set(path, location);
+}
+
+/**
+ *
+ * @brief Sets the default location configuration for the virtual server.
+ *
+ * @param location The Location object containing the default configuration.
+ *
+ */
+void Config::setDefaultLocation(const Location &location)
+{
+	m_defaultLocation = location;
 }
 
 
@@ -162,8 +154,8 @@ void Config::setMaxBodySize(const size_t maxBodySize)
 const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath)->getIndexFiles();
-	return m_defaultLocation->getIndexFiles();
+		return m_locations.get(locationPath).getIndexFiles();
+	return m_defaultLocation.getIndexFiles();
 }
 
 
@@ -179,9 +171,9 @@ const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) c
 bool Config::hasIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath)->hasIndexFile();
+		return m_locations.get(locationPath).hasIndexFile();
 	if (locationPath == "/")
-		return m_defaultLocation->hasIndexFile();
+		return m_defaultLocation.hasIndexFile();
 	return false;
 }
 
@@ -282,7 +274,7 @@ const Vec<std::string> &Config::getServerNames() const
  * @return A pointer to the default Location object.
  *
  */
-Location const *Config::getDefaultLocation() const
+const Location &Config::getDefaultLocation() const
 {
 	return m_defaultLocation;
 }
@@ -294,7 +286,7 @@ Location const *Config::getDefaultLocation() const
  * @return A constant reference to the map of locations.
  *
  */
-const Map<const Location *> &Config::getLocations() const
+const Config::LocationsMap &Config::getLocations() const
 {
 	return m_locations;
 }
@@ -307,10 +299,14 @@ const Map<const Location *> &Config::getLocations() const
 
 std::ostream &operator<<(std::ostream &os, const Config &config)
 {
+	const Config::LocationsMap &locations = config.getLocations();
+
 	os << "Config(ip=" << config.getIp()
 	   << ", port=" << config.getPort()
 	   << ", serverName=" << LoggerJson::get(config.getServerNames())
 	   << ", defaultLocation=" << LoggerJson::get(config.getDefaultLocation())
+	   << ", locations size=" << locations.size()
+	   << ", Locations=" << LoggerJson::get(locations)
 	   << ")";
 	return os;
 }

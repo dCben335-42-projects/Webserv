@@ -27,14 +27,6 @@ int main(int argc, char *argv[])
 		const std::string bnf	 = FileManager::readFile(BNF_FILE_PATH);
 		const std::string config = FileManager::readFile(filepath);
 
-
-		std::string ip1 = "4::16";
-		std::string ip2 = "40::16";
-
-		SocketAddress a("[4::16]", 8080);
-		SocketAddress b("[4:0:0:0:0:0:0:16]", 8080);
-
-		Logger::error("Comparing SocketAddress a and b: " + Logger::get(a) + " == " + Logger::get(b) + " ? " + (a == b ? "true" : "false"));
 		ConfigManager configManager(bnf, config);
 		configManager.lex();
 		configManager.parse();
@@ -44,7 +36,7 @@ int main(int argc, char *argv[])
 		Logger::log("Fatal error: " + std::string(e.what()));
 		return 1;
 	}
-	// EventLoop::init();
-	// EventLoop::run();
+	EventLoop::init();
+	EventLoop::run();
 	return 0;
 }

@@ -31,7 +31,7 @@ class Location
 		Location(const std::string path);
 		~Location();
 
-		static bool compare(const Location *a, const Location *b);
+		static bool compare(const Location &a, const Location &b);
 
 		const std::string	   &getPath() const;
 		const std::string	   &getRoot() const;
@@ -47,11 +47,12 @@ class Location
 		bool hasCgi() const;
 		bool hasIndexFile() const;
 		bool hasRoot() const;
-		bool hasAutoIndexSet() const;
+		bool hasAutoIndex() const;
 		bool hasCgiParams() const;
 		bool hasMethods() const;
 		bool hasUpload() const;
 		bool hasReturn() const;
+		bool hasIndexes() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
@@ -63,7 +64,7 @@ class Location
 		void setMethods(const Set<HttpMethod> &methods);
 		void setMethods(const Vec<std::string> &methods);
 		void setReturn(const LocationReturn &returnVal);
-
+		void setReturn(const Vec<std::string> &returnVal);
 		void setIndexes(const Vec<std::string> &indexFiles);
 };
 

@@ -27,5 +27,13 @@ void ConfigManager::lex()
 void ConfigManager::parse()
 {
 	m_parser.retreive();
-	m_parser.parse();
+	m_parser.resolve();
+	m_parser.removeDuplicate();
+	m_parser.createConfigs();
+	const ::Parser::VServerConfigs &serversConfigs = m_parser.getServersConfigs();
+	Logger::debug("Parsed " + Logger::get(serversConfigs.size()) + " server configurations:");
+	Logger::log(serversConfigs);
+	const Config &httpConfig = m_parser.getHttpConfig();
+	Logger::debug("Parsed HTTP configuration:");
+	Logger::log(httpConfig);
 }

@@ -8,14 +8,18 @@
 
 class Config
 {
+	public:
+		typedef Map<Location> LocationsMap;
+		typedef Vec<Location> Locations;
+
 	private:
 		std::string	   m_ip;
 		unsigned short m_port;
 
 		Vec<std::string> m_serverNames;
 
-		Location			 *m_defaultLocation;
-		Map<const Location *> m_locations;
+		Location	 m_defaultLocation;
+		LocationsMap m_locations;
 
 		time_t m_keepAliveTimeout;
 		time_t m_headerTimeout;
@@ -25,13 +29,10 @@ class Config
 
 	public:
 		Config();
-		Config(const std::string		   &ip,
-			   unsigned short				port,
-			   Location					   *defaultLoc,
-			   const Map<const Location *> &locs);
 		~Config();
 
 		void setLocation(const std::string &path, const Location &location);
+		void setDefaultLocation(const Location &location);
 
 		void setIp(const std::string &ip);
 		void setPort(unsigned short port);
@@ -41,10 +42,10 @@ class Config
 		void setMaxBodySize(const size_t maxBodySize);
 		void setServerNames(const Vec<std::string> &serverNames);
 
-		const std::string			&getIp() const;
-		unsigned short				 getPort() const;
-		const Location				*getDefaultLocation() const;
-		const Map<const Location *> &getLocations() const;
+		const std::string  &getIp() const;
+		unsigned short		getPort() const;
+		const Location	   &getDefaultLocation() const;
+		const LocationsMap &getLocations() const;
 
 		bool					hasServerName() const;
 		const Vec<std::string> &getServerNames() const;

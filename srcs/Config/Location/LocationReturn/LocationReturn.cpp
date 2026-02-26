@@ -65,3 +65,11 @@ void LocationReturn::setStatusCode(const int statusCode)
 {
 	m_statusCode = statusCode;
 }
+
+#include <ostream>
+
+std::ostream &operator<<(std::ostream &os, const LocationReturn &locationReturn)
+{
+	os << "Status Code: " << locationReturn.getStatusCode() << ", Target: " << locationReturn.getTarget();
+	return os;
+}

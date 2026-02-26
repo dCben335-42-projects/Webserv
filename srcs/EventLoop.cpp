@@ -13,46 +13,62 @@ size_t				 EventLoop::m_nfds = 0;
 
 void EventLoop::init()
 {
-	// const std::string ip = "localhost";
+	const std::string ip = "127.0.0.1";
 
-	// Location *defaultLocation = new Location("");
-	// defaultLocation->setRoot("files/www/website");
+	Location defaultLocation = Location("");
+	defaultLocation.setRoot("files/www/website");
 
-	// Location		*slashLoc = new Location("/");
-	// Map<std::string> binSlash;
-	// binSlash.set(".py", "/usr/bin/python3");
-	// slashLoc->setAutoIndex(true);
-	// CgiParams *py = new CgiParams(binSlash);
-	// slashLoc->setCgiParams(py);
+	Location		 slashLoc = Location("/");
+	Map<std::string> binSlash;
+	binSlash.set(".py", "/usr/bin/python3");
+	slashLoc.setAutoIndex(true);
+	CgiParams *py = new CgiParams(binSlash);
+	slashLoc.setCgiParams(py);
 
-	// Location		*bin = new Location("/cgi-bin");
-	// Map<std::string> binmap1;
-	// binmap1.set(".php", "/usr/bin/php");
-	// CgiParams *cgi = new CgiParams(binmap1);
-	// bin->setCgiParams(cgi);
-	// bin->setAlias("files/www/usr/bin/");
-	// bin->setAutoIndex(true);
+	Location		 bin = Location("/cgi-bin");
+	Map<std::string> binmap1;
+	binmap1.set(".php", "/usr/bin/php");
+	CgiParams *cgi = new CgiParams(binmap1);
+	bin.setCgiParams(cgi);
+	bin.setAlias("files/www/usr/bin/");
+	bin.setAutoIndex(true);
 
 
-	// Location *uploadLocation = new Location("/uploads");
-	// uploadLocation->setAutoIndex(true);
-	// uploadLocation->setUpload("files/www/uploads");
-	// uploadLocation->setAlias("files/www/uploads");
-	// Set<HttpMethod> methods;
-	// methods.push(HttpMethod::GET);
+	Location uploadLocation = Location("/uploads");
+	uploadLocation.setAutoIndex(true);
+	uploadLocation.setUpload("files/www/uploads");
+	uploadLocation.setAlias("files/www/uploads");
+	Set<HttpMethod> methods;
+	methods.push(HttpMethod::GET);
+	methods.push(HttpMethod::POST);
+	methods.push(HttpMethod::PUT);
 	// methods.push(HttpMethod::POST);
-	// methods.push(HttpMethod::PUT);
-	// // methods.push(HttpMethod::POST);
-	// uploadLocation->setMethods(methods);
+	uploadLocation.setMethods(methods);
 
-	// Map<const Location *> locations;
-	// locations.set("/", slashLoc);
-	// locations.set("/cgi-bin", bin);
-	// locations.set("/uploads", uploadLocation);
+	Config *config1 = new Config();
+	config1->setIp(ip);
+	config1->setPort(8999);
+	config1->setDefaultLocation(defaultLocation);
+	config1->setLocation("/cgi-bin", bin);
+	config1->setLocation("/uploads", uploadLocation);
 
-	// Config *config1 = new Config(ip, 8080, "localhost", defaultLocation, locations);
-	// new VirtualServer(*(config1));
-	// Signals::catchSigs();
+
+	Config	*config2		  = new Config();
+	Location defaultLocation2 = Location("");
+	defaultLocation2.setRoot("files/www/upload");
+	defaultLocation2.setAutoIndex(true);
+	config2->setIp("0.0.0.0");
+	config2->setPort(8080);
+	config2->setDefaultLocation(defaultLocation2);
+	config2->setLocation("/", slashLoc);
+
+
+
+
+	new VirtualServer(*(config2));
+	new VirtualServer(*(config1));
+
+	Signals::catchSigs();
 }
 
 
