@@ -182,16 +182,6 @@ Concept *ARule::getConceptPtr() const
 	return m_conceptPtr;
 }
 
-bool ARule::isOption() const
-{
-	return m_type == OPTION;
-}
-
-bool ARule::isSequence() const
-{
-	return m_type == SEQUENCE;
-}
-
 // clang-format off
 const Map<size_t, Vec<std::string> > &ARule::getRequiredInJsonMap() const
 {
@@ -208,16 +198,6 @@ void ARule::addRequiredInJson(size_t index, const std::string &val)
 bool ARule::isEnd() const
 {
 	return m_nextRules.empty();
-}
-
-bool ARule::isGroup() const
-{
-	return m_type == GROUP;
-}
-
-bool ARule::isSymbol() const
-{
-	return m_type == SYMBOL;
 }
 
 const ARule *ARule::getNextRule() const

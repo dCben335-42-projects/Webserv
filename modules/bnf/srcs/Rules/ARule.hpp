@@ -69,11 +69,6 @@ class ARule
 		const ARule *tryGetAdjacentRules() const;
 		ConceptDef	*getConceptDefPtr();
 
-
-		bool		 isOption() const;
-		bool		 isSequence() const;
-		bool		 isGroup() const;
-		bool		 isSymbol() const;
 		const ARule *getNextRule() const;
 		bool		 is(const ERuleType type) const;
 

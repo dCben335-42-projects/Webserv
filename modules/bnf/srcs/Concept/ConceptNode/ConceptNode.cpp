@@ -6,7 +6,7 @@ ConceptNode::ConceptNode(const std::string name, const ConceptList &concepts) : 
 
 bool ConceptNode::is_multiple() const
 {
-	return (m_concepts.size() > 1);
+	return m_concepts.size() > 1;
 }
 
 std::ostream &operator<<(std::ostream &os, const ConceptNode &data)

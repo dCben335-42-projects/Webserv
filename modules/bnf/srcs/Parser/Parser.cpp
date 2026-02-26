@@ -99,7 +99,7 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 	for (int i = lastIndex; i >= 0; --i)
 	{
 		const ARule *const rule = path[i];
-		if (rule->isSequence())
+		if (rule->is(SEQUENCE))
 		{
 			ARulePath subPath = path;
 			if (i != lastIndex)
@@ -300,7 +300,7 @@ bool Parser::isFullyOptional(const ARule &rule) const
 
 	bool result = false;
 
-	if (rule.isOption())
+	if (rule.is(OPTION))
 		result = true;
 	else
 	{
@@ -450,7 +450,7 @@ void Parser::parse(const std::string &stringToParsed)
 	{
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
-			throw InvalidEntryException(std::string("Invalid character '") + c + "' at position " + Logger::get(i) + ".");
+			throwInvalidEntryException(mapPathCurrent, c, i);
 		if (i == lastIndex)
 			break;
 
@@ -463,4 +463,35 @@ void Parser::parse(const std::string &stringToParsed)
 		Logger::log("Parsing complete ✅");
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
+}
+
+
+void Parser::throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const
+{
+	std::string expectedChars;
+	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
+	{
+		const ARulePaths &val = it->second;
+		for (ARulePaths::const_iterator paths = val.begin(); paths != val.end(); ++paths)
+		{
+			ARulePathInfo *pathInfo = *paths;
+			for (size_t j = 0; j < pathInfo->m_path.size(); ++j)
+			{
+				expectedChars += pathInfo->m_path[j]->getConceptName();
+				expectedChars += " -> ";
+			}
+			for (size_t k = 0; k < pathInfo->getValue().size(); ++k)
+			{
+				expectedChars += "'" + pathInfo->getValue()[k] + "'";
+				if (k != pathInfo->getValue().size() - 1)
+					expectedChars += ", ";
+				else
+					expectedChars += " ";
+			}
+			if (paths + 1 != val.end())
+				expectedChars += "\n";
+		}
+		expectedChars += "\n";
+	}
+	throw InvalidEntryException(std::string("Invalid character '") + c + "' at position " + Logger::get(i + 1) + ".\nExpected characters:\n" + expectedChars);
 }

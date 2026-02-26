@@ -1,0 +1,148 @@
+<head> ::= http
+
+QUOTE             ::= '"'
+WORD_QUOTED       ::= QUOTE { LETTER | '.' | '-' | '_' | DIGIT | '=' | SPACE | ';' | '\\' } QUOTE
+
+http              ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
+http_directives   ::= { default_type | keepalive_timeout | client_header_timeout | client_body_timeout 
+                     | client_max_body_size | client_max_header_size | autoindex | sendfile 
+                     | error_page | server }
+
+server            ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
+server_directives ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc }
+					|= [LINE_JUMP]
+
+default_type      			::= IDENT 'default_type' 			I IDENT PATH 			SEMI LINE_JUMP
+keepalive_timeout 			::= IDENT 'keepalive_timeout' 		IDENT NUMBER 		SEMI LINE_JUMP
+client_header_timeout 		::= IDENT 'client_header_timeout' 	IDENT NUMBER 		SEMI LINE_JUMP
+client_body_timeout   		::= IDENT 'client_body_timeout'		IDENT NUMBER 		SEMI LINE_JUMP
+client_max_body_size  		::= IDENT 'client_max_body_size' 	IDENT NUMBER 		SEMI LINE_JUMP
+client_max_header_size 		::= IDENT 'client_max_header_size' 	IDENT NUMBER 		SEMI LINE_JUMP
+autoindex          			::= IDENT 'autoindex' 				IDENT BOOL SEMI LINE_JUMP
+sendfile           			::= IDENT 'sendfile' 				IDENT BOOL IDENT PATH SEMI LINE_JUMP
+error_page         			::= IDENT 'error_page' 				IDENT NUMBER IDENT PATH SEMI LINE_JUMP
+listen             			::= IDENT 'listen' 					IDENT ADDRESS ':' PORT SEMI LINE_JUMP
+server_name        			::= IDENT 'server_name' 			IDENT WORD SEMI LINE_JUMP
+root               			::= IDENT 'root' IDENT PATH SEMI LINE_JUMP
+index              			::= IDENT 'index' IDENT { FILE } SEMI LINE_JUMP
+add_header         			::= IDENT 'add_header' IDENT WORD IDENT WORD SEMI LINE_JUMP
+auth_loc           			::= IDENT 'auth_loc' IDENT PATH SEMI LINE_JUMP
+alias              			::= IDENT 'alias' IDENT PATH SEMI LINE_JUMP
+return             			::= IDENT 'return' IDENT NUMBER IDENT [ WORD_QUOTED | PATH ] SEMI LINE_JUMP
+allowed_methods    			::= IDENT 'allowed_methods' IDENT { HTTP_METHOD | IDENT } SEMI LINE_JUMP
+auth_required      			::= IDENT 'auth_required' IDENT BOOL SEMI LINE_JUMP
+cgi_pass           			::= IDENT 'cgi_pass' IDENT EXT IDENT PATH SEMI LINE_JUMP
+
+location           	::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT LINE_JUMP
+location_directives ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass }
+
+HTTP_METHOD        ::= ( 'GET' | 'POST' )
+EXT                ::= ( '.py' | '.php' )
+
+ADDRESS            ::= ( IPV_FOUR | IPV_SIX | HOSTNAME )
+
+IPV_FOUR           ::= OCTET '.' OCTET '.' OCTET '.' OCTET
+OCTET              ::= DIGIT
+                    |= DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT
+
+IPV_SIX            ::= BRACKET_OPEN IPV_SIX_CORE BRACKET_CLOSE
+
+BRACKET_OPEN       ::= '['
+BRACKET_CLOSE      ::= ']'
+
+IPV_SIX_CORE       ::= IPV_SIX_FULL
+                    |= IPV_SIX_LEADING
+                    |= IPV_SIX_TRAILING
+                    |= IPV_SIX_MIDDLE
+
+
+IPV_SIX_FULL       ::= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+
+
+IPV_SIX_LEADING    ::= '::'
+                    |= '::' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+
+
+IPV_SIX_TRAILING   ::= IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+
+
+IPV_SIX_MIDDLE     ::= IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+
+
+IPV_SIX_H          ::= HEX_DIGIT
+                    |= HEX_DIGIT HEX_DIGIT
+                    |= HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    |= HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+
+
+HEX_DIGIT          ::= (DIGIT | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F')
+
+HOSTNAME           ::= LETTER { HOST_SEQ }
+HOST_SEQ           ::= LETTER
+                    |= DIGIT
+                    |= '-'
+                    |= '.'
+
+PORT               ::= DIGIT
+                    |= DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT DIGIT DIGIT
+
+DIGIT              ::= ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9')
+
+LETTER             ::= (UPCASE_LETTER | LOCASE_LETTER)
+
+UPCASE_LETTER      ::= ('A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z')
+LOCASE_LETTER      ::= ('a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z')
+
+IDENT              ::= [ TAB_SPACE ]
+TAB_SPACE          ::= { SPACE | TAB }
+TAB                ::= '\t'
+SPACE              ::= ' '
+LINE_JUMP          ::= '\n'
+
+BRACE_IN           ::= '{'
+BRACE_OUT          ::= '}'
+SEMI               ::= ';'
+
+FILE               ::= { LETTER | DIGIT } '.' { LETTER | DIGIT } [ SPACE ]
+PATH               ::= { LETTER | '/' | '.' | NUMBER | '-' }
+WORD               ::= [ WORD_QUOTED ] [ WORD_NORMAL ]
+WORD_NORMAL        ::= { LETTER | '.' | '-' | '_' | DIGIT | '=' }
+
+NUMBER             ::= { DIGIT }
+BOOL               ::= ( 'on' | 'off' )

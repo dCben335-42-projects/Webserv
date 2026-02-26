@@ -48,6 +48,7 @@ class Parser
 		void createPathInfo(ARulePaths &element, const ARulePath &completePath);
 
 		ARulePathInfo *createARulePathInfo(const ARulePath &path, size_t pathHash);
+		void		   throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const;
 
 	public:
 		Parser(const SemanticDescriptor &semantic);

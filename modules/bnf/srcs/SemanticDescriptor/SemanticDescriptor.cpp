@@ -66,19 +66,23 @@ bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 
 	while (i < size && std::isspace(line[i]))
 		++i;
-	if (i + 2 <= size && line.compare(i, 2, "|=") == 0)
+	if (i + 2 <= size && line.compare(i, 2, ORRULE) == 0)
 	{
 		*startDef = i + 2;
 		return true;
 	}
-	size_t start = i;
-	while (i < size && (std::isalnum(line[i]) || line[i] == '_'))
-		++i;
-	if (i == start)
+	size_t spacePos = line.find_first_of(WS, i);
+	if (spacePos == std::string::npos)
 		return false;
+	const std::string conceptName = line.substr(i, spacePos - i);
+	if (conceptName.empty() || conceptName == DIVIDER)
+		return false;
+	if (!validate_string_strict(conceptName))
+		throw InvalidConceptNameException(conceptName);
+	i = spacePos;
 	while (i < size && std::isspace(line[i]))
 		++i;
-	if (i + 3 <= size && line.compare(i, 3, "::=") == 0)
+	if (i + 3 <= size && line.compare(i, 3, EQRULE) == 0)
 	{
 		*startDef = i + 3;
 		return true;
@@ -100,7 +104,10 @@ void SemanticDescriptor::splitBlocks(std::istringstream &iss)
 		if (isStartRule(line, &startDef) && !cblock.empty())
 		{
 			if (isOnlyWhitespace(cblock, prevStartDef))
+			{
+				Logger::log("Block: " + cblock);
 				throw ConceptHasNotDefinitionException();
+			}
 			blocks.push_back(cblock);
 			cblock.clear();
 			prevStartDef = startDef;
@@ -130,7 +137,7 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 		pos += ORRULE.length();
 		return false;
 	}
-	Logger::log("Error: Concept definition is missing separator '::=' or '|=' for concept name: " + block.substr(0, pos));
+	Logger::log("Block: " + block);
 	throw ConceptHasNotDefinitionException();
 }
 
@@ -478,8 +485,10 @@ ARuleMap SemanticDescriptor::getStartPath() const
  */
 void SemanticDescriptor::parseConceptName(std::string s)
 {
+	Logger::log("Parsing concept name from: " + s);
 	std::istringstream iss(erasePaternWrapper(s, WS));
-	std::string		   w;
+	std::cout << "Concept name after trimming: '" << iss.str() << "'" << std::endl;
+	std::string w;
 	if (!(iss >> w))
 		throw EmptyConceptNameException();
 	if (iss >> w)
