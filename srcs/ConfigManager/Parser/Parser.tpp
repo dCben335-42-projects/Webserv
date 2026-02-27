@@ -21,7 +21,7 @@ bool Parser::applyBoolDirective(T &obj, const DirectiveType &directive, const st
 	else if (value == "off" || value == "false" || value == "0")
 		(obj.*directive.setBool)(false);
 	else
-		return false;
+		throw std::invalid_argument("Invalid boolean value: " + value);
 	return true;
 }
 
@@ -39,6 +39,7 @@ bool Parser::applyNumberDirective(T &obj, const DirectiveType &directive, const 
 	return true;
 }
 
+#include "Logger.hpp"
 
 template <typename T, typename DirectiveType>
 bool Parser::applyDirective(

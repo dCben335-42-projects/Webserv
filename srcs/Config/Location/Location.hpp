@@ -29,6 +29,7 @@ class Location
 	public:
 		Location();
 		Location(const std::string path);
+		Location(const Location &other);
 		~Location();
 
 		static bool compare(const Location &a, const Location &b);

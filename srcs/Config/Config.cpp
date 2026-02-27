@@ -13,6 +13,19 @@ Config::Config() :
 	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
 }
 
+Config::Config(const Config &other) :
+	m_ip(other.m_ip),
+	m_port(other.m_port),
+	m_serverNames(other.m_serverNames),
+	m_defaultLocation(other.m_defaultLocation),
+	m_locations(other.m_locations),
+	m_keepAliveTimeout(other.m_keepAliveTimeout),
+	m_headerTimeout(other.m_headerTimeout),
+	m_bodyTimeout(other.m_bodyTimeout),
+	m_maxBodySize(other.m_maxBodySize)
+{
+}
+
 
 Config::~Config()
 {

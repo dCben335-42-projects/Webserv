@@ -41,6 +41,21 @@ Location::Location(const std::string path)
 	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
 }
 
+
+Location::Location(const Location &other)
+{
+	m_path = other.m_path;
+	m_cgi  = other.m_cgi ? new CgiParams(*other.m_cgi) : NULL;
+
+	m_root			 = other.m_root;
+	m_alias			 = other.m_alias;
+	m_uploadDir		 = other.m_uploadDir;
+	m_autoIndex		 = other.m_autoIndex;
+	m_return		 = other.m_return;
+	m_indexFiles	 = other.m_indexFiles;
+	m_allowedMethods = other.m_allowedMethods;
+}
+
 Location::~Location()
 {
 	if (m_cgi)

@@ -13,10 +13,12 @@ size_t				 EventLoop::m_nfds = 0;
 
 void EventLoop::init()
 {
-	const std::string ip = "127.0.0.1";
+	const std::string ip  = "0.0.0.0";
+	const std::string ip2 = "127.0.0.1";
 
 	Location defaultLocation = Location("");
 	defaultLocation.setRoot("files/www/website");
+	defaultLocation.setAutoIndex(true);
 
 	Location		 slashLoc = Location("/");
 	Map<std::string> binSlash;
@@ -47,7 +49,7 @@ void EventLoop::init()
 
 	Config *config1 = new Config();
 	config1->setIp(ip);
-	config1->setPort(8999);
+	config1->setPort(8080);
 	config1->setDefaultLocation(defaultLocation);
 	config1->setLocation("/cgi-bin", bin);
 	config1->setLocation("/uploads", uploadLocation);
@@ -57,7 +59,7 @@ void EventLoop::init()
 	Location defaultLocation2 = Location("");
 	defaultLocation2.setRoot("files/www/upload");
 	defaultLocation2.setAutoIndex(true);
-	config2->setIp("0.0.0.0");
+	config2->setIp(ip2);
 	config2->setPort(8080);
 	config2->setDefaultLocation(defaultLocation2);
 	config2->setLocation("/", slashLoc);
@@ -65,8 +67,8 @@ void EventLoop::init()
 
 
 
-	new VirtualServer(*(config2));
 	new VirtualServer(*(config1));
+	new VirtualServer(*(config2));
 
 	Signals::catchSigs();
 }

@@ -52,6 +52,34 @@ const Parser::VServerConfigs &Parser::getServersConfigs() const
 	return m_serversConfigs;
 }
 
+
+/**
+ *
+ * @brief Saves a token to the tokens vector, handling quoted strings and semicolons.
+ *
+ * @param tokens The vector of tokens to which the token will be added.
+ * @param token The current token being built from the line.
+ * @param inQuotes A boolean indicating whether the current token is within quotes.
+ *
+ * @note If the token is not empty, it is added to the tokens vector.
+ * If the token ends with a semicolon and is not within quotes, the semicolon is removed before adding it to the vector.
+ *
+ */
+void Parser::saveToken(Vec<std::string> &tokens, std::string &token, const bool inQuotes)
+{
+	if (token.empty())
+		return;
+	if (!inQuotes && token.at(token.size() - 1) == ';')
+	{
+		const std::string tokenWithoutSemicolon = token.substr(0, token.size() - 1);
+		if (!tokenWithoutSemicolon.empty())
+			tokens.push(tokenWithoutSemicolon);
+	}
+	else
+		tokens.push(token);
+	token.clear();
+}
+
 /**
  *
  * @brief Splits a line into tokens, respecting quoted strings.
@@ -79,22 +107,11 @@ Vec<std::string> Parser::extractTokens(const std::string &line)
 			continue;
 		}
 		if (isspace(static_cast<unsigned char>(c)) && !inQuotes)
-		{
-			if (!current.empty())
-			{
-				tokens.push(current);
-				current.clear();
-			}
-		}
+			saveToken(tokens, current, inQuotes);
 		else
-		{
 			current += c;
-		}
 	}
-
-	if (!current.empty())
-		tokens.push(current);
-
+	saveToken(tokens, current, inQuotes);
 	return tokens;
 }
 
@@ -370,8 +387,8 @@ void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator
  */
 void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 {
-	Config	 serverConfig;
-	Location defaultLocation;
+	Config	 serverConfig(m_httpConfig);
+	Location defaultLocation(m_httpConfig.getDefaultLocation());
 
 	const AConfigNode::Directives		&directives = serverNode.getDirectives();
 	AConfigNode::DirectivesConstIt		 dit		= directives.begin();
@@ -413,8 +430,6 @@ void Parser::createHttpConfig()
 	AConfigNode::DirectivesConstIt		 dit		= directives.begin();
 	const AConfigNode::DirectivesConstIt end		= directives.end();
 
-	Logger::debug("m_serverDirectivesCount: " + Logger::get(m_serverDirectivesCount));
-	Logger::debug("m_locationDirectivesCount: " + Logger::get(m_locationDirectivesCount));
 	Location defaultLocation;
 	while (dit != end)
 	{

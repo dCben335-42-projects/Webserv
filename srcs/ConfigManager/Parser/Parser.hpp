@@ -52,7 +52,7 @@ class Parser
 		template <typename T>
 		struct Directive
 		{
-				const char *key;
+				const std::string key;
 				void (T::*setString)(const std::string &);
 				void (T::*setBool)(bool);
 				void (T::*setArray)(const Vec<std::string> &);
@@ -75,6 +75,7 @@ class Parser
 		static const size_t				 m_locationDirectivesCount;
 		static const size_t				 m_serverDirectivesCount;
 
+		void			 saveToken(Vec<std::string> &tokens, std::string &current, const bool inQuotes);
 		Vec<std::string> extractTokens(const std::string &line);
 		std::string		 joinTokens(const Vec<std::string> &tokens, const size_t start);
 
@@ -84,19 +85,14 @@ class Parser
 		bool isDuplicate(const ServerNode &server, const Vec<ServerNode> &servers, const size_t start = 0);
 		void removeDuplicate(Vec<ServerNode> &servers);
 
-
 		template <typename T, typename DirectiveType>
 		bool applyStringDirective(T &obj, const DirectiveType &directive, const std::string &value);
-
 		template <typename T, typename DirectiveType>
 		bool applyBoolDirective(T &obj, const DirectiveType &directive, const std::string &value);
-
 		template <typename T, typename DirectiveType>
 		bool applyArrayDirective(T &obj, const DirectiveType &directive, const Vec<std::string> &values);
-
 		template <typename T, typename DirectiveType>
 		bool applyNumberDirective(T &obj, const DirectiveType &directive, const std::string &value);
-
 		template <typename T, typename DirectiveType>
 		bool applyDirective(
 			T					   &object,
@@ -112,7 +108,6 @@ class Parser
 		void fillIpAnyMaps(
 			Map<unsigned short, SocketAddress> &ipv4AnyPorts,
 			Map<unsigned short, SocketAddress> &ipv6AnyPorts) const;
-
 
 		void createServersConfigs();
 		void createHttpConfig();

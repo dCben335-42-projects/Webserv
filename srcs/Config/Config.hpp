@@ -29,6 +29,7 @@ class Config
 
 	public:
 		Config();
+		Config(const Config &other);
 		~Config();
 
 		void setLocation(const std::string &path, const Location &location);
