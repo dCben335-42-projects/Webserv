@@ -22,17 +22,17 @@
 class Parser
 {
 	private:
-		mutable std::map<const ARule *, bool> m_optionalCache;
-		mutable std::set<const ARule *>		  m_optionalComputing;
-		Vec<const std::string *>			  m_conceptPaths;
-		Vec<ARulePathInfo>					  m_arulePathInfoList;
+		std::map<const ARule *, bool> m_optionalCache;
+		std::set<const ARule *>		  m_optionalComputing;
+		Vec<const std::string *>	  m_conceptPaths;
+		Vec<ARulePathInfo>			  m_arulePathInfoList;
 
 		const SemanticDescriptor &m_semantic;
 
 		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		bool word(const char c, const ARule *const rule, ARulePathInfo *path, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t indexElementTerminalChar);
 
-		bool isFullyOptional(const ARule &rule) const;
+		bool isFullyOptional(const ARule &rule);
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
 		bool isFullyOptionalEnd(const ARulePath &path);
 

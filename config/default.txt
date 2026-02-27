@@ -4,7 +4,6 @@ http {
     client_header_timeout    10;
     client_body_timeout        20;
     client_max_body_size        500;
-    client_max_header_size        100;
     autoindex             on;
     sendfile            on /var/www/uploads;
     error_page             500 /var/www/errors/500.html;

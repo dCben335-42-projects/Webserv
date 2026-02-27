@@ -3,7 +3,7 @@
 
 http              ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
 http_directives   ::= { default_type | keepalive_timeout | client_header_timeout | client_body_timeout 
-                     | client_max_body_size | client_max_header_size | autoindex | sendfile 
+                     | client_max_body_size | autoindex | sendfile 
                      | error_page | server }
 
 server            ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
@@ -11,23 +11,22 @@ server_directives ::= { listen | server_name | root | index | location | sendfil
 					|= [LINE_JUMP]
 
 default_type      			::= IDENT 'default_type' 	        TAB_SPACE default_type_mime 			SEMI LINE_JUMP
-keepalive_timeout 			::= IDENT 'keepalive_timeout' 		TAB_SPACE NUMBER 		SEMI LINE_JUMP
-client_header_timeout 		::= IDENT 'client_header_timeout' 	TAB_SPACE NUMBER 		SEMI LINE_JUMP
-client_body_timeout   		::= IDENT 'client_body_timeout'		TAB_SPACE NUMBER 		SEMI LINE_JUMP
-client_max_body_size  		::= IDENT 'client_max_body_size' 	TAB_SPACE NUMBER 		SEMI LINE_JUMP
-client_max_header_size 		::= IDENT 'client_max_header_size' 	TAB_SPACE NUMBER 		SEMI LINE_JUMP
+keepalive_timeout 			::= IDENT 'keepalive_timeout' 		TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
+client_header_timeout 		::= IDENT 'client_header_timeout' 	TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
+client_body_timeout   		::= IDENT 'client_body_timeout'		TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
+client_max_body_size  		::= IDENT 'client_max_body_size' 	TAB_SPACE NUMBER_THREE_UNIT 		SEMI LINE_JUMP
 autoindex          			::= IDENT 'autoindex' 				TAB_SPACE BOOL SEMI LINE_JUMP
-sendfile           			::= IDENT 'sendfile' 				TAB_SPACE BOOL TAB_SPACE PATH SEMI LINE_JUMP
-error_page         			::= IDENT 'error_page' 				TAB_SPACE NUMBER TAB_SPACE PATH SEMI LINE_JUMP
+sendfile           			::= IDENT 'sendfile' 				TAB_SPACE sendfile_content SEMI LINE_JUMP
+error_page         			::= IDENT  error_page_directive     SEMI LINE_JUMP
 listen             			::= IDENT 'listen' 					TAB_SPACE ADDRESS ':' PORT SEMI LINE_JUMP
 server_name        			::= IDENT 'server_name' 			TAB_SPACE WORD SEMI LINE_JUMP
 root               			::= IDENT 'root'                    TAB_SPACE PATH SEMI LINE_JUMP
 index              			::= IDENT 'index'                   TAB_SPACE { index_file_list } SEMI LINE_JUMP
-add_header         			::= IDENT 'add_header'              TAB_SPACE WORD TAB_SPACE WORD SEMI LINE_JUMP
+add_header         			::= IDENT 'add_header'              TAB_SPACE WORD_NORMAL TAB_SPACE WORD SEMI LINE_JUMP
 auth_loc           			::= IDENT 'auth_loc'                TAB_SPACE PATH SEMI LINE_JUMP
 alias              			::= IDENT 'alias'                   TAB_SPACE PATH SEMI LINE_JUMP
 return             			::= IDENT 'return'                  TAB_SPACE return_type SEMI LINE_JUMP
-allowed_methods    			::= IDENT 'allowed_methods'         TAB_SPACE { HTTP_METHOD | TAB_SPACE } SEMI LINE_JUMP
+allowed_methods    			::= IDENT 'allowed_methods'         { HTTP_METHOD_SPACED } SEMI LINE_JUMP
 auth_required      			::= IDENT 'auth_required'           TAB_SPACE BOOL SEMI LINE_JUMP
 cgi_pass           			::= IDENT 'cgi_pass'                TAB_SPACE EXT TAB_SPACE PATH SEMI LINE_JUMP
 
@@ -36,7 +35,23 @@ location_directives ::= { root | index | alias | autoindex | return | add_header
 
 index_file_list		::= FILE [ SPACE ]
 
-HTTP_METHOD        ::= ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
+HTTP_METHOD_SPACED          ::= TAB_SPACE HTTP_METHOD
+
+HTTP_METHOD                 ::= ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
+
+sendfile_content            ::= 'on' TAB_SPACE PATH
+                            |= 'off'
+
+DIGIT_NOT_NULL              ::= [ '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ]
+UNIT                        ::= [ 'K' | 'M' | 'G' ]
+
+NUMBER_THREE                ::= DIGIT_NOT_NULL DIGIT DIGIT
+                            |=  DIGIT_NOT_NULL DIGIT
+                            |=  DIGIT_NOT_NULL
+
+NUMBER_THREE_UNIT           ::= NUMBER_THREE UNIT
+                            |= DIGIT_NOT_NULL { DIGIT }
+                            |= DIGIT_NOT_NULL
 
 ADDRESS            ::= ( IPV_FOUR | IPV_SIX | HOSTNAME )
 
@@ -166,7 +181,20 @@ SLASH				::= '/'
 WS					::= ( '\t' | '\n' | '\r' | ' ' )
 EXT                	::= DOT [ 'php' | 'py' | 'html' | 'htm' ]
 DOT                	::= '.'
-default_type_mime	::= ( 'application/octet-stream' )
+default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'application/json' | 'application/javascript' |
+						'application/vnd.ms-fontobject' | 'application/pdf' | 'application/xml' | 'application/zip' | 'application/gzip' | 'application/x-tar' |
+						'application/x-7z-compressed' | 'application/vnd.rar' | 'application/x-www-form-urlencoded' | 'application/x-yaml' | 'application/toml' |
+						'application/rtf' | 'application/x-sqlite3' | 'application/wasm' | 'application/octet-stream' | 'font/woff' | 'font/woff2' | 'font/ttf' |
+						'font/otf' | 'multipart/form-data' | 'audio/mpeg' | 'audio/wav' | 'audio/flac' | 'audio/ogg' | 'audio/aac' | 'video/mp4' | 'video/webm' |
+						'video/ogg' | 'video/x-msvideo' | 'video/x-matroska' | 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif' | 'image/svg+xml' |
+						'image/avif' | 'image/heic' | 'image/icns' | 'image/bmp' | 'image/tiff' | 'image/x-icon' | 'image/x-xpixmap' |
+                        'text/markdown' | 'text/x-c' | 'text/x-c++' | 'text/x-go' | 'text/rust' | 'text/x-python' | 'text/x-java-source' |
+                        'application/x-sh' | 'application/x-makefile' )
+
+
+WORD                ::= WORD_QUOTED
+                    |= WORD_NORMAL
+WORD_NORMAL         ::= { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE_ESC | '-' | '_' | '=' | BACKSLASH }
 WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE_ESC | '-' | '_' | '=' | WS | BACKSLASH | SEMI } DQUOTE
 
 
@@ -230,6 +258,45 @@ return_no_content					::= '204'
 return_reset_content				::= '205'
 
 
+error_page_directive                ::= 'error_page' TAB_SPACE error_code_list error_target
+
+error_code_list                     ::= { error_code_line }
+
+error_code_line                     ::= error_code TAB_SPACE
+
+error_code                          ::= '400'
+                                    |= '401'
+                                    |= '403'
+                                    |= '404'
+                                    |= '405'
+                                    |= '408'
+                                    |= '410'
+                                    |= '413'
+                                    |= '418'
+                                    |= '429'
+                                    |= '500'
+                                    |= '502'
+                                    |= '503'
+                                    |= '504'
+
+error_target                        ::= uri
+
+response_code                       ::= '200'
+                                    |= '201'
+                                    |= '202'
+                                    |= '204'
+                                    |= '301'
+                                    |= '302'
+                                    |= '307'
+                                    |= '308'
+                                    |= '400'
+                                    |= '401'
+                                    |= '403'
+                                    |= '404'
+                                    |= '500'
+
+uri                                 ::= PATH
+                                    |= WORD_QUOTED
 
 
 
@@ -237,8 +304,7 @@ return_reset_content				::= '205'
 
 
 
-WORD               ::= [ WORD_QUOTED ] [ WORD_NORMAL ]
-WORD_NORMAL        ::= { LETTER | '.' | '-' | '_' | DIGIT | '=' }
+
 
 NUMBER             ::= { DIGIT }
 BOOL               ::= ( 'on' | 'off' )

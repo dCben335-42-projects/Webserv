@@ -287,7 +287,7 @@ bool Parser::parseCurrentChar(
  * @param rule The ARule to be checked.
  * @return true if the ARule is fully optional, false otherwise.
  */
-bool Parser::isFullyOptional(const ARule &rule) const
+bool Parser::isFullyOptional(const ARule &rule)
 {
 	std::map<const ARule *, bool>::iterator cacheIt = m_optionalCache.find(&rule);
 	if (cacheIt != m_optionalCache.end())
