@@ -13,11 +13,15 @@ class Upload
 		Upload();
 		Upload(const Upload &other);
 
+		Upload &operator=(const Upload &other);
+
 		const std::string &getUploadDir() const;
 		bool			   isOn() const;
 
 		void setUploadDir(const std::string &uploadDir);
 		void setOn(bool isOn);
 };
+
+std::ostream &operator<<(std::ostream &os, const Upload &upload);
 
 #endif

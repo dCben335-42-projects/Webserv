@@ -553,7 +553,7 @@ std::string HttpRequest::getUploadPath() const
 	{
 		--it;
 		if ((*it).hasUpload())
-			return (*it).getUpload();
+			return (*it).getUpload().getUploadDir();
 	}
 	return "";
 }

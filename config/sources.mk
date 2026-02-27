@@ -2,6 +2,7 @@ SRC_FILES += Config/CgiParams/CgiParams.cpp
 SRC_FILES += Config/Config.cpp
 SRC_FILES += Config/Location/Location.cpp
 SRC_FILES += Config/Location/LocationReturn/LocationReturn.cpp
+SRC_FILES += Config/Location/Upload/Upload.cpp
 SRC_FILES += ConfigManager/ConfigManager.cpp
 SRC_FILES += ConfigManager/Parser/ConfigNode/AConfigNode.cpp
 SRC_FILES += ConfigManager/Parser/ConfigNode/HttpNode/HttpNode.cpp

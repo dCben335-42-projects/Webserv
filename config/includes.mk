@@ -2,6 +2,7 @@ INCLUDES_FLAGS += -I ./srcs/Config/CgiParams
 INCLUDES_FLAGS += -I ./srcs/Config
 INCLUDES_FLAGS += -I ./srcs/Config/Location
 INCLUDES_FLAGS += -I ./srcs/Config/Location/LocationReturn
+INCLUDES_FLAGS += -I ./srcs/Config/Location/Upload
 INCLUDES_FLAGS += -I ./srcs/ConfigManager
 INCLUDES_FLAGS += -I ./srcs/ConfigManager/Parser/ConfigNode
 INCLUDES_FLAGS += -I ./srcs/ConfigManager/Parser/ConfigNode/HttpNode

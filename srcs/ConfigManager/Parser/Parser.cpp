@@ -10,7 +10,7 @@ const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_ROOT, &Location::setRoot, NULL, NULL, NULL},
 	{PARSER_KEY_ALIAS, &Location::setAlias, NULL, NULL, NULL},
 	{PARSER_KEY_AUTOINDEX, NULL, &Location::setAutoIndex, NULL, NULL},
-	{PARSER_KEY_UPLOAD, &Location::setUpload, NULL, NULL, NULL},
+	{PARSER_KEY_UPLOAD, NULL, NULL, &Location::setUpload, NULL},
 	{PARSER_KEY_INDEX, NULL, NULL, &Location::setIndexes, NULL},
 	{PARSER_KEY_METHODS, NULL, NULL, &Location::setMethods, NULL},
 	{PARSER_KEY_RETURN, NULL, NULL, &Location::setReturn, NULL}};

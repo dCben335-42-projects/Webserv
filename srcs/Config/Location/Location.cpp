@@ -9,9 +9,9 @@ Location::Location()
 
 	m_autoIndex = std::make_pair(false, false);
 
-	m_root		= std::make_pair(false, std::string());
-	m_alias		= std::make_pair(false, std::string());
-	m_uploadDir = std::make_pair(false, std::string());
+	m_root	 = std::make_pair(false, std::string());
+	m_alias	 = std::make_pair(false, std::string());
+	m_upload = std::make_pair(false, Upload());
 
 	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
 	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
@@ -33,9 +33,9 @@ Location::Location(const std::string path)
 
 	m_autoIndex = std::make_pair(false, false);
 
-	m_root		= std::make_pair(false, std::string());
-	m_alias		= std::make_pair(false, std::string());
-	m_uploadDir = std::make_pair(false, std::string());
+	m_root	 = std::make_pair(false, std::string());
+	m_alias	 = std::make_pair(false, std::string());
+	m_upload = std::make_pair(false, Upload());
 
 	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
 	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
@@ -49,7 +49,7 @@ Location::Location(const Location &other)
 
 	m_root			 = other.m_root;
 	m_alias			 = other.m_alias;
-	m_uploadDir		 = other.m_uploadDir;
+	m_upload		 = other.m_upload;
 	m_autoIndex		 = other.m_autoIndex;
 	m_return		 = other.m_return;
 	m_indexFiles	 = other.m_indexFiles;
@@ -170,9 +170,9 @@ const Set<HttpMethod> &Location::getAllowedMethods() const
  * @return true if file uploads are allowed, false otherwise.
  *
  */
-const std::string &Location::getUpload() const
+const Upload &Location::getUpload() const
 {
-	return m_uploadDir.second;
+	return m_upload.second;
 }
 
 /**
@@ -280,7 +280,7 @@ bool Location::hasCgi() const
  */
 bool Location::hasUpload() const
 {
-	return m_uploadDir.first;
+	return m_upload.first;
 }
 
 /**
@@ -398,19 +398,6 @@ void Location::setMethods(const Vec<std::string> &methods)
 
 /**
  *
- * @brief Sets whether file uploads are allowed for the location.
- *
- * @param upload A boolean indicating whether to allow file uploads.
- *
- */
-void Location::setUpload(const std::string &upload)
-{
-	m_uploadDir.first  = true;
-	m_uploadDir.second = upload;
-}
-
-/**
- *
  * @brief Sets the return value for the location.
  *
  * @param returnVal A LocationReturn object representing the return value to be set.
@@ -464,6 +451,30 @@ void Location::addIndexFile(const std::string &indexFile)
 {
 	m_indexFiles.first = true;
 	m_indexFiles.second.push(indexFile);
+}
+
+/**
+ *
+ * @brief Sets the upload directory for the location using a vector of strings.
+ *
+ * @param upload A vector containing either 'on' with the upload directory or 'off' to disable uploads.
+ *
+ */
+void Location::setUpload(const Vec<std::string> &upload)
+{
+	if (upload.empty())
+		return;
+	m_upload.first = true;
+	if (upload[0] == "on" && upload.size() >= 2)
+	{
+		m_upload.second.setOn(true);
+		m_upload.second.setUploadDir(upload[1]);
+	}
+	else if (upload[0] == "off")
+	{
+		m_upload.second.setOn(false);
+		m_upload.second.setUploadDir("");
+	}
 }
 
 

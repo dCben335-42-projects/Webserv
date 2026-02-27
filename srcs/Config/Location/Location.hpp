@@ -7,6 +7,8 @@
 #include "CgiParams.hpp"
 #include "Vec.hpp"
 
+#include "Upload.hpp"
+
 class Location
 {
 	private:
@@ -14,11 +16,13 @@ class Location
 
 		const CgiParams *m_cgi;
 
-		std::pair<bool, std::string>	m_root;
-		std::pair<bool, std::string>	m_alias;
-		std::pair<bool, std::string>	m_uploadDir;
+		std::pair<bool, std::string> m_root;
+		std::pair<bool, std::string> m_alias;
+		// std::pair<bool, std::string>	m_uploadDir;
 		std::pair<bool, bool>			m_autoIndex;
 		std::pair<bool, LocationReturn> m_return;
+		std::pair<bool, Upload>			m_upload;
+		std::pair<bool, std::string>	m_maxBodySize;
 
 		// clang-format off
 		std::pair<bool, Set<HttpMethod> >  m_allowedMethods;
@@ -41,7 +45,7 @@ class Location
 		bool					getAutoIndex() const;
 		const CgiParams		   *getCgiParams() const;
 		const Set<HttpMethod>  &getAllowedMethods() const;
-		const std::string	   &getUpload() const;
+		const Upload		   &getUpload() const;
 		const LocationReturn   &getReturn() const;
 
 		bool hasAlias() const;
@@ -51,9 +55,9 @@ class Location
 		bool hasAutoIndex() const;
 		bool hasCgiParams() const;
 		bool hasMethods() const;
-		bool hasUpload() const;
 		bool hasReturn() const;
 		bool hasIndexes() const;
+		bool hasUpload() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
@@ -67,6 +71,7 @@ class Location
 		void setReturn(const LocationReturn &returnVal);
 		void setReturn(const Vec<std::string> &returnVal);
 		void setIndexes(const Vec<std::string> &indexFiles);
+		void setUpload(const Vec<std::string> &upload);
 };
 
 std::ostream &operator<<(std::ostream &os, const Location &location);
