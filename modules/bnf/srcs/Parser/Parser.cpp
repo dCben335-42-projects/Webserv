@@ -5,6 +5,7 @@
 #include "../ARulePathInfo/ARulePathInfo.hpp"
 #include "Json.hpp"
 #include "../BNFPath/BNFPath.hpp"
+#include "../BNFSignals/BNFSignals.hpp"
 
 /**
  * @brief Constructs a Parser object with the given SemanticDescriptor.
@@ -448,6 +449,8 @@ void Parser::parse(const std::string &stringToParsed)
 
 	for (size_t i = 0; i < size; ++i)
 	{
+		if (BNFSignals::getEnd())
+			throw FileNotFinishedException("Parsing was interrupted by a termination signal.");
 		c = stringToParsed[i];
 		if (!parseCurrentChar(c, mapPathCurrent, mapPathNext))
 			throwInvalidEntryException(mapPathCurrent, c, i);

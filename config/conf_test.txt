@@ -4,11 +4,12 @@
 http              ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
 http_directives   ::= { default_type | keepalive_timeout | client_header_timeout | client_body_timeout 
                      | client_max_body_size | autoindex | sendfile 
-                     | error_page | server }
+                     | error_page | server | IDENT_DIRECTIVE }
+
+IDENT_DIRECTIVE     ::= IDENT [LINE_JUMP]
 
 server            ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
-server_directives ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc }
-					|= [LINE_JUMP]
+server_directives ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc | IDENT_DIRECTIVE | autoindex }
 
 default_type      			::= IDENT 'default_type' 	        TAB_SPACE default_type_mime 			SEMI LINE_JUMP
 keepalive_timeout 			::= IDENT 'keepalive_timeout' 		TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
@@ -31,9 +32,9 @@ auth_required      			::= IDENT 'auth_required'           TAB_SPACE BOOL SEMI LI
 cgi_pass           			::= IDENT 'cgi_pass'                TAB_SPACE EXT TAB_SPACE PATH SEMI LINE_JUMP
 
 location           	::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [LINE_JUMP]
-location_directives ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass }
+location_directives ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | autoindex }
 
-index_file_list		::= FILE [ SPACE ]
+index_file_list		::= PATH [ SPACE ]
 
 HTTP_METHOD_SPACED          ::= TAB_SPACE HTTP_METHOD
 
@@ -154,11 +155,10 @@ BRACE_IN           ::= '{'
 BRACE_OUT          ::= '}'
 SEMI               ::= ';'
 
-FILE               ::= SEGMENT_STR
-
 PATH				::= [ '/' ] { SEGMENT }
 					|= PROTOCOL ':' SLASH SLASH { SEGMENT }
 					|= '/'
+                    |= DQUOTE { SEGMENT_QUOTED } DQUOTE
 
 PROTOCOL			::= 'https'
 					|= 'http'
@@ -168,8 +168,15 @@ SEGMENT				::= { DOT } SEGMENT_STR [ '/' ]
 					|= DOT DOT [ '/' ]
 					|= SEGMENT_STR [ '/' ]
 
-SEGMENT_STR			::= { LETTER | DIGIT | DOT | DQUOTE | '-' | '_' | '=' }
-					|= WORD_QUOTED
+SEGMENT_QUOTED      ::= { DOT } SEGMENT_QUOTED_STR [ '/' ]
+					|= DOT [ '/' ]
+					|= DOT DOT [ '/' ]
+					|= SEGMENT_QUOTED_STR [ '/' ]
+
+SEGMENT_STR			    ::= { LETTER | DIGIT | DOT | DQUOTE | '-' | '_' | '=' | SQUOTE }
+SEGMENT_QUOTED_STR		::= { LETTER | DIGIT | SYMBOL_FILE | SPACE }
+
+SYMBOL_FILE         ::= ( '-' | '_' | '.' | '~' | '!' | '$' | '&' | '\'' | '(' | ')' | '@' | '^' | '`' | '{' | '}' | ',' | ';' | '=' | '+' )
 
 DQUOTE				::= '"'
 SQUOTE				::= '\''
@@ -195,7 +202,7 @@ default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' |
 WORD                ::= WORD_QUOTED
                     |= WORD_NORMAL
 WORD_NORMAL         ::= { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE_ESC | '-' | '_' | '=' | BACKSLASH }
-WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE_ESC | '-' | '_' | '=' | WS | BACKSLASH | SEMI } DQUOTE
+WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | '-' | '_' | '=' | WS | BACKSLASH | SEMI } DQUOTE
 
 
 return_type					::= ( return_bad_request | return_unauthorized | return_forbidden | return_not_found | return_method_not_allowed
@@ -258,11 +265,7 @@ return_no_content					::= '204'
 return_reset_content				::= '205'
 
 
-error_page_directive                ::= 'error_page' TAB_SPACE error_code_list error_target
-
-error_code_list                     ::= { error_code_line }
-
-error_code_line                     ::= error_code TAB_SPACE
+error_page_directive                ::= 'error_page' TAB_SPACE error_code TAB_SPACE error_target
 
 error_code                          ::= '400'
                                     |= '401'

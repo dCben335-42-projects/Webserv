@@ -3,9 +3,11 @@
 #include "FileManager.hpp"
 #include "Logger.hpp"
 #include "EventLoop.hpp"
+#include <csignal>
 
 int main()
 {
+	signal(SIGINT, SIG_IGN);
 	try
 	{
 		const std::string content = FileManager::readFile("config/conf_test.txt");

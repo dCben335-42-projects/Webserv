@@ -2,6 +2,7 @@
 #include <iostream>
 #include "./SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
+#include "../BNFSignals/BNFSignals.hpp"
 
 using namespace bnf;
 
@@ -12,6 +13,7 @@ using namespace bnf;
  */
 SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL), m_recursiveConceptAuthorize(false)
 {
+	BNFSignals::catchSigs();
 	try
 	{
 		std::istringstream iss(m_content);
@@ -150,6 +152,8 @@ void SemanticDescriptor::parseBlocks()
 	const size_t blocksCount = blocks.size();
 	for (size_t i = 0; i < blocksCount; ++i)
 	{
+		if (BNFSignals::getEnd())
+			throw InterruptedProgramException("BNF semantic descriptor");
 		if (findSeparator(blocks[i], pos))
 		{
 			parseConceptName(blocks[i].substr(0, pos));

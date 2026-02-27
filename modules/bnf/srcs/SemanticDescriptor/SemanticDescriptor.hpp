@@ -24,6 +24,7 @@
 #include "../Exception/BadPrefixException.hpp"
 #include "../Exception/RecursiveConceptException.hpp"
 #include "../Exception/RecursiveLoopConceptException.hpp"
+#include "../Exception/InterruptedProgramException.hpp"
 
 class SemanticDescriptor
 {
