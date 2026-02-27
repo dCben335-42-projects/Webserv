@@ -67,12 +67,17 @@ size_t Number::toSizeT(const std::string &str)
 
 unsigned short Number::toUShort(const std::string &str)
 {
-	return static_cast<unsigned short>(std::atoi(str.c_str()));
+	return static_cast<unsigned short>(std::strtoul(str.c_str(), NULL, 10));
 }
 
 int Number::toInt(const std::string &str)
 {
-	return std::atoi(str.c_str());
+	return static_cast<int>(std::strtol(str.c_str(), NULL, 10));
+}
+
+unsigned long Number::toULong(const std::string &str)
+{
+	return static_cast<unsigned long>(std::strtoul(str.c_str(), NULL, 10));
 }
 
 std::string Number::bytesToHumanSize(const size_t bytes)

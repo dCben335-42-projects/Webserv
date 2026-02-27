@@ -9,12 +9,24 @@ SocketAddress::SocketAddress()
 	std::memset(&m_storage, 0, sizeof(m_storage));
 	m_length = 0;
 	m_isIPv6 = false;
+	m_port	 = 0;
+	m_ip	 = "";
 }
 
 SocketAddress::SocketAddress(const std::string &ip, const unsigned short port)
 {
 	m_port = port;
+	m_ip   = ip;
 	initIP(ip, port);
+}
+
+SocketAddress::SocketAddress(const SocketAddress &other)
+{
+	std::memcpy(&m_storage, &other.m_storage, sizeof(m_storage));
+	m_length = other.m_length;
+	m_isIPv6 = other.m_isIPv6;
+	m_port	 = other.m_port;
+	m_ip	 = other.m_ip;
 }
 
 void SocketAddress::initIP(const std::string &ip, const unsigned short port)
@@ -66,6 +78,21 @@ void SocketAddress::initIPv6(const unsigned short port, const in6_addr sin6_addr
 
 	m_length = sizeof(struct sockaddr_in6);
 }
+
+bool SocketAddress::equal(const std::string &ip) const
+{
+	if (IPAddress::isIPv6(ip) != m_isIPv6)
+		return false;
+	if (m_isIPv6)
+	{
+		const std::string		   ipWithoutBrackets = ip.substr(1, ip.size() - 2);
+		struct in6_addr			   addr				 = IPAddress::convertIPv6(ipWithoutBrackets);
+		const struct sockaddr_in6 *currentAddr		 = reinterpret_cast<const struct sockaddr_in6 *>(&m_storage);
+		return std::memcmp(&currentAddr->sin6_addr, &addr, sizeof(in6_addr)) == 0;
+	}
+	return ip == m_ip;
+}
+
 
 SocketAddress SocketAddress::any(const bool ipv6, const unsigned short port)
 {

@@ -5,18 +5,17 @@
 
 namespace bnf
 {
-SemanticDescriptor::SemanticDescriptor(const std::string &m_content) :
-	m_fileContent(m_content),
-	tree(NULL)
+
+SemanticDescriptor::SemanticDescriptor() : tree(NULL)
 {
 }
 
 
-void SemanticDescriptor::parse()
+void SemanticDescriptor::parse(const std::string &fileContent)
 {
 	try
 	{
-		std::istringstream iss(m_fileContent);
+		std::istringstream iss(fileContent);
 		splitBlocks(iss);
 		parseBlocks();
 	}

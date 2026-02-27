@@ -4,7 +4,6 @@
 #include "Number.hpp"
 
 const Parser::Directive<Config> Parser::m_serverDirectives[] = {
-	{PARSER_KEY_LISTEN, &Config::setIp, NULL, NULL, NULL},
 	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL}};
 
 const Parser::Directive<Location> Parser::m_locationDirectives[] = {
@@ -47,7 +46,7 @@ const Config &Parser::getHttpConfig() const
  * @return A constant reference to the vector of server configurations.
  *
  */
-const Parser::VServerConfigs &Parser::getServersConfigs() const
+const VServersConfigs &Parser::getServersConfigs() const
 {
 	return m_serversConfigs;
 }
@@ -365,8 +364,11 @@ void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator
 	Location location;
 	while (dit != end)
 	{
-		applyDirective(location, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount);
-		Logger::debug("Applied directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
+		if (!applyDirective(location, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount))
+		{
+			if (dit->first != PARSER_KEY_LISTEN)
+				Logger::warn("Unknown directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
+		}
 		++dit;
 	}
 	config.setLocation(locIt->first, location);
@@ -387,7 +389,8 @@ void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator
  */
 void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 {
-	Config	 serverConfig(m_httpConfig);
+	Config serverConfig(m_httpConfig);
+	serverConfig.setAddress(serverNode.getSocketAddress());
 	Location defaultLocation(m_httpConfig.getDefaultLocation());
 
 	const AConfigNode::Directives		&directives = serverNode.getDirectives();
@@ -400,7 +403,8 @@ void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 		{
 			if (!applyDirective(defaultLocation, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount))
 			{
-				Logger::warn("Unknown directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
+				if (dit->first != PARSER_KEY_LISTEN)
+					Logger::warn("Unknown directive " + Logger::get(dit->first) + " with value: " + Logger::get(dit->second));
 			}
 		}
 		++dit;
@@ -433,6 +437,8 @@ void Parser::createHttpConfig()
 	Location defaultLocation;
 	while (dit != end)
 	{
+		if (dit->first == PARSER_KEY_LISTEN)
+			continue;
 		if (!applyDirective(m_httpConfig, dit->first, dit->second, m_serverDirectives, m_serverDirectivesCount))
 		{
 			if (!applyDirective(defaultLocation, dit->first, dit->second, m_locationDirectives, m_locationDirectivesCount))

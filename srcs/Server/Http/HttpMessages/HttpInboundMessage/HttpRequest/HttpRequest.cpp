@@ -474,6 +474,7 @@ std::string HttpRequest::readHost(const std::string &currentHeader) const
  * @return The constructed resource path as a string.
  *
  * @throws std::out_of_range if the segment index is out of range.
+ * @throws Http404Exception if no valid location with root or alias is found.
  *
  */
 std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
@@ -498,6 +499,8 @@ std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
 			isRoot		  = true;
 		}
 	}
+	if (!validLocation)
+		throw Http404Exception();
 	std::string resourcePath = isRoot ? validLocation->getRoot() : validLocation->getAlias();
 	if (segmentIndex == -1)
 		return resourcePath;

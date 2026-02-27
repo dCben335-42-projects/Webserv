@@ -4,6 +4,7 @@
 #include "Pollable.hpp"
 #include "Vec.hpp"
 #include "Map.hpp"
+#include "Config.hpp"
 
 class EventLoop
 {
@@ -12,6 +13,7 @@ class EventLoop
 		static Vec<pollfd>			m_pollFds;
 		static Map<int, Pollable *> m_handlers;
 		static size_t				m_nfds;
+		static bool					m_isRunning;
 
 		static void		 deletePollable(const int fd, const size_t &index);
 		static Pollable *getHandler(const int fd);
@@ -20,12 +22,13 @@ class EventLoop
 
 
 	public:
-		static void init();
+		static void init(const Config &httpConfig, const VServersConfigs &serversConfigs);
 		static void run();
 		static void destroy();
 
 		static void	  addHandler(Pollable *const handler);
 		static size_t getNfds();
+		static void	  setIsRunning(bool isRunning);
 };
 
 

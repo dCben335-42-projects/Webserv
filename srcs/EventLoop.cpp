@@ -9,67 +9,23 @@
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
-size_t				 EventLoop::m_nfds = 0;
+size_t				 EventLoop::m_nfds		= 0;
+bool				 EventLoop::m_isRunning = false;
 
-void EventLoop::init()
+void EventLoop::init(const Config &httpConfig, const VServersConfigs &serversConfigs)
 {
-	const std::string ip  = "0.0.0.0";
-	const std::string ip2 = "127.0.0.1";
-
-	Location defaultLocation = Location("");
-	defaultLocation.setRoot("files/www/website");
-	defaultLocation.setAutoIndex(true);
-
-	Location		 slashLoc = Location("/");
-	Map<std::string> binSlash;
-	binSlash.set(".py", "/usr/bin/python3");
-	slashLoc.setAutoIndex(true);
-	CgiParams *py = new CgiParams(binSlash);
-	slashLoc.setCgiParams(py);
-
-	Location		 bin = Location("/cgi-bin");
-	Map<std::string> binmap1;
-	binmap1.set(".php", "/usr/bin/php");
-	CgiParams *cgi = new CgiParams(binmap1);
-	bin.setCgiParams(cgi);
-	bin.setAlias("files/www/usr/bin/");
-	bin.setAutoIndex(true);
-
-
-	Location uploadLocation = Location("/uploads");
-	uploadLocation.setAutoIndex(true);
-	uploadLocation.setUpload("files/www/uploads");
-	uploadLocation.setAlias("files/www/uploads");
-	Set<HttpMethod> methods;
-	methods.push(HttpMethod::GET);
-	methods.push(HttpMethod::POST);
-	methods.push(HttpMethod::PUT);
-	// methods.push(HttpMethod::POST);
-	uploadLocation.setMethods(methods);
-
-	Config *config1 = new Config();
-	config1->setIp(ip);
-	config1->setPort(8080);
-	config1->setDefaultLocation(defaultLocation);
-	config1->setLocation("/cgi-bin", bin);
-	config1->setLocation("/uploads", uploadLocation);
-
-
-	Config	*config2		  = new Config();
-	Location defaultLocation2 = Location("");
-	defaultLocation2.setRoot("files/www/upload");
-	defaultLocation2.setAutoIndex(true);
-	config2->setIp(ip2);
-	config2->setPort(8080);
-	config2->setDefaultLocation(defaultLocation2);
-	config2->setLocation("/", slashLoc);
-
-
-
-
-	new VirtualServer(*(config1));
-	new VirtualServer(*(config2));
-
+	for (VServersConfCIt it = serversConfigs.begin(); it != serversConfigs.end(); ++it)
+	{
+		const SocketAddress &address	   = it->first;
+		const ServerConfigs &serverConfigs = it->second;
+		VirtualServer *const server		   = new VirtualServer(address, httpConfig, serverConfigs);
+		if (server->getConnectionClosed())
+		{
+			delete server;
+			continue;
+		}
+		addHandler(server);
+	}
 	Signals::catchSigs();
 }
 
@@ -116,9 +72,10 @@ void EventLoop::destroy()
 void EventLoop::run()
 {
 	int ready;
+	m_isRunning = true;
 
 	std::srand(std::time(0));
-	while (true)
+	while (m_isRunning)
 	{
 		updatePollStatus();
 		ready = poll(&m_pollFds[0], m_pollFds.size(), POLL_TIMEOUT);
@@ -263,4 +220,17 @@ Pollable *EventLoop::getHandler(int fd)
 size_t EventLoop::getNfds()
 {
 	return m_nfds;
+}
+
+
+/**
+ *
+ * @brief Sets the running state of the event loop.
+ *
+ * @param isRunning A boolean value indicating whether the event loop should be running (true) or stopped (false).
+ *
+ */
+void EventLoop::setIsRunning(bool isRunning)
+{
+	m_isRunning = isRunning;
 }

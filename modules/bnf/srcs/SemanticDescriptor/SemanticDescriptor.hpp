@@ -28,15 +28,14 @@ namespace bnf
 class SemanticDescriptor
 {
 	private:
-		const std::string &m_fileContent;
-		ConceptNode		  *tree;
-		Vec<std::string>   blocks;
-		Map<ConceptNode>   m_data;
-		Vec<Concept>	   m_concepts_data;
-		ARuleMap		   m_startPath;
-		Map<Concept *>	   m_concepts;
-		std::string		   m_lastKey;
-		bool			   m_recursiveConceptAuthorize;
+		ConceptNode		*tree;
+		Vec<std::string> blocks;
+		Map<ConceptNode> m_data;
+		Vec<Concept>	 m_concepts_data;
+		ARuleMap		 m_startPath;
+		Map<Concept *>	 m_concepts;
+		std::string		 m_lastKey;
+		bool			 m_recursiveConceptAuthorize;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);
@@ -58,10 +57,10 @@ class SemanticDescriptor
 		void			 findAllNext();
 
 	public:
-		SemanticDescriptor(const std::string &bfnFileContent);
+		SemanticDescriptor();
 		~SemanticDescriptor();
 
-		void parse();
+		void parse(const std::string &fileContent);
 
 		SemanticDescriptor &operator=(const SemanticDescriptor &other);
 

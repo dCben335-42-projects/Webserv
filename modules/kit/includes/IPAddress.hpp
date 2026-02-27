@@ -1,8 +1,6 @@
 #ifndef KIT_IP_ADDRESS_HPP
 #define KIT_IP_ADDRESS_HPP
 
-#pragma once
-
 #include <string>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -29,7 +27,11 @@ class IPAddress
 
 	public:
 		static bool isHostname(const std::string &ip);
-		static bool isIPv4(const std::string &ip);
+		static bool extractPort(
+			const std::string &ip,
+			unsigned short	  &port,
+			size_t			  &startPos,
+			bool			  &invalidPort);
 		static bool isIPv6(const std::string &ip);
 
 		static struct in6_addr convertIPv6(const std::string &ip);
@@ -38,4 +40,4 @@ class IPAddress
 		static struct addrinfo *resolveHost(const std::string &hostname);
 };
 
-#endif // KIT_IP_ADDRESS_HPP
+#endif

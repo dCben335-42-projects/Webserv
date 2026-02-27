@@ -7,13 +7,13 @@ bool Signals::m_isDestroyed = false;
 void Signals::sendStop(int signum)
 {
 	(void) signum;
-	if (!m_isDestroyed)
+	if (m_isChild && !m_isDestroyed)
 	{
 		m_isDestroyed = true;
 		EventLoop::destroy();
 	}
-	if (!m_isChild)
-		exit(0);
+	else
+		EventLoop::setIsRunning(false);
 }
 
 void Signals::catchSigs()

@@ -40,14 +40,8 @@
 
 #include "Config.hpp"
 
-typedef Vec<Config> ServerConfigs;
-
 class Parser
 {
-	public:
-		typedef Map<SocketAddress, ServerConfigs> VServerConfigs;
-		typedef VServerConfigs::const_iterator	  VServerConfCIt;
-
 	private:
 		template <typename T>
 		struct Directive
@@ -68,7 +62,7 @@ class Parser
 		HttpNode		   m_http;
 		const std::string &m_content;
 		Config			   m_httpConfig;
-		VServerConfigs	   m_serversConfigs;
+		VServersConfigs	   m_serversConfigs;
 
 		static const Directive<Location> m_locationDirectives[];
 		static const Directive<Config>	 m_serverDirectives[];
@@ -116,8 +110,8 @@ class Parser
 		Parser(const std::string &fileContent);
 		~Parser();
 
-		const Config		 &getHttpConfig() const;
-		const VServerConfigs &getServersConfigs() const;
+		const Config		  &getHttpConfig() const;
+		const VServersConfigs &getServersConfigs() const;
 
 		void retreive();
 		void resolve();

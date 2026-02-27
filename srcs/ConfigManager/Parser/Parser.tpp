@@ -39,8 +39,6 @@ bool Parser::applyNumberDirective(T &obj, const DirectiveType &directive, const 
 	return true;
 }
 
-#include "Logger.hpp"
-
 template <typename T, typename DirectiveType>
 bool Parser::applyDirective(
 	T					   &obj,

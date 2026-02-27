@@ -466,6 +466,7 @@ bool Client::prepareResponse()
 	return true;
 }
 
+#include "IPAddress.hpp"
 
 /**
  *
@@ -476,22 +477,34 @@ bool Client::prepareResponse()
  *
  * @return A pointer to the Config object that matches the client's request, or the default configuration if no match is found.
  *
+ * @throws Http400Exception if the Host header contains an invalid port number.
+ *
  */
 const Config *Client::findHostConfig(const std::string &host) const
 {
-	const size_t	  pos				  = host.find(':');
-	const std::string extractedServerName = pos != std::string::npos ? host.substr(0, pos) : host;
+	bool		   invalidPort = false;
+	unsigned short port;
+	size_t		   portPos;
 
-	const Vec<const Config *> &confs = m_server.getConfigs();
-	for (Vec<const Config *>::const_iterator it = confs.begin(); it != confs.end(); ++it)
+	bool hasPort = IPAddress::extractPort(host, port, portPos, invalidPort);
+	if (invalidPort)
+		throw Http400Exception("Invalid port in Host header");
+	const std::string extractedServerName = hasPort ? host.substr(0, portPos) : host;
+	Logger::debug("Extracted server name from Host header: " + extractedServerName);
+	const ServerConfigs &confs = m_server.getConfigs();
+	for (ServerConfigs::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
-		const Config &config = *(*it);
-		if (config.hasServerName() && config.getServerNames().contains(extractedServerName))
+		const Config &config = (*it);
+
+		if (config.getServerNames().contains(extractedServerName))
+			return &config;
+
+		const SocketAddress &address = config.getAddress();
+		if (address.equal(extractedServerName))
 			return &config;
 	}
-	return confs.at(0);
+	return &confs.at(0);
 }
-
 
 /**
  *

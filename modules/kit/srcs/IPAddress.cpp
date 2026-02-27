@@ -21,6 +21,61 @@ bool IPAddress::isHostname(const std::string &ip)
 	return !ip.empty() && std::isalpha(static_cast<unsigned char>(ip[0]));
 }
 
+
+/**
+ *
+ * @brief Extracts the port number from the given IP address string if it is present and valid.
+ *
+ * @param ip The IP address string from which to extract the port number.
+ * @param port A reference to an unsigned short variable where the extracted port number will be stored
+ * if the extraction is successful.
+ * @param startPos A reference to a size_t variable where the starting position of the port number in the IP string will be stored
+ * if the extraction is successful.
+ * @param invalidPort A reference to a string variable where the invalid port substring will be stored
+ * if the extraction fails due to an invalid port format.
+ *
+ *
+ * @return true if the port number was successfully extracted and is valid, false otherwise.
+ *
+ */
+bool IPAddress::extractPort(
+	const std::string &ip,
+	unsigned short	  &port,
+	size_t			  &startPos,
+	bool			  &invalidPort)
+{
+	const size_t pos = ip.rfind(':');
+	if (pos == std::string::npos || (pos > 0 && ip[pos - 1] == ':'))
+		return false;
+	const std::string portStr = ip.substr(pos + 1);
+	if (portStr.empty())
+		return false;
+	startPos = pos;
+	if (portStr.length() > 5)
+	{
+		invalidPort = true;
+		return false;
+	}
+	size_t i = 0;
+	while (i < portStr.length())
+	{
+		if (!std::isdigit(static_cast<unsigned char>(portStr[i])))
+		{
+			invalidPort = true;
+			return false;
+		}
+		++i;
+	}
+	unsigned long portLong = Number::toULong(portStr);
+	if (portLong > 0 && portLong <= 65535)
+	{
+		port = static_cast<unsigned short>(portLong);
+		return true;
+	}
+	invalidPort = true;
+	return false;
+}
+
 /**
  *
  * @brief Determines if the given IP address string is an IPv6 address.
@@ -36,7 +91,14 @@ bool IPAddress::isHostname(const std::string &ip)
  */
 bool IPAddress::isIPv6(const std::string &ip)
 {
-	return ip.find(':') != std::string::npos;
+	if (ip.empty())
+		return false;
+	if (ip.at(0) != '[')
+		return false;
+	const size_t closingBracketPos = ip.find(']');
+	if (closingBracketPos == std::string::npos)
+		return false;
+	return true;
 }
 
 
@@ -60,7 +122,6 @@ struct in6_addr IPAddress::buildIPv6(const uint16_t (&parts)[8])
 
 	for (int i = 0; i < 8; ++i)
 		addr.s6_addr16[i] = htons(parts[i]);
-
 	return addr;
 }
 

@@ -3,9 +3,7 @@
 #include "CgiParams.hpp"
 #include "webserv.hpp"
 
-Config::Config() :
-	m_ip(""),
-	m_port(0)
+Config::Config()
 {
 	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
@@ -14,8 +12,7 @@ Config::Config() :
 }
 
 Config::Config(const Config &other) :
-	m_ip(other.m_ip),
-	m_port(other.m_port),
+	m_address(other.m_address),
 	m_serverNames(other.m_serverNames),
 	m_defaultLocation(other.m_defaultLocation),
 	m_locations(other.m_locations),
@@ -30,30 +27,6 @@ Config::Config(const Config &other) :
 Config::~Config()
 {
 	m_locations.clear();
-}
-
-
-/**
- *
- * @brief Gets the IP address of the virtual server.
- *
- * @return The IP address as a constant reference to a string.
- *
- */
-const std::string &Config::getIp() const
-{
-	return m_ip;
-}
-/**
- *
- * @brief Gets the port number of the virtual server.
- *
- * @return The port number as an unsigned short.
- *
- */
-unsigned short Config::getPort() const
-{
-	return m_port;
 }
 
 
@@ -85,25 +58,14 @@ void Config::setDefaultLocation(const Location &location)
 
 /**
  *
- * @brief Sets the IP address of the virtual server.
+ * @brief Sets the socket address for the virtual server.
  *
- * @param ip The IP address to be set.
- *
- */
-void Config::setIp(const std::string &ip)
-{
-	m_ip = ip;
-}
-/**
- *
- * @brief Sets the port number of the virtual server.
- *
- * @param port The port number to be set.
+ * @param address The SocketAddress object containing the IP and port information.
  *
  */
-void Config::setPort(unsigned short port)
+void Config::setAddress(const SocketAddress &address)
 {
-	m_port = port;
+	m_address = address;
 }
 
 /**
@@ -268,6 +230,20 @@ bool Config::hasServerName() const
 }
 
 
+
+/**
+ *
+ * @brief Gets the IP address of the virtual server.
+ *
+ * @return The IP address as a constant reference to a string.
+ *
+ */
+const SocketAddress &Config::getAddress() const
+{
+	return m_address;
+}
+
+
 /**
  *
  * @brief Gets the server name for the virtual server.
@@ -314,8 +290,7 @@ std::ostream &operator<<(std::ostream &os, const Config &config)
 {
 	const Config::LocationsMap &locations = config.getLocations();
 
-	os << "Config(ip=" << config.getIp()
-	   << ", port=" << config.getPort()
+	os << "Config(address=" << config.getAddress()
 	   << ", serverName=" << LoggerJson::get(config.getServerNames())
 	   << ", defaultLocation=" << LoggerJson::get(config.getDefaultLocation())
 	   << ", locations size=" << locations.size()

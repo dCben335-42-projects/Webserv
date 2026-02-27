@@ -7,7 +7,7 @@ http              ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
 http_directives   ::= { default_type | keepalive_timeout | client_header_timeout | client_body_timeout | client_max_body_size | client_max_header_size | autoindex | sendfile | error_page | server | root }
 
 server            ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
-server_directives ::= { listen | server_name | root | index | alias | location | sendfile | add_header | auth_loc }
+server_directives ::= { listen | server_name | root | index | alias | location | sendfile | add_header | auth_loc | autoindex }
 					|= [LINE_JUMP]
 
 default_type      			::= IDENT 'default_type' 			IDENT PATH 			SEMI LINE_JUMP

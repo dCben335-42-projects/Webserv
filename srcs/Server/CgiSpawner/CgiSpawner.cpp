@@ -82,7 +82,7 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar(CGI_REQUEST_METHOD, m_req.getMethod().getStrType()));
 	m_env.push(makeEnvVar(CGI_SCRIPT_NAME, m_scriptName));
 	m_env.push(makeEnvVar(CGI_SERVER_NAME, SERVER_NAME));
-	m_env.push(makeEnvVar(CGI_SERVER_PORT, Number::toString(m_config.getPort())));
+	m_env.push(makeEnvVar(CGI_SERVER_PORT, Number::toString(m_config.getAddress().getPort())));
 	m_env.push(makeEnvVar(CGI_SERVER_PROTOCOL, PROTOCOL));
 	m_env.push(makeEnvVar(CGI_SERVER_SOFTWARE, SERVER_NAME));
 	if (m_has_post_data)
