@@ -1,14 +1,11 @@
 #include "VirtualServer.hpp"
 #include "EventLoop.hpp"
 #include <fcntl.h>
-#include "Number.hpp"
 #include <unistd.h>
 #include <netdb.h>
-#include <arpa/inet.h>
 
 #include "Logger.hpp"
 #include "httpExceptions.hpp"
-#include "Date.hpp"
 
 #include "Client.hpp"
 #include "HttpUser.hpp"
@@ -334,6 +331,11 @@ bool VirtualServer::setupSocket(
 		m_fd = socket(m_isIPv6 ? AF_INET6 : AF_INET, SOCK_STREAM, 0);
 		if (m_fd < 0)
 			throw SocketCreationException();
+		if (fcntl(m_fd, F_SETFL, O_NONBLOCK) < 0)
+		{
+			// TODO Logger::openFile(errorFile).custom(ERROR_MSG_FCNTL_FAILED);
+			throw SocketCreationException();
+		}
 		setReusable(m_fd);
 		bindAndListen(m_fd, ip, port);
 		// TODO
@@ -425,6 +427,17 @@ void VirtualServer::onTimeOut()
 {
 }
 
+
+/**
+ *
+ * @brief Creates a user for the auth system, and a cookie associated with this user
+ *
+ * @param name The name of the user
+ * @param pswd The password of the user
+ *
+ * @throw Http409Exception() if the user already exists
+ *
+ */
 const std::string VirtualServer::createUser(const std::string name, const std::string pswd)
 {
 	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
@@ -438,6 +451,14 @@ const std::string VirtualServer::createUser(const std::string name, const std::s
 	return newUser.getStringifiedCookie();
 }
 
+
+/**
+ *
+ * @brief Checks if the Server has a specific user based on a hash
+ *
+ * @param hash The hash used to find the user in the server
+ *
+ */
 bool VirtualServer::hasUser(const std::string &hash) const
 {
 	AuthToken token(hash);
@@ -449,6 +470,19 @@ bool VirtualServer::hasUser(const std::string &hash) const
 	return false;
 }
 
+
+/**
+ *
+ * @brief Returns the cookie corresonding with the user settings in params
+ * Hashes thoses params and checks if the hash is already stored
+ *
+ * @param name The name of the user
+ * @param pswd The password of the user
+ * @param authLoc The location of authentification, used to redirect the user when invalid credentials are entered
+ *
+ * @throw Http301Exception() in case the User is not found
+ *
+ */
 const std::string &VirtualServer::findUser(const std::string &name, const std::string &pswd, const std::string &authLoc)
 {
 	for (UserIt it = m_users.begin(); it != m_users.end(); it++)
