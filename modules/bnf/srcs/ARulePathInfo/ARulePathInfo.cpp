@@ -1,63 +1,81 @@
 #include "ARulePathInfo.hpp"
+#include "../Rules/ARule.hpp"
+#include "Logger.hpp"
 
-ARulePathInfo::ARulePathInfo(const ARulePath &path) : path(path), terminalCharsInfo(Vec<TerminalCharInfo>())
+ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 {
+	const Vec<TerminalSymbol> &items = m_path.back()->getItems();
+
+	size_t		 terminalCount = 0;
+	const size_t n			   = items.size();
+
+	for (size_t i = 0; i < n; ++i)
+		if (items[i].isTerminalChar())
+			++terminalCount;
+
+	terminalCharsInfo.resize(terminalCount);
+
+	size_t idx = 0;
+	for (size_t i = 0; i < n; ++i)
+	{
+		const TerminalSymbol &item = items[i];
+
+		if (item.isTerminalChar())
+			terminalCharsInfo[idx++] =
+				TerminalCharInfo(0, item.getValue().size());
+	}
+
+	m_pathHash	= createPathHash(path);
+	replaceable = terminalCount;
+}
+
+void ARulePathInfo::resetTerminalCharsInfo()
+{
+	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
+		terminalCharsInfo[i].position = 0;
+	replaceable = terminalCharsInfo.size();
 }
 
 ARulePathInfo::~ARulePathInfo()
 {
 }
 
-
-bool ARulePathInfo::operator==(const ARulePathInfo &other) const
+size_t ARulePathInfo::createPathHash(const ARulePath &path)
 {
-	if (path.size() != other.path.size())
-		return false;
-	for (size_t i = 0; i < path.size(); ++i)
-	{
-		if (path[i] != other.path[i])
-			return false;
-	}
+	size_t pathHash = 0;
+	size_t size		= path.size();
+	for (size_t i = 0; i < size; ++i)
+		pathHash ^= reinterpret_cast<size_t>(path[i]) + (pathHash << 5) + (pathHash >> 2);
+	return pathHash;
+}
 
-	if (terminalCharsInfo.size() != other.terminalCharsInfo.size())
-		return false;
+const Vec<std::string> &ARulePathInfo::getValue() const
+{
+	return m_path.back()->getItemsValue();
+}
 
-	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
-	{
-		const TerminalCharInfo &info1 = terminalCharsInfo[i];
-		const TerminalCharInfo &info2 = other.terminalCharsInfo[i];
-
-		if (&info1.terminal != &info2.terminal ||
-			info1.position != info2.position ||
-			info1.length != info2.length)
-		{
-			return false;
-		}
-	}
-	return true;
+const ARulePath &ARulePathInfo::getPath() const
+{
+	return m_path;
 }
 
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 {
 	os << "ARulePathInfo(path=[";
-	for (size_t i = 0; i < data.path.size(); ++i)
+	for (size_t i = 0; i < data.getPath().size(); ++i)
 	{
-		os << data.path[i];
-		if (i < data.path.size() - 1)
+		os << data.getPath()[i];
+		if (i < data.getPath().size() - 1)
 			os << ", ";
 	}
 	os << "], charPtr=[";
-
-
 	for (size_t i = 0; i < data.terminalCharsInfo.size(); ++i)
 	{
 		const TerminalCharInfo &info = data.terminalCharsInfo[i];
-		os << "{terminal: \"" << info.terminal << "\", position: " << info.position << ", length: " << info.length << "}";
+		os << "{position: " << info.position << ", length: " << info.length << "}";
 		if (i < data.terminalCharsInfo.size() - 1)
 			os << ", ";
 	}
-
-
 	os << "])";
 	return os;
 }
@@ -65,6 +83,11 @@ std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 
 std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data)
 {
-	os << "{terminal: \"" << data.terminal << "\", position: " << data.position << ", length: " << data.length << "}";
+	os << "{position: " << data.position << ", length: " << data.length << "}";
 	return os;
+}
+
+size_t ARulePathInfo::getPathHash() const
+{
+	return m_pathHash;
 }

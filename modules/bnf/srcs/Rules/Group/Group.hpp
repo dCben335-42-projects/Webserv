@@ -14,6 +14,7 @@ class Group : public ARule
 		~Group();
 
 		const Vec<TerminalSymbol> &getItems() const;
+		const Vec<std::string>	  &getItemsValue() const;
 		std::string				   getPrintableValue() const;
 		const std::string		   getTypeName() const;
 		void					   addItem(const TerminalSymbol &val);

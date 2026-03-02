@@ -17,6 +17,8 @@ class TerminalSymbol
 		static TerminalSymbol specify(const std::string &val);
 		const std::string	 *getValuePtr() const;
 
+		TerminalSymbol &operator=(const TerminalSymbol &other);
+
 	protected:
 		std::string m_str;
 		bool		m_isTerminalChar;

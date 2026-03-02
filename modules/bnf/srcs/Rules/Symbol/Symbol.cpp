@@ -36,6 +36,9 @@ void Symbol::addItem(const TerminalSymbol &val)
 {
 	m_items.clear();
 	m_items.push_back(val);
+	m_itemsValue.clear();
+	if (val.isTerminalChar())
+		m_itemsValue.push_back(val.getValue());
 }
 
 const std::string &Symbol::getValue() const
@@ -43,6 +46,11 @@ const std::string &Symbol::getValue() const
 	if (m_items.empty())
 		throw std::runtime_error("Symbol::getValue(): No items in symbol");
 	return m_items[0].getValue();
+}
+
+const Vec<std::string> &Symbol::getItemsValue() const
+{
+	return m_itemsValue;
 }
 
 std::string Symbol::getPrintableValue() const

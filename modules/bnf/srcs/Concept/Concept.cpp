@@ -27,17 +27,12 @@ Concept::~Concept()
 
 void Concept::pushDef(ConceptDef *definition)
 {
-	definitions.push_back(definition);
-}
-
-Vec<ConceptDef *> &Concept::getDefinitions()
-{
-	return definitions;
+	m_definitions.push_back(definition);
 }
 
 const Vec<ConceptDef *> &Concept::getDefinitions() const
 {
-	return definitions;
+	return m_definitions;
 }
 
 const std::string Concept::getConceptName() const

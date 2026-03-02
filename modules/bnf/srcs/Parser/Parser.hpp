@@ -16,24 +16,24 @@
 
 #include "../Exception/Parser/InvalidEntryException.hpp"
 #include "../Exception/Parser/FileNotFinishedException.hpp"
-#include "../BNFPath/BNFPath.hpp"
+#include "../Exception/Parser/CacheFullException.hpp"
 
 namespace bnf
 {
 class Parser
 {
 	private:
-		mutable std::map<const ARule *, bool> m_optionalCache;
-		mutable std::set<const ARule *>		  m_optionalComputing;
-		Vec<const std::string *>			  m_conceptPaths;
-
-		const SemanticDescriptor &m_semantic;
+		std::map<const ARule *, bool> m_optionalCache;
+		std::set<const ARule *>		  m_optionalComputing;
+		Vec<const std::string *>	  m_conceptPaths;
+		Vec<ARulePathInfo>			  m_arulePathInfoList;
+		const SemanticDescriptor	 &m_semantic;
 
 		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
+		bool word(const char c, const ARule *const rule, ARulePathInfo *path, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t indexElementTerminalChar);
 
-		bool isFullyOptional(const ARule &rule) const;
+		bool isFullyOptional(const ARule &rule);
 		bool isFullyOptionalEndAdvance(const ARulePath &path);
-		// bool isFullyOptionalEnd(ARulePath path);
 		bool isFullyOptionalEnd(const ARulePath &path);
 
 		bool isValidEmptyFile();
@@ -44,20 +44,11 @@ class Parser
 		void addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext);
 
 		void getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath);
-		void precomputeOptional(const ARule *rule);
+		void processTerminalSymbol(const ARule *rule, ARulePath &path, ARuleMap &mapPath);
+		void createPathInfo(ARulePaths &element, const ARulePath &completePath);
 
-		void processTerminalSymbol(
-			const TerminalSymbol &symbol,
-			const ARule			 *rule,
-			ARulePath			 &path,
-			ARuleMap			 &mapPath);
-		bool word(
-			TerminalCharInfo  &data,
-			const char		   c,
-			const ARule *const rule,
-			const ARulePath	  &path,
-			const ARuleMap	  &mapPathCurrent,
-			ARuleMap		  &mapPathNext);
+		ARulePathInfo *createARulePathInfo(const ARulePath &path, size_t pathHash);
+		void		   throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const;
 
 	public:
 		Parser(const SemanticDescriptor &semantic);

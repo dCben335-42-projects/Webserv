@@ -9,7 +9,7 @@ AR 								= ar -rcs
 CXX         					= c++
 WWW_FLAGS    					= -Wall -Wextra -Werror 
 DEPS_FLAGS   					= -MMD -MP 
-CPP98_FLAGS  					= -std=c++98
+CPP98_FLAGS  					= -std=c++98 -g3
 CXX_FLAGS     					= $(WWW_FLAGS) $(CPP98_FLAGS) $(DEPS_FLAGS)
 
 # Tools

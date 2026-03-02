@@ -12,7 +12,6 @@ class Concept
 		~Concept();
 
 		void					  pushDef(ConceptDef *definition);
-		Vec<ConceptDef *>		 &getDefinitions();
 		const Vec<ConceptDef *>	 &getDefinitions() const;
 		const std::string		  getConceptName() const;
 		void					  addParent(const ARule *parent);
@@ -25,7 +24,7 @@ class Concept
 		const std::string  m_conceptName;
 		Set<const ARule *> m_terminalChars;
 		Set<const ARule *> m_parents;
-		Vec<ConceptDef *>  definitions;
+		Vec<ConceptDef *>  m_definitions;
 		bool			   m_isTerminalConcept;
 };
 

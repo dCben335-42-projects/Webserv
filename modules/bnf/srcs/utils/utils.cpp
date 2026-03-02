@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include "bnf_defs.hpp"
 
 bool startsWith(const std::string &s, const std::string &prefix)
 {
@@ -102,15 +103,14 @@ bool is_alpha_string(const std::string &s)
 bool validate_string_strict(const std::string &s)
 {
 	size_t len = s.size();
+	if (s == bnf::CURSOR)
+		return true;
 	if (len < 2)
 		return false;
 
 	if (s[0] == '\'' && s[len - 1] == '\'')
-	{
 		return true;
-	}
 
-	// sinon que lettres
 	for (size_t i = 0; i < len; ++i)
 		if (!std::isalpha(s[i]) && s[i] != '_')
 			return false;

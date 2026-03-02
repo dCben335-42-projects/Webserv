@@ -3,15 +3,17 @@
 
 #include <stdexcept>
 #include <string>
-#include "SemanticException.hpp"
+#include "../SemanticException.hpp"
 #include "bnf_defs.hpp"
 using namespace bnf;
 
 class ConceptNotFoundException : public SemanticException
 {
 	public:
-		explicit ConceptNotFoundException(const std::string &concept) : SemanticException("Concept not found: " + concept,
-																						  "ConceptNotFoundException") {};
+		explicit ConceptNotFoundException(const std::string &concept) :
+			SemanticException(
+				"Concept not found: " + concept,
+				"ConceptNotFoundException") {};
 };
 
 #endif

@@ -9,7 +9,9 @@ class InvalidEntryException : public SemanticException
 {
 	public:
 		explicit InvalidEntryException(const std::string &message) :
-			SemanticException(message, "BNF Parsing - InvalidEntryException") {};
+			SemanticException(
+				message,
+				"BNF Parsing - InvalidEntryException") {};
 };
 
 #endif

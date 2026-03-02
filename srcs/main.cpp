@@ -5,9 +5,6 @@
 #include "EventLoop.hpp"
 #include "webserv.hpp"
 
-
-#include "SocketAddress.hpp"
-
 /**
  *
  * @brief Reads the BNF and configuration files and stores their contents in the provided string references.
@@ -20,6 +17,7 @@
  */
 bool getFiles(std::string &bnf, std::string &config, const std::string &configPath)
 {
+	signal(SIGINT, SIG_IGN);
 	try
 	{
 		bnf	   = FileManager::readFile(BNF_FILE_PATH);

@@ -4,38 +4,23 @@
 #include <string>
 #include "bnf_defs.hpp"
 #include "../../Rules/ARule.hpp"
+#include "../../ARulePathInfo/ARulePathInfo.hpp"
 
 class ConceptDef
 {
 	public:
-		ConceptDef(const std::string conceptName);
+		ConceptDef();
 		~ConceptDef();
 
-		ARulePath			getRules();
-		ARulePath			getValues() const;
-		Vec<TerminalSymbol> getItemsOfARule(size_t index = 0);
-		Vec<TerminalSymbol> getItems();
-		Vec<std::string>	getItemsValue();
-		Vec<std::string>	getItemsWithOption();
-		bool				getIsTerminal() const;
-		void				computeOptionalIndex();
-		size_t				getOptionalEndIndex() const;
-		size_t				size() const;
-		const ARule		   *getARule(const size_t index) const;
-
-		void				finish();
-		void				setRule(const ARule *rule);
-		const std::string  &getConceptName() const;
-		Vec<TerminalSymbol> getItemsValueWithOption();
-		const ARulePath	   &getValuesConstRef() const;
-
-
+		const ARulePath			 &getRules() const;
+		const ARule				 *getARuleUnsafe(const size_t index) const;
+		const Vec<TerminalSymbol> getItems() const;
+		const Vec<TerminalSymbol> getItemsValueWithOption() const;
+		size_t					  size() const;
+		void					  setRule(const ARule *rule);
 
 	private:
-		const std::string m_conceptName;
-		ARulePath		  values;
-		bool			  isTerminal;
-		size_t			  optionalEndIndex;
+		ARulePath m_rules;
 };
 
 std::ostream &operator<<(std::ostream &os, const ConceptDef &data);

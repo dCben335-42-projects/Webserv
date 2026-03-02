@@ -40,4 +40,6 @@ namespace bnf
 	static const std::string ERR_CONCEPT_NOT_DEFINED	 = "\033[33mError: Concept not defined\033[0m";
 }
 
+#define BNF_CACHE_SIZE 5000
+
 #endif

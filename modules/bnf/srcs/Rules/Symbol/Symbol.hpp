@@ -14,6 +14,7 @@ class Symbol : public ARule
 		~Symbol();
 		void					   addItem(const TerminalSymbol &val);
 		const Vec<TerminalSymbol> &getItems() const;
+		const Vec<std::string>	  &getItemsValue() const;
 		const std::string		  &getValue() const;
 		const std::string		   getTypeName() const;
 		std::string				   getPrintableValue() const;

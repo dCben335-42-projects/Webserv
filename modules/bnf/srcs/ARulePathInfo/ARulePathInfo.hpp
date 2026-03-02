@@ -8,14 +8,14 @@ class ARule;
 
 typedef Vec<const ARule *> ARulePath;
 
-struct TerminalCharInfo
+class TerminalCharInfo
 {
 	public:
-		TerminalCharInfo() : terminal(NULL), position(0), length(0)
+		TerminalCharInfo() : position(0), length(0)
 		{
 		}
 
-		TerminalCharInfo(const TerminalSymbol *terminal, size_t position) : terminal(terminal), position(position), length(terminal->getValue().size())
+		TerminalCharInfo(size_t position, size_t length) : position(position), length(length)
 		{
 		}
 		~TerminalCharInfo()
@@ -26,35 +26,40 @@ struct TerminalCharInfo
 		{
 			if (this == &other)
 				return *this;
-			terminal = other.terminal;
 			position = other.position;
 			length	 = other.length;
 			return *this;
 		}
 
-		const TerminalSymbol *terminal;
-		size_t				  position;
-		size_t				  length;
+		size_t position;
+		size_t length;
 };
 
 std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data);
 
 class ARulePathInfo
 {
+	private:
+		ARulePath m_path;
+		size_t	  m_pathHash;
+
 	public:
-		ARulePath			  path;
 		Vec<TerminalCharInfo> terminalCharsInfo;
+		unsigned int		  replaceable;
 
 		ARulePathInfo(const ARulePath &path);
 		~ARulePathInfo();
 
-		bool operator==(const ARulePathInfo &other) const;
+		void					resetTerminalCharsInfo();
+		const Vec<std::string> &getValue() const;
+		static size_t			createPathHash(const ARulePath &path);
+		const ARulePath		   &getPath() const;
+		size_t					getPathHash() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data);
 
-
-typedef Vec<ARulePathInfo>					ARulePaths;
+typedef Vec<ARulePathInfo *>				ARulePaths;
 typedef Map<const ARule *const, ARulePaths> ARuleMap;
 
 #endif
