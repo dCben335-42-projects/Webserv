@@ -15,10 +15,14 @@ class Number
 		static std::string toString(const size_t number);
 		static std::string toString(const long number);
 
-		static int		   fromString(const std::string &str);
-		static bool		   isNumber(const std::string &str);
-		static size_t	   toSizeT(const std::string &str);
-		static int		   toInt(const std::string &str);
+		static int	fromString(const std::string &str);
+		static bool isNumber(const std::string &str);
+
+		static size_t		  toSizeT(const std::string &str);
+		static unsigned short toUShort(const std::string &str);
+		static int			  toInt(const std::string &str);
+		static unsigned long  toULong(const std::string &str);
+
 		static std::string bytesToHumanSize(const size_t bytes);
 
 		static int hexToInt(char c);

@@ -82,7 +82,7 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar(CGI_REQUEST_METHOD, m_req.getMethod().getStrType()));
 	m_env.push(makeEnvVar(CGI_SCRIPT_NAME, m_scriptName));
 	m_env.push(makeEnvVar(CGI_SERVER_NAME, SERVER_NAME));
-	m_env.push(makeEnvVar(CGI_SERVER_PORT, Number::toString(m_config.getPort())));
+	m_env.push(makeEnvVar(CGI_SERVER_PORT, Number::toString(m_config.getAddress().getPort())));
 	m_env.push(makeEnvVar(CGI_SERVER_PROTOCOL, PROTOCOL));
 	m_env.push(makeEnvVar(CGI_SERVER_SOFTWARE, SERVER_NAME));
 	if (m_has_post_data)
@@ -185,15 +185,15 @@ void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t sc
 
 void CgiSpawner::fillActiveBinMap()
 {
-	Vec<const Config::CgiParams *>		 cgiParams;
-	const Vec<const Config::Location *> &locations = m_req.getActiveLocations();
+	Vec<const CgiParams *>	 cgiParams;
+	const Config::Locations &locations = m_req.getActiveLocations();
 
-	for (Vec<const Config::Location *>::const_iterator it = locations.begin(); it != locations.end(); it++)
+	for (Config::Locations::const_iterator it = locations.begin(); it != locations.end(); it++)
 	{
-		if ((*it)->getCgiParams())
-			cgiParams.push((*it)->getCgiParams());
+		if ((*it).getCgiParams())
+			cgiParams.push((*it).getCgiParams());
 	}
-	for (Vec<const Config::CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
+	for (Vec<const CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
 	{
 		const Map<std::string> binMap = (*it)->getBinMap();
 		for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)

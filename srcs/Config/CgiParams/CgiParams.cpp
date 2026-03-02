@@ -1,22 +1,22 @@
 #include "CgiParams.hpp"
 
-Config::CgiParams::CgiParams() :
+CgiParams::CgiParams() :
 	m_allowCgi(false)
 {
 }
 
-Config::CgiParams::CgiParams(Map<std::string> binMap) :
+CgiParams::CgiParams(Map<std::string> binMap) :
 	m_allowCgi(true),
 	m_binMap(binMap)
 {
 }
 
 
-Config::CgiParams::~CgiParams()
+CgiParams::~CgiParams()
 {
 }
 
-const Map<std::string> &Config::CgiParams::getBinMap() const
+const Map<std::string> &CgiParams::getBinMap() const
 {
 	return (m_binMap);
 }
@@ -29,7 +29,7 @@ const Map<std::string> &Config::CgiParams::getBinMap() const
  * @return true if CGI is allowed, false otherwise.
  *
  */
-bool Config::CgiParams::getAllowCgi() const
+bool CgiParams::getAllowCgi() const
 {
 	return m_allowCgi;
 }
@@ -42,7 +42,7 @@ bool Config::CgiParams::getAllowCgi() const
  * @param allowCgi A boolean indicating whether to allow CGI.
  *
  */
-void Config::CgiParams::setAllowCgi(const bool &allowCgi)
+void CgiParams::setAllowCgi(const bool &allowCgi)
 {
 	m_allowCgi = allowCgi;
 }
@@ -51,7 +51,7 @@ void Config::CgiParams::setAllowCgi(const bool &allowCgi)
 
 #include "Logger.hpp"
 
-std::ostream &operator<<(std::ostream &os, const Config::CgiParams &cgiParams)
+std::ostream &operator<<(std::ostream &os, const CgiParams &cgiParams)
 {
 	os << "CgiParams(allowCgi: " << (cgiParams.getAllowCgi() ? "true" : "false") << ", binMap: " << Logger::get(cgiParams.getBinMap()) << ")";
 	return os;

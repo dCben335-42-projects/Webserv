@@ -4,9 +4,8 @@
 #include "Set.hpp"
 #include "Map.hpp"
 #include "HttpMethod.hpp"
-#include "Config.hpp"
 
-class Config::CgiParams
+class CgiParams
 {
 	private:
 		bool			 m_allowCgi;
@@ -23,6 +22,6 @@ class Config::CgiParams
 		void setAllowCgi(const bool &allowCgi);
 };
 
-std::ostream &operator<<(std::ostream &os, const Config::CgiParams &cgiParams);
+std::ostream &operator<<(std::ostream &os, const CgiParams &cgiParams);
 
 #endif

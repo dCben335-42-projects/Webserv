@@ -4,46 +4,38 @@
 #include "Pollable.hpp"
 #include "Config.hpp"
 #include <netinet/in.h>
+#include "SocketAddress.hpp"
 
 class Client;
 class HttpUser;
 
 class VirtualServer : public Pollable
 {
-
 	private:
-		const Config	   &m_defaultConf;
-		Vec<const Config *> m_configs;
+		const Config		&m_defaultConf;
+		const ServerConfigs &m_configs;
 
-		bool		   m_isIPv6;
-		std::string	   m_bindIp;
-		unsigned short m_bindPort;
-		Vec<HttpUser>  m_users;
+		const SocketAddress &m_bindAddress;
+		Vec<HttpUser>		 m_users;
 
-		bool setupSocket(const std::string &ip, unsigned short port);
-
-		uint32_t convertIPv4(const std::string &ip);
-		uint32_t resolveIPv4(const std::string &hostname);
-
-		struct in6_addr convertIPv6(const std::string &ip);
-		struct in6_addr resolveIPv6(const std::string &hostname);
+		bool setupSocket();
 
 		void setReusable(int sockFd);
-		void bindAndListen(int sockFd, const std::string &ip, unsigned short port);
+		void bindAndListen(int sockFd);
 		void createClient(int clientFd);
 
 		typedef Vec<HttpUser>::iterator		  UserIt;
 		typedef Vec<HttpUser>::const_iterator UserCIt;
 
 	public:
-		VirtualServer(const Config &config);
+		VirtualServer(
+			const SocketAddress &address,
+			const Config		&http,
+			const ServerConfigs &serverConfigs);
 		~VirtualServer();
 
-		const Config  &getConfig() const;
-		std::string	   getBindIp() const;
-		unsigned short getBindPort() const;
-
-		const Vec<const Config *> &getConfigs() const;
+		const Config		&getConfig() const;
+		const ServerConfigs &getConfigs() const;
 
 		void onPollIn();
 		void onPollOut();
@@ -56,8 +48,6 @@ class VirtualServer : public Pollable
 		const std::string  createUser(const std::string name, const std::string pswd);
 		bool			   hasUser(const std::string &hash) const;
 		const std::string &findUser(const std::string &name, const std::string &pswd, const std::string &authLoc);
-
-
 
 
 	private:

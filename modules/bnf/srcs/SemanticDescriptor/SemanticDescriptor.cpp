@@ -3,21 +3,28 @@
 #include "./SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
-using namespace bnf;
+namespace bnf
+{
+
+
+SemanticDescriptor::SemanticDescriptor() : tree(NULL)
+{
+}
 
 /**
  * @brief Constructs a SemanticDescriptor object by parsing the given string content.
- * @param m_content The string content representing the semantic descriptor to be parsed.
+ *
+ * @param fileContent The string content of the semantic descriptor to be parsed.
+ *
  * @throws std::runtime_error if the semantic descriptor is not valid.
  */
-SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL)
+void SemanticDescriptor::parse(const std::string &fileContent)
 {
 	try
 	{
-		std::istringstream iss(m_content);
+		std::istringstream iss(fileContent);
 		splitBlocks(iss);
 		parseBlocks();
-		Logger::log("Semantic descriptor parsed successfully!");
 	}
 	catch (const SemanticException &e)
 	{
@@ -57,7 +64,9 @@ SemanticDescriptor &SemanticDescriptor::operator=(const SemanticDescriptor &othe
 }
 
 /**
+ * 
  * @brief Destructor for the SemanticDescriptor class.
+ * Deletes the tree and all concepts stored in the m_concepts map.
  */
 SemanticDescriptor::~SemanticDescriptor()
 {
@@ -180,7 +189,7 @@ void SemanticDescriptor::parseBlocks()
  * @param rule The rule string to be split.
  * @return A vector of strings representing the individual words in the rule.
  */
-Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
+Vec<std::string> SemanticDescriptor::splitwords(const std::string &rule)
 {
 	Vec<std::string> result;
 	std::string		 current;
@@ -279,8 +288,11 @@ Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
 
 /**
  * @brief Parses and consumes a prefix from the given string.
+ * 
  * @param str The string to be parsed.
+ * 
  * @param out A pointer to an integer where the parsed value will be stored.
+ * 
  * @return true if a valid prefix was found and consumed, false otherwise.
  */
 bool SemanticDescriptor::parseAndConsumePrefix(std::string &str, int *out)
@@ -374,6 +386,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			{
 				if (!validate_string_strict(word))
 				{
+					Logger::log("Error: Invalid concept name: " + word + " at index " + Logger::get(i) + " in rule: " + m_content.substr(cursor));
 					delete arule;
 					throw InvalidConceptNameException(word);
 				}
@@ -668,3 +681,5 @@ std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 	Logger::log(data.getConcepts());
 	return (os);
 }
+
+} // namespace bnf

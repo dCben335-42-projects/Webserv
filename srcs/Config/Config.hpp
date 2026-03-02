@@ -1,55 +1,61 @@
-#ifndef VIRTUALSERVER_CONFIG_HPP
-#define VIRTUALSERVER_CONFIG_HPP
+#ifndef SERVER_CONFIG_HPP
+#define SERVER_CONFIG_HPP
 
 #include "Vec.hpp"
 #include "Map.hpp"
+#include "Location.hpp"
+#include "SocketAddress.hpp"
+
+class Config;
+
+typedef Vec<Config> ServerConfigs;
+
+typedef Map<SocketAddress, ServerConfigs> VServersConfigs;
+typedef VServersConfigs::const_iterator	  VServersConfCIt;
 
 class Config
 {
 	public:
-		class Location;
-		class CgiParams;
+		typedef Map<Location> LocationsMap;
+		typedef Vec<Location> Locations;
 
 	private:
-		std::string	   m_ip;
-		unsigned short m_port;
+		SocketAddress	 m_address;
+		Vec<std::string> m_serverNames;
 
-		std::pair<bool, std::string> m_serverName;
+		Location	 m_defaultLocation;
+		LocationsMap m_locations;
 
-		Location			 *m_defaultLocation;
-		Map<const Location *> m_locations;
+		std::pair<bool, std::string> m_authLocation;
 
 		time_t m_keepAliveTimeout;
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
-
 		size_t m_maxBodySize;
 
 	public:
-		Config(const std::string		   &ip,
-			   unsigned short				port,
-			   const std::string		   &serverName,
-			   Location					   *defaultLoc,
-			   const Map<const Location *> &locs);
-
+		Config();
+		Config(const Config &other);
 		~Config();
 
+		void setLocation(const std::string &path, const Location &location);
+		void setDefaultLocation(const Location &location);
 
-		void setIp(const std::string &ip);
-		void setPort(unsigned short port);
+		void setAddress(const SocketAddress &address);
 		void setKeepAliveTimeout(const time_t timeout);
 		void setHeaderTimeout(const time_t timeout);
 		void setBodyTimeout(const time_t timeout);
 		void setMaxBodySize(const size_t maxBodySize);
-		void setServerName(const std::string &serverName);
+		void setServerNames(const Vec<std::string> &serverNames);
+		void setAuthLocation(const std::string &authLocation);
+		void setUploadLocation(const std::string &uploadLocation);
 
-		const std::string			&getIp() const;
-		unsigned short				 getPort() const;
-		const Location				*getDefaultLocation() const;
-		const Map<const Location *> &getLocations() const;
+		const SocketAddress &getAddress() const;
+		const Location		&getDefaultLocation() const;
+		const LocationsMap	&getLocations() const;
 
-		bool			   hasServerName() const;
-		const std::string &getServerName() const;
+		bool					hasServerName() const;
+		const Vec<std::string> &getServerNames() const;
 
 		time_t getKeepAliveTimeout() const;
 		time_t getHeaderTimeout() const;

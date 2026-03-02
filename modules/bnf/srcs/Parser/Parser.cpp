@@ -1,33 +1,41 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
-#include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
-#include "Json.hpp"
 #include "../BNFPath/BNFPath.hpp"
+#include "Parser.hpp"
 
+
+namespace bnf
+{
 /**
+ *
  * @brief Constructs a Parser object with the given SemanticDescriptor.
+ *
  * @param semantic The SemanticDescriptor that defines the grammar rules and concepts for parsing.
+ *
  */
 Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
 }
 
 /**
+ *
  * @brief Destructor for the Parser class.
+ *
  */
 Parser::~Parser()
 {
 }
 
 /**
+ *
  * @brief Adds a path possibility to the ARuleMap based on the given rule and concept name.
- * @param rule The ARule for which the path possibility is being added.
- * @param conceptPaths A vector of strings representing the current concept paths being explored.
- * @param mapPath The ARuleMap to which the path possibility will be added.
- * @param conceptName The name of the concept associated with the rule.
+ *
  * @param completePath The current complete path of ARules being explored.
+ * @param rule The ARule for which the path possibility is being added.
+ * @param mapPath The ARuleMap to which the path possibility will be added.
+ *
  */
 void Parser::addPathPossibility(
 	ARulePath		  &completePath,
@@ -64,9 +72,12 @@ void Parser::addPathPossibility(
 }
 
 /**
+ *
  * @brief Adds sequence paths to the ARuleMap based on the given path.
+ *
  * @param path The ARulePath representing the current sequence of rules.
  * @param mapPathNext The ARuleMap to which the sequence paths will be added.
+ *
  */
 void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 {
@@ -94,11 +105,14 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 }
 
 /**
+ *
  * @brief Processes a terminal symbol and updates the ARuleMap with the corresponding paths.
+ *
  * @param symbol The TerminalSymbol to be processed.
  * @param rule The ARule associated with the terminal symbol.
  * @param path The current ARulePath being explored.
  * @param mapPath The ARuleMap to which the paths will be added based on the terminal symbol.
+ *
  */
 void Parser::processTerminalSymbol(
 	const TerminalSymbol &symbol,
@@ -126,11 +140,14 @@ void Parser::processTerminalSymbol(
 }
 
 /**
+ *
  * @brief Retrieves the terminal characters associated with the given concept name and updates the ARuleMap accordingly.
+ *
  * @param completePath The current complete path of ARules being explored.
  * @param conceptName The name of the concept for which terminal characters are being retrieved.
  * @param mapPath The ARuleMap to which the terminal character paths will be added.
  * @param conceptPaths A vector of strings representing the current concept paths being explored to avoid cycles.
+ *
  */
 void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
 {
@@ -177,11 +194,14 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *c
 }
 
 /**
+ *
  * @brief Adds the next paths to the ARuleMap based on the current path and rule.
+ *
  * @param mapPathCurrent The current ARuleMap representing the active paths.
  * @param mapPathNext The ARuleMap to which the next paths will be added.
  * @param path The current ARulePath being explored.
  * @param rule The ARule for which the next paths are being added.
+ *
  */
 void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule)
 {
@@ -200,7 +220,9 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
 }
 
 /**
+ *
  * @brief Processes a terminal character in the parsing process and updates the ARuleMap accordingly.
+ *
  * @param data The TerminalCharInfo containing information about the current terminal character being processed.
  * @param c The current character being parsed from the input string.
  * @param rule The ARule associated with the current path being processed.
@@ -208,6 +230,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
  * @param mapPathCurrent The current ARuleMap representing the active paths before processing the character.
  * @param mapPathNext The ARuleMap to which the next paths will be added after processing the character.
  * @return true if the character is valid for the current path and rule, false otherwise.
+ *
  */
 bool Parser::word(
 	TerminalCharInfo  &data,
@@ -265,8 +288,7 @@ bool Parser::parseCurrentChar(
 {
 	bool isValidWithCurrentPath = false;
 
-	for (ARuleMap::const_iterator it = mapPathCurrent.begin();
-		 it != mapPathCurrent.end(); ++it)
+	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
 		const ARule				  *rule	 = it->first;
 		const ARulePaths		  &paths = it->second;
@@ -568,3 +590,4 @@ void Parser::parse(const std::string &stringToParsed)
 	else
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 }
+} // namespace bnf

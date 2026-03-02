@@ -10,6 +10,7 @@
 #define REQ_INVALID_CONTENT_LENGTH_MSG "Invalid Content-Length value: No digits found"
 #define REQ_CONTENT_LENGTH_MISMATCH_MSG "Content-Length header value does not match the actual body size"
 #define REQ_UNSUPPORTED_METHOD_MSG "Unsupported HTTP Version: "
+#define REQ_INVALID_FIRST_LINE_MSG "Invalid First Line: "
 #define REQ_INVALID_TARGET_MSG "Invalid Request Target: "
 #define REQ_MISSING_CONTENT_LENGTH_MSG "Missing Content-Length Header"
 #define REQ_EXPECTED_HEADER_COLON_MSG "Expected ':' after header designation"
@@ -21,12 +22,12 @@
 class HttpRequest : public AHttpInboundMessage
 {
 	private:
-		std::string					  m_queryString;
-		Vec<std::string>			  m_segments;
-		Vec<const Config::Location *> m_activeLocations;
-		Vec<Accept>					  m_accepts;
-		bool						  m_connectionKeepAlive;
-		Map<std::string>			  m_cookieValues;
+		std::string		  m_queryString;
+		Vec<std::string>  m_segments;
+		Config::Locations m_activeLocations;
+		Vec<Accept>		  m_accepts;
+		bool			  m_connectionKeepAlive;
+		Map<std::string>  m_cookieValues;
 
 		size_t m_firstLineEndPos;
 		size_t m_headersEndPos;
@@ -49,7 +50,7 @@ class HttpRequest : public AHttpInboundMessage
 
 
 
-		typedef Vec<const Config::Location *>::const_iterator m_locCIt;
+		typedef Config::Locations::const_iterator m_locCIt;
 
 	public:
 		HttpRequest();
@@ -60,8 +61,8 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<std::string> &getSegments() const;
 		const std::string	   &getQueryString() const;
 
-		const Vec<const Config::Location *> &getActiveLocations() const;
-		bool								 getActiveAutoIndex() const;
+		const Config::Locations &getActiveLocations() const;
+		bool					 getActiveAutoIndex() const;
 
 		const Vec<Accept>	  &getAccepts() const;
 		bool				   getConnectionKeepAlive() const;

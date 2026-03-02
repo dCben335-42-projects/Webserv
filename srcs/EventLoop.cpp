@@ -9,43 +9,23 @@
 
 Map<int, Pollable *> EventLoop::m_handlers;
 Vec<pollfd>			 EventLoop::m_pollFds;
-size_t				 EventLoop::m_nfds = 0;
+size_t				 EventLoop::m_nfds		= 0;
+bool				 EventLoop::m_isRunning = false;
 
-void EventLoop::init()
+void EventLoop::init(const Config &httpConfig, const VServersConfigs &serversConfigs)
 {
-	const std::string ip = "localhost";
-
-	Config::Location *defaultLocation = new Config::Location("");
-	defaultLocation->setRoot("files/www/website");
-
-	Config::Location *slashLoc = new Config::Location("/");
-	Map<std::string>  binSlash;
-	binSlash.set(".py", "/usr/bin/python3");
-	slashLoc->setAutoIndex(true);
-	Config::CgiParams *py = new Config::CgiParams(binSlash);
-	slashLoc->setCgiParams(py);
-
-	Config::Location *bin = new Config::Location("/cgi-bin");
-	Map<std::string>  binmap1;
-	binmap1.set(".php", "/usr/bin/php");
-	Config::CgiParams *cgi = new Config::CgiParams(binmap1);
-	bin->setCgiParams(cgi);
-	bin->setAlias("files/www/usr/bin/");
-	bin->setAutoIndex(true);
-
-
-	Config::Location *uploadLocation = new Config::Location("/uploads");
-	uploadLocation->setAutoIndex(true);
-	uploadLocation->setUpload("files/www/uploads");
-	uploadLocation->setAlias("files/www/uploads");
-
-	Map<const Config::Location *> locations;
-	locations.set("/", slashLoc);
-	locations.set("/cgi-bin", bin);
-	locations.set("/uploads", uploadLocation);
-
-	Config *config1 = new Config(ip, 8080, "localhost", defaultLocation, locations);
-	new VirtualServer(*(config1));
+	for (VServersConfCIt it = serversConfigs.begin(); it != serversConfigs.end(); ++it)
+	{
+		const SocketAddress &address	   = it->first;
+		const ServerConfigs &serverConfigs = it->second;
+		VirtualServer *const server		   = new VirtualServer(address, httpConfig, serverConfigs);
+		if (server->getConnectionClosed())
+		{
+			delete server;
+			continue;
+		}
+		addHandler(server);
+	}
 	Signals::catchSigs();
 }
 
@@ -92,9 +72,10 @@ void EventLoop::destroy()
 void EventLoop::run()
 {
 	int ready;
+	m_isRunning = true;
 
 	std::srand(std::time(0));
-	while (true)
+	while (m_isRunning)
 	{
 		updatePollStatus();
 		ready = poll(&m_pollFds[0], m_pollFds.size(), POLL_TIMEOUT);
@@ -239,4 +220,17 @@ Pollable *EventLoop::getHandler(int fd)
 size_t EventLoop::getNfds()
 {
 	return m_nfds;
+}
+
+
+/**
+ *
+ * @brief Sets the running state of the event loop.
+ *
+ * @param isRunning A boolean value indicating whether the event loop should be running (true) or stopped (false).
+ *
+ */
+void EventLoop::setIsRunning(bool isRunning)
+{
+	m_isRunning = isRunning;
 }

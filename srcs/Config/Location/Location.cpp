@@ -1,5 +1,21 @@
 #include "Location.hpp"
-#include "CgiParams.hpp"
+#include "Number.hpp"
+
+
+Location::Location()
+{
+	m_path = "";
+	m_cgi  = NULL;
+
+	m_autoIndex = std::make_pair(false, false);
+
+	m_root	 = std::make_pair(false, std::string());
+	m_alias	 = std::make_pair(false, std::string());
+	m_upload = std::make_pair(false, Upload());
+
+	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
+	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
+}
 
 /**
  *
@@ -10,22 +26,37 @@
  * @note m_isAutoIndex is set to true in this constructor.
  *
  */
-Config::Location::Location(const std::string path)
+Location::Location(const std::string path)
 {
 	m_path = path;
 	m_cgi  = NULL;
 
 	m_autoIndex = std::make_pair(false, false);
 
-	m_root		= std::make_pair(false, std::string());
-	m_alias		= std::make_pair(false, std::string());
-	m_uploadDir = std::make_pair(false, std::string());
+	m_root	 = std::make_pair(false, std::string());
+	m_alias	 = std::make_pair(false, std::string());
+	m_upload = std::make_pair(false, Upload());
 
 	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
 	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
 }
 
-Config::Location::~Location()
+
+Location::Location(const Location &other)
+{
+	m_path = other.m_path;
+	m_cgi  = other.m_cgi ? new CgiParams(*other.m_cgi) : NULL;
+
+	m_root			 = other.m_root;
+	m_alias			 = other.m_alias;
+	m_upload		 = other.m_upload;
+	m_autoIndex		 = other.m_autoIndex;
+	m_return		 = other.m_return;
+	m_indexFiles	 = other.m_indexFiles;
+	m_allowedMethods = other.m_allowedMethods;
+}
+
+Location::~Location()
 {
 	if (m_cgi)
 		delete m_cgi;
@@ -44,9 +75,9 @@ Config::Location::~Location()
  * @return true if the path of the first Location is less than that of the second, false otherwise.
  *
  */
-bool Config::Location::compare(const Location *a, const Location *b)
+bool Location::compare(const Location &a, const Location &b)
 {
-	return a->m_path < b->m_path;
+	return a.m_path < b.m_path;
 }
 
 
@@ -60,7 +91,7 @@ bool Config::Location::compare(const Location *a, const Location *b)
  * @return The path as a constant reference to a string.
  *
  */
-const std::string &Config::Location::getPath() const
+const std::string &Location::getPath() const
 {
 	return m_path;
 }
@@ -71,7 +102,7 @@ const std::string &Config::Location::getPath() const
  * @return The root directory as a constant reference to a string.
  *
  */
-const std::string &Config::Location::getRoot() const
+const std::string &Location::getRoot() const
 {
 	return m_root.second;
 }
@@ -82,7 +113,7 @@ const std::string &Config::Location::getRoot() const
  * @return The index file as a constant reference to a string.
  *
  */
-const Vec<std::string> &Config::Location::getIndexFiles() const
+const Vec<std::string> &Location::getIndexFiles() const
 {
 	return m_indexFiles.second;
 }
@@ -93,7 +124,7 @@ const Vec<std::string> &Config::Location::getIndexFiles() const
  * @return The alias as a constant reference to a string.
  *
  */
-const std::string &Config::Location::getAlias() const
+const std::string &Location::getAlias() const
 {
 	return m_alias.second;
 }
@@ -104,7 +135,7 @@ const std::string &Config::Location::getAlias() const
  * @return true if auto-indexing is enabled, false otherwise.
  *
  */
-bool Config::Location::getAutoIndex() const
+bool Location::getAutoIndex() const
 {
 	return m_autoIndex.second;
 }
@@ -115,7 +146,7 @@ bool Config::Location::getAutoIndex() const
  * @return A constant reference to the CGI parameters as a string.
  *
  */
-const Config::CgiParams *Config::Location::getCgiParams() const
+const CgiParams *Location::getCgiParams() const
 {
 	return m_cgi;
 }
@@ -127,7 +158,7 @@ const Config::CgiParams *Config::Location::getCgiParams() const
  * @return A constant reference to the set of allowed HTTP methods.
  *
  */
-const Set<HttpMethod> &Config::Location::getAllowedMethods() const
+const Set<HttpMethod> &Location::getAllowedMethods() const
 {
 	return m_allowedMethods.second;
 }
@@ -139,9 +170,9 @@ const Set<HttpMethod> &Config::Location::getAllowedMethods() const
  * @return true if file uploads are allowed, false otherwise.
  *
  */
-const std::string &Config::Location::getUpload() const
+const Upload &Location::getUpload() const
 {
-	return m_uploadDir.second;
+	return m_upload.second;
 }
 
 /**
@@ -151,7 +182,7 @@ const std::string &Config::Location::getUpload() const
  * @return A constant reference to the LocationReturn object representing the return value.
  *
  */
-const LocationReturn &Config::Location::getReturn() const
+const LocationReturn &Location::getReturn() const
 {
 	return m_return.second;
 }
@@ -167,7 +198,7 @@ const LocationReturn &Config::Location::getReturn() const
  * @return true if an alias is set, false otherwise.
  *
  */
-bool Config::Location::hasAlias() const
+bool Location::hasAlias() const
 {
 	return m_alias.first;
 }
@@ -178,7 +209,7 @@ bool Config::Location::hasAlias() const
  * @return true if CGI parameters are set, false otherwise.
  *
  */
-bool Config::Location::hasCgiParams() const
+bool Location::hasCgiParams() const
 {
 	return m_cgi != NULL;
 }
@@ -189,7 +220,7 @@ bool Config::Location::hasCgiParams() const
  * @return true if an index file is set, false otherwise.
  *
  */
-bool Config::Location::hasIndexFile() const
+bool Location::hasIndexFile() const
 {
 	return m_indexFiles.first;
 }
@@ -200,7 +231,7 @@ bool Config::Location::hasIndexFile() const
  * @return true if a root directory is set, false otherwise.
  *
  */
-bool Config::Location::hasRoot() const
+bool Location::hasRoot() const
 {
 	return m_root.first;
 }
@@ -211,7 +242,7 @@ bool Config::Location::hasRoot() const
  * @return true if the auto-index setting has been set, false otherwise.
  *
  */
-bool Config::Location::hasAutoIndexSet() const
+bool Location::hasAutoIndex() const
 {
 	return m_autoIndex.first;
 }
@@ -223,7 +254,7 @@ bool Config::Location::hasAutoIndexSet() const
  * @return true if allowed methods are set, false otherwise.
  *
  */
-bool Config::Location::hasMethods() const
+bool Location::hasMethods() const
 {
 	return m_allowedMethods.first;
 }
@@ -235,7 +266,7 @@ bool Config::Location::hasMethods() const
  * @return true if CGI settings are present, false otherwise.
  *
  */
-bool Config::Location::hasCgi() const
+bool Location::hasCgi() const
 {
 	return m_cgi != NULL;
 }
@@ -247,9 +278,9 @@ bool Config::Location::hasCgi() const
  * @return true if file uploads are allowed, false otherwise.
  *
  */
-bool Config::Location::hasUpload() const
+bool Location::hasUpload() const
 {
-	return m_uploadDir.first;
+	return m_upload.first;
 }
 
 /**
@@ -259,11 +290,23 @@ bool Config::Location::hasUpload() const
  * @return true if a return value is set, false otherwise.
  *
  */
-bool Config::Location::hasReturn() const
+bool Location::hasReturn() const
 {
 	return m_return.first;
 }
 
+
+/**
+ *
+ * @brief Checks if the location has index files set.
+ *
+ * @return true if index files are set, false otherwise.
+ *
+ */
+bool Location::hasIndexes() const
+{
+	return m_indexFiles.first;
+}
 
 
 
@@ -274,7 +317,7 @@ bool Config::Location::hasReturn() const
  * @param path The path to be set.
  *
  */
-void Config::Location::setPath(const std::string &path)
+void Location::setPath(const std::string &path)
 {
 	m_path = path;
 }
@@ -285,7 +328,7 @@ void Config::Location::setPath(const std::string &path)
  * @param root The root directory to be set.
  *
  */
-void Config::Location::setRoot(const std::string &root)
+void Location::setRoot(const std::string &root)
 {
 	m_root.first  = true;
 	m_root.second = root;
@@ -299,7 +342,7 @@ void Config::Location::setRoot(const std::string &root)
  * @param alias The alias to be set.
  *
  */
-void Config::Location::setAlias(const std::string &alias)
+void Location::setAlias(const std::string &alias)
 {
 	m_alias.first  = true;
 	m_alias.second = alias;
@@ -313,7 +356,7 @@ void Config::Location::setAlias(const std::string &alias)
  * @param autoIndex A boolean indicating whether to enable auto-indexing.
  *
  */
-void Config::Location::setAutoIndex(const bool autoIndex)
+void Location::setAutoIndex(const bool autoIndex)
 {
 	m_autoIndex.first  = true;
 	m_autoIndex.second = autoIndex;
@@ -326,7 +369,7 @@ void Config::Location::setAutoIndex(const bool autoIndex)
  *
  *
  */
-void Config::Location::setCgiParams(const Config::CgiParams *cgi)
+void Location::setCgiParams(const CgiParams *cgi)
 {
 	m_cgi = cgi;
 }
@@ -339,25 +382,19 @@ void Config::Location::setCgiParams(const Config::CgiParams *cgi)
  * @param methods A set of HttpMethod objects representing the allowed methods.
  *
  */
-void Config::Location::setMethods(const Set<HttpMethod> &methods)
+void Location::setMethods(const Set<HttpMethod> &methods)
 {
 	m_allowedMethods.first	= true;
 	m_allowedMethods.second = methods;
 }
 
-
-/**
- *
- * @brief Sets whether file uploads are allowed for the location.
- *
- * @param upload A boolean indicating whether to allow file uploads.
- *
- */
-void Config::Location::setUpload(const std::string &upload)
+void Location::setMethods(const Vec<std::string> &methods)
 {
-	m_uploadDir.first  = true;
-	m_uploadDir.second = upload;
+	m_allowedMethods.first = true;
+	for (size_t i = 0; i < methods.size(); ++i)
+		m_allowedMethods.second.push(HttpMethod(methods[i]));
 }
+
 
 /**
  *
@@ -366,10 +403,27 @@ void Config::Location::setUpload(const std::string &upload)
  * @param returnVal A LocationReturn object representing the return value to be set.
  *
  */
-void Config::Location::setReturn(const LocationReturn &returnVal)
+void Location::setReturn(const LocationReturn &returnVal)
 {
 	m_return.first	= true;
 	m_return.second = returnVal;
+}
+
+/**
+ *
+ * @brief Sets the return value for the location using a vector of strings.
+ *
+ * @param returnVal A vector of strings representing the return value to be set.
+ *
+ */
+void Location::setReturn(const Vec<std::string> &returnVal)
+{
+	m_return.first = true;
+	if (returnVal.size() >= 2)
+	{
+		m_return.second.setStatusCode(Number::toInt(returnVal[0]));
+		m_return.second.setTarget(returnVal[1]);
+	}
 }
 
 
@@ -380,7 +434,7 @@ void Config::Location::setReturn(const LocationReturn &returnVal)
  * @param indexFiles A vector of strings representing the index files to be set.
  *
  */
-void Config::Location::setIndexFiles(const Vec<std::string> &indexFiles)
+void Location::setIndexes(const Vec<std::string> &indexFiles)
 {
 	m_indexFiles.first	= true;
 	m_indexFiles.second = indexFiles;
@@ -393,24 +447,59 @@ void Config::Location::setIndexFiles(const Vec<std::string> &indexFiles)
  * @param indexFile The index file to be added.
  *
  */
-void Config::Location::addIndexFile(const std::string &indexFile)
+void Location::addIndexFile(const std::string &indexFile)
 {
 	m_indexFiles.first = true;
 	m_indexFiles.second.push(indexFile);
+}
+
+/**
+ *
+ * @brief Sets the upload directory for the location using a vector of strings.
+ *
+ * @param upload A vector containing either 'on' with the upload directory or 'off' to disable uploads.
+ *
+ */
+void Location::setUpload(const Vec<std::string> &upload)
+{
+	if (upload.empty())
+		return;
+	m_upload.first = true;
+	if (upload[0] == "on" && upload.size() >= 2)
+	{
+		m_upload.second.setOn(true);
+		m_upload.second.setUploadDir(upload[1]);
+	}
+	else if (upload[0] == "off")
+	{
+		m_upload.second.setOn(false);
+		m_upload.second.setUploadDir("");
+	}
 }
 
 
 #include "Logger.hpp"
 
 
-std::ostream &operator<<(std::ostream &os, const Config::Location &location)
+std::ostream &operator<<(std::ostream &os, const Location &location)
 {
 	os << "Location(path: " << location.getPath();
-	os << ", root: " << location.getRoot();
-	os << ", alias: " << location.getAlias();
-	os << ", indexFiles: " << Logger::get(location.getIndexFiles());
-	os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
-	os << ", cgiParams: " << Logger::get(location.getCgiParams());
+	if (location.hasRoot())
+		os << ", root: " << location.getRoot();
+	if (location.hasAlias())
+		os << ", alias: " << location.getAlias();
+	if (location.hasAutoIndex())
+		os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
+	if (location.hasMethods())
+		os << ", allowedMethods: " << Logger::get(location.getAllowedMethods());
+	if (location.hasUpload())
+		os << ", uploadDir: " << location.getUpload();
+	if (location.hasReturn())
+		os << ", return: " << Logger::get(location.getReturn());
+	if (location.hasIndexes())
+		os << ", indexes: " << Logger::get(location.getIndexFiles());
+	if (location.hasCgi())
+		os << ", cgiParams: " << Logger::get(location.getCgiParams());
 	os << ")";
 	return os;
 }

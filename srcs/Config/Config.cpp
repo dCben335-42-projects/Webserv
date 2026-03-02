@@ -3,79 +3,69 @@
 #include "CgiParams.hpp"
 #include "webserv.hpp"
 
-Config::Config(
-	const std::string			&ip,
-	unsigned short				 port,
-	const std::string			&serverName,
-	Location					*defaultLoc,
-	const Map<const Location *> &locs) :
-	m_ip(ip),
-	m_port(port),
-	m_defaultLocation(defaultLoc),
-	m_locations(locs)
+Config::Config()
 {
 	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
-	m_serverName	   = std::make_pair(serverName != "", serverName);
 }
+
+Config::Config(const Config &other) :
+	m_address(other.m_address),
+	m_serverNames(other.m_serverNames),
+	m_defaultLocation(other.m_defaultLocation),
+	m_locations(other.m_locations),
+	m_keepAliveTimeout(other.m_keepAliveTimeout),
+	m_headerTimeout(other.m_headerTimeout),
+	m_bodyTimeout(other.m_bodyTimeout),
+	m_maxBodySize(other.m_maxBodySize)
+{
+}
+
 
 Config::~Config()
 {
-	for (Map<const Location *>::iterator it = m_locations.begin(); it != m_locations.end(); ++it)
-		delete it->second;
-	delete m_defaultLocation;
 	m_locations.clear();
 }
 
 
 /**
  *
- * @brief Gets the IP address of the virtual server.
+ * @brief Adds a location configuration to the virtual server.
  *
- * @return The IP address as a constant reference to a string.
- *
- */
-const std::string &Config::getIp() const
-{
-	return m_ip;
-}
-/**
- *
- * @brief Gets the port number of the virtual server.
- *
- * @return The port number as an unsigned short.
+ * @param path The path of the location.
+ * @param location The Location object containing the configuration for the specified path.
  *
  */
-unsigned short Config::getPort() const
+void Config::setLocation(const std::string &path, const Location &location)
 {
-	return m_port;
+	m_locations.set(path, location);
 }
-
-
 
 /**
  *
- * @brief Sets the IP address of the virtual server.
+ * @brief Sets the default location configuration for the virtual server.
  *
- * @param ip The IP address to be set.
+ * @param location The Location object containing the default configuration.
  *
  */
-void Config::setIp(const std::string &ip)
+void Config::setDefaultLocation(const Location &location)
 {
-	m_ip = ip;
+	m_defaultLocation = location;
 }
+
+
 /**
  *
- * @brief Sets the port number of the virtual server.
+ * @brief Sets the socket address for the virtual server.
  *
- * @param port The port number to be set.
+ * @param address The SocketAddress object containing the IP and port information.
  *
  */
-void Config::setPort(unsigned short port)
+void Config::setAddress(const SocketAddress &address)
 {
-	m_port = port;
+	m_address = address;
 }
 
 /**
@@ -139,8 +129,8 @@ void Config::setMaxBodySize(const size_t maxBodySize)
 const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath)->getIndexFiles();
-	return m_defaultLocation->getIndexFiles();
+		return m_locations.get(locationPath).getIndexFiles();
+	return m_defaultLocation.getIndexFiles();
 }
 
 
@@ -156,9 +146,9 @@ const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) c
 bool Config::hasIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath)->hasIndexFile();
+		return m_locations.get(locationPath).hasIndexFile();
 	if (locationPath == "/")
-		return m_defaultLocation->hasIndexFile();
+		return m_defaultLocation.hasIndexFile();
 	return false;
 }
 
@@ -221,10 +211,9 @@ size_t Config::getMaxBodySize(const std::string &locationPath) const
  * @param serverName The server name to be set.
  *
  */
-void Config::setServerName(const std::string &serverName)
+void Config::setServerNames(const Vec<std::string> &serverNames)
 {
-	m_serverName.first	= true;
-	m_serverName.second = serverName;
+	m_serverNames = serverNames;
 }
 
 
@@ -237,7 +226,21 @@ void Config::setServerName(const std::string &serverName)
  */
 bool Config::hasServerName() const
 {
-	return m_serverName.first;
+	return m_serverNames.size() > 0;
+}
+
+
+
+/**
+ *
+ * @brief Gets the IP address of the virtual server.
+ *
+ * @return The IP address as a constant reference to a string.
+ *
+ */
+const SocketAddress &Config::getAddress() const
+{
+	return m_address;
 }
 
 
@@ -248,9 +251,9 @@ bool Config::hasServerName() const
  * @return The server name as a constant reference to a string.
  *
  */
-const std::string &Config::getServerName() const
+const Vec<std::string> &Config::getServerNames() const
 {
-	return m_serverName.second;
+	return m_serverNames;
 }
 
 /**
@@ -260,7 +263,7 @@ const std::string &Config::getServerName() const
  * @return A pointer to the default Location object.
  *
  */
-Config::Location const *Config::getDefaultLocation() const
+const Location &Config::getDefaultLocation() const
 {
 	return m_defaultLocation;
 }
@@ -272,10 +275,11 @@ Config::Location const *Config::getDefaultLocation() const
  * @return A constant reference to the map of locations.
  *
  */
-const Map<const Config::Location *> &Config::getLocations() const
+const Config::LocationsMap &Config::getLocations() const
 {
 	return m_locations;
 }
+
 
 
 
@@ -284,10 +288,13 @@ const Map<const Config::Location *> &Config::getLocations() const
 
 std::ostream &operator<<(std::ostream &os, const Config &config)
 {
-	os << "Config(ip=" << config.getIp()
-	   << ", port=" << config.getPort()
-	   << ", serverName=" << config.getServerName()
+	const Config::LocationsMap &locations = config.getLocations();
+
+	os << "Config(address=" << config.getAddress()
+	   << ", serverName=" << LoggerJson::get(config.getServerNames())
 	   << ", defaultLocation=" << LoggerJson::get(config.getDefaultLocation())
+	   << ", locations size=" << locations.size()
+	   << ", Locations=" << LoggerJson::get(locations)
 	   << ")";
 	return os;
 }

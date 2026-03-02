@@ -21,4 +21,6 @@ class LocationReturn
 		void setStatusCode(const int statusCode);
 };
 
+std::ostream &operator<<(std::ostream &os, const LocationReturn &locationReturn);
+
 #endif

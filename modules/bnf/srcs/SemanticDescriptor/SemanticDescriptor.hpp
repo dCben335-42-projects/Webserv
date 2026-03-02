@@ -2,10 +2,8 @@
 #define BNF_SEMANTIC_DESCRIPTOR_HPP
 
 #include "bnf_defs.hpp"
-#include "../Rules/Group/Group.hpp"
-#include "../Rules/Option/Option.hpp"
-#include "../Rules/Sequence/Sequence.hpp"
-#include "../Rules/Symbol/Symbol.hpp"
+#include "../Rules/ARule.hpp"
+
 #include "../Concept/ConceptDef/ConceptDef.hpp"
 #include "../Concept/ConceptNode/ConceptNode.hpp"
 #include "../utils/utils.hpp"
@@ -25,6 +23,8 @@
 #include "../Exception/RecursiveConceptException.hpp"
 #include "../Exception/RecursiveLoopConceptException.hpp"
 
+namespace bnf
+{
 class SemanticDescriptor
 {
 	private:
@@ -51,12 +51,18 @@ class SemanticDescriptor
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void addParent();
 
+		bool			 parseAndConsumePrefix(std::string &str, int *out);
+		Vec<std::string> splitwords(const std::string &rule);
+		void			 ndw(const ARule *rule, Vec<std::string> &conceptPaths);
+		void			 findAllNext();
+		void			 findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
 
-		bool parseAndConsumePrefix(std::string &str, int *out);
 
 	public:
-		SemanticDescriptor(const std::string &m_content);
+		SemanticDescriptor();
 		~SemanticDescriptor();
+
+		void parse(const std::string &fileContent);
 
 		SemanticDescriptor &operator=(const SemanticDescriptor &other);
 
@@ -66,10 +72,9 @@ class SemanticDescriptor
 		const Concept			*getConcept(const std::string &key) const;
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 		ConceptNode				*getTree() const;
-		void					 findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
-		void					 findAllNext();
-		Vec<std::string>		 splitwords(std::string rule);
 };
+} // namespace bnf
+
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);
 

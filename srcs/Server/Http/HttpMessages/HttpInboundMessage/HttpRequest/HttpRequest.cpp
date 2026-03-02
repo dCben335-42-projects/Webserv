@@ -81,10 +81,10 @@ size_t HttpRequest::getSegmentSize() const
  *
  * @brief Retrieves the active locations matched for the request.
  *
- * @return A constant reference to a vector of pointers to the active Config::Location objects.
+ * @return A constant reference to a vector of pointers to the active Location objects.
  *
  */
-const Vec<const Config::Location *> &HttpRequest::getActiveLocations() const
+const Config::Locations &HttpRequest::getActiveLocations() const
 {
 	return m_activeLocations;
 }
@@ -303,8 +303,8 @@ void HttpRequest::parseAccepts(const std::string &headerValue)
  */
 void HttpRequest::parseActiveLocations(const Config &config)
 {
-	const Map<const Config::Location *> &locs = config.getLocations();
-	Vec<const Config::Location *>		 locations;
+	const Config::LocationsMap &locs = config.getLocations();
+	Config::Locations			locations;
 	m_activeLocations.push(config.getDefaultLocation());
 
 	if (locs.has("/"))
@@ -333,7 +333,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 		m_activeLocations += locations;
 	else if (locations.size() > 0)
 		m_activeLocations.push(locations.back());
-	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Config::Location::compare);
+	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Location::compare);
 }
 
 
@@ -354,25 +354,21 @@ size_t HttpRequest::parseFirstLine(const size_t lineEnd)
 {
 	const std::string requestLine = m_rawStr.substr(0, lineEnd);
 	const size_t	  methodEnd	  = requestLine.find(' ');
-	if (methodEnd != std::string::npos)
-		setMethod(HttpMethod(requestLine.substr(0, methodEnd)));
+	if (methodEnd == std::string::npos)
+		throw std::invalid_argument(REQ_INVALID_FIRST_LINE_MSG + requestLine);
+	setMethod(HttpMethod(requestLine.substr(0, methodEnd)));
 
 	const size_t targetEnd = requestLine.find(' ', methodEnd + 1);
-	if (targetEnd != std::string::npos)
-	{
-		std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
-		if (path.empty() || path[0] != '/')
-			throw std::invalid_argument(REQ_INVALID_TARGET_MSG + path);
-		parseTargetQuery(path);
-	}
+	if (targetEnd == std::string::npos)
+		throw std::invalid_argument(REQ_INVALID_FIRST_LINE_MSG + requestLine);
+	std::string path = requestLine.substr(methodEnd + 1, targetEnd - methodEnd - 1);
+	if (path.empty() || path[0] != '/')
+		throw std::invalid_argument(REQ_INVALID_TARGET_MSG + path);
+	parseTargetQuery(path);
 
-	const size_t versionPos = requestLine.find(' ', targetEnd + 1);
-	if (versionPos != std::string::npos)
-	{
-		const std::string httpVersion = requestLine.substr(versionPos + 1);
-		if (httpVersion != PROTOCOL)
-			throw std::invalid_argument(REQ_UNSUPPORTED_METHOD_MSG + httpVersion);
-	}
+	const size_t versionPos = requestLine.find(PROTOCOL, targetEnd + 1);
+	if (versionPos == std::string::npos)
+		throw std::invalid_argument(REQ_UNSUPPORTED_METHOD_MSG + requestLine.substr(targetEnd + 1));
 	return lineEnd;
 }
 
@@ -478,30 +474,33 @@ std::string HttpRequest::readHost(const std::string &currentHeader) const
  * @return The constructed resource path as a string.
  *
  * @throws std::out_of_range if the segment index is out of range.
+ * @throws Http404Exception if no valid location with root or alias is found.
  *
  */
 std::string HttpRequest::buildResourcePath(const ssize_t segmentIndex) const
 {
 	if (segmentIndex >= static_cast<ssize_t>(m_segments.size()) || segmentIndex < -1)
 		return "";
-	const Config::Location *validLocation = NULL;
-	bool					isRoot		  = true;
+	const Location *validLocation = NULL;
+	bool			isRoot		  = true;
 
 	m_locCIt end = segmentIndex == -1 ? m_activeLocations.begin() + 1 : m_activeLocations.end();
 	for (m_locCIt loc = m_activeLocations.begin(); loc != end; ++loc)
 	{
-		if ((*loc)->hasAlias())
+		if ((*loc).hasAlias())
 		{
-			validLocation = *loc;
+			validLocation = &(*loc);
 			isRoot		  = false;
 			continue;
 		}
-		if ((*loc)->hasRoot())
+		if ((*loc).hasRoot())
 		{
-			validLocation = *loc;
+			validLocation = &(*loc);
 			isRoot		  = true;
 		}
 	}
+	if (!validLocation)
+		throw Http404Exception();
 	std::string resourcePath = isRoot ? validLocation->getRoot() : validLocation->getAlias();
 	if (segmentIndex == -1)
 		return resourcePath;
@@ -531,8 +530,8 @@ bool HttpRequest::getActiveAutoIndex() const
 	while (it != begin)
 	{
 		--it;
-		if ((*it)->hasAutoIndexSet())
-			return (*it)->getAutoIndex();
+		if ((*it).hasAutoIndex())
+			return (*it).getAutoIndex();
 	}
 	return false;
 }
@@ -553,8 +552,8 @@ std::string HttpRequest::getUploadPath() const
 	while (it != begin)
 	{
 		--it;
-		if ((*it)->hasUpload())
-			return (*it)->getUpload();
+		if ((*it).hasUpload())
+			return (*it).getUpload().getUploadDir();
 	}
 	return "";
 }
@@ -597,7 +596,7 @@ bool HttpRequest::hasUpload() const
 	while (it != begin)
 	{
 		--it;
-		if ((*it)->hasUpload())
+		if ((*it).hasUpload())
 			return true;
 	}
 	return false;
@@ -615,10 +614,10 @@ bool HttpRequest::hasReturn() const
 {
 	m_locCIt root = m_activeLocations.begin();
 
-	if ((*root)->hasReturn())
+	if ((*root).hasReturn())
 		return true;
 	m_locCIt last = m_activeLocations.end() - 1;
-	return (*last)->hasReturn();
+	return (*last).hasReturn();
 }
 
 
@@ -633,10 +632,10 @@ const LocationReturn &HttpRequest::getReturn() const
 {
 	m_locCIt root = m_activeLocations.begin();
 
-	if ((*root)->hasReturn())
-		return (*root)->getReturn();
+	if ((*root).hasReturn())
+		return (*root).getReturn();
 	m_locCIt last = m_activeLocations.end() - 1;
-	return (*last)->getReturn();
+	return (*last).getReturn();
 }
 
 
@@ -672,8 +671,8 @@ const Set<HttpMethod> *HttpRequest::getAllowedMethods() const
 	while (it != begin)
 	{
 		--it;
-		if ((*it)->hasMethods())
-			return &(*it)->getAllowedMethods();
+		if ((*it).hasMethods())
+			return &(*it).getAllowedMethods();
 	}
 	return NULL;
 }
@@ -713,6 +712,7 @@ const std::string &HttpRequest::getHost() const
  * @note Updates m_isFirstLineParsed member.
  * @note Updates m_firstLineEndPos member.
  * @note Updates m_headersEndPos member.
+ * @note Updates m_host member.
  *
  * @throws Http400Exception if the request line is malformed or if the Host header is missing when headers are complete.
  *

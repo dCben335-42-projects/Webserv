@@ -18,6 +18,8 @@
 #include "../Exception/Parser/FileNotFinishedException.hpp"
 #include "../BNFPath/BNFPath.hpp"
 
+namespace bnf
+{
 class Parser
 {
 	private:
@@ -63,5 +65,6 @@ class Parser
 
 		void parse(const std::string &stringToParsed);
 };
+} // namespace bnf
 
 #endif
