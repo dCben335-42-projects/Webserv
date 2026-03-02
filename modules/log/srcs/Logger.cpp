@@ -89,6 +89,8 @@ Logger &Logger::setTarget(Target t)
 	m_target = t;
 	return m_instance;
 }
+#include "unistd.h"
+
 /**
  *
  * @brief Opens a log file and sets it as the current logging target.
@@ -103,18 +105,21 @@ Logger &Logger::setTarget(Target t)
  * This allows for multiple log files to be used simultaneously by providing different keys.
  *
  */
-Logger &Logger::openFile(
+bool Logger::openFile(
 	const std::string &path,
 	const FileMode	   mode,
 	const std::string  key)
 {
 	const std::string &fileKey = key.empty() ? path : key;
-
 	if (m_openFiles.has(fileKey))
 	{
-		m_file	 = m_openFiles[fileKey];
-		m_target = File;
-		return m_instance;
+		if (access(path.c_str(), F_OK) == 0)
+		{
+			m_file	 = m_openFiles[fileKey];
+			m_target = File;
+			return true;
+		}
+		closeFile(fileKey);
 	}
 
 	std::ofstream *newFile = new std::ofstream();
@@ -127,11 +132,11 @@ Logger &Logger::openFile(
 	{
 		delete newFile;
 		m_openFiles.remove(fileKey);
-		return m_instance;
+		return false;
 	}
 	m_target = File;
 	m_file	 = newFile;
-	return m_instance;
+	return true;
 }
 
 
@@ -149,7 +154,7 @@ Logger &Logger::openFile(
  * This allows for multiple log files to be used simultaneously by providing different keys.
  *
  */
-Logger &Logger::openFile(const std::string &path, const std::string key, const FileMode mode)
+bool Logger::openFile(const std::string &path, const std::string key, const FileMode mode)
 {
 	return openFile(path, mode, key);
 }
