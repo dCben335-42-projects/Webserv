@@ -20,8 +20,12 @@
 #define PARSER_KEY_ERROR_PAGE "error_page"
 
 #define PARSER_KEY_LISTEN "listen"
-
 #define PARSER_KEY_SERVER_NAME "server_name"
+#define PARSER_KEY_AUTH_LOCATION "auth_loc"
+#define PARSER_KEY_BODY_TIMEOUT "body_timeout"
+#define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
+#define PARSER_KEY_HEADER_TIMEOUT "header_timeout"
+
 #define PARSER_KEY_ROOT "root"
 #define PARSER_KEY_ALIAS "alias"
 #define PARSER_KEY_INDEX "index"
@@ -29,14 +33,7 @@
 #define PARSER_KEY_UPLOAD "sendfiles"
 #define PARSER_KEY_RETURN "return"
 #define PARSER_KEY_METHODS "allow_methods"
-#define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
-#define PARSER_KEY_HEADER_TIMEOUT "header_timeout"
-#define PARSER_KEY_BODY_TIMEOUT "body_timeout"
 #define PARSER_KEY_MAX_BODY_SIZE "client_max_body_size"
-#define PARSER_KEY_CGI_PARAMS "cgi_params"
-
-#define MAX_PORT_NUMBER 65535
-
 
 #include "Config.hpp"
 
@@ -50,7 +47,7 @@ class Parser
 				void (T::*setString)(const std::string &);
 				void (T::*setBool)(bool);
 				void (T::*setArray)(const Vec<std::string> &);
-				void (T::*setNumber)(unsigned int);
+				void (T::*setNumber)(size_t);
 		};
 
 	private:

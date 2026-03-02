@@ -24,6 +24,7 @@ class Number
 		static unsigned long  toULong(const std::string &str);
 
 		static std::string bytesToHumanSize(const size_t bytes);
+		static size_t	   toBytes(const std::string &str);
 
 		static int hexToInt(char c);
 };

@@ -31,6 +31,8 @@ class Config
 		time_t m_keepAliveTimeout;
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
+
+
 		size_t m_maxBodySize;
 
 	public:
@@ -42,10 +44,9 @@ class Config
 		void setDefaultLocation(const Location &location);
 
 		void setAddress(const SocketAddress &address);
-		void setKeepAliveTimeout(const time_t timeout);
-		void setHeaderTimeout(const time_t timeout);
-		void setBodyTimeout(const time_t timeout);
-		void setMaxBodySize(const size_t maxBodySize);
+		void setKeepAliveTimeout(const size_t timeout);
+		void setHeaderTimeout(const size_t timeout);
+		void setBodyTimeout(const size_t timeout);
 		void setServerNames(const Vec<std::string> &serverNames);
 		void setAuthLocation(const std::string &authLocation);
 		void setUploadLocation(const std::string &uploadLocation);

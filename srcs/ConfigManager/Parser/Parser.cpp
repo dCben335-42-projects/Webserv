@@ -2,9 +2,14 @@
 #include <stack>
 #include "Logger.hpp"
 #include "Number.hpp"
+#include "constants.hpp"
 
 const Parser::Directive<Config> Parser::m_serverDirectives[] = {
-	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL}};
+	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL},
+	{PARSER_KEY_KEEPALIVE_TIMEOUT, NULL, NULL, NULL, &Config::setKeepAliveTimeout},
+	{PARSER_KEY_HEADER_TIMEOUT, NULL, NULL, NULL, &Config::setHeaderTimeout},
+	{PARSER_KEY_BODY_TIMEOUT, NULL, NULL, NULL, &Config::setBodyTimeout},
+	{PARSER_KEY_AUTH_LOCATION, &Config::setAuthLocation, NULL, NULL, NULL}};
 
 const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_ROOT, &Location::setRoot, NULL, NULL, NULL},
@@ -13,7 +18,8 @@ const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_UPLOAD, NULL, NULL, &Location::setUpload, NULL},
 	{PARSER_KEY_INDEX, NULL, NULL, &Location::setIndexes, NULL},
 	{PARSER_KEY_METHODS, NULL, NULL, &Location::setMethods, NULL},
-	{PARSER_KEY_RETURN, NULL, NULL, &Location::setReturn, NULL}};
+	{PARSER_KEY_RETURN, NULL, NULL, &Location::setReturn, NULL},
+	{PARSER_KEY_MAX_BODY_SIZE, &Location::setMaxBodySize, NULL, NULL, NULL}};
 
 const size_t Parser::m_serverDirectivesCount   = sizeof(m_serverDirectives) / sizeof(m_serverDirectives[0]);
 const size_t Parser::m_locationDirectivesCount = sizeof(m_locationDirectives) / sizeof(m_locationDirectives[0]);
@@ -102,6 +108,11 @@ Vec<std::string> Parser::extractTokens(const std::string &line)
 
 		if (c == DQUOTE)
 		{
+			if (inQuotes && line[i - 1] == '\\')
+			{
+				current += c;
+				continue;
+			}
 			inQuotes = !inQuotes;
 			continue;
 		}

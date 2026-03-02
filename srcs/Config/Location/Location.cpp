@@ -187,6 +187,18 @@ const LocationReturn &Location::getReturn() const
 	return m_return.second;
 }
 
+/**
+ *
+ * @brief Gets the maximum body size for the location.
+ *
+ * @return The maximum body size in bytes.
+ *
+ */
+size_t Location::getMaxBodySize() const
+{
+	return m_maxBodySize.second;
+}
+
 
 
 
@@ -308,6 +320,18 @@ bool Location::hasIndexes() const
 	return m_indexFiles.first;
 }
 
+/**
+ *
+ * @brief Checks if the location has a maximum body size set.
+ *
+ * @return true if a maximum body size is set, false otherwise.
+ *
+ */
+bool Location::hasMaxBodySize() const
+{
+	return m_maxBodySize.first;
+}
+
 
 
 /**
@@ -418,12 +442,17 @@ void Location::setReturn(const LocationReturn &returnVal)
  */
 void Location::setReturn(const Vec<std::string> &returnVal)
 {
+	if (returnVal.empty())
+		return;
 	m_return.first = true;
 	if (returnVal.size() >= 2)
 	{
 		m_return.second.setStatusCode(Number::toInt(returnVal[0]));
 		m_return.second.setTarget(returnVal[1]);
+		return;
 	}
+	m_return.second.setStatusCode(Number::toInt(returnVal[0]));
+	m_return.second.setTarget("");
 }
 
 
@@ -465,7 +494,7 @@ void Location::setUpload(const Vec<std::string> &upload)
 	if (upload.empty())
 		return;
 	m_upload.first = true;
-	if (upload[0] == "on" && upload.size() >= 2)
+	if (upload[0] == "on" && upload.size() == 2)
 	{
 		m_upload.second.setOn(true);
 		m_upload.second.setUploadDir(upload[1]);
@@ -475,6 +504,20 @@ void Location::setUpload(const Vec<std::string> &upload)
 		m_upload.second.setOn(false);
 		m_upload.second.setUploadDir("");
 	}
+}
+
+
+/**
+ *
+ * @brief Sets the maximum body size for the location.
+ *
+ * @param maxBodySize A string representing the maximum body size (e.g., "10m", "500k").
+ *
+ */
+void Location::setMaxBodySize(const std::string &maxBodySize)
+{
+	m_maxBodySize.first	 = true;
+	m_maxBodySize.second = Number::toBytes(maxBodySize);
 }
 
 

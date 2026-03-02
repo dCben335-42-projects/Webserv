@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <iomanip>
+#include <cmath>
 
 Number::Number()
 {
@@ -95,6 +96,50 @@ std::string Number::bytesToHumanSize(const size_t bytes)
 	std::ostringstream oss;
 	oss << std::fixed << std::setprecision(2) << size << " " << sizes[order];
 	return oss.str();
+}
+
+
+/**
+ *
+ * @brief Converts a human-readable file size string into its equivalent size in bytes.
+ *
+ * @param str The human-readable file size string to convert.
+ * - The string should consist of a numeric value followed by an optional unit (k, m, g for kilobytes, megabytes, gigabytes respectively).
+ *
+ * @return The equivalent size in bytes as a size_t value.
+ *
+ */
+size_t Number::toBytes(const std::string &str)
+{
+	size_t order = 0;
+	double size	 = 0.0;
+	size_t i	 = 0;
+
+	while (i < str.size() && (std::isdigit(static_cast<unsigned char>(str[i])) || str[i] == '.'))
+	{
+		size = size * 10 + (str[i] - '0');
+		++i;
+	}
+	if (i < str.size())
+	{
+		char unit = std::tolower(static_cast<unsigned char>(str[i]));
+		switch (unit)
+		{
+			case 'k':
+				order = 1;
+				break;
+			case 'm':
+				order = 2;
+				break;
+			case 'g':
+				order = 3;
+				break;
+			default:
+				order = 0;
+				break;
+		}
+	}
+	return static_cast<size_t>(size * std::pow(1024, order));
 }
 
 int Number::hexToInt(char c)

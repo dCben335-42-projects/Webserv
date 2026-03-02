@@ -17,4 +17,7 @@
 #define MURMUR_FIRST_SHIFT 13u
 #define MURMUR_LAST_SHIFT 15u
 
+
+#define MAX_PORT_NUMBER 65535
+
 #endif

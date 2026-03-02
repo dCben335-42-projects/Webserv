@@ -18,11 +18,11 @@ class Location
 
 		std::pair<bool, std::string> m_root;
 		std::pair<bool, std::string> m_alias;
-		// std::pair<bool, std::string>	m_uploadDir;
+
 		std::pair<bool, bool>			m_autoIndex;
 		std::pair<bool, LocationReturn> m_return;
 		std::pair<bool, Upload>			m_upload;
-		std::pair<bool, std::string>	m_maxBodySize;
+		std::pair<bool, size_t>			m_maxBodySize;
 
 		// clang-format off
 		std::pair<bool, Set<HttpMethod> >  m_allowedMethods;
@@ -47,6 +47,7 @@ class Location
 		const Set<HttpMethod>  &getAllowedMethods() const;
 		const Upload		   &getUpload() const;
 		const LocationReturn   &getReturn() const;
+		size_t					getMaxBodySize() const;
 
 		bool hasAlias() const;
 		bool hasCgi() const;
@@ -58,6 +59,7 @@ class Location
 		bool hasReturn() const;
 		bool hasIndexes() const;
 		bool hasUpload() const;
+		bool hasMaxBodySize() const;
 
 		void setPath(const std::string &path);
 		void setRoot(const std::string &root);
@@ -72,6 +74,7 @@ class Location
 		void setReturn(const Vec<std::string> &returnVal);
 		void setIndexes(const Vec<std::string> &indexFiles);
 		void setUpload(const Vec<std::string> &upload);
+		void setMaxBodySize(const std::string &maxBodySize);
 };
 
 std::ostream &operator<<(std::ostream &os, const Location &location);

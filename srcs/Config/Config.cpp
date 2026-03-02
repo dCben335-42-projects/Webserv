@@ -75,7 +75,7 @@ void Config::setAddress(const SocketAddress &address)
  * @param timeout The keep-alive timeout to be set (in seconds).
  *
  */
-void Config::setKeepAliveTimeout(const time_t timeout)
+void Config::setKeepAliveTimeout(const size_t timeout)
 {
 	m_keepAliveTimeout = timeout;
 }
@@ -87,7 +87,7 @@ void Config::setKeepAliveTimeout(const time_t timeout)
  * @param timeout The header timeout to be set (in seconds).
  *
  */
-void Config::setHeaderTimeout(const time_t timeout)
+void Config::setHeaderTimeout(const size_t timeout)
 {
 	m_headerTimeout = timeout;
 }
@@ -99,21 +99,9 @@ void Config::setHeaderTimeout(const time_t timeout)
  * @param timeout The body timeout to be set (in seconds).
  *
  */
-void Config::setBodyTimeout(const time_t timeout)
+void Config::setBodyTimeout(const size_t timeout)
 {
 	m_bodyTimeout = timeout;
-}
-
-/**
- *
- * @brief Sets the maximum body size for the virtual server.
- *
- * @param maxBodySize The maximum body size to be set (in bytes).
- *
- */
-void Config::setMaxBodySize(const size_t maxBodySize)
-{
-	m_maxBodySize = maxBodySize;
 }
 
 
@@ -214,6 +202,20 @@ size_t Config::getMaxBodySize(const std::string &locationPath) const
 void Config::setServerNames(const Vec<std::string> &serverNames)
 {
 	m_serverNames = serverNames;
+}
+
+
+/**
+ *
+ * @brief Sets the authentication location for the virtual server.
+ *
+ * @param authLocation The authentication location to be set.
+ *
+ */
+void Config::setAuthLocation(const std::string &authLocation)
+{
+	m_authLocation.first  = true;
+	m_authLocation.second = authLocation;
 }
 
 
