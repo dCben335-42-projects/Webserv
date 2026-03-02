@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	signal(SIGINT, SIG_IGN);
 	if (argc < 2)
 		Logger::info(DEFAULT_CONFIG_MSG);
-	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ");
+	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ").setFormat(Logger::PlainText);
 	const std::string &configPath = argc >= 2 ? argv[1] : DEFAULT_CONFIG_PATH;
 	std::string		   bnf;
 	std::string		   config;

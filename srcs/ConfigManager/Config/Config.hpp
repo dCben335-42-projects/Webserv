@@ -32,7 +32,8 @@ class Config
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
 
-		size_t m_maxBodySize;
+		std::string m_accessLog;
+		std::string m_errorLog;
 
 	public:
 		Config();
@@ -64,6 +65,12 @@ class Config
 
 		void   setBodyTimeout(const size_t timeout);
 		time_t getBodyTimeout() const;
+
+		void			   setAccessLog(const std::string &accessLog);
+		const std::string &getAccessLog() const;
+
+		void			   setErrorLog(const std::string &errorLog);
+		const std::string &getErrorLog() const;
 
 		bool					hasIndexes(const std::string &locationPath) const;
 		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;

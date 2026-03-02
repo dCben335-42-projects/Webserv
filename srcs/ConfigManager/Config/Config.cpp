@@ -7,7 +7,8 @@ Config::Config()
 	m_bodyTimeout	   = FALLBACK_BODY_TIMEOUT;
 	m_headerTimeout	   = FALLBACK_HEADER_TIMEOUT;
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
-	m_maxBodySize	   = FALLBACK_MAX_BODY_SIZE;
+	m_accessLog		   = FALLBACK_ACCESS_LOG;
+	m_errorLog		   = FALLBACK_ERROR_LOG;
 }
 
 Config::Config(const Config &other)
@@ -22,7 +23,8 @@ Config::Config(const Config &other)
 	m_headerTimeout	   = other.m_headerTimeout;
 	m_bodyTimeout	   = other.m_bodyTimeout;
 
-	m_maxBodySize = other.m_maxBodySize;
+	m_accessLog = other.m_accessLog;
+	m_errorLog	= other.m_errorLog;
 }
 
 
@@ -210,6 +212,31 @@ void Config::setAuthLocation(const std::string &authLocation)
 
 /**
  *
+ * @brief Sets the access log file path for the virtual server.
+ *
+ * @param accessLog The access log file path to be set.
+ *
+ */
+void Config::setAccessLog(const std::string &accessLog)
+{
+	m_accessLog = accessLog;
+}
+
+/**
+ *
+ * @brief Sets the error log file path for the virtual server.
+ *
+ * @param errorLog The error log file path to be set.
+ *
+ */
+void Config::setErrorLog(const std::string &errorLog)
+{
+	m_errorLog = errorLog;
+}
+
+
+/**
+ *
  * @brief Checks if the virtual server has an authentication location configured.
  *
  * @return true if the authentication location is configured, false otherwise.
@@ -286,6 +313,30 @@ const Location &Config::getDefaultLocation() const
 
 /**
  *
+ * @brief Gets the access log file path for the virtual server.
+ *
+ * @return The access log file path as a constant reference to a string.
+ *
+ */
+const std::string &Config::getAccessLog() const
+{
+	return m_accessLog;
+}
+
+/**
+ *
+ * @brief Gets the error log file path for the virtual server.
+ *
+ * @return The error log file path as a constant reference to a string.
+ *
+ */
+const std::string &Config::getErrorLog() const
+{
+	return m_errorLog;
+}
+
+/**
+ *
  * @brief Gets the map of location paths to their corresponding Location objects.
  *
  * @return A constant reference to the map of locations.
@@ -308,6 +359,13 @@ std::ostream &operator<<(std::ostream &os, const Config &config)
 	os << Logger::indent() << "address=" << LoggerJson::get(config.getAddress()) << "\n";
 	if (config.hasServerName())
 		os << Logger::indent() << "serverNames=" << LoggerJson::get(config.getServerNames()) << "\n";
+	if (config.hasAuthLocation())
+		os << Logger::indent() << "authLocation=" << LoggerJson::get(config.getAuthLocation()) << "\n";
+	os << Logger::indent() << "keepAliveTimeout=" << config.getKeepAliveTimeout() << "\n";
+	os << Logger::indent() << "headerTimeout=" << config.getHeaderTimeout() << "\n";
+	os << Logger::indent() << "bodyTimeout=" << config.getBodyTimeout() << "\n";
+	os << Logger::indent() << "accessLog=" << LoggerJson::get(config.getAccessLog()) << "\n";
+	os << Logger::indent() << "errorLog=" << LoggerJson::get(config.getErrorLog()) << "\n";
 	os << Logger::indent() << "defaultLocation=" << LoggerJson::get(config.getDefaultLocation()) << "\n";
 	if (locations.size() > 0)
 		os << Logger::indent() << "Locations=" << LoggerJson::get(locations) << "\n";

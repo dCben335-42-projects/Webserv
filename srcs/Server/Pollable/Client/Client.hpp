@@ -21,10 +21,12 @@ class Client : public Pollable
 		};
 
 	private:
+		VirtualServer &m_server;
+
 		const Config *m_config;
 		bool		  m_isConfigSet;
-
-		VirtualServer &m_server;
+		std::string	  m_accessLog;
+		std::string	  m_errorLog;
 
 		HttpRequest	 m_req;
 		HttpResponse m_res;

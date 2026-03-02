@@ -25,6 +25,8 @@
 #define PARSER_KEY_BODY_TIMEOUT "client_body_timeout"
 #define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
 #define PARSER_KEY_HEADER_TIMEOUT "client_header_timeout"
+#define PARSER_KEY_ACCESS_LOG "access_log"
+#define PARSER_KEY_ERROR_LOG "error_log"
 
 #define PARSER_KEY_ROOT "root"
 #define PARSER_KEY_ALIAS "alias"
@@ -71,7 +73,7 @@ class Parser
 		Vec<std::string> extractTokens(const std::string &line);
 		std::string		 joinTokens(const Vec<std::string> &tokens, const size_t start);
 
-		void set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node);
+		void set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node, const size_t lineNumber);
 		void resolveListen(ServerNode &server);
 
 		bool isDuplicate(const ServerNode &server, const Vec<ServerNode> &servers, const size_t start = 0);

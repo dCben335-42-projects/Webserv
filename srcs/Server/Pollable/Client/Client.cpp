@@ -13,6 +13,8 @@
 #include "httpHeaders.hpp"
 #include "Logger.hpp"
 #include "log.hpp"
+#include "IPAddress.hpp"
+
 
 const std::string errorFile	 = "errors.log";
 const std::string accessFile = "access.log";
@@ -21,13 +23,16 @@ const std::string accessFile = "access.log";
 
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
-	m_config(&config),
-	m_server(server)
+	m_server(server),
+	m_config(&config)
 {
 	m_count = 0;
 	reset();
+	m_isConfigSet = false;
+	m_accessLog	  = config.getAccessLog();
+	m_errorLog	  = config.getErrorLog();
 	EventLoop::addHandler(this);
-	Logger::openFile(accessFile).custom(LOG_MSG_CLIENT_CONNECTED);
+	Logger::openFile(m_accessLog).custom(LOG_MSG_CLIENT_CONNECTED);
 }
 
 Client::~Client()
@@ -107,7 +112,6 @@ void Client::reset()
 	m_shouldClose  = false;
 	m_events	   = POLLIN;
 	m_time		   = std::time(0);
-	m_isConfigSet  = false;
 }
 
 /**
@@ -487,7 +491,6 @@ bool Client::prepareResponse()
 	return true;
 }
 
-#include "IPAddress.hpp"
 
 /**
  *
@@ -510,9 +513,8 @@ const Config *Client::findHostConfig(const std::string &host) const
 	bool hasPort = IPAddress::extractPort(host, port, portPos, invalidPort);
 	if (invalidPort)
 		throw Http400Exception("Invalid port in Host header");
-	const std::string extractedServerName = hasPort ? host.substr(0, portPos) : host;
-	Logger::debug("Extracted server name from Host header: " + extractedServerName);
-	const ServerConfigs &confs = m_server.getConfigs();
+	const std::string	 extractedServerName = hasPort ? host.substr(0, portPos) : host;
+	const ServerConfigs &confs				 = m_server.getConfigs();
 	for (ServerConfigs::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
 		const Config &config = (*it);
@@ -610,6 +612,8 @@ bool Client::hasReceivedCompleteRequest()
 	if (!m_isConfigSet && m_req.hasHost())
 	{
 		m_config	  = findHostConfig(m_req.getHost());
+		m_accessLog	  = m_config->getAccessLog();
+		m_errorLog	  = m_config->getErrorLog();
 		m_isConfigSet = true;
 	}
 	m_timeoutState = isCompleteHeader ? BODY_TIMEOUT : HEADER_TIMEOUT;

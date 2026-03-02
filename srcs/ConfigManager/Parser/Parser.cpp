@@ -11,6 +11,8 @@ const Parser::Directive<Config> Parser::m_serverDirectives[] = {
 	{PARSER_KEY_KEEPALIVE_TIMEOUT, NULL, NULL, NULL, &Config::setKeepAliveTimeout},
 	{PARSER_KEY_HEADER_TIMEOUT, NULL, NULL, NULL, &Config::setHeaderTimeout},
 	{PARSER_KEY_BODY_TIMEOUT, NULL, NULL, NULL, &Config::setBodyTimeout},
+	{PARSER_KEY_ACCESS_LOG, &Config::setAccessLog, NULL, NULL, NULL},
+	{PARSER_KEY_ERROR_LOG, &Config::setErrorLog, NULL, NULL, NULL},
 	{PARSER_KEY_AUTH_LOCATION, &Config::setAuthLocation, NULL, NULL, NULL}};
 
 const Parser::Directive<Location> Parser::m_locationDirectives[] = {
@@ -167,7 +169,7 @@ std::string Parser::joinTokens(const Vec<std::string> &tokens, const size_t star
  * with special processing, while other directives are set directly using the setDirective method of the node.
  *
  */
-void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node)
+void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node, const size_t lineNumber)
 {
 	if (key == PARSER_KEY_ADDHEADER && tokens.size() >= 2)
 		node.setAddHeaders(tokens[0], joinTokens(tokens, 1));
@@ -176,7 +178,11 @@ void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfig
 	else if (key == PARSER_KEY_ERROR_PAGE && !tokens.empty())
 		node.setErrorPages(tokens[0], joinTokens(tokens, 1));
 	else
+	{
+		if (node.hasDirective(key))
+			Logger::warn("Duplicate directive: " + Logger::get(key) + " at line " + Logger::get(lineNumber));
 		node.setDirective(key, tokens);
+	}
 }
 
 
@@ -202,9 +208,11 @@ void Parser::retreive()
 
 	ServerNode	 currentServer;
 	LocationNode currentLocation;
+	size_t		 lineNumber = 0;
 
 	while (std::getline(input, line))
 	{
+		++lineNumber;
 		if (line.empty())
 			continue;
 
@@ -246,11 +254,11 @@ void Parser::retreive()
 		tokens.erase(tokens.begin());
 		const std::string &currentContext = context.top();
 		if (currentContext == PARSER_BLOCK_HTTP)
-			set(key, tokens, m_http);
+			set(key, tokens, m_http, lineNumber);
 		else if (currentContext == PARSER_BLOCK_SERVER)
-			set(key, tokens, currentServer);
+			set(key, tokens, currentServer, lineNumber);
 		else if (currentContext == PARSER_BLOCK_LOCATION)
-			set(key, tokens, currentLocation);
+			set(key, tokens, currentLocation, lineNumber);
 	}
 }
 
@@ -442,7 +450,7 @@ void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 
 /**
  *
- * @brief Creates the HTTP configuration based on the directives in the HttpNode.
+ * @brief Creates the HTTP configuration based on the directives in the HttpNode.pCOnfig
  *
  * @note This function iterates through the directives in the HttpNode and applies them to the m_httpConfig object.
  * It also handles any directives that are applicable to locations and applies them to a default location configuration.

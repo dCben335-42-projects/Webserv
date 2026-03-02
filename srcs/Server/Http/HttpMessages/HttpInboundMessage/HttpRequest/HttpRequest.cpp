@@ -127,8 +127,9 @@ size_t HttpRequest::getMaxBodySize() const
 	const Config::Locations::const_iterator begin	  = locations.begin();
 	Config::Locations::const_iterator		it		  = locations.end();
 
-	while (--it != begin)
+	while (it != begin)
 	{
+		--it;
 		if (it->hasMaxBodySize())
 			return it->getMaxBodySize();
 	}

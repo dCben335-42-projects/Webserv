@@ -22,13 +22,18 @@
 #define READ_CGI_BUFFER_SIZE 8192u
 #define WRITE_CGI_BUFFER_SIZE 8192u
 
-#define FALLBACK_MAX_BODY_SIZE (100 * MB)
+#define FALLBACK_MAX_BODY_SIZE (10 * MB)
 #define FALLBACK_MAX_HEADERS_SIZE (8 * KB)
 
 #define FALLBACK_INDEX "index.html"
+
 #define FALLBACK_KEEP_ALIVE_TIMEOUT 50u
 #define FALLBACK_HEADER_TIMEOUT 5u
 #define FALLBACK_BODY_TIMEOUT 5u
+
+#define FALLBACK_ACCESS_LOG "files/logs/access.log"
+#define FALLBACK_ERROR_LOG "files/logs/error.log"
+
 #define POLL_TIMEOUT 500u
 
 
