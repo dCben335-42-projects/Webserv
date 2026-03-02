@@ -1,19 +1,17 @@
 #include "VirtualServer.hpp"
 #include "EventLoop.hpp"
 #include <fcntl.h>
-#include "Number.hpp"
 #include <unistd.h>
 #include <netdb.h>
-#include <arpa/inet.h>
 
 #include "Logger.hpp"
 #include "httpExceptions.hpp"
-#include "Date.hpp"
 
 #include "Client.hpp"
 #include "HttpUser.hpp"
 
 #include "HttpAuth.hpp"
+#include "log.hpp"
 
 
 VirtualServer::VirtualServer(
@@ -118,8 +116,11 @@ bool VirtualServer::setupSocket()
 		m_fd = socket(m_bindAddress.isIPv6() ? AF_INET6 : AF_INET, SOCK_STREAM, 0);
 		if (m_fd < 0)
 			throw SocketCreationException();
+		if (fcntl(m_fd, F_SETFL, O_NONBLOCK) < 0)
+			throw SocketCreationException();
 		setReusable(m_fd);
 		bindAndListen(m_fd);
+		// TODO
 		Logger::info("Go to http://" + Logger::get(m_bindAddress) + " to access the server");
 		return true;
 	}
@@ -131,6 +132,8 @@ bool VirtualServer::setupSocket()
 			m_fd = -1;
 		}
 		std::cerr << e.what() << " (" << Logger::get(m_bindAddress) << ")" << std::endl;
+		// TODO
+		//  std::cerr << e.what() << " (" << ip << ":" << port << ")" << std::endl;
 		return false;
 	}
 }
@@ -155,7 +158,7 @@ void VirtualServer::createClient(int clientFd)
 {
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
 	{
-		std::cerr << "Failed to set client socket to non-blocking mode: " << strerror(errno) << std::endl;
+		// TODO Logger::openFile(errorFile).custom(ERROR_MSG_FCNTL_FAILED);
 		close(clientFd);
 		return;
 	}
@@ -183,7 +186,7 @@ void VirtualServer::onPollIn()
 	int clientFd = accept(m_fd, (struct sockaddr *) &clientAddr, &clientLen);
 	if (clientFd < 0)
 	{
-		std::cerr << "Accept failed on fd " << m_fd << ": " << strerror(errno) << std::endl;
+		// TODO Logger::openFile(errorFile).custom(ERROR_MSG_ACCEPT_FAILED);
 		return;
 	}
 	createClient(clientFd);
@@ -198,6 +201,7 @@ void VirtualServer::onPollErr()
 	m_connectionClosed = true;
 	m_events		   = 0;
 	std::cerr << "VirtualServer error on fd " << m_fd << std::endl;
+	// TODO Logger::openFile(errorFile).custom(ERROR_MSG_UNKNOWN);
 }
 
 void VirtualServer::onPollHangUp()
@@ -208,6 +212,17 @@ void VirtualServer::onTimeOut()
 {
 }
 
+
+/**
+ *
+ * @brief Creates a user for the auth system, and a cookie associated with this user
+ *
+ * @param name The name of the user
+ * @param pswd The password of the user
+ *
+ * @throw Http409Exception() if the user already exists
+ *
+ */
 const std::string VirtualServer::createUser(const std::string name, const std::string pswd)
 {
 	for (UserCIt it = m_users.begin(); it != m_users.end(); it++)
@@ -221,6 +236,14 @@ const std::string VirtualServer::createUser(const std::string name, const std::s
 	return newUser.getStringifiedCookie();
 }
 
+
+/**
+ *
+ * @brief Checks if the Server has a specific user based on a hash
+ *
+ * @param hash The hash used to find the user in the server
+ *
+ */
 bool VirtualServer::hasUser(const std::string &hash) const
 {
 	AuthToken token(hash);
@@ -232,6 +255,19 @@ bool VirtualServer::hasUser(const std::string &hash) const
 	return false;
 }
 
+
+/**
+ *
+ * @brief Returns the cookie corresonding with the user settings in params
+ * Hashes thoses params and checks if the hash is already stored
+ *
+ * @param name The name of the user
+ * @param pswd The password of the user
+ * @param authLoc The location of authentification, used to redirect the user when invalid credentials are entered
+ *
+ * @throw Http301Exception() in case the User is not found
+ *
+ */
 const std::string &VirtualServer::findUser(const std::string &name, const std::string &pswd, const std::string &authLoc)
 {
 	for (UserIt it = m_users.begin(); it != m_users.end(); it++)

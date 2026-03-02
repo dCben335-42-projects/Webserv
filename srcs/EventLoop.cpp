@@ -55,7 +55,6 @@ void EventLoop::destroy()
 }
 
 
-#include "Logger.hpp"
 /**
  *
  * @brief Runs the event loop to handle I/O events.

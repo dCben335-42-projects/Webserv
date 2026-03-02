@@ -11,6 +11,7 @@
 
 #include "Signals.hpp"
 #include <stdio.h>
+#include <fcntl.h>
 
 CgiSpawner::CgiSpawner(const HttpRequest &req, const Config &config) :
 	m_req(req),
@@ -25,30 +26,15 @@ CgiSpawner::~CgiSpawner()
 {
 }
 
-void CgiSpawner::spawn()
-{
-	setupPipes();
-	setupEnv();
-	m_pid = fork();
-	if (m_pid == -1)
-	{
-		close(m_stdoutPipe[1]);
-		close(m_stdoutPipe[0]);
-		close(m_stdinPipe[1]);
-		close(m_stdinPipe[0]);
-		throw Http500Exception();
-	}
-	if (m_pid == 0)
-		childprocess();
-	close(m_stdoutPipe[1]);
-	close(m_stdinPipe[0]);
-	if (!m_has_post_data)
-	{
-		close(m_stdinPipe[1]);
-		m_stdinPipe[1] = -1;
-	}
-}
 
+/**
+ *
+ * @brief Create pipes to establish communication between the child and parent processes
+ * Also sets those pipes to non-blocking state with fcntl
+ *
+ * @throw Http500Exception in case pipe() or fcntl() fails
+ *
+ */
 void CgiSpawner::setupPipes()
 {
 	if (pipe(m_stdinPipe) == -1)
@@ -63,6 +49,62 @@ void CgiSpawner::setupPipes()
 		m_stdoutPipe[1] = -1;
 		throw Http500Exception();
 	}
+	if (fcntl(m_stdinPipe[1], F_SETFL, O_NONBLOCK) == -1)
+	{
+		closePipes();
+		throw Http500Exception();
+	}
+	if (fcntl(m_stdoutPipe[0], F_SETFL, O_NONBLOCK) == -1)
+	{
+		closePipes();
+		throw Http500Exception();
+	}
+}
+
+
+/**
+ *
+ * @brief Util secured function to close the pipes
+ *
+ */
+void CgiSpawner::closePipes()
+{
+	if (m_stdinPipe[0] != -1)
+		close(m_stdinPipe[0]);
+	if (m_stdinPipe[1] != -1)
+		close(m_stdinPipe[1]);
+	if (m_stdoutPipe[0] != -1)
+		close(m_stdoutPipe[0]);
+	if (m_stdoutPipe[1] != -1)
+		close(m_stdoutPipe[1]);
+}
+
+/**
+ *
+ * @brief Set up child and parent processes communication
+ *
+ * @throw Http500Exception in case fork() fails
+ *
+ */
+void CgiSpawner::spawn()
+{
+	setupPipes();
+	setupEnv();
+	m_pid = fork();
+	if (m_pid == -1)
+	{
+		closePipes();
+		throw Http500Exception();
+	}
+	if (m_pid == 0)
+		childprocess();
+	close(m_stdoutPipe[1]);
+	close(m_stdinPipe[0]);
+	if (!m_has_post_data)
+	{
+		close(m_stdinPipe[1]);
+		m_stdinPipe[1] = -1;
+	}
 }
 
 std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &value)
@@ -70,6 +112,12 @@ std::string CgiSpawner::makeEnvVar(const std::string &key, const std::string &va
 	return key + '=' + value;
 }
 
+
+/**
+ *
+ * @brief Fill the env vector that will be sent to the child process
+ *
+ */
 void CgiSpawner::setupEnv()
 {
 	m_env.push(makeEnvVar(CGI_AUTH_TYPE, ""));
@@ -102,6 +150,14 @@ void CgiSpawner::setupEnv()
 	m_env.push(makeEnvVar(CGI_HTTP_REFERER, m_req.getHeader(HEADER_REFERER)));
 }
 
+/**
+ *
+ * @brief Child process handler, it generates the envp char** for execve,
+ * dup the pipes to standard I/O and call execve with the binary and script to launch
+ *
+ * @note If somewhat execve fails, the child free all the memory allocated and destroy itself before exiting
+ *
+ */
 void CgiSpawner::childprocess()
 {
 	Signals::setIsChild(true);
@@ -111,25 +167,24 @@ void CgiSpawner::childprocess()
 		NULL};
 	generateEnvp();
 	if (dup2(m_stdinPipe[0], STDIN_FILENO) == -1)
-		exitChild();
-	close(m_stdinPipe[1]);
-	close(m_stdinPipe[0]);
+		exitChild(true);
 	if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
-		exitChild();
-	close(m_stdoutPipe[0]);
-	close(m_stdoutPipe[1]);
+		exitChild(true);
+	closePipes();
 	execve(argv[0], argv, m_envp.data());
-	EventLoop::destroy();
-	(*this).~CgiSpawner();
-	exit(1);
+	exitChild(false);
 }
 
-void CgiSpawner::exitChild()
+
+/**
+ *
+ * @brief Util function to exit the child process in case of dup2() and execve fails()
+ *
+ */
+void CgiSpawner::exitChild(bool needFdClose)
 {
-	close(m_stdinPipe[0]);
-	close(m_stdinPipe[1]);
-	close(m_stdoutPipe[0]);
-	close(m_stdoutPipe[1]);
+	if (needFdClose)
+		closePipes();
 	if (!Signals::getIsDestroyed())
 	{
 		Signals::setIsDestroyed(true);
@@ -139,6 +194,12 @@ void CgiSpawner::exitChild()
 	exit(1);
 }
 
+
+/**
+ *
+ * @brief Util function to convert the Vec<std::string> to an Vec<char *> to comply with execve
+ *
+ */
 void CgiSpawner::generateEnvp()
 {
 	for (size_t i = 0; i < m_env.size(); i++)
@@ -146,6 +207,21 @@ void CgiSpawner::generateEnvp()
 	m_envp.push(NULL);
 }
 
+
+/**
+ *
+ * @brief Parses the urlSegments vector from a specific point and finds the script to launch,
+ * checks if it's extension is valid (e.g present in the binMap from the config), and if the user
+ * has the rights to launch the binary associated with the extension
+ *
+ * @note The path of the binary and the path of the script or assigned here
+ *
+ * @param urlSegments A vector filled with each url segment
+ * @param start The index of the start of the research in the vector
+ *
+ * @throw FilePermissionException if the binary is not executable
+ *
+ */
 ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const size_t start)
 {
 	for (size_t i = start; i < urlSegments.size(); i++)
@@ -155,13 +231,22 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
 		if (!FileManager::hasXPerm(m_binPath))
-			throw Http500Exception();
+			throw FileManager::FilePermissionException(m_binPath);
 		m_scriptPath = m_req.buildResourcePath(i);
 		return i;
 	}
 	return -1;
 }
 
+/**
+ *
+ * @brief Builds the PATH_INFO variable for the CGI environment
+ *
+ * @param urlSegments A vector filled with each url segment
+ * @param scriptIndex The index of the script, since the PATH_INFO variable contains
+ * all the content between the script segment and the end of the vector
+ *
+ */
 void CgiSpawner::buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scriptIndex)
 {
 	for (Vec<std::string>::const_iterator it = urlSegments.begin() + scriptIndex + 1; it != urlSegments.end(); it++)
@@ -174,6 +259,15 @@ void CgiSpawner::buildPathInfo(const Vec<std::string> &urlSegments, ssize_t scri
 		m_pathInfo.append("/");
 }
 
+/**
+ *
+ * @brief Builds the SCRIPT_NAME variable for the CGI environment
+ *
+ * @param urlSegments A vector filled with each url segment
+ * @param scriptIndex The index of the script, to create the full name of the script
+ * based on his segment
+ *
+ */
 void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex)
 {
 	for (Vec<std::string>::const_iterator it = urlSegments.begin(); it != urlSegments.begin() + scriptIndex + 1; it++)
@@ -183,6 +277,12 @@ void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t sc
 	}
 }
 
+
+/**
+ *
+ * @brief Fill the map of active CGI binaries, based on the active locations Vector
+ *
+ */
 void CgiSpawner::fillActiveBinMap()
 {
 	Vec<const CgiParams *>	 cgiParams;
@@ -204,6 +304,11 @@ void CgiSpawner::fillActiveBinMap()
 	}
 }
 
+/**
+ *
+ * @brief Check if the script is a valid file that can be read and used for the CGI
+ *
+ */
 bool CgiSpawner::isValidScript()
 {
 	struct stat st = FileManager::getStat(m_scriptPath);
@@ -212,14 +317,20 @@ bool CgiSpawner::isValidScript()
 	{
 		struct stat st = FileManager::getStat(m_scriptPath);
 		if (!FileManager::isFile(st))
-			throw Http404Exception();
+			throw FileManager::FileDoesNotExistException(m_scriptPath);
 		if (!FileManager::hasRPerm(m_scriptPath))
-			throw Http403Exception();
+			throw FileManager::FilePermissionException(m_scriptPath);
 		return true;
 	}
 	return false;
 }
 
+
+/**
+ *
+ * @brief Checks if the requested target is a CGI script
+ *
+ */
 bool CgiSpawner::isCgi()
 {
 	try
@@ -242,7 +353,6 @@ bool CgiSpawner::isCgi()
 	}
 	catch (const FileManager::FileException &e)
 	{
-		std::cerr << e.what() << '\n';
 		throw e.getHttpException();
 	}
 	return true;

@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <cstdio>
+
 #include <limits.h>
 #include "webserv.hpp"
 #include "httpHeaders.hpp"
@@ -471,4 +473,41 @@ std::string FileManager::determineExtension(const std::string &fileName, size_t 
 	if (dotPos != std::string::npos && dotPos != 0 && dotPos != fileName.length() - 1)
 		return String::toLower(fileName.substr(dotPos));
 	return "";
+}
+
+/**
+ *
+ * @brief Creates a disk file and fills it with the given content
+ *
+ * @param fullPath The path of the file that should be created and filled
+ * @param body The content to write to the file
+ *
+ * @throw Http500Exception in case open() fails
+ */
+void FileManager::createDiskFile(const std::string &fullPath, const std::string &body)
+{
+	std::ofstream file;
+	file.open(fullPath.c_str(), std::ofstream::trunc);
+	if (!file.is_open())
+		throw FileOpenException(fullPath);
+	file << body;
+	file.close();
+}
+
+/**
+ *
+ * @brief Delete a file using std::remove()
+ *
+ * @throw FileDeleteException() if std::remove() fails
+ */
+void FileManager::deleteFile(const char *fullPath)
+{
+	if (!FileManager::exists(fullPath))
+		throw FileDoesNotExistException(fullPath);
+	if (FileManager::isFolder(fullPath))
+		throw FilePermissionException(fullPath);
+	if (!FileManager::hasRWPerm(fullPath))
+		throw FilePermissionException(fullPath);
+	if (std::remove(fullPath) == -1)
+		throw FileDeleteException(fullPath);
 }

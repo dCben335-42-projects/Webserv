@@ -1,12 +1,8 @@
 #include "FileUpload.hpp"
 #include "httpMimes.hpp"
 #include "httpExceptions.hpp"
-#include "AHttpInboundMessage.hpp"
-#include "HttpSubRequest.hpp"
-#include "fcntl.h"
 #include "unistd.h"
-// TODO
-#include "Logger.hpp"
+#include "FileManager.hpp"
 
 FileUpload::FileUpload(HttpRequest &req) : m_req(req)
 {
@@ -16,30 +12,48 @@ FileUpload::~FileUpload()
 {
 }
 
+
+/**
+ *
+ * @brief Fetch the boundaries of the multipart/form-data body, the first one and the last one
+ *
+ * @throw Http400Exception() if the size of the boundary is too small
+ *
+ */
 void FileUpload::fetchBoundaries(size_t boundaryPos, std::string contentType)
 {
-	m_boundaryStr	  = "--" + contentType.substr(boundaryPos + 9);
-	m_lastBoundaryStr = m_boundaryStr + "--";
+	m_boundaryStr	  = FILE_UPLOAD_BOUNDARY_MATCH_BEGIN_END + contentType.substr(boundaryPos + 9);
+	m_lastBoundaryStr = m_boundaryStr + FILE_UPLOAD_BOUNDARY_MATCH_BEGIN_END;
 
 	if (m_boundaryStr.size() < 3)
-		throw Http400Exception("Invalid boundary in Content-Type header");
+		throw Http400Exception(FILE_UPLOAD_400_INVALID_BOUNDARY_IN_HEADER);
 }
 
-
+/**
+ *
+ * @brief Checks the validity of the multipart/form-data format :
+ * The content type header and the boundaries contained in the body
+ *
+ */
 bool FileUpload::isUploadValid()
 {
 	std::string contentType	   = m_req.getHeader(HEADER_CONTENT_TYPE);
 	size_t		contentTypePos = contentType.find(MIME_MULTIPART);
-	size_t		boundaryPos	   = contentType.find("boundary=");
+	size_t		boundaryPos	   = contentType.find(FILE_UPLOAD_BOUNDARY_KEYWORD);
 
 	if (contentTypePos == std::string::npos || boundaryPos == std::string::npos)
 		return false;
 	fetchBoundaries(boundaryPos, contentType);
-	parseSubTypes();
-	parseSubRequests();
 	return true;
 }
 
+
+/**
+ *
+ * @brief Creates a vector with each subtypes, checks if the body ends with the last boundary,
+ * It then fill the subrequests vector
+ *
+ */
 void FileUpload::parseSubTypes()
 {
 	const std::string &body			= m_req.getBody();
@@ -47,13 +61,20 @@ void FileUpload::parseSubTypes()
 	size_t			   subTypesSize = subTypes.size();
 
 	if (subTypesSize == 0)
-		throw Http400Exception("No subtypes found in multipart/form-data body");
-	if (subTypes[(subTypes.size()) - 1] != "--\r\n")
-		throw Http400Exception("Invalid multipart/form-data ending");
+		throw Http400Exception(FILE_UPLOAD_400_NO_SUBTYPES);
+	if (subTypes[(subTypes.size()) - 1] != FILE_UPLOAD_BOUNDARY_MATCH_BEGIN_END HEADER_LINE_ENDING)
+		throw Http400Exception(FILE_UPLOAD_400_INVALID_FORM_DATA_ENDING);
 	subTypes.remove(subTypesSize - 1);
 	fillSubRequests(subTypes);
 }
 
+
+/**
+ *
+ * @brief Fills the sub requests vector with the content of each subtypes
+ * This way, each subtypes can be treated as an HttpRequest later on
+ *
+ */
 void FileUpload::fillSubRequests(const Vec<std::string> &subTypes)
 {
 	for (Vec<std::string>::const_iterator it = subTypes.begin(); it != subTypes.end(); it++)
@@ -63,25 +84,27 @@ void FileUpload::fillSubRequests(const Vec<std::string> &subTypes)
 	}
 }
 
-void FileUpload::parseSubRequests()
+
+/**
+ *
+ * @brief Parses the subrequest as HttpRequest to check their validity
+ *
+ * @note This function remote duplicate slashes
+ *
+ * @throw Http409Exception() if the file uploaded already exists
+ * @throw Http400Exception() if any of the subtype is invalid
+ *
+ */
+void FileUpload::parseAndUpload()
 {
+	parseSubTypes();
 	const std::string &uploadPath = m_req.getUploadPath();
 	for (Vec<HttpSubRequest>::iterator it = m_subRequests.begin(); it != m_subRequests.end(); it++)
 	{
 		(*it).parseSubRequest();
 		const std::string &fullPath = String::removeDuplicateSlashes(uploadPath + "/" + it->getFileName());
-		if (access(fullPath.c_str(), F_OK) == 0)
+		if (FileManager::exists(fullPath))
 			throw Http409Exception();
-		createDiskFile(fullPath, it->getBody());
+		FileManager::createDiskFile(fullPath, it->getBody());
 	}
-}
-
-void FileUpload::createDiskFile(const std::string &fullPath, const std::string &body)
-{
-	std::ofstream file;
-	file.open(fullPath.c_str(), std::ofstream::trunc);
-	if (!file.is_open())
-		throw Http500Exception();
-	file << body;
-	file.close();
 }

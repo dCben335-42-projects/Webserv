@@ -5,6 +5,12 @@
 #include "HttpSubRequest.hpp"
 #include <string>
 
+#define FILE_UPLOAD_BOUNDARY_KEYWORD "boundary="
+#define FILE_UPLOAD_400_NO_SUBTYPES "No subtypes found in multipart/form-data body"
+#define FILE_UPLOAD_400_INVALID_FORM_DATA_ENDING "Invalid multipart/form-data ending"
+#define FILE_UPLOAD_400_INVALID_BOUNDARY_IN_HEADER "Invalid boundary in Content-Type header"
+#define FILE_UPLOAD_BOUNDARY_MATCH_BEGIN_END "--"
+
 class FileUpload
 {
 	private:
@@ -13,15 +19,16 @@ class FileUpload
 		HttpRequest		   &m_req;
 		Vec<HttpSubRequest> m_subRequests;
 
-	public:
-		FileUpload(HttpRequest &req);
-		~FileUpload();
-		bool isUploadValid();
 		void fetchBoundaries(size_t boundaryPos, std::string contentType);
 		void parseSubTypes();
 		void fillSubRequests(const Vec<std::string> &subTypes);
-		void parseSubRequests();
-		void createDiskFile(const std::string &fullPath, const std::string &body);
+
+	public:
+		FileUpload(HttpRequest &req);
+		~FileUpload();
+
+		void parseAndUpload();
+		bool isUploadValid();
 };
 
 #endif

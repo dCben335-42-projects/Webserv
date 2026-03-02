@@ -6,6 +6,9 @@
 #include "httpMimes.hpp"
 #include "CgiOutput.hpp"
 #include "httpExceptions.hpp"
+#include "Logger.hpp"
+#include "log.hpp"
+
 
 CgiPipe::CgiPipe(
 	pid_t		  pid,
@@ -18,6 +21,13 @@ CgiPipe::CgiPipe(
 {
 }
 
+
+/**
+ *
+ * @brief CgiPipe destructor, if called inside the parent process, kill the child
+ * and wait for the kill() call to take effect
+ *
+ */
 CgiPipe::~CgiPipe()
 {
 	if (m_pid > 0 && !Signals::getIsChild())
@@ -30,6 +40,14 @@ CgiPipe::~CgiPipe()
 		close(m_fd);
 }
 
+/**
+ *
+ * @brief Waits for the child to end, without blocking, and reacts differently
+ * depending on the exit status of the child process
+ *
+ * @throw Http500Exception() if the child exited unexpectedly
+ *
+ */
 void CgiPipe::waitChild()
 {
 	int	  exit_status;
@@ -60,6 +78,15 @@ void CgiPipe::onPollIn()
 	onPollHangUp();
 }
 
+
+/**
+ *
+ * @brief Function to handle reaction when the poll() call on the CgiPipe
+ * returns a POLLOUT event
+ *
+ * @throw Http500Exception() if write() fails
+ *
+ */
 void CgiPipe::onPollOut()
 {
 	const std::string &body			= m_client->getRequest().getBody();
@@ -83,12 +110,20 @@ void CgiPipe::onPollOut()
 	m_connectionClosed = true;
 }
 
+
+/**
+ *
+ * @brief Function to handle reaction when the poll() call on the CgiPipe
+ * returns a POLLERR event
+ *
+ */
 void CgiPipe::onPollErr()
 {
 	m_client->onHttpException(Http500Exception());
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
+	// TODO Logger::openFile(errorFile).custom(LOG_MSG_CGIPIPE_PREFIX ERROR_MSG_UNKNOWN);
 }
 
 void CgiPipe::onPollHangUp()
@@ -96,6 +131,7 @@ void CgiPipe::onPollHangUp()
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
 	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
+	// TODO Logger::openClient(accessFile).custom(LOG_MSG_PIPE_CLOSED);
 	if (bytesRead > 0)
 	{
 		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
@@ -109,17 +145,24 @@ void CgiPipe::onPollHangUp()
 		m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
 		m_cgiOutput.build();
 		HttpResponse &res = m_client->getResponse();
+		res.setStatusCode(m_cgiOutput.getStatusCode());
 		res.setFullResponse(m_cgiOutput.getRes());
 	}
 	catch (const AHttpException &e)
 	{
 		m_client->onHttpException(e);
+		m_client->buildResponse();
 	}
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
 }
 
+/**
+ *
+ * @brief Util function to detect if the Cgi timed out
+ *
+ */
 // TODO CGI timeout
 bool CgiPipe::isTimedOut(const time_t currentTime) const
 {
@@ -127,6 +170,12 @@ bool CgiPipe::isTimedOut(const time_t currentTime) const
 	return false;
 }
 
+
+/**
+ *
+ * @brief Function to handle reaction when the Cgi Time out
+ *
+ */
 void CgiPipe::onTimeOut()
 {
 	HttpResponse &res = m_client->getResponse();
@@ -137,4 +186,5 @@ void CgiPipe::onTimeOut()
 	res.fill(true, 0).build();
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
+	// TODO Logger::openFile(errorFile).custom(ERROR_MSG_CGI_TIMEOUT);
 }

@@ -78,6 +78,7 @@ class Client : public Pollable
 		void onTimeOut();
 
 		void onHttpException(const AHttpException &e);
+		void buildResponse();
 		bool determineKeepAlive(unsigned short statusCode);
 };
 

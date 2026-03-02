@@ -42,7 +42,8 @@ class CgiSpawner
 		void buildScriptName(const Vec<std::string> &urlSegments, ssize_t scriptIndex);
 		void fillActiveBinMap();
 		void spawn();
-		void exitChild();
+		void exitChild(bool needFdClose);
+		void closePipes();
 		bool isValidScript();
 
 

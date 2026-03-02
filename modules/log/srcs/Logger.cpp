@@ -523,7 +523,7 @@ Logger &Logger::debug(char c)
  */
 Logger &Logger::custom(const std::string &str)
 {
-	return Logger::log(m_customColor + m_customPrefix + str + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + str);
 }
 
 /**
@@ -535,7 +535,7 @@ Logger &Logger::custom(const std::string &str)
  */
 Logger &Logger::custom(const char *cstr)
 {
-	return Logger::log(m_customColor + m_customPrefix + std::string(cstr) + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + std::string(cstr));
 }
 /**
  *
@@ -544,5 +544,5 @@ Logger &Logger::custom(const char *cstr)
  */
 Logger &Logger::custom(char c)
 {
-	return Logger::log(m_customColor + m_customPrefix + std::string(1, c) + LOG_RESET_COLOR);
+	return Logger::log(m_customColor + m_customPrefix + std::string(1, c));
 }

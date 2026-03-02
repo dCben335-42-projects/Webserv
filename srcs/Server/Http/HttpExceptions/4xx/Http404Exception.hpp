@@ -11,6 +11,10 @@ class Http404Exception : public AHttpException
 		Http404Exception() : AHttpException(HTTP_404_MSG, 404)
 		{
 		}
+		Http404Exception(const std::string &extraMsg) : AHttpException(HTTP_404_MSG, 404)
+		{
+			m_extraMessage = extraMsg;
+		}
 };
 
 

@@ -203,6 +203,12 @@ HttpAuth::~HttpAuth()
 {
 }
 
+
+/**
+ *
+ * @brief Generate the html page by replacing a special keyword by the auth location
+ *
+ */
 void HttpAuth::generatePage()
 {
 	m_page = m_templatePage;
@@ -215,6 +221,15 @@ const std::string &HttpAuth::getPage() const
 	return m_page;
 }
 
+
+/**
+ *
+ * @brief Parses the credentials sent by the user to make sure they are valid
+ *
+ * @throw Http301Exception() to redirect if the credentials doesn't correspond
+ * @throw Http40Exception() if the fields are not valid, for example if there is no field
+ *
+ */
 void HttpAuth::parse(const std::string &body, AuthMode mode)
 {
 	Vec<std::string> bodySplit = String::split(body, FORM_FIELD_SEP);
@@ -245,6 +260,15 @@ void HttpAuth::parse(const std::string &body, AuthMode mode)
 	}
 }
 
+
+/**
+ *
+ * @brief Check if a field is valid, if the field exists and if it isn't empty
+ *
+ * @throw Http400Exception() if the field doesn't exist
+ * @throw Http301Exception() if the field is empty
+ *
+ */
 void HttpAuth::checkField(const std::string field)
 {
 	if (!m_urlEncoded.has(field))
