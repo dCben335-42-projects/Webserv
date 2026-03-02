@@ -51,6 +51,9 @@ class String
 		static std::string htmlEscape(const std::string &input);
 		static std::string htmlUnescape(const std::string &input);
 
+		static std::string escape(const std::string &input);
+		static std::string unescape(const std::string &input);
+
 		static std::string normalizePath(const std::string &path);
 };
 

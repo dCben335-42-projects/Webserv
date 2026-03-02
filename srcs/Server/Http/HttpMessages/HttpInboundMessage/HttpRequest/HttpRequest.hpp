@@ -39,9 +39,9 @@ class HttpRequest : public AHttpInboundMessage
 
 		size_t parseFirstLine(const size_t lineEnd);
 		void   parseTargetQuery(const std::string &path);
-		void   parseActiveLocations(const Config &config);
 		void   parseAccepts(const std::string &headerValue);
-		bool   determineConnectionKeepAlive() const;
+
+		bool determineConnectionKeepAlive() const;
 
 		size_t		 readContentLength(const std::string &headers) const;
 		std::string	 readMethodString(const std::string &currentRawStr) const;
@@ -56,6 +56,7 @@ class HttpRequest : public AHttpInboundMessage
 		HttpRequest();
 
 		size_t getTotalLength() const;
+		size_t getMaxBodySize() const;
 
 		size_t					getSegmentSize() const;
 		const Vec<std::string> &getSegments() const;
@@ -79,7 +80,8 @@ class HttpRequest : public AHttpInboundMessage
 
 		bool isAllowedMethod() const;
 
-		HttpRequest &parse(const Config &serverConfig);
+		HttpRequest &parse();
+		HttpRequest &parseActiveLocations(const Config &config);
 		HttpRequest &reset();
 
 		ssize_t		readOnce(int socketFd);
@@ -90,7 +92,7 @@ class HttpRequest : public AHttpInboundMessage
 		bool		matchAccept(const std::string &contentType) const;
 
 		bool isCompleteHeader();
-		bool isCompleteBody(const size_t maxBodySize);
+		bool isCompleteBody();
 };
 
 std::ostream &operator<<(std::ostream &o, const HttpRequest &message);

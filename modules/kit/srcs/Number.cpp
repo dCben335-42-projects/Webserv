@@ -4,6 +4,7 @@
 #include <cctype>
 #include <iomanip>
 #include <cmath>
+#include <limits>
 
 Number::Number()
 {
@@ -45,18 +46,23 @@ int Number::fromString(const std::string &str)
 	return std::atoi(str.c_str());
 }
 
+#include <limits>
+#include <cctype>
+
 bool Number::isNumber(const std::string &str)
 {
 	if (str.empty())
-	{
 		return false;
-	}
-	for (size_t i = 0; i < str.size(); ++i)
+	size_t		 result = 0;
+	const size_t max	= std::numeric_limits<size_t>::max();
+	for (std::string::size_type i = 0; i < str.size(); ++i)
 	{
 		if (!std::isdigit(static_cast<unsigned char>(str[i])))
-		{
 			return false;
-		}
+		const size_t digit = str[i] - '0';
+		if (result > (max - digit) / 10)
+			return false;
+		result = result * 10 + digit;
 	}
 	return true;
 }
@@ -122,7 +128,7 @@ size_t Number::toBytes(const std::string &str)
 	}
 	if (i < str.size())
 	{
-		char unit = std::tolower(static_cast<unsigned char>(str[i]));
+		char unit = static_cast<char>(std::tolower(static_cast<unsigned char>(str[i])));
 		switch (unit)
 		{
 			case 'k':

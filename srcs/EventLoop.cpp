@@ -1,7 +1,6 @@
 #include "EventLoop.hpp"
 #include "VirtualServer.hpp"
 #include "Location.hpp"
-#include "CgiParams.hpp"
 #include "Signals.hpp"
 #include "Logger.hpp"
 #include "webserv.hpp"

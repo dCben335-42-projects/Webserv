@@ -2,7 +2,9 @@
 #include <stack>
 #include "Logger.hpp"
 #include "Number.hpp"
+#include "String.hpp"
 #include "constants.hpp"
+#include "webserv.hpp"
 
 const Parser::Directive<Config> Parser::m_serverDirectives[] = {
 	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL},
@@ -82,7 +84,7 @@ void Parser::saveToken(Vec<std::string> &tokens, std::string &token, const bool 
 			tokens.push(tokenWithoutSemicolon);
 	}
 	else
-		tokens.push(token);
+		tokens.push(inQuotes ? String::unescape(token) : token);
 	token.clear();
 }
 
@@ -425,8 +427,11 @@ void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 		}
 		++dit;
 	}
-
+	defaultLocation.combineAddHeaders(serverNode.getAddHeaders());
+	defaultLocation.combineErrorPages(serverNode.getErrorPages());
+	defaultLocation.combineCgiBin(serverNode.getCgiPass());
 	serverConfig.setDefaultLocation(defaultLocation);
+
 	const Map<LocationNode> &locations = serverNode.getLocations();
 	for (Map<LocationNode>::const_iterator locIt = locations.begin(); locIt != locations.end(); ++locIt)
 		addLocation(serverConfig, locIt);
@@ -451,6 +456,7 @@ void Parser::createHttpConfig()
 	const AConfigNode::DirectivesConstIt end		= directives.end();
 
 	Location defaultLocation;
+	defaultLocation.setMaxBodySize(FALLBACK_MAX_BODY_SIZE);
 	while (dit != end)
 	{
 		if (dit->first == PARSER_KEY_LISTEN)
@@ -464,6 +470,9 @@ void Parser::createHttpConfig()
 		}
 		++dit;
 	}
+	defaultLocation.setAddHeaders(m_http.getAddHeaders());
+	defaultLocation.setErrorPages(m_http.getErrorPages());
+	defaultLocation.setCgiBin(m_http.getCgiPass());
 	m_httpConfig.setDefaultLocation(defaultLocation);
 }
 

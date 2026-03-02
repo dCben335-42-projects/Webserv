@@ -615,8 +615,8 @@ bool Client::hasReceivedCompleteRequest()
 	m_timeoutState = isCompleteHeader ? BODY_TIMEOUT : HEADER_TIMEOUT;
 	if (!isCompleteHeader)
 		return false;
-	const size_t maxBodySize = m_config->getMaxBodySize(m_req.getTarget());
-	return m_req.isCompleteBody(maxBodySize);
+	m_req.parseActiveLocations(*m_config);
+	return m_req.isCompleteBody();
 }
 
 /**
@@ -646,7 +646,7 @@ void Client::onPollIn()
 		if (!hasReceivedCompleteRequest())
 			return;
 		m_timeoutState = KEEP_ALIVE_TIMEOUT;
-		m_req.parse(*m_config);
+		m_req.parse();
 		if (!prepareResponse())
 			return;
 	}

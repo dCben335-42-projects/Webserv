@@ -571,6 +571,131 @@ std::string String::htmlUnescape(const std::string &input)
 
 
 
+
+/**
+ *
+ * @brief Escapes special characters in a string by adding backslashes before them.
+ *
+ * @param input The input string to be escaped.
+ *
+ * @note This function replaces the following characters:
+ *       " -> \"
+ *       \ -> \\
+ *       \n -> \\n
+ *       \t -> \\t
+ *       \r -> \\r
+ *       \b -> \\b
+ *       \f -> \\f
+ *
+ * @return A new string with special characters escaped with backslashes.
+ */
+std::string String::escape(const std::string &input)
+{
+	std::string result;
+	result.reserve(input.size() * 1.1);
+	for (std::string::size_type i = 0; i < input.size(); ++i)
+	{
+		char c = input[i];
+		switch (c)
+		{
+			case '\"':
+				result += "\\\"";
+				break;
+			case '\\':
+				result += "\\\\";
+				break;
+			case '\n':
+				result += "\\n";
+				break;
+			case '\t':
+				result += "\\t";
+				break;
+			case '\r':
+				result += "\\r";
+				break;
+			case '\b':
+				result += "\\b";
+				break;
+			case '\f':
+				result += "\\f";
+				break;
+			default:
+				result += c;
+				break;
+		}
+	}
+	return result;
+}
+
+
+/**
+ *
+ * @brief Unescapes a string by converting escape sequences back to their original characters.
+ *
+ * @param input The input string containing escape sequences to be unescaped.
+ *
+ * @note This function replaces the following escape sequences:
+ *       \" -> "
+ *       \\ -> \
+ *       \n -> newline
+ *       \t -> tab
+ *       \r -> carriage return
+ *       \b -> backspace
+ *       \f -> form feed
+ *
+ * @return A new string with escape sequences replaced by their corresponding characters.
+ */
+std::string String::unescape(const std::string &input)
+{
+	std::string result;
+	result.reserve(input.size());
+
+	for (std::string::size_type i = 0; i < input.size(); ++i)
+	{
+		if (input[i] == '\\' && i + 1 < input.size())
+		{
+			char next = input[i + 1];
+
+			switch (next)
+			{
+				case '\"':
+					result += '\"';
+					break;
+				case '\\':
+					result += '\\';
+					break;
+				case 'n':
+					result += '\n';
+					break;
+				case 't':
+					result += '\t';
+					break;
+				case 'r':
+					result += '\r';
+					break;
+				case 'b':
+					result += '\b';
+					break;
+				case 'f':
+					result += '\f';
+					break;
+				default:
+					result += next;
+					break;
+			}
+
+			++i;
+		}
+		else
+			result += input[i];
+	}
+
+	return result;
+}
+
+
+
+
 /**
  *
  * @brief Normalizes a file path by removing duplicate slashes and resolving '.' and '..' segments.

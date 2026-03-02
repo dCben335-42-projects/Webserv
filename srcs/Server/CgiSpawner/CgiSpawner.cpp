@@ -6,7 +6,6 @@
 #include "CgiPipe.hpp"
 
 #include "Location.hpp"
-#include "CgiParams.hpp"
 #include "cgiEnv.hpp"
 
 #include "Signals.hpp"
@@ -281,26 +280,21 @@ void CgiSpawner::buildScriptName(const Vec<std::string> &urlSegments, ssize_t sc
 /**
  *
  * @brief Fill the map of active CGI binaries, based on the active locations Vector
- *
+ *ss
  */
 void CgiSpawner::fillActiveBinMap()
 {
-	Vec<const CgiParams *>	 cgiParams;
-	const Config::Locations &locations = m_req.getActiveLocations();
+	Vec<Location::CgiBin> cgiParams;
 
+	const Config::Locations &locations = m_req.getActiveLocations();
 	for (Config::Locations::const_iterator it = locations.begin(); it != locations.end(); it++)
+		cgiParams.push((*it).getCgiBin());
+
+	for (Vec<Location::CgiBin>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
 	{
-		if ((*it).getCgiParams())
-			cgiParams.push((*it).getCgiParams());
-	}
-	for (Vec<const CgiParams *>::iterator it = cgiParams.begin(); it != cgiParams.end(); it++)
-	{
-		const Map<std::string> binMap = (*it)->getBinMap();
+		const Map<std::string> &binMap = (*it);
 		for (Map<std::string>::const_iterator mit = binMap.begin(); mit != binMap.end(); mit++)
-		{
-			std::string first = mit->first;
-			m_activeBinMap.set(first, mit->second);
-		}
+			m_activeBinMap.set(mit->first, mit->second);
 	}
 }
 

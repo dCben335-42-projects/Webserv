@@ -114,6 +114,28 @@ size_t HttpRequest::getTotalLength() const
 }
 
 
+/**
+ *
+ * @brief Retrieves the maximum allowed body size for the request based on the active locations.
+ *
+ * @return The maximum body size in bytes, or 0 if no specific limit is set in the active locations.
+ *
+ */
+size_t HttpRequest::getMaxBodySize() const
+{
+	const Config::Locations				   &locations = getActiveLocations();
+	const Config::Locations::const_iterator begin	  = locations.begin();
+	Config::Locations::const_iterator		it		  = locations.end();
+
+	while (--it != begin)
+	{
+		if (it->hasMaxBodySize())
+			return it->getMaxBodySize();
+	}
+	return 0;
+}
+
+
 
 /**
  *
@@ -194,7 +216,7 @@ std::string HttpRequest::getCookieValue(const std::string &key) const
  * @throws Http400Exception if the request is malformed or has invalid headers.
  *
  */
-HttpRequest &HttpRequest::parse(const Config &serverConfig)
+HttpRequest &HttpRequest::parse()
 {
 	try
 	{
@@ -205,7 +227,6 @@ HttpRequest &HttpRequest::parse(const Config &serverConfig)
 
 		if (!hasHeader(HEADER_HOST))
 			throw std::invalid_argument(REQ_MISSING_HOST_MSG);
-		parseActiveLocations(serverConfig);
 		parseAccepts(getHeader(HEADER_ACCEPT));
 		if (hasHeader(HEADER_CONTENT_LENGTH))
 		{
@@ -300,8 +321,10 @@ void HttpRequest::parseAccepts(const std::string &headerValue)
  * @param config The server configuration containing location mappings.
  *
  */
-void HttpRequest::parseActiveLocations(const Config &config)
+HttpRequest &HttpRequest::parseActiveLocations(const Config &config)
 {
+	if (m_activeLocations.size() > 0)
+		return *this;
 	const Config::LocationsMap &locs = config.getLocations();
 	Config::Locations			locations;
 	m_activeLocations.push(config.getDefaultLocation());
@@ -333,6 +356,7 @@ void HttpRequest::parseActiveLocations(const Config &config)
 	else if (locations.size() > 0)
 		m_activeLocations.push(locations.back());
 	std::sort(m_activeLocations.begin(), m_activeLocations.end(), Location::compare);
+	return *this;
 }
 
 
@@ -759,23 +783,22 @@ bool HttpRequest::isCompleteHeader()
  *
  * @brief Checks if the HTTP request body is complete based on the Content-Length header.
  *
- * @param maxBodySize The maximum allowed size for the request body in bytes.
- *
  * @throws Http413Exception if the Content-Length exceeds the specified maximum body size.
  *
  * @return true if the request body is complete, false otherwise.
  *
  */
-bool HttpRequest::isCompleteBody(const size_t maxBodySize)
+bool HttpRequest::isCompleteBody()
 {
 	const HttpMethod::Type methodType = m_method.getType();
 	if (methodType != HttpMethod::POST &&
 		methodType != HttpMethod::PUT &&
 		methodType != HttpMethod::PATCH)
 		return true;
-	const size_t contentLength = readContentLength(m_rawStr);
-	if (contentLength > maxBodySize)
-		throw Http413Exception(REQ_MAX_BODY_REACHED_MSG + Number::toString(maxBodySize) + " bytes");
+	const size_t contentLength		= readContentLength(m_rawStr);
+	const size_t maxAllowedBodySize = getMaxBodySize();
+	if (contentLength > maxAllowedBodySize)
+		throw Http413Exception(REQ_MAX_BODY_REACHED_MSG + Number::toString(maxAllowedBodySize) + " bytes");
 	m_totalLen = m_headersEndPos + std::strlen(HEADER_ENDING) + contentLength;
 	return m_rawStr.size() >= m_totalLen;
 }

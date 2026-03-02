@@ -32,7 +32,6 @@ class Config
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
 
-
 		size_t m_maxBodySize;
 
 	public:
@@ -40,29 +39,31 @@ class Config
 		Config(const Config &other);
 		~Config();
 
-		void setLocation(const std::string &path, const Location &location);
-		void setDefaultLocation(const Location &location);
-
-		void setAddress(const SocketAddress &address);
-		void setKeepAliveTimeout(const size_t timeout);
-		void setHeaderTimeout(const size_t timeout);
-		void setBodyTimeout(const size_t timeout);
-		void setServerNames(const Vec<std::string> &serverNames);
-		void setAuthLocation(const std::string &authLocation);
-		void setUploadLocation(const std::string &uploadLocation);
-
+		void				 setAddress(const SocketAddress &address);
 		const SocketAddress &getAddress() const;
-		const Location		&getDefaultLocation() const;
-		const LocationsMap	&getLocations() const;
 
+		void				setLocation(const std::string &path, const Location &location);
+		const LocationsMap &getLocations() const;
+
+		void			setDefaultLocation(const Location &location);
+		const Location &getDefaultLocation() const;
+
+		void			   setAuthLocation(const std::string &authLocation);
+		bool			   hasAuthLocation() const;
+		const std::string &getAuthLocation() const;
+
+		void					setServerNames(const Vec<std::string> &serverNames);
 		bool					hasServerName() const;
 		const Vec<std::string> &getServerNames() const;
 
+		void   setKeepAliveTimeout(const size_t timeout);
 		time_t getKeepAliveTimeout() const;
-		time_t getHeaderTimeout() const;
-		time_t getBodyTimeout() const;
 
-		size_t getMaxBodySize(const std::string &locationPath) const;
+		void   setHeaderTimeout(const size_t timeout);
+		time_t getHeaderTimeout() const;
+
+		void   setBodyTimeout(const size_t timeout);
+		time_t getBodyTimeout() const;
 
 		bool					hasIndexes(const std::string &locationPath) const;
 		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;

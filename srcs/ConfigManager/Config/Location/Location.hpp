@@ -4,16 +4,16 @@
 #include "Set.hpp"
 #include "HttpMethod.hpp"
 #include "LocationReturn.hpp"
-#include "CgiParams.hpp"
 #include "Vec.hpp"
 #include "Upload.hpp"
 
 class Location
 {
+	public:
+		typedef Map<std::string> CgiBin;
+
 	private:
 		std::string m_path;
-
-		const CgiParams *m_cgi;
 
 		std::pair<bool, std::string> m_root;
 		std::pair<bool, std::string> m_alias;
@@ -29,8 +29,8 @@ class Location
 		Map<std::string> m_cgiBin;
 
 		// clang-format off
-		std::pair<bool, Set<HttpMethod> >  m_allowedMethods;
-		std::pair<bool, Vec<std::string> > m_indexFiles;
+		std::pair<bool, Set<HttpMethod> >  m_methods;
+		std::pair<bool, Vec<std::string> > m_indexes;
 		// clang-format on
 
 
@@ -42,13 +42,9 @@ class Location
 
 		void reset();
 
-
-		const CgiParams *getCgiParams() const;
-
 		const std::string &getAlias() const;
 		bool			   hasAlias() const;
 		void			   setAlias(const std::string &alias);
-
 
 		bool hasCgi() const;
 		bool hasCgiParams() const;
@@ -72,9 +68,6 @@ class Location
 		bool					hasIndexes() const;
 		const Vec<std::string> &getIndexes() const;
 
-
-		void setCgiParams(const CgiParams *cgi);
-
 		void				   setMethods(const Vec<std::string> &methods);
 		bool				   hasMethods() const;
 		const Set<HttpMethod> &getMethods() const;
@@ -84,6 +77,7 @@ class Location
 		const LocationReturn &getReturn() const;
 
 		void   setMaxBodySize(const std::string &maxBodySize);
+		void   setMaxBodySize(const size_t maxBodySize);
 		bool   hasMaxBodySize() const;
 		size_t getMaxBodySize() const;
 
@@ -92,13 +86,16 @@ class Location
 		bool getAuthRequired() const;
 
 		void					setAddHeaders(const Map<std::string> &addHeaders);
+		void					combineAddHeaders(const Map<std::string> &addHeaders);
 		const Map<std::string> &getAddHeaders() const;
 
 		void					setErrorPages(const Map<std::string> &errorPages);
+		void					combineErrorPages(const Map<std::string> &errorPages);
 		const Map<std::string> &getErrorPages() const;
 
-		void					setCgiBin(const Map<std::string> &cgiBin);
-		const Map<std::string> &getCgiBin() const;
+		void		  setCgiBin(const Map<std::string> &cgiBin);
+		void		  combineCgiBin(const Map<std::string> &cgiBin);
+		const CgiBin &getCgiBin() const;
 
 		static bool compare(const Location &a, const Location &b);
 };
