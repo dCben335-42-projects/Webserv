@@ -178,12 +178,13 @@ bool CgiPipe::isTimedOut(const time_t currentTime) const
  */
 void CgiPipe::onTimeOut()
 {
-	HttpResponse &res = m_client->getResponse();
+	HttpResponse		&res			= m_client->getResponse();
+	const Vec<Location> &activeLocation = m_client->getRequest().getActiveLocations();
 	res.reset();
 	res.setStatusCode(504);
 	res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 	res.setBody("<h1>CGI Script Timeout</h1>");
-	res.fill(true, 0).build();
+	res.fill(true, 0, activeLocation).build();
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
 	// TODO Logger::openFile(errorFile).custom(ERROR_MSG_CGI_TIMEOUT);

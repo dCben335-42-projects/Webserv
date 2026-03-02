@@ -2,6 +2,7 @@
 #define HTPP_RESPONSE_CPP
 
 #include "AHttpMessage.hpp"
+#include "Location.hpp"
 
 class HttpResponse : public AHttpMessage
 {
@@ -24,7 +25,7 @@ class HttpResponse : public AHttpMessage
 
 		HttpResponse &build();
 		HttpResponse &reset();
-		HttpResponse &fill(bool shouldClose, const time_t keepAliveTimeout);
+		HttpResponse &fill(bool shouldClose, const time_t keepAliveTimeout, const Vec<Location> &activeLocation);
 };
 
 #endif

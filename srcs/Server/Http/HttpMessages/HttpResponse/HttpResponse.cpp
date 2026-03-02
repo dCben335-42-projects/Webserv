@@ -146,8 +146,16 @@ HttpResponse &HttpResponse::build()
 }
 
 
-HttpResponse &HttpResponse::fill(bool shouldClose, const time_t keepAliveTimeout)
+HttpResponse &HttpResponse::fill(bool shouldClose, const time_t keepAliveTimeout, const Vec<Location> &activeLocation)
 {
+	const size_t size = activeLocation.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		const Map<std::string>				  &add_headers = activeLocation[i].getAddHeaders();
+		const Map<std::string>::const_iterator ite		   = add_headers.end();
+		for (Map<std::string>::const_iterator it = add_headers.begin(); it != ite; ++it)
+			setHeader(it->first, it->second);
+	}
 	setHeader(HEADER_CONTENT_LENGTH, Number::toString(m_body.size()));
 	setHeader(HEADER_DATE, Date::getCurrentHttpDate());
 
