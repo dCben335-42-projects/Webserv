@@ -11,7 +11,7 @@ using namespace bnf;
  * @param m_content The string content representing the semantic descriptor to be parsed.
  * @throws std::runtime_error if the semantic descriptor is not valid.
  */
-SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : tree(NULL), m_recursiveConceptAuthorize(false)
+SemanticDescriptor::SemanticDescriptor(const std::string &m_content) : m_tree(NULL), m_recursiveConceptAuthorize(false)
 {
 	BNFSignals::catchSigs();
 	try
@@ -42,8 +42,8 @@ SemanticDescriptor::~SemanticDescriptor()
  */
 void SemanticDescriptor::clear()
 {
-	delete tree;
-	tree = NULL;
+	delete m_tree;
+	m_tree = NULL;
 	for (Map<Concept *>::iterator it = m_concepts.begin(); it != m_concepts.end(); ++it)
 	{
 		const Vec<ConceptDef *> &defs	   = (*it).second->getDefinitions();
@@ -110,14 +110,14 @@ void SemanticDescriptor::splitBlocks(std::istringstream &iss)
 				Logger::log("Block: " + cblock);
 				throw ConceptHasNotDefinitionException();
 			}
-			blocks.push_back(cblock);
+			m_blocks.push_back(cblock);
 			cblock.clear();
 			prevStartDef = startDef;
 		}
 		cblock += line + '\n';
 	}
 	if (!cblock.empty())
-		blocks.push_back(cblock);
+		m_blocks.push_back(cblock);
 }
 
 
@@ -149,17 +149,17 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 void SemanticDescriptor::parseBlocks()
 {
 	size_t		 pos;
-	const size_t blocksCount = blocks.size();
+	const size_t blocksCount = m_blocks.size();
 	for (size_t i = 0; i < blocksCount; ++i)
 	{
 		if (BNFSignals::getEnd())
 			throw InterruptedProgramException("BNF semantic descriptor");
-		if (findSeparator(blocks[i], pos))
+		if (findSeparator(m_blocks[i], pos))
 		{
-			parseConceptName(blocks[i].substr(0, pos));
+			parseConceptName(m_blocks[i].substr(0, pos));
 			pos += EQRULE.length();
 		}
-		parseRule(blocks[i], pos);
+		parseRule(m_blocks[i], pos);
 	}
 	checkForRecursion();
 	assignParentRules();
@@ -172,7 +172,7 @@ void SemanticDescriptor::parseBlocks()
  * @param rule The rule string to be split.
  * @return A vector of strings representing the individual words in the rule.
  */
-Vec<std::string> SemanticDescriptor::splitwords(std::string rule)
+const Vec<std::string> SemanticDescriptor::splitwords(std::string rule) const
 {
 	Vec<std::string> result;
 	std::string		 current;
@@ -474,12 +474,6 @@ void SemanticDescriptor::assignTerminalChar()
 	}
 }
 
-
-ARuleMap SemanticDescriptor::getStartPath() const
-{
-	return m_startPath;
-}
-
 /**
  * @brief Parses the concept name from the given string and updates the last key accordingly.
  * @param s The string containing the concept name to be parsed.
@@ -564,8 +558,8 @@ bool SemanticDescriptor::hasRecursiveError(ConceptNode &node)
  */
 void SemanticDescriptor::checkForRecursion()
 {
-	tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
-	tree->addSegmentPath(CURSOR);
+	m_tree = new ConceptNode(CURSOR, m_concepts[CURSOR]->getDefinitions());
+	m_tree->addSegmentPath(CURSOR);
 
 	if (m_recursiveConceptAuthorize == false)
 	{
@@ -588,7 +582,7 @@ void SemanticDescriptor::checkForRecursion()
 		}
 	}
 
-	if (hasRecursiveError(*tree))
+	if (hasRecursiveError(*m_tree))
 		throw RecursiveLoopConceptException();
 }
 
@@ -597,19 +591,9 @@ void SemanticDescriptor::checkForRecursion()
  * @brief Retrieves the map of concepts defined in the semantic descriptor.
  * @return A map where the keys are concept names and the values are pointers to Concept objects.
  */
-Map<Concept *> SemanticDescriptor::getConcepts() const
+const Map<Concept *> &SemanticDescriptor::getConcepts() const
 {
 	return m_concepts;
-}
-
-/**
- * @brief Retrieves a concept by its name from the semantic descriptor.
- * @param key The name of the concept to retrieve.
- * @return A reference to a pointer to the Concept object.
- */
-Concept *&SemanticDescriptor::getConcept(const std::string &key)
-{
-	return m_concepts.get(key);
 }
 
 /**
@@ -620,15 +604,6 @@ Concept *&SemanticDescriptor::getConcept(const std::string &key)
 const Concept *SemanticDescriptor::getConcept(const std::string &key) const
 {
 	return m_concepts.get(key);
-}
-
-/**
- * @brief Retrieves the ConceptNode tree of the semantic descriptor.
- * @return A pointer to the root ConceptNode.
- */
-ConceptNode *SemanticDescriptor::getTree() const
-{
-	return tree;
 }
 
 /**

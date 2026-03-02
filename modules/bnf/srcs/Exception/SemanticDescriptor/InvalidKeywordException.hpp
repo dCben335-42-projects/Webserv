@@ -3,15 +3,17 @@
 
 #include <stdexcept>
 #include <string>
-#include "SemanticException.hpp"
+#include "../SemanticException.hpp"
 #include "bnf_defs.hpp"
 using namespace bnf;
 
 class InvalidKeywordException : public SemanticException
 {
 	public:
-		explicit InvalidKeywordException(const std::string &keyword) : SemanticException("Invalid keyword: " + keyword,
-																						 "InvalidKeywordException") {};
+		explicit InvalidKeywordException(const std::string &keyword) :
+			SemanticException(
+				"Invalid keyword: " + keyword,
+				"InvalidKeywordException") {};
 };
 
 #endif

@@ -17,7 +17,6 @@
 #include "../Exception/Parser/InvalidEntryException.hpp"
 #include "../Exception/Parser/FileNotFinishedException.hpp"
 #include "../Exception/Parser/CacheFullException.hpp"
-#include "../BNFPath/BNFPath.hpp"
 
 class Parser
 {
@@ -26,8 +25,7 @@ class Parser
 		std::set<const ARule *>		  m_optionalComputing;
 		Vec<const std::string *>	  m_conceptPaths;
 		Vec<ARulePathInfo>			  m_arulePathInfoList;
-
-		const SemanticDescriptor &m_semantic;
+		const SemanticDescriptor	 &m_semantic;
 
 		bool parseCurrentChar(const char c, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext);
 		bool word(const char c, const ARule *const rule, ARulePathInfo *path, const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, size_t indexElementTerminalChar);

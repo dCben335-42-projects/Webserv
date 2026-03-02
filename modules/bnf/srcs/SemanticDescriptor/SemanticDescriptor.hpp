@@ -11,26 +11,26 @@
 #include "../utils/utils.hpp"
 #include "../Concept/Concept.hpp"
 
-#include "../Exception/ConceptAlreadyDefinedException.hpp"
-#include "../Exception/InvalidConceptNameException.hpp"
-#include "../Exception/ConceptHasNotDefinitionException.hpp"
-#include "../Exception/EmptyConceptNameException.hpp"
-#include "../Exception/DoubleQuoteStartException.hpp"
-#include "../Exception/MemoryAllocationFailedException.hpp"
-#include "../Exception/BadClosingKeywordException.hpp"
-#include "../Exception/UnexpectedEndRuleException.hpp"
-#include "../Exception/InvalidKeywordException.hpp"
-#include "../Exception/ConceptNotFoundException.hpp"
-#include "../Exception/BadPrefixException.hpp"
-#include "../Exception/RecursiveConceptException.hpp"
-#include "../Exception/RecursiveLoopConceptException.hpp"
-#include "../Exception/InterruptedProgramException.hpp"
+#include "../Exception/SemanticDescriptor/ConceptAlreadyDefinedException.hpp"
+#include "../Exception/SemanticDescriptor/InvalidConceptNameException.hpp"
+#include "../Exception/SemanticDescriptor/ConceptHasNotDefinitionException.hpp"
+#include "../Exception/SemanticDescriptor/EmptyConceptNameException.hpp"
+#include "../Exception/SemanticDescriptor/DoubleQuoteStartException.hpp"
+#include "../Exception/SemanticDescriptor/MemoryAllocationFailedException.hpp"
+#include "../Exception/SemanticDescriptor/BadClosingKeywordException.hpp"
+#include "../Exception/SemanticDescriptor/UnexpectedEndRuleException.hpp"
+#include "../Exception/SemanticDescriptor/InvalidKeywordException.hpp"
+#include "../Exception/SemanticDescriptor/ConceptNotFoundException.hpp"
+#include "../Exception/SemanticDescriptor/BadPrefixException.hpp"
+#include "../Exception/SemanticDescriptor/RecursiveConceptException.hpp"
+#include "../Exception/SemanticDescriptor/RecursiveLoopConceptException.hpp"
+#include "../Exception/SemanticDescriptor/InterruptedProgramException.hpp"
 
 class SemanticDescriptor
 {
 	private:
-		ConceptNode		*tree;
-		Vec<std::string> blocks;
+		ConceptNode		*m_tree;
+		Vec<std::string> m_blocks;
 		Map<ConceptNode> m_data;
 		Vec<Concept>	 m_concepts_data;
 		ARuleMap		 m_startPath;
@@ -52,23 +52,19 @@ class SemanticDescriptor
 		bool hasRecursiveErrorOnNewNode(std::string item, ConceptNode *parentPtr);
 		void assignParentRules();
 		void clear();
+		void findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
+		void assignTerminalChar();
 
-
-		bool parseAndConsumePrefix(std::string &str, int *out);
+		bool				   parseAndConsumePrefix(std::string &str, int *out);
+		const Vec<std::string> splitwords(std::string rule) const;
 
 	public:
 		SemanticDescriptor(const std::string &m_content);
 		~SemanticDescriptor();
 
-		ARuleMap				 getStartPath() const;
-		Map<Concept *>			 getConcepts() const;
-		Concept				   *&getConcept(const std::string &key);
+		const Map<Concept *>	&getConcepts() const;
 		const Concept			*getConcept(const std::string &key) const;
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
-		ConceptNode				*getTree() const;
-		void					 findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
-		void					 assignTerminalChar();
-		Vec<std::string>		 splitwords(std::string rule);
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data);

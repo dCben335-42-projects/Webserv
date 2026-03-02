@@ -3,15 +3,17 @@
 
 #include <stdexcept>
 #include <string>
-#include "SemanticException.hpp"
+#include "../SemanticException.hpp"
 #include "bnf_defs.hpp"
 using namespace bnf;
 
 class UnexpectedEndRuleException : public SemanticException
 {
 	public:
-		explicit UnexpectedEndRuleException(const std::string &rule) : SemanticException("Unexpected end of rule: " + rule,
-																						 "UnexpectedEndRuleException") {};
+		explicit UnexpectedEndRuleException(const std::string &rule) :
+			SemanticException(
+				"Unexpected end of rule: " + rule,
+				"UnexpectedEndRuleException") {};
 };
 
 #endif

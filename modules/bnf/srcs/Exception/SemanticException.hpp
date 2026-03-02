@@ -11,16 +11,10 @@ class SemanticException : public std::runtime_error
 		std::string m_classId;
 
 	public:
-		explicit SemanticException(const std::string &message, const std::string &classId) : std::runtime_error(message), m_classId(classId)
-		{
-		}
-		~SemanticException() throw()
-		{
-		}
-		std::string getClassId() const
-		{
-			return m_classId;
-		}
+		SemanticException(const std::string &message, const std::string &classId);
+		~SemanticException() throw();
+
+		std::string getClassId() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const SemanticException &data);

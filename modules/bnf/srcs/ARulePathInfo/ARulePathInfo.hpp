@@ -39,11 +39,13 @@ std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data);
 
 class ARulePathInfo
 {
+	private:
+		ARulePath m_path;
+		size_t	  m_pathHash;
+
 	public:
-		ARulePath			  m_path;
 		Vec<TerminalCharInfo> terminalCharsInfo;
-		size_t				  m_pathHash;
-		unsigned int		  m_replaceable;
+		unsigned int		  replaceable;
 
 		ARulePathInfo(const ARulePath &path);
 		~ARulePathInfo();
@@ -51,6 +53,8 @@ class ARulePathInfo
 		void					resetTerminalCharsInfo();
 		const Vec<std::string> &getValue() const;
 		static size_t			createPathHash(const ARulePath &path);
+		const ARulePath		   &getPath() const;
+		size_t					getPathHash() const;
 };
 
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data);

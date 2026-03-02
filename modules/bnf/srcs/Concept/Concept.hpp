@@ -24,7 +24,7 @@ class Concept
 		const std::string  m_conceptName;
 		Set<const ARule *> m_terminalChars;
 		Set<const ARule *> m_parents;
-		Vec<ConceptDef *>  definitions;
+		Vec<ConceptDef *>  m_definitions;
 		bool			   m_isTerminalConcept;
 };
 

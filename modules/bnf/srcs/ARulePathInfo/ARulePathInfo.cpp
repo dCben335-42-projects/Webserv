@@ -25,15 +25,15 @@ ARulePathInfo::ARulePathInfo(const ARulePath &path) : m_path(path)
 				TerminalCharInfo(0, item.getValue().size());
 	}
 
-	m_pathHash	  = createPathHash(path);
-	m_replaceable = terminalCount;
+	m_pathHash	= createPathHash(path);
+	replaceable = terminalCount;
 }
 
 void ARulePathInfo::resetTerminalCharsInfo()
 {
 	for (size_t i = 0; i < terminalCharsInfo.size(); ++i)
 		terminalCharsInfo[i].position = 0;
-	m_replaceable = terminalCharsInfo.size();
+	replaceable = terminalCharsInfo.size();
 }
 
 ARulePathInfo::~ARulePathInfo()
@@ -54,13 +54,18 @@ const Vec<std::string> &ARulePathInfo::getValue() const
 	return m_path.back()->getItemsValue();
 }
 
+const ARulePath &ARulePathInfo::getPath() const
+{
+	return m_path;
+}
+
 std::ostream &operator<<(std::ostream &os, const ARulePathInfo &data)
 {
 	os << "ARulePathInfo(path=[";
-	for (size_t i = 0; i < data.m_path.size(); ++i)
+	for (size_t i = 0; i < data.getPath().size(); ++i)
 	{
-		os << data.m_path[i];
-		if (i < data.m_path.size() - 1)
+		os << data.getPath()[i];
+		if (i < data.getPath().size() - 1)
 			os << ", ";
 	}
 	os << "], charPtr=[";
@@ -80,4 +85,9 @@ std::ostream &operator<<(std::ostream &os, const TerminalCharInfo &data)
 {
 	os << "{position: " << data.position << ", length: " << data.length << "}";
 	return os;
+}
+
+size_t ARulePathInfo::getPathHash() const
+{
+	return m_pathHash;
 }

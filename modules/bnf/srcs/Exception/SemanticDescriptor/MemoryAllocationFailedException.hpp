@@ -3,15 +3,17 @@
 
 #include <stdexcept>
 #include <string>
-#include "SemanticException.hpp"
+#include "../SemanticException.hpp"
 #include "bnf_defs.hpp"
 using namespace bnf;
 
 class MemoryAllocationFailedException : public SemanticException
 {
 	public:
-		explicit MemoryAllocationFailedException() : SemanticException("Memory allocation failed",
-																	   "MemoryAllocationFailedException") {};
+		explicit MemoryAllocationFailedException() :
+			SemanticException(
+				"Memory allocation failed",
+				"MemoryAllocationFailedException") {};
 };
 
 #endif

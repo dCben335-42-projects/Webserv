@@ -4,6 +4,7 @@
 #include <string>
 #include "bnf_defs.hpp"
 #include "../../Rules/ARule.hpp"
+#include "../../ARulePathInfo/ARulePathInfo.hpp"
 
 class ConceptDef
 {

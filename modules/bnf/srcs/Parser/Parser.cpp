@@ -4,7 +4,6 @@
 #include "./Parser.hpp"
 #include "../ARulePathInfo/ARulePathInfo.hpp"
 #include "Json.hpp"
-#include "../BNFPath/BNFPath.hpp"
 #include "../BNFSignals/BNFSignals.hpp"
 
 /**
@@ -60,7 +59,7 @@ void Parser::createPathInfo(
 {
 	size_t pathHash = ARulePathInfo::createPathHash(completePath);
 	for (ARulePaths::iterator it = element.begin(); it != element.end(); ++it)
-		if ((*it)->m_pathHash == pathHash)
+		if ((*it)->getPathHash() == pathHash)
 			return;
 	element.push_back(createARulePathInfo(completePath, pathHash));
 }
@@ -77,7 +76,7 @@ ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path, size_t pathHas
 	for (size_t i = 0; i < n; ++i)
 	{
 		ARulePathInfo &an = m_arulePathInfoList[i];
-		if (an.m_pathHash == pathHash && an.m_replaceable == 0)
+		if (an.getPathHash() == pathHash && an.replaceable == 0)
 		{
 			an.resetTerminalCharsInfo();
 			return &an;
@@ -214,14 +213,14 @@ bool Parser::word(
 
 	if (data.position >= data.length || pathInfo->getValue()[indexElementTerminalChar][data.position] != c)
 	{
-		pathInfo->m_replaceable -= 1;
+		pathInfo->replaceable -= 1;
 		return false;
 	}
 
 	if (data.position++ == data.length - 1)
 	{
-		pathInfo->m_replaceable -= 1;
-		addNextPaths(mapPathCurrent, mapPathNext, pathInfo->m_path, rule);
+		pathInfo->replaceable -= 1;
+		addNextPaths(mapPathCurrent, mapPathNext, pathInfo->getPath(), rule);
 		return true;
 	}
 
@@ -231,7 +230,7 @@ bool Parser::word(
 	for (size_t i = 0; i < pathCount; ++i)
 	{
 		ARulePathInfo *it = paths[i];
-		if (it->m_path == pathInfo->m_path)
+		if (it->getPathHash() == pathInfo->getPathHash())
 		{
 			it->terminalCharsInfo[indexElementTerminalChar].position = data.position;
 			return true;
@@ -391,7 +390,7 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 		const ARulePaths &val = it->second;
 		for (ARulePaths::const_iterator path = val.begin(); path != val.end(); ++path)
 		{
-			const ARulePath			  &rules = (*path)->m_path;
+			const ARulePath			  &rules = (*path)->getPath();
 			const Vec<TerminalSymbol> &items = rules.back()->getItems();
 			for (Vec<TerminalSymbol>::const_iterator item = items.begin(); item != items.end(); ++item)
 				if (item->isTerminalChar() && *(item->getValue().end() - 1) == c && isFullyOptionalEndAdvance(rules))
@@ -460,8 +459,6 @@ void Parser::parse(const std::string &stringToParsed)
 		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();
 	}
-	Logger::log("ARulePathInfoList size: " + Logger::get(m_arulePathInfoList.size()));
-
 	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c))
 		Logger::log("Parsing complete ✅");
 	else
@@ -478,9 +475,9 @@ void Parser::throwInvalidEntryException(const ARuleMap &mapPathCurrent, const ch
 		for (ARulePaths::const_iterator paths = val.begin(); paths != val.end(); ++paths)
 		{
 			ARulePathInfo *pathInfo = *paths;
-			for (size_t j = 0; j < pathInfo->m_path.size(); ++j)
+			for (size_t j = 0; j < pathInfo->getPath().size(); ++j)
 			{
-				expectedChars += pathInfo->m_path[j]->getConceptName();
+				expectedChars += pathInfo->getPath()[j]->getConceptName();
 				expectedChars += " -> ";
 			}
 			for (size_t k = 0; k < pathInfo->getValue().size(); ++k)

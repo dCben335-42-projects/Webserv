@@ -9,7 +9,9 @@ class CacheFullException : public SemanticException
 {
 	public:
 		explicit CacheFullException() :
-			SemanticException("ARulePathInfo cache error due to reaching maximum capacity", "BNF Parsing - CacheFullException") {};
+			SemanticException(
+				"ARulePathInfo cache error due to reaching maximum capacity",
+				"BNF Parsing - CacheFullException") {};
 };
 
 #endif
