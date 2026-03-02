@@ -62,6 +62,7 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<std::string> &getSegments() const;
 		const std::string	   &getQueryString() const;
 
+
 		const Config::Locations &getActiveLocations() const;
 		bool					 getActiveAutoIndex() const;
 

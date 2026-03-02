@@ -63,7 +63,7 @@ void Location::reset()
 	m_authRequired = std::make_pair(false, false);
 
 	m_addHeaders = Map<std::string>();
-	m_errorPages = Map<std::string>();
+	m_errorPages = Map<unsigned short, std::string>();
 	m_cgiBin	 = Map<std::string>();
 
 	m_indexes = std::make_pair(false, Vec<std::string>());
@@ -536,7 +536,8 @@ void Location::combineAddHeaders(const Map<std::string> &addHeaders)
  */
 void Location::setErrorPages(const Map<std::string> &errorPages)
 {
-	m_errorPages = errorPages;
+	for (Map<std::string>::const_iterator it = errorPages.begin(); it != errorPages.end(); ++it)
+		m_errorPages.set(Number::toUShort(it->first), it->second);
 }
 
 /**
@@ -551,7 +552,7 @@ void Location::setErrorPages(const Map<std::string> &errorPages)
 void Location::combineErrorPages(const Map<std::string> &errorPages)
 {
 	for (Map<std::string>::const_iterator it = errorPages.begin(); it != errorPages.end(); ++it)
-		m_errorPages.set(it->first, it->second);
+		m_errorPages.set(Number::toUShort(it->first), it->second);
 }
 
 /**
@@ -600,11 +601,39 @@ const Map<std::string> &Location::getAddHeaders() const
  * @return A constant reference to a map of HTTP status codes and their corresponding error page paths that are set for the location.
  *
  */
-const Map<std::string> &Location::getErrorPages() const
+const Map<unsigned short, std::string> &Location::getErrorPages() const
 {
 	return m_errorPages;
 }
 
+
+/**
+ *
+ * @brief Checks if there is an error page set for a specific HTTP status code.
+ *
+ * @param statusCode The HTTP status code to check for an associated error page.
+ *
+ * @return true if there is an error page set for the given HTTP status code, false otherwise.
+ *
+ */
+bool Location::hasErrorPage(const unsigned short statusCode) const
+{
+	return m_errorPages.has(statusCode);
+}
+
+/**
+ *
+ * @brief Gets the error page path for a specific HTTP status code.
+ *
+ * @param statusCode The HTTP status code for which to retrieve the error page path.
+ *
+ * @return The error page path corresponding to the given HTTP status code, or an empty string if no error page is set for that status code.
+ *
+ */
+std::string Location::getErrorPage(const unsigned short statusCode) const
+{
+	return m_errorPages.get(statusCode);
+}
 /**
  *
  * @brief Gets the CGI bin map for the location.

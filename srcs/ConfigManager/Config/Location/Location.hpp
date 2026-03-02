@@ -24,9 +24,9 @@ class Location
 		std::pair<bool, size_t>			m_maxBodySize;
 		std::pair<bool, bool>			m_authRequired;
 
-		Map<std::string> m_addHeaders;
-		Map<std::string> m_errorPages;
-		Map<std::string> m_cgiBin;
+		Map<std::string>				 m_addHeaders;
+		Map<unsigned short, std::string> m_errorPages;
+		Map<std::string>				 m_cgiBin;
 
 		// clang-format off
 		std::pair<bool, Set<HttpMethod> >  m_methods;
@@ -89,9 +89,11 @@ class Location
 		void					combineAddHeaders(const Map<std::string> &addHeaders);
 		const Map<std::string> &getAddHeaders() const;
 
-		void					setErrorPages(const Map<std::string> &errorPages);
-		void					combineErrorPages(const Map<std::string> &errorPages);
-		const Map<std::string> &getErrorPages() const;
+		void									setErrorPages(const Map<std::string> &errorPages);
+		void									combineErrorPages(const Map<std::string> &errorPages);
+		const Map<unsigned short, std::string> &getErrorPages() const;
+		bool									hasErrorPage(const unsigned short statusCode) const;
+		std::string								getErrorPage(const unsigned short statusCode) const;
 
 		void		  setCgiBin(const Map<std::string> &cgiBin);
 		void		  combineCgiBin(const Map<std::string> &cgiBin);

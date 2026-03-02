@@ -14,6 +14,7 @@ class SocketAddress
 		bool					m_isIPv6;
 		unsigned short			m_port;
 		std::string				m_ip;
+		bool					m_isHostname;
 
 		void initIPv4(unsigned short port, uint32_t sin_addr);
 		void initIPv6(unsigned short port, in6_addr sin6_addr);

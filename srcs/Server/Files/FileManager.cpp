@@ -361,6 +361,9 @@ bool FileManager::hasRWXPerm(const std::string &path)
  *
  * @return The content of the file as a string.
  *
+ * @note Catch exceptions using FileManager::FileException, which is the base class for all file-related exceptions.
+ * This allows you to handle different types of file errors (e.g., file not found, permission denied, read errors) in a unified way.
+ *
  * @throws FileDoesNotExistException if the file does not exist.
  * @throws FilePermissionException if the file cannot be read due to permission issues.
  * @throws FileReadException if there is an error while reading the file.
@@ -394,13 +397,13 @@ std::string FileManager::readFile(const std::string &path)
  * @return The MIME content type as a string. If the file extension is not recognized, returns "application/octet-stream".
  *
  */
-std::string FileManager::getMime(const std::string &filePath)
+std::string FileManager::getMime(const std::string &filePath, const std::string &defaultMime)
 {
 	const std::string &ext = determineExtension(filePath, NULL);
 
 	if (m_mimes.has(ext))
 		return m_mimes.get(ext);
-	return MIME_OCTET;
+	return defaultMime.empty() ? MIME_OCTET : defaultMime;
 }
 
 
@@ -413,13 +416,13 @@ std::string FileManager::getMime(const std::string &filePath)
  * @return The MIME content type as a string. If the file extension is not recognized, returns "application/octet-stream".
  *
  */
-std::string FileManager::getMime(const File &file)
+std::string FileManager::getMime(const File &file, const std::string &defaultMime)
 {
 	const std::string &ext = file.getExtension();
 
 	if (m_mimes.has(ext))
 		return m_mimes.get(ext);
-	return MIME_OCTET;
+	return defaultMime.empty() ? MIME_OCTET : defaultMime;
 }
 
 

@@ -515,6 +515,7 @@ const Config *Client::findHostConfig(const std::string &host) const
 		throw Http400Exception("Invalid port in Host header");
 	const std::string	 extractedServerName = hasPort ? host.substr(0, portPos) : host;
 	const ServerConfigs &confs				 = m_server.getConfigs();
+	Logger::log("confs to compare: " + Logger::get(confs));
 	for (ServerConfigs::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
 		const Config &config = (*it);
@@ -527,6 +528,36 @@ const Config *Client::findHostConfig(const std::string &host) const
 			return &config;
 	}
 	return &confs.at(0);
+}
+
+
+bool Client::serveCustomErrorPage(const int statusCode)
+{
+	const Vec<Location> &locations = m_req.getActiveLocations();
+	size_t				 locCount  = locations.size();
+	while (locCount--)
+	{
+		const Location &loc = locations[locCount];
+		if (!loc.hasErrorPage(statusCode))
+			continue;
+		const std::string &errorPagePath = loc.getErrorPage(statusCode);
+		try
+		{
+			const std::string fileContent = FileManager::readFile(errorPagePath);
+			m_res.setBody(fileContent);
+			m_res.setHeader(HEADER_CONTENT_TYPE, FileManager::getMime(errorPagePath));
+			return true;
+		}
+		catch (const FileManager::FileException &e)
+		{
+			Logger::custom(LOG_MSG_CLIENT_PREFIX + Logger::get(statusCode) + LOG_GLOBAL_SEPARATOR + "Failed to serve custom error page: " + e.what());
+			m_res.setStatusCode(statusCode);
+			m_res.setBody(Http404Exception().getPage());
+			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -549,15 +580,17 @@ void Client::onHttpException(const AHttpException &e)
 		m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Logger::get(e.getStatusCode()) +
 		LOG_GLOBAL_SEPARATOR + e.what() + LOG_GLOBAL_SEPARATOR + e.getExtraMessage());
 	m_res.reset();
-	m_res.setStatusCode(e.getStatusCode());
+	const int statusCode = e.getStatusCode();
+	m_res.setStatusCode(statusCode);
 	if (e.isRedirection())
 	{
 		m_res.setHeader(HEADER_LOCATION, e.getRedirectionUrl());
 		return;
 	}
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-	m_res.setBody(e.getPage());
-	if (e.getStatusCode() != 405)
+	if (!serveCustomErrorPage(statusCode))
+		m_res.setBody(e.getPage());
+	if (statusCode != 405)
 		return;
 	const Set<HttpMethod> *locMethods	  = m_req.getAllowedMethods();
 	const Set<HttpMethod>  allowedMethods = locMethods ? *locMethods : Client::handledMethods;
@@ -803,8 +836,11 @@ void Client::onTimeOut()
 	{
 		m_res.reset();
 		m_res.setStatusCode(408);
-		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-		m_res.setBody(Http408Exception().getPage());
+		if (!serveCustomErrorPage(408))
+		{
+			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+			m_res.setBody(Http408Exception().getPage());
+		}
 		m_res.fill(true, 0).build();
 		determineKeepAlive(m_res.getStatusCode());
 		m_events = POLLOUT;

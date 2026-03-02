@@ -5,6 +5,7 @@
 #include <exception>
 #include "httpExceptions.hpp"
 #include "File.hpp"
+#include "httpMimes.hpp"
 
 #define ICON_PLAIN "📄"
 #define ICON_IMAGE "🖼️"
@@ -51,8 +52,8 @@ class FileManager
 		static std::string readFile(const std::string &path);
 		static void		   createDiskFile(const std::string &fullPath, const std::string &body);
 
-		static std::string getMime(const std::string &filePath);
-		static std::string getMime(const File &file);
+		static std::string getMime(const std::string &filePath, const std::string &defaultMime = MIME_OCTET);
+		static std::string getMime(const File &file, const std::string &defaultMime = MIME_OCTET);
 		static std::string getIcon(const File &file);
 
 		static std::string determineExtension(const std::string &fileName, size_t *extPos);

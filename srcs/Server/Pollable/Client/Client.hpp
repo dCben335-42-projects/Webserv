@@ -57,6 +57,7 @@ class Client : public Pollable
 		void handlePutPatch(const std::string &ressourcePath);
 
 		bool prepareResponse();
+		bool serveCustomErrorPage(const int statusCode);
 
 		const Config *findHostConfig(const std::string &host) const;
 		bool		  hasReceivedCompleteRequest();

@@ -33,9 +33,8 @@ void SocketAddress::initIP(const std::string &ip, const unsigned short port)
 {
 	std::memset(&m_storage, 0, sizeof(m_storage));
 
-	const bool isHostname = IPAddress::isHostname(ip);
-
-	if (isHostname)
+	m_isHostname = IPAddress::isHostname(ip);
+	if (m_isHostname)
 	{
 		struct addrinfo *result = IPAddress::resolveHost(ip);
 		m_isIPv6				= result->ai_family == AF_INET6;
