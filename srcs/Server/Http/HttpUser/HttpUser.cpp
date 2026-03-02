@@ -9,14 +9,12 @@
 HttpUser::HttpUser(
 	const std::string name,
 	const std::string pswd,
-	const std::string serverName,
 	unsigned short	  serverPort) :
 	m_uname(name),
 	m_salt(""),
-	m_serverName(serverName),
 	m_serverPort(serverPort),
 	m_stringifiedCookie(""),
-	m_token(AuthToken(m_uname, m_serverName, m_serverPort))
+	m_token(AuthToken(m_uname, m_serverPort))
 {
 	m_creationDate = std::time(0);
 	m_pswd		   = generateEncryptedPassword(pswd);
@@ -51,10 +49,6 @@ const AuthToken &HttpUser::getToken() const
 	return m_token;
 }
 
-// if (!fields.has(COOKIE_KEY_TOKEN))
-// 	throw Http401Exception();
-// m_token.setHashStr(fields.get(COOKIE_KEY_TOKEN));
-
 void HttpUser::stringifyCookie()
 {
 	time_t expDate = m_token.getExpDate();
@@ -85,7 +79,7 @@ bool HttpUser::hasValidToken() const
 
 void HttpUser::refreshToken()
 {
-	AuthToken newToken(m_uname, m_serverName, m_serverPort);
+	AuthToken newToken(m_uname, m_serverPort);
 
 	m_token = newToken;
 	stringifyCookie();

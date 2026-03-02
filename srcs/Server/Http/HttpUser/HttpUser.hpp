@@ -14,7 +14,6 @@ class HttpUser
 		std::string m_salt;
 		time_t		m_creationDate;
 
-		std::string	   m_serverName;
 		unsigned short m_serverPort;
 
 		std::string m_stringifiedCookie;
@@ -22,7 +21,7 @@ class HttpUser
 		AuthToken m_token;
 
 	public:
-		HttpUser(const std::string name, const std::string pswd, const std::string serverName, unsigned short serverPort);
+		HttpUser(const std::string name, const std::string pswd, unsigned short serverPort);
 		HttpUser();
 		~HttpUser();
 

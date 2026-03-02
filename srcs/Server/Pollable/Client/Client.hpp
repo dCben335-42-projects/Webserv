@@ -7,6 +7,8 @@
 #include "Config.hpp"
 #include <ctime>
 
+#define INVALID_PORT_HOST_HEADER "Invalid port in Host header"
+
 class VirtualServer;
 class AHttpException;
 
@@ -53,6 +55,8 @@ class Client : public Pollable
 		void handlePost(const std::string &ressourcePath);
 		void handleDelete(const std::string &ressourcePath);
 		void handlePutPatch(const std::string &ressourcePath);
+
+		bool hasPostAuth();
 
 		bool prepareResponse();
 

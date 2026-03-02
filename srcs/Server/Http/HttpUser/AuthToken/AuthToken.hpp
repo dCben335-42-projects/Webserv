@@ -15,7 +15,7 @@ class AuthToken
 		uint64_t	m_hashInt;
 
 	public:
-		AuthToken(const std::string &name, const std::string &serverName, unsigned short serverPort);
+		AuthToken(const std::string &name, unsigned short serverPort);
 		AuthToken(const std::string &hash);
 		~AuthToken();
 

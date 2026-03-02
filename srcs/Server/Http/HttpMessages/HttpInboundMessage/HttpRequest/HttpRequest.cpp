@@ -127,8 +127,9 @@ size_t HttpRequest::getMaxBodySize() const
 	const Config::Locations::const_iterator begin	  = locations.begin();
 	Config::Locations::const_iterator		it		  = locations.end();
 
-	while (--it != begin)
+	while (it != begin)
 	{
+		--it;
 		if (it->hasMaxBodySize())
 			return it->getMaxBodySize();
 	}
@@ -620,7 +621,7 @@ bool HttpRequest::hasUpload() const
 	{
 		--it;
 		if ((*it).hasUpload())
-			return true;
+			return (*it).getUpload().isOn();
 	}
 	return false;
 }
@@ -722,6 +723,20 @@ bool HttpRequest::hasHost() const
 const std::string &HttpRequest::getHost() const
 {
 	return m_host.second;
+}
+
+bool HttpRequest::isAuthRequired() const
+{
+	m_locCIt it	   = m_activeLocations.end();
+	m_locCIt begin = m_activeLocations.begin();
+
+	while (it != begin)
+	{
+		--it;
+		if ((*it).hasAuthRequired())
+			return (*it).getAuthRequired();
+	}
+	return false;
 }
 
 
