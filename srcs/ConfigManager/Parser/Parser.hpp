@@ -22,18 +22,19 @@
 #define PARSER_KEY_LISTEN "listen"
 #define PARSER_KEY_SERVER_NAME "server_name"
 #define PARSER_KEY_AUTH_LOCATION "auth_loc"
-#define PARSER_KEY_BODY_TIMEOUT "body_timeout"
+#define PARSER_KEY_BODY_TIMEOUT "client_body_timeout"
 #define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
-#define PARSER_KEY_HEADER_TIMEOUT "header_timeout"
+#define PARSER_KEY_HEADER_TIMEOUT "client_header_timeout"
 
 #define PARSER_KEY_ROOT "root"
 #define PARSER_KEY_ALIAS "alias"
 #define PARSER_KEY_INDEX "index"
 #define PARSER_KEY_AUTOINDEX "autoindex"
-#define PARSER_KEY_UPLOAD "sendfiles"
+#define PARSER_KEY_UPLOAD "sendfile"
 #define PARSER_KEY_RETURN "return"
-#define PARSER_KEY_METHODS "allow_methods"
+#define PARSER_KEY_METHODS "allowed_methods"
 #define PARSER_KEY_MAX_BODY_SIZE "client_max_body_size"
+#define PARSER_KEY_AUTH_REQUIRED "auth_required"
 
 #include "Config.hpp"
 

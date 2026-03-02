@@ -671,7 +671,7 @@ const Set<HttpMethod> *HttpRequest::getAllowedMethods() const
 	{
 		--it;
 		if ((*it).hasMethods())
-			return &(*it).getAllowedMethods();
+			return &(*it).getMethods();
 	}
 	return NULL;
 }

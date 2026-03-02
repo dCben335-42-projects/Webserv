@@ -19,7 +19,8 @@ const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_INDEX, NULL, NULL, &Location::setIndexes, NULL},
 	{PARSER_KEY_METHODS, NULL, NULL, &Location::setMethods, NULL},
 	{PARSER_KEY_RETURN, NULL, NULL, &Location::setReturn, NULL},
-	{PARSER_KEY_MAX_BODY_SIZE, &Location::setMaxBodySize, NULL, NULL, NULL}};
+	{PARSER_KEY_MAX_BODY_SIZE, &Location::setMaxBodySize, NULL, NULL, NULL},
+	{PARSER_KEY_AUTH_REQUIRED, NULL, &Location::setAuthRequired, NULL, NULL}};
 
 const size_t Parser::m_serverDirectivesCount   = sizeof(m_serverDirectives) / sizeof(m_serverDirectives[0]);
 const size_t Parser::m_locationDirectivesCount = sizeof(m_locationDirectives) / sizeof(m_locationDirectives[0]);
@@ -382,6 +383,10 @@ void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator
 		}
 		++dit;
 	}
+	location.setAddHeaders(locationNode.getAddHeaders());
+	location.setErrorPages(locationNode.getErrorPages());
+	location.setCgiBin(locationNode.getCgiPass());
+	location.setPath(locIt->first);
 	config.setLocation(locIt->first, location);
 }
 
@@ -460,7 +465,6 @@ void Parser::createHttpConfig()
 		++dit;
 	}
 	m_httpConfig.setDefaultLocation(defaultLocation);
-	Logger::error(defaultLocation);
 }
 
 
@@ -545,12 +549,13 @@ void Parser::removeDuplicate()
 		}
 		if (!servers[i].getSocketAddress().getLength())
 		{
+			Logger::warn("Invalid listen directive found for server: " + Logger::get(servers[i]));
 			servers.remove(i);
 			continue;
 		}
 		if (isDuplicate(servers[i], servers, i + 1))
 		{
-			Logger::warn("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()));
+			Logger::warn("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()) + ". This server will be ignored: " + Logger::get(servers[i]));
 			servers.remove(i);
 			continue;
 		}

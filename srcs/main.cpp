@@ -4,6 +4,8 @@
 #include "Logger.hpp"
 #include "EventLoop.hpp"
 #include "webserv.hpp"
+#include <csignal>
+#include "Signals.hpp"
 
 /**
  *
@@ -17,7 +19,6 @@
  */
 bool getFiles(std::string &bnf, std::string &config, const std::string &configPath)
 {
-	signal(SIGINT, SIG_IGN);
 	try
 	{
 		bnf	   = FileManager::readFile(BNF_FILE_PATH);
@@ -34,6 +35,7 @@ bool getFiles(std::string &bnf, std::string &config, const std::string &configPa
 
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, SIG_IGN);
 	if (argc < 2)
 		Logger::info(DEFAULT_CONFIG_MSG);
 	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ");
@@ -55,8 +57,13 @@ int main(int argc, char *argv[])
 	}
 	const VServersConfigs &serversConfigs = configManager.getServersConfigs();
 	const Config		  &httpConfig	  = configManager.getHttpConfig();
+	Logger::log("Configuration loaded successfully ✅");
+	Logger::log("serversConfigs: " + Logger::get(serversConfigs));
+	Logger::error("httpConfig: " + Logger::get(httpConfig));
 	EventLoop::init(httpConfig, serversConfigs);
 	EventLoop::run();
 	EventLoop::destroy();
+	if (Signals::getIsChild())
+		return 1;
 	return 0;
 }

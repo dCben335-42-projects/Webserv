@@ -117,8 +117,8 @@ void Config::setBodyTimeout(const size_t timeout)
 const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath).getIndexFiles();
-	return m_defaultLocation.getIndexFiles();
+		return m_locations.get(locationPath).getIndexes();
+	return m_defaultLocation.getIndexes();
 }
 
 
@@ -131,12 +131,12 @@ const Vec<std::string> &Config::getIndexFiles(const std::string &locationPath) c
  * @return true if the location has an index file configured, false otherwise.
  *
  */
-bool Config::hasIndexFiles(const std::string &locationPath) const
+bool Config::hasIndexes(const std::string &locationPath) const
 {
 	if (m_locations.has(locationPath))
-		return m_locations.get(locationPath).hasIndexFile();
+		return m_locations.get(locationPath).hasIndexes();
 	if (locationPath == "/")
-		return m_defaultLocation.hasIndexFile();
+		return m_defaultLocation.hasIndexes();
 	return false;
 }
 

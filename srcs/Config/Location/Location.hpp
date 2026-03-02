@@ -6,7 +6,6 @@
 #include "LocationReturn.hpp"
 #include "CgiParams.hpp"
 #include "Vec.hpp"
-
 #include "Upload.hpp"
 
 class Location
@@ -23,6 +22,11 @@ class Location
 		std::pair<bool, LocationReturn> m_return;
 		std::pair<bool, Upload>			m_upload;
 		std::pair<bool, size_t>			m_maxBodySize;
+		std::pair<bool, bool>			m_authRequired;
+
+		Map<std::string> m_addHeaders;
+		Map<std::string> m_errorPages;
+		Map<std::string> m_cgiBin;
 
 		// clang-format off
 		std::pair<bool, Set<HttpMethod> >  m_allowedMethods;
@@ -36,45 +40,67 @@ class Location
 		Location(const Location &other);
 		~Location();
 
-		static bool compare(const Location &a, const Location &b);
+		void reset();
 
-		const std::string	   &getPath() const;
-		const std::string	   &getRoot() const;
-		const Vec<std::string> &getIndexFiles() const;
-		const std::string	   &getAlias() const;
-		bool					getAutoIndex() const;
-		const CgiParams		   *getCgiParams() const;
-		const Set<HttpMethod>  &getAllowedMethods() const;
-		const Upload		   &getUpload() const;
-		const LocationReturn   &getReturn() const;
-		size_t					getMaxBodySize() const;
 
-		bool hasAlias() const;
+		const CgiParams *getCgiParams() const;
+
+		const std::string &getAlias() const;
+		bool			   hasAlias() const;
+		void			   setAlias(const std::string &alias);
+
+
 		bool hasCgi() const;
-		bool hasIndexFile() const;
-		bool hasRoot() const;
-		bool hasAutoIndex() const;
 		bool hasCgiParams() const;
-		bool hasMethods() const;
-		bool hasReturn() const;
-		bool hasIndexes() const;
-		bool hasUpload() const;
-		bool hasMaxBodySize() const;
 
-		void setPath(const std::string &path);
-		void setRoot(const std::string &root);
-		void setAlias(const std::string &alias);
+		void			   setPath(const std::string &path);
+		const std::string &getPath() const;
+
+		void			   setRoot(const std::string &root);
+		bool			   hasRoot() const;
+		const std::string &getRoot() const;
+
 		void setAutoIndex(const bool autoIndex);
-		void setUpload(const std::string &upload);
-		void addIndexFile(const std::string &indexFile);
+		bool hasAutoIndex() const;
+		bool getAutoIndex() const;
+
+		void		  setUpload(const Vec<std::string> &upload);
+		bool		  hasUpload() const;
+		const Upload &getUpload() const;
+
+		void					setIndexes(const Vec<std::string> &indexFiles);
+		bool					hasIndexes() const;
+		const Vec<std::string> &getIndexes() const;
+
+
 		void setCgiParams(const CgiParams *cgi);
-		void setMethods(const Set<HttpMethod> &methods);
-		void setMethods(const Vec<std::string> &methods);
-		void setReturn(const LocationReturn &returnVal);
-		void setReturn(const Vec<std::string> &returnVal);
-		void setIndexes(const Vec<std::string> &indexFiles);
-		void setUpload(const Vec<std::string> &upload);
-		void setMaxBodySize(const std::string &maxBodySize);
+
+		void				   setMethods(const Vec<std::string> &methods);
+		bool				   hasMethods() const;
+		const Set<HttpMethod> &getMethods() const;
+
+		void				  setReturn(const Vec<std::string> &returnVal);
+		bool				  hasReturn() const;
+		const LocationReturn &getReturn() const;
+
+		void   setMaxBodySize(const std::string &maxBodySize);
+		bool   hasMaxBodySize() const;
+		size_t getMaxBodySize() const;
+
+		void setAuthRequired(const bool authRequired);
+		bool hasAuthRequired() const;
+		bool getAuthRequired() const;
+
+		void					setAddHeaders(const Map<std::string> &addHeaders);
+		const Map<std::string> &getAddHeaders() const;
+
+		void					setErrorPages(const Map<std::string> &errorPages);
+		const Map<std::string> &getErrorPages() const;
+
+		void					setCgiBin(const Map<std::string> &cgiBin);
+		const Map<std::string> &getCgiBin() const;
+
+		static bool compare(const Location &a, const Location &b);
 };
 
 std::ostream &operator<<(std::ostream &os, const Location &location);

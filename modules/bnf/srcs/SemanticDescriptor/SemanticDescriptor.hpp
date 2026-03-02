@@ -55,10 +55,8 @@ class SemanticDescriptor
 		void findTerminalChar(const ARule *rule, Vec<std::string> &conceptPaths);
 		void assignTerminalChar();
 
-		bool			 parseAndConsumePrefix(std::string &str, int *out);
-		Vec<std::string> splitwords(const std::string &rule);
-		void			 ndw(const ARule *rule, Vec<std::string> &conceptPaths);
-		void			 findAllNext();
+		bool			 parseAndConsumePrefix(std::string &str, int *out) const;
+		Vec<std::string> splitwords(const std::string &rule) const;
 
 	public:
 		SemanticDescriptor();
@@ -66,11 +64,7 @@ class SemanticDescriptor
 
 		void parse(const std::string &fileContent);
 
-		SemanticDescriptor &operator=(const SemanticDescriptor &other);
-
-		ARuleMap				 getStartPath() const;
 		const Map<Concept *>	&getConcepts() const;
-		Concept				   *&getConcept(const std::string &key);
 		const Concept			*getConcept(const std::string &key) const;
 		const Vec<ConceptDef *> &getConceptDefs(const std::string &conceptName) const;
 };

@@ -64,7 +64,7 @@ class Config
 
 		size_t getMaxBodySize(const std::string &locationPath) const;
 
-		bool					hasIndexFiles(const std::string &locationPath) const;
+		bool					hasIndexes(const std::string &locationPath) const;
 		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;
 };
 

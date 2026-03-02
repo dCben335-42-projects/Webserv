@@ -36,7 +36,7 @@ void SemanticDescriptor::parse(const std::string &fileContent)
 }
 
 /**
- * 
+ *
  * @brief Destructor for the SemanticDescriptor class.
  * Deletes the tree and all concepts stored in the m_concepts map.
  */
@@ -177,15 +177,15 @@ void SemanticDescriptor::parseBlocks()
 
 
 /**
- * 
+ *
  * @brief Splits the given rule string into individual words, considering quotes and escape sequences.
- * 
+ *
  * @param rule The rule string to be split.
- * 
+ *
  * @return A vector of strings representing the individual words in the rule.
- * 
+ *
  */
-Vec<std::string> SemanticDescriptor::splitwords(const std::string &rule)
+Vec<std::string> SemanticDescriptor::splitwords(const std::string &rule) const
 {
 	Vec<std::string> result;
 	std::string		 current;
@@ -285,14 +285,14 @@ Vec<std::string> SemanticDescriptor::splitwords(const std::string &rule)
 
 /**
  * @brief Parses and consumes a prefix from the given string.
- * 
+ *
  * @param str The string to be parsed.
- * 
+ *
  * @param out A pointer to an integer where the parsed value will be stored.
- * 
+ *
  * @return true if a valid prefix was found and consumed, false otherwise.
  */
-bool SemanticDescriptor::parseAndConsumePrefix(std::string &str, int *out)
+bool SemanticDescriptor::parseAndConsumePrefix(std::string &str, int *out) const
 {
 	size_t i = 0;
 

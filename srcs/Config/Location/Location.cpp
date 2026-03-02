@@ -4,17 +4,7 @@
 
 Location::Location()
 {
-	m_path = "";
-	m_cgi  = NULL;
-
-	m_autoIndex = std::make_pair(false, false);
-
-	m_root	 = std::make_pair(false, std::string());
-	m_alias	 = std::make_pair(false, std::string());
-	m_upload = std::make_pair(false, Upload());
-
-	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
-	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
+	reset();
 }
 
 /**
@@ -28,17 +18,8 @@ Location::Location()
  */
 Location::Location(const std::string path)
 {
+	reset();
 	m_path = path;
-	m_cgi  = NULL;
-
-	m_autoIndex = std::make_pair(false, false);
-
-	m_root	 = std::make_pair(false, std::string());
-	m_alias	 = std::make_pair(false, std::string());
-	m_upload = std::make_pair(false, Upload());
-
-	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
-	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
 }
 
 
@@ -60,6 +41,25 @@ Location::~Location()
 {
 	if (m_cgi)
 		delete m_cgi;
+}
+
+
+void Location::reset()
+{
+	m_path = "";
+	m_cgi  = NULL;
+
+	m_autoIndex = std::make_pair(false, false);
+
+	m_root	 = std::make_pair(false, std::string());
+	m_alias	 = std::make_pair(false, std::string());
+	m_upload = std::make_pair(false, Upload());
+
+	m_indexFiles	 = std::make_pair(false, Vec<std::string>());
+	m_allowedMethods = std::make_pair(false, Set<HttpMethod>());
+	m_return		 = std::make_pair(false, LocationReturn());
+	m_maxBodySize	 = std::make_pair(false, 0);
+	m_authRequired	 = std::make_pair(false, false);
 }
 
 
@@ -113,7 +113,7 @@ const std::string &Location::getRoot() const
  * @return The index file as a constant reference to a string.
  *
  */
-const Vec<std::string> &Location::getIndexFiles() const
+const Vec<std::string> &Location::getIndexes() const
 {
 	return m_indexFiles.second;
 }
@@ -158,7 +158,7 @@ const CgiParams *Location::getCgiParams() const
  * @return A constant reference to the set of allowed HTTP methods.
  *
  */
-const Set<HttpMethod> &Location::getAllowedMethods() const
+const Set<HttpMethod> &Location::getMethods() const
 {
 	return m_allowedMethods.second;
 }
@@ -200,6 +200,18 @@ size_t Location::getMaxBodySize() const
 }
 
 
+/**
+ *
+ * @brief Gets whether authentication is required for the location.
+ *
+ * @return true if authentication is required, false otherwise.
+ *
+ */
+bool Location::getAuthRequired() const
+{
+	return m_authRequired.second;
+}
+
 
 
 
@@ -225,17 +237,7 @@ bool Location::hasCgiParams() const
 {
 	return m_cgi != NULL;
 }
-/**
- *
- * @brief Checks if the location has an index file set.
- *
- * @return true if an index file is set, false otherwise.
- *
- */
-bool Location::hasIndexFile() const
-{
-	return m_indexFiles.first;
-}
+
 /**
  *
  * @brief Checks if the location has a root directory set.
@@ -333,6 +335,19 @@ bool Location::hasMaxBodySize() const
 }
 
 
+/**
+ *
+ * @brief Checks if authentication is required for the location.
+ *
+ * @return true if authentication is required, false otherwise.
+ *
+ */
+bool Location::hasAuthRequired() const
+{
+	return m_authRequired.first;
+}
+
+
 
 /**
  *
@@ -401,17 +416,11 @@ void Location::setCgiParams(const CgiParams *cgi)
 
 /**
  *
- * @brief Sets the allowed HTTP methods for the location.
+ * @brief Sets the allowed HTTP methods for the location using a vector of strings.
  *
- * @param methods A set of HttpMethod objects representing the allowed methods.
+ * @param methods A vector of strings representing the HTTP methods to be allowed for the location.
  *
  */
-void Location::setMethods(const Set<HttpMethod> &methods)
-{
-	m_allowedMethods.first	= true;
-	m_allowedMethods.second = methods;
-}
-
 void Location::setMethods(const Vec<std::string> &methods)
 {
 	m_allowedMethods.first = true;
@@ -419,19 +428,6 @@ void Location::setMethods(const Vec<std::string> &methods)
 		m_allowedMethods.second.push(HttpMethod(methods[i]));
 }
 
-
-/**
- *
- * @brief Sets the return value for the location.
- *
- * @param returnVal A LocationReturn object representing the return value to be set.
- *
- */
-void Location::setReturn(const LocationReturn &returnVal)
-{
-	m_return.first	= true;
-	m_return.second = returnVal;
-}
 
 /**
  *
@@ -469,18 +465,6 @@ void Location::setIndexes(const Vec<std::string> &indexFiles)
 	m_indexFiles.second = indexFiles;
 }
 
-/**
- *
- * @brief Adds an index file to the location's list of index files.
- *
- * @param indexFile The index file to be added.
- *
- */
-void Location::addIndexFile(const std::string &indexFile)
-{
-	m_indexFiles.first = true;
-	m_indexFiles.second.push(indexFile);
-}
 
 /**
  *
@@ -521,6 +505,87 @@ void Location::setMaxBodySize(const std::string &maxBodySize)
 }
 
 
+void Location::setAuthRequired(const bool authRequired)
+{
+	m_authRequired.first  = true;
+	m_authRequired.second = authRequired;
+}
+
+
+
+/**
+ *
+ * @brief Sets the additional headers for the location.
+ *
+ * @param addHeaders A map of header names and their corresponding values to be added to the location.
+ *
+ */
+void Location::setAddHeaders(const Map<std::string> &addHeaders)
+{
+	m_addHeaders = addHeaders;
+}
+
+/**
+ *
+ * @brief Sets the error pages for the location.
+ *
+ * @param errorPages A map of HTTP status codes and their corresponding error page paths to be set for the location.
+ *
+ */
+void Location::setErrorPages(const Map<std::string> &errorPages)
+{
+	m_errorPages = errorPages;
+}
+
+/**
+ *
+ * @brief Sets the CGI passes for the location.
+ *
+ * @param cgiPasses A map of file extensions and their corresponding CGI script paths to be set for the location.
+ *
+ */
+void Location::setCgiBin(const Map<std::string> &cgiBin)
+{
+	m_cgiBin = cgiBin;
+}
+
+
+/**
+ *
+ * @brief Gets the additional headers for the location.
+ *
+ * @return A constant reference to a map of header names and their corresponding values that are added to the location.
+ *
+ */
+const Map<std::string> &Location::getAddHeaders() const
+{
+	return m_addHeaders;
+}
+
+/**
+ *
+ * @brief Gets the error pages for the location.
+ *
+ * @return A constant reference to a map of HTTP status codes and their corresponding error page paths that are set for the location.
+ *
+ */
+const Map<std::string> &Location::getErrorPages() const
+{
+	return m_errorPages;
+}
+
+/**
+ *
+ * @brief Gets the CGI bin map for the location.
+ *
+ * @return A constant reference to a map of file extensions and their corresponding CGI script paths that are set for the location.
+ *
+ */
+const Map<std::string> &Location::getCgiBin() const
+{
+	return m_cgiBin;
+}
+
 #include "Logger.hpp"
 
 
@@ -534,15 +599,25 @@ std::ostream &operator<<(std::ostream &os, const Location &location)
 	if (location.hasAutoIndex())
 		os << ", autoIndex: " << (location.getAutoIndex() ? "true" : "false");
 	if (location.hasMethods())
-		os << ", allowedMethods: " << Logger::get(location.getAllowedMethods());
+		os << ", allowedMethods: " << Logger::get(location.getMethods());
 	if (location.hasUpload())
 		os << ", uploadDir: " << location.getUpload();
 	if (location.hasReturn())
 		os << ", return: " << Logger::get(location.getReturn());
 	if (location.hasIndexes())
-		os << ", indexes: " << Logger::get(location.getIndexFiles());
+		os << ", indexes: " << Logger::get(location.getIndexes());
 	if (location.hasCgi())
 		os << ", cgiParams: " << Logger::get(location.getCgiParams());
+	if (location.hasMaxBodySize())
+		os << ", maxBodySize: " << location.getMaxBodySize() << " bytes";
+	if (location.hasAuthRequired())
+		os << ", authRequired: " << (location.getAuthRequired() ? "true" : "false");
+	if (!location.getAddHeaders().empty())
+		os << ", addHeaders: " << Logger::get(location.getAddHeaders());
+	if (!location.getErrorPages().empty())
+		os << ", errorPages: " << Logger::get(location.getErrorPages());
+	if (!location.getCgiBin().empty())
+		os << ", cgiBin: " << Logger::get(location.getCgiBin());
 	os << ")";
 	return os;
 }

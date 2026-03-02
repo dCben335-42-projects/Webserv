@@ -330,12 +330,23 @@ void Client::serveIndexOf(const std::string &ressourcePath, const std::string &t
  */
 bool Client::findIndexFile(std::string &ressourcePath, const std::string &target)
 {
-	if (m_config->hasIndexFiles(target))
+	if (m_config->hasIndexes(target))
 	{
 		const Vec<std::string> indexFiles = m_config->getIndexFiles(target);
 		for (size_t i = 0; i < indexFiles.size(); ++i)
 		{
-			const std::string indexPath = String::removeDuplicateSlashes(ressourcePath + "/" + indexFiles[i]);
+			const std::string &indexFile = indexFiles[i];
+			std::string		   srcPath;
+			if (indexFile.at(0) == '/')
+			{
+				const Location &loc = m_config->getDefaultLocation();
+				if (!loc.hasRoot())
+					continue;
+				srcPath = loc.getRoot();
+			}
+			else
+				srcPath = ressourcePath;
+			const std::string indexPath = String::removeDuplicateSlashes(srcPath + "/" + indexFile);
 			if (FileManager::exists(indexPath))
 			{
 				ressourcePath = indexPath;
