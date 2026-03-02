@@ -31,12 +31,10 @@ class SemanticDescriptor
 	private:
 		ConceptNode		*m_tree;
 		Vec<std::string> m_blocks;
-		Map<ConceptNode> m_data;
-		Vec<Concept>	 m_concepts_data;
-		ARuleMap		 m_startPath;
-		Map<Concept *>	 m_concepts;
-		std::string		 m_lastKey;
-		bool			 m_recursiveConceptAuthorize;
+
+		Map<Concept *> m_concepts;
+		std::string	   m_lastKey;
+		bool		   m_recursiveConceptAuthorize;
 
 		bool isStartRule(const std::string &line, size_t *startDef);
 		void splitBlocks(std::istringstream &iss);

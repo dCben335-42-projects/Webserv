@@ -7,7 +7,7 @@
 namespace bnf
 {
 
-SemanticDescriptor::SemanticDescriptor() : m_tree(NULL)
+SemanticDescriptor::SemanticDescriptor() : m_tree(NULL), m_recursiveConceptAuthorize(false)
 {
 }
 

@@ -10,10 +10,18 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 
 	map[200] = HTTP_200_MSG;
 	map[201] = HTTP_201_MSG;
+	map[202] = HTTP_202_MSG;
+	map[203] = HTTP_203_MSG;
 	map[204] = HTTP_204_MSG;
+	map[205] = HTTP_205_MSG;
+	map[206] = HTTP_206_MSG;
 
 	map[300] = HTTP_300_MSG;
 	map[301] = HTTP_301_MSG;
+	map[302] = HTTP_302_MSG;
+	map[303] = HTTP_303_MSG;
+	map[307] = HTTP_307_MSG;
+	map[308] = HTTP_308_MSG;
 
 	map[400] = HTTP_400_MSG;
 	map[401] = HTTP_401_MSG;
@@ -23,10 +31,15 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 	map[406] = HTTP_406_MSG;
 	map[408] = HTTP_408_MSG;
 	map[409] = HTTP_409_MSG;
+	map[410] = HTTP_410_MSG;
 	map[413] = HTTP_413_MSG;
+	map[418] = HTTP_418_MSG;
+	map[429] = HTTP_429_MSG;
 
 	map[500] = HTTP_500_MSG;
 	map[501] = HTTP_501_MSG;
+	map[502] = HTTP_502_MSG;
+	map[503] = HTTP_503_MSG;
 	map[504] = HTTP_504_MSG;
 	return (map);
 }

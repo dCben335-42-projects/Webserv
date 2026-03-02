@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 	try
 	{
 		configManager.lex();
+		Logger::log("Lexing completed successfully ✅");
 		configManager.parse();
 	}
 	catch (const std::exception &e)
@@ -60,10 +61,8 @@ int main(int argc, char *argv[])
 	Logger::log("Configuration loaded successfully ✅");
 	Logger::log("serversConfigs: " + Logger::get(serversConfigs));
 	Logger::error("httpConfig: " + Logger::get(httpConfig));
-	EventLoop::init(httpConfig, serversConfigs);
-	EventLoop::run();
-	EventLoop::destroy();
-	if (Signals::getIsChild())
-		return 1;
+	// EventLoop::init(httpConfig, serversConfigs);
+	// EventLoop::run();
+	// EventLoop::destroy();
 	return 0;
 }
