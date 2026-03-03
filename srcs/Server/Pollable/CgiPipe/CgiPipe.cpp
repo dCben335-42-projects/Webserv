@@ -9,7 +9,6 @@
 #include "Logger.hpp"
 #include "log.hpp"
 #include "Date.hpp"
-#include "Signals.hpp"
 
 
 CgiPipe::CgiPipe(
@@ -21,8 +20,6 @@ CgiPipe::CgiPipe(
 	m_pid(pid),
 	m_bytesWritten(0)
 {
-	m_accessLog = m_client->getConfig().getAccessLog();
-	m_errorLog	= m_client->getConfig().getErrorLog();
 }
 
 
@@ -42,12 +39,6 @@ CgiPipe::~CgiPipe()
 	}
 	if (m_fd >= 0)
 		close(m_fd);
-	if (!Signals::getIsChild())
-	{
-		if (Logger::openFile(m_accessLog))
-			Logger::custom(LOG_MSG_CGI_CLOSED);
-		Logger::setTarget(Logger::Stdout).custom(LOG_MSG_CGI_CLOSED);
-	}
 }
 
 /**
@@ -133,9 +124,7 @@ void CgiPipe::onPollErr()
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
-	if (Logger::openFile(m_errorLog))
-		Logger::custom(LOG_MSG_CGIPIPE_PREFIX ERROR_MSG_UNKNOWN);
-	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CGIPIPE_PREFIX ERROR_MSG_UNKNOWN);
+	// TODO Logger::openFile(m_errorLog).custom(LOG_MSG_CGIPIPE_PREFIX ERROR_MSG_UNKNOWN);
 }
 
 void CgiPipe::onPollHangUp()
@@ -143,9 +132,7 @@ void CgiPipe::onPollHangUp()
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
 	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
-	if (Logger::openFile(m_accessLog))
-		Logger::custom(LOG_MSG_PIPE_CLOSED);
-	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_PIPE_CLOSED);
+	// TODO Logger::openClient(m_accessLog).custom(LOG_MSG_PIPE_CLOSED);
 	if (bytesRead > 0)
 	{
 		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
@@ -158,9 +145,17 @@ void CgiPipe::onPollHangUp()
 		waitChild();
 		m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
 		m_cgiOutput.build();
-		HttpResponse &res = m_client->getResponse();
-		res.setStatusCode(m_cgiOutput.getStatusCode());
+
+		const HttpRequest &req		  = m_client->getRequest();
+		HttpResponse	  &res		  = m_client->getResponse();
+		unsigned int	   statusCode = m_cgiOutput.getStatusCode();
+
+		res.setStatusCode(statusCode);
 		res.setFullResponse(m_cgiOutput.getRes());
+		const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(statusCode);
+		if (Logger::openFile(m_accessLog))
+			Logger::custom(logStr);
+		Logger::setTarget(Logger::Stdout).custom(logStr);
 	}
 	catch (const AHttpException &e)
 	{
@@ -201,7 +196,5 @@ void CgiPipe::onTimeOut()
 	m_client->setEvents(POLLOUT);
 	m_events		   = 0;
 	m_connectionClosed = true;
-	if (Logger::openFile(m_errorLog))
-		Logger::custom(ERROR_MSG_CGI_TIMEOUT);
-	Logger::setTarget(Logger::Stderr).custom(ERROR_MSG_CGI_TIMEOUT);
+	// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_CGI_TIMEOUT);
 }
