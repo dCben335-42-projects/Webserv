@@ -99,6 +99,10 @@ void FileUpload::parseAndUpload()
 {
 	parseSubTypes();
 	const std::string &uploadPath = m_req.getUploadPath();
+	if (!FileManager::exists(uploadPath))
+		throw FileManager::FileDoesNotExistException(uploadPath);
+	if (!FileManager::hasRWPerm(uploadPath))
+		throw FileManager::FilePermissionException(uploadPath);
 	for (Vec<HttpSubRequest>::iterator it = m_subRequests.begin(); it != m_subRequests.end(); it++)
 	{
 		(*it).parseSubRequest();

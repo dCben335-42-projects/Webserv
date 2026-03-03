@@ -247,7 +247,17 @@ void Client::handlePost(const std::string &ressourcePath)
 		throw Http403Exception();
 	if (!file.isUploadValid())
 		throw Http400Exception(INVALID_UPLOAD_DATA_MSG);
-	file.parseAndUpload();
+	try
+	{
+		file.parseAndUpload();
+	}
+	catch (const FileManager::FileException &e)
+	{
+		const std::string logStr = LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what();
+		if (Logger::openFile(m_errorLog))
+			Logger::custom(logStr);
+		throw e.getHttpException();
+	}
 	m_req.setBody(UPLOAD_SUCCESS_MSG);
 	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_PLAIN);
 	m_res.setStatusCode(201);
