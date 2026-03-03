@@ -15,11 +15,6 @@
 #include "log.hpp"
 #include "IPAddress.hpp"
 
-const std::string errorFile	 = "logs/errors.log";
-const std::string accessFile = "logs/access.log";
-// TODO HOST OU IP DANS LES LOGS
-
-
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
 	m_server(server),
@@ -31,7 +26,7 @@ Client::Client(int fd, const Config &config, VirtualServer &server) :
 	m_accessLog	  = config.getAccessLog();
 	m_errorLog	  = config.getErrorLog();
 	EventLoop::addHandler(this);
-	if (Logger::openFile(errorFile))
+	if (Logger::openFile(m_errorLog))
 		Logger::custom(LOG_MSG_CLIENT_CONNECTED);
 	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CLIENT_CONNECTED);
 }
@@ -40,7 +35,7 @@ Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
-	if (Logger::openFile(errorFile))
+	if (Logger::openFile(m_errorLog))
 		Logger::custom(LOG_MSG_CLIENT_DISCONNECTED);
 	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CLIENT_DISCONNECTED);
 }
@@ -273,7 +268,7 @@ void Client::handleDelete(const std::string &ressourcePath)
 	catch (const FileManager::FileException &e)
 	{
 		const std::string logStr = LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what();
-		if (Logger::openFile(errorFile))
+		if (Logger::openFile(m_errorLog))
 			Logger::custom(logStr);
 		Logger::setTarget(Logger::Stderr).custom(logStr);
 		throw e.getHttpException();
@@ -432,7 +427,7 @@ void Client::handleGet(const std::string &ressourcePath)
 	catch (const FileManager::FileException &e)
 	{
 		const std::string logStr = LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what();
-		if (Logger::openFile(errorFile))
+		if (Logger::openFile(m_errorLog))
 			Logger::custom(logStr);
 		throw e.getHttpException();
 	}
@@ -472,6 +467,7 @@ void Client::serveReturn()
  */
 bool Client::prepareResponse()
 {
+	Logger::setTarget(Logger::Stdout).log("host: " + m_req.getHost());
 	if (m_req.isAuthRequired())
 	{
 		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
@@ -519,14 +515,24 @@ bool Client::prepareResponse()
  */
 const Config *Client::findHostConfig(const std::string &host) const
 {
+	if (String::startWith(host, PROTOCOL_HTTPS_URL_PREFIX))
+		throw Http400Exception(HTTPS_HOST_HEADER);
+
+	std::string hostWithoutProtocol;
+	if (String::startWith(host, PROTOCOL_HTTP_URL_PREFIX))
+		hostWithoutProtocol = host.substr(std::strlen(PROTOCOL_HTTP_URL_PREFIX));
+	else
+		hostWithoutProtocol = host;
+
 	bool		   invalidPort = false;
 	unsigned short port;
 	size_t		   portPos;
 
-	bool hasPort = IPAddress::extractPort(host, port, portPos, invalidPort);
+	bool hasPort = IPAddress::extractPort(hostWithoutProtocol, port, portPos, invalidPort);
 	if (invalidPort)
 		throw Http400Exception(INVALID_PORT_HOST_HEADER);
-	const std::string	 extractedServerName = hasPort ? host.substr(0, portPos) : host;
+
+	const std::string	 extractedServerName = hasPort ? hostWithoutProtocol.substr(0, portPos) : hostWithoutProtocol;
 	const ServerConfigs &confs				 = m_server.getConfigs();
 	for (ServerConfigs::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
@@ -602,7 +608,7 @@ void Client::onHttpException(const AHttpException &e)
 	const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR +
 							   m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Logger::get(e.getStatusCode()) +
 							   LOG_GLOBAL_SEPARATOR + e.what() + LOG_GLOBAL_SEPARATOR + e.getExtraMessage();
-	if (Logger::openFile(errorFile))
+	if (Logger::openFile(m_errorLog))
 		Logger::custom(logStr);
 	m_res.reset();
 	const int statusCode = e.getStatusCode();
@@ -728,7 +734,7 @@ void Client::buildResponse()
 
 
 	const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode());
-	if (Logger::openFile(accessFile))
+	if (Logger::openFile(m_accessLog))
 		Logger::custom(logStr);
 	Logger::setTarget(Logger::Stdout).custom(logStr);
 }
@@ -751,7 +757,7 @@ void Client::onPollOut()
 		if (m_res.sendOnce(m_fd))
 		{
 			const std::string logStr = LOG_MSG_REPONSE_SENT LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode());
-			if (Logger::openFile(accessFile))
+			if (Logger::openFile(m_accessLog))
 				Logger::custom(logStr);
 			Logger::setTarget(Logger::Stdout).custom(logStr);
 			if (m_shouldClose)
@@ -768,7 +774,7 @@ void Client::onPollOut()
 	catch (const std::exception &e)
 	{
 		const std::string logStr = ERROR_MSG_RESPONSE_SENDING_FAILED LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()) + LOG_GLOBAL_SEPARATOR + e.what();
-		if (Logger::openFile(accessFile))
+		if (Logger::openFile(m_accessLog))
 			Logger::custom(logStr);
 		Logger::setTarget(Logger::Stdout).custom(logStr);
 
@@ -794,7 +800,7 @@ void Client::onPollOut()
 void Client::onPollErr()
 {
 	const std::string logStr = ERROR_MSG_UNKNOWN LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL;
-	if (Logger::openFile(errorFile))
+	if (Logger::openFile(m_errorLog))
 		Logger::custom(logStr);
 	Logger::setTarget(Logger::Stderr).custom(logStr);
 	m_events		   = 0;
@@ -815,7 +821,7 @@ void Client::onPollErr()
  */
 void Client::onPollHangUp()
 {
-	if (Logger::openFile(accessFile))
+	if (Logger::openFile(m_accessLog))
 		Logger::custom(LOG_MSG_CONNECTION_TERMINATED);
 	Logger::setTarget(Logger::Stdout).custom(LOG_MSG_CONNECTION_TERMINATED);
 	m_events		   = 0;
@@ -876,7 +882,7 @@ void Client::onTimeOut()
 		default:
 			logStr = LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_TIMED_OUT;
 	}
-	if (Logger::openFile(errorFile))
+	if (Logger::openFile(m_errorLog))
 		Logger::custom(logStr);
 	Logger::setTarget(Logger::Stderr).custom(logStr);
 	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)

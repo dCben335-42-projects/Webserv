@@ -8,6 +8,7 @@
 #include <ctime>
 
 #define INVALID_PORT_HOST_HEADER "Invalid port in Host header"
+#define HTTPS_HOST_HEADER "HTTPS URL in Host header is not allowed"
 
 class VirtualServer;
 class AHttpException;

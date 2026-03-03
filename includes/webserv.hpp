@@ -10,11 +10,13 @@
 #define DEFAULT_CONFIG_MSG "No configuration file specified. Using default: " DEFAULT_CONFIG_PATH
 
 #define SERVER_NAME "i_am_the_one_who_ports"
-#define SERVER_VERSION "1.0"
+#define SERVER_VERSION "1.1"
 #define SERVER_FULL_NAME SERVER_NAME "/" SERVER_VERSION
 
 #define PROTOCOL "HTTP/1.1"
 #define GATEWAY_INTERFACE "CGI/1.1"
+#define PROTOCOL_HTTP_URL_PREFIX "http://"
+#define PROTOCOL_HTTPS_URL_PREFIX "https://"
 
 #define READ_CLIENT_BUFFER_SIZE 8u
 #define WRITE_CLIENT_BUFFER_SIZE 8192u
@@ -27,6 +29,7 @@
 
 #define FALLBACK_INDEX "index.html"
 
+#define FALLBACK_CGI_TIMEOUT 10u
 #define FALLBACK_KEEP_ALIVE_TIMEOUT 50u
 #define FALLBACK_HEADER_TIMEOUT 5u
 #define FALLBACK_BODY_TIMEOUT 5u

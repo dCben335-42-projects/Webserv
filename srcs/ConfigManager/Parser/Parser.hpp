@@ -19,14 +19,20 @@
 #define PARSER_KEY_CGI_PASS "cgi_pass"
 #define PARSER_KEY_ERROR_PAGE "error_page"
 
+
 #define PARSER_KEY_LISTEN "listen"
 #define PARSER_KEY_SERVER_NAME "server_name"
 #define PARSER_KEY_AUTH_LOCATION "auth_loc"
+
 #define PARSER_KEY_BODY_TIMEOUT "client_body_timeout"
 #define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
 #define PARSER_KEY_HEADER_TIMEOUT "client_header_timeout"
+
 #define PARSER_KEY_ACCESS_LOG "access_log"
 #define PARSER_KEY_ERROR_LOG "error_log"
+#define PARSER_KEY_CGI_TIMEOUT "cgi_timeout"
+
+
 
 #define PARSER_KEY_ROOT "root"
 #define PARSER_KEY_ALIAS "alias"
@@ -105,6 +111,8 @@ class Parser
 
 		void createServersConfigs();
 		void createHttpConfig();
+
+		void checkTimeoutValues(Config &config);
 
 	public:
 		Parser(const std::string &fileContent);

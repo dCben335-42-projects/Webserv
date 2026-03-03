@@ -55,6 +55,9 @@ class String
 		static std::string unescape(const std::string &input);
 
 		static std::string normalizePath(const std::string &path);
+
+		static bool startWith(const std::string &str, const std::string &prefix);
+		static bool endWith(const std::string &str, const std::string &suffix);
 };
 
 #endif

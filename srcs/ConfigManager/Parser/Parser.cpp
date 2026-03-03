@@ -13,7 +13,8 @@ const Parser::Directive<Config> Parser::m_serverDirectives[] = {
 	{PARSER_KEY_BODY_TIMEOUT, NULL, NULL, NULL, &Config::setBodyTimeout},
 	{PARSER_KEY_ACCESS_LOG, &Config::setAccessLog, NULL, NULL, NULL},
 	{PARSER_KEY_ERROR_LOG, &Config::setErrorLog, NULL, NULL, NULL},
-	{PARSER_KEY_AUTH_LOCATION, &Config::setAuthLocation, NULL, NULL, NULL}};
+	{PARSER_KEY_AUTH_LOCATION, &Config::setAuthLocation, NULL, NULL, NULL},
+	{PARSER_KEY_CGI_TIMEOUT, NULL, NULL, NULL, &Config::setCgiTimeout}};
 
 const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_ROOT, &Location::setRoot, NULL, NULL, NULL},
@@ -292,8 +293,22 @@ void Parser::resolveListen(ServerNode &server)
 }
 
 
-
-
+/**
+ *
+ * @brief Checks if a server configuration is a duplicate of any existing server configurations
+ * based on socket address and server names.
+ *
+ * @param server The ServerNode object to be checked for duplication.
+ * @param servers The vector of existing ServerNode objects to compare against.
+ * @param start The index from which to start checking for duplicates in the servers vector.
+ *
+ * @return true if a duplicate server configuration is found, false otherwise.
+ *
+ * @note This function compares the socket address of the given server with those of the existing servers.
+ * If a match is found, it further checks the server names to determine
+ * if they are considered duplicates based on the presence or absence of server names and their values.
+ *
+ */
 bool Parser::isDuplicate(
 	const ServerNode	  &server,
 	const Vec<ServerNode> &servers,
@@ -327,9 +342,19 @@ bool Parser::isDuplicate(
 }
 
 
-
-
-
+/**
+ *
+ * @brief Fills maps of "any" IP addresses for both IPv4 and IPv6 based on the server configurations.
+ *
+ * @param ipv4AnyPorts A map to be filled with ports that have an "any" IPv4 address configuration.
+ * @param ipv6AnyPorts A map to be filled with ports that have an "any" IPv6 address configuration.
+ *
+ * @note This function iterates through the server configurations and
+ * checks if any of them are configured to listen on an "any" IP address
+ * for either IPv4 or IPv6. If it finds such configurations,
+ * it adds the corresponding port and "any" SocketAddress to the provided maps.
+ *
+ */
 void Parser::fillIpAnyMaps(
 	Map<unsigned short, SocketAddress> &ipv4AnyPorts,
 	Map<unsigned short, SocketAddress> &ipv6AnyPorts) const
@@ -347,6 +372,20 @@ void Parser::fillIpAnyMaps(
 	}
 }
 
+
+/**
+ *
+ * @brief Groups server nodes by their socket addresses,
+ * taking into account "any" IP address configurations.
+ *
+ * @return A map where the keys are SocketAddress objects representing the listening addresses and ports,
+ *  and the values are vectors of ServerNode objects that share the same listening configuration.
+ *
+ * @note This function groups server nodes based on their socket addresses.
+ * If a server is configured to listen on an "any" IP address for a specific port,
+ * it will be grouped under the corresponding "any" SocketAddress in the resulting map.
+ *
+ */
 Parser::VServersNodes Parser::groupServersNodes() const
 {
 	VServersNodes		   grouped;
@@ -376,6 +415,17 @@ Parser::VServersNodes Parser::groupServersNodes() const
 }
 
 
+/**
+ *
+ * @brief Adds a location configuration to a server configuration based on a LocationNode.
+ *
+ * @param config The Config object representing the server configuration to which the location will be added.
+ * @param locIt An iterator pointing to the LocationNode in the map of locations for the server configuration.
+ *
+ * @note This function creates a Location object based on the directives in the LocationNode,
+ * applies the directives to it, and then adds it to the provided Config object under the corresponding path.
+ *
+ */
 void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator &locIt)
 {
 	const LocationNode					&locationNode = locIt->second;
@@ -408,8 +458,9 @@ void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator
  * @param configs The list of server configurations to which the new configuration will be added.
  * @param serverNode The ServerNode object containing the directives and locations for the server configuration.
  *
- * @note This function creates a Config object based on the directives in the ServerNode, applies the directives to it,
- * and then adds it to the provided list of server configurations. It also processes any location blocks within the server node
+ * @note This function creates a Config object based on the directives in the ServerNode,
+ * applies the directives to it, and then adds it to the provided list of server configurations.
+ * It also processes any location blocks within the server node
  * and adds them to the Config object before adding it to the list.
  *
  */
@@ -443,6 +494,7 @@ void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 	const Map<LocationNode> &locations = serverNode.getLocations();
 	for (Map<LocationNode>::const_iterator locIt = locations.begin(); locIt != locations.end(); ++locIt)
 		addLocation(serverConfig, locIt);
+	checkTimeoutValues(serverConfig);
 	configs.push(serverConfig);
 }
 
@@ -452,8 +504,10 @@ void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
  *
  * @brief Creates the HTTP configuration based on the directives in the HttpNode.pCOnfig
  *
- * @note This function iterates through the directives in the HttpNode and applies them to the m_httpConfig object.
- * It also handles any directives that are applicable to locations and applies them to a default location configuration.
+ * @note This function iterates through the directives in the HttpNode
+ * and applies them to the m_httpConfig object.
+ * It also handles any directives that are applicable to locations
+ * and applies them to a default location configuration.
  * Finally, it sets the default location in the m_httpConfig object.
  *
  */
@@ -482,6 +536,7 @@ void Parser::createHttpConfig()
 	defaultLocation.setErrorPages(m_http.getErrorPages());
 	defaultLocation.setCgiBin(m_http.getCgiPass());
 	m_httpConfig.setDefaultLocation(defaultLocation);
+	checkTimeoutValues(m_httpConfig);
 }
 
 
@@ -524,6 +579,34 @@ void Parser::createConfigs()
 }
 
 
+
+/**
+ *
+ * @brief Parses the configuration content and creates the HTTP and server configurations.
+ *
+ * @note This function first retrieves the configuration data by parsing the content,
+ * and then creates the HTTP and server configurations based on the parsed data.
+ *
+ */
+void Parser::checkTimeoutValues(Config &config)
+{
+	const time_t keepAliveTimeOut = config.getKeepAliveTimeout();
+	const time_t cgiTimeOut		  = config.getCgiTimeout();
+
+	const time_t diff = cgiTimeOut - keepAliveTimeOut;
+	if (diff < 0)
+	{
+		Logger::warn("cgi_timeout is less than keepalive_timeout by " + Logger::get(-diff) + " seconds. This might cause issues with CGI scripts timing out before the connection times out. " +
+					 "Resetting cgi_timeout to keepalive_timeout + 10 seconds.");
+		config.setCgiTimeout(keepAliveTimeOut + 10);
+	}
+	else if (diff < 5)
+	{
+		Logger::warn("cgi_timeout is only " + Logger::get(diff) + " seconds greater than keepalive_timeout. Consider increasing cgi_timeout to avoid potential issues with CGI scripts timing out." +
+					 " Resetting cgi_timeout to keepalive_timeout + 10 second.");
+		config.setCgiTimeout(keepAliveTimeOut + 10);
+	}
+}
 
 
 /**

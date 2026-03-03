@@ -123,7 +123,7 @@ void CgiPipe::onPollErr()
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
-	// TODO Logger::openFile(errorFile).custom(LOG_MSG_CGIPIPE_PREFIX ERROR_MSG_UNKNOWN);
+	// TODO Logger::openFile(m_errorLog).custom(LOG_MSG_CGIPIPE_PREFIX ERROR_MSG_UNKNOWN);
 }
 
 void CgiPipe::onPollHangUp()
@@ -131,7 +131,7 @@ void CgiPipe::onPollHangUp()
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
 	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
-	// TODO Logger::openClient(accessFile).custom(LOG_MSG_PIPE_CLOSED);
+	// TODO Logger::openClient(m_accessLog).custom(LOG_MSG_PIPE_CLOSED);
 	if (bytesRead > 0)
 	{
 		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
@@ -183,5 +183,5 @@ void CgiPipe::onTimeOut()
 	m_client->setEvents(POLLOUT);
 	m_events		   = 0;
 	m_connectionClosed = true;
-	// TODO Logger::openFile(errorFile).custom(ERROR_MSG_CGI_TIMEOUT);
+	// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_CGI_TIMEOUT);
 }

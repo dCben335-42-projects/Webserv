@@ -743,3 +743,47 @@ std::string String::normalizePath(const std::string &path)
 		result += "/";
 	return result;
 }
+
+
+
+
+
+/**
+ *
+ * @brief Checks if a string starts with a specified prefix.
+ *
+ * @param str The input string to check.
+ * @param prefix The prefix to look for at the beginning of the input string.
+ *
+ * @return true if the input string starts with the specified prefix, false otherwise.
+ *
+ */
+bool String::startWith(const std::string &str, const std::string &prefix)
+{
+	const size_t strLen	   = str.size();
+	const size_t prefixLen = prefix.size();
+	if (prefixLen > strLen)
+		return false;
+	return str.compare(0, prefixLen, prefix) == 0;
+}
+
+
+
+/**
+ *
+ * @brief Checks if a string ends with a specified suffix.
+ *
+ * @param str The input string to check.
+ * @param suffix The suffix to look for at the end of the input string.
+ *
+ * @return true if the input string ends with the specified suffix, false otherwise.
+ *
+ */
+bool String::endWith(const std::string &str, const std::string &suffix)
+{
+	const size_t strLen	   = str.size();
+	const size_t suffixLen = suffix.size();
+	if (suffixLen > strLen)
+		return false;
+	return str.compare(strLen - suffixLen, suffixLen, suffix) == 0;
+}

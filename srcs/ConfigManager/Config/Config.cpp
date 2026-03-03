@@ -9,6 +9,7 @@ Config::Config()
 	m_keepAliveTimeout = FALLBACK_KEEP_ALIVE_TIMEOUT;
 	m_accessLog		   = FALLBACK_ACCESS_LOG;
 	m_errorLog		   = FALLBACK_ERROR_LOG;
+	m_cgiTimeout	   = FALLBACK_CGI_TIMEOUT;
 }
 
 Config::Config(const Config &other)
@@ -22,6 +23,7 @@ Config::Config(const Config &other)
 	m_keepAliveTimeout = other.m_keepAliveTimeout;
 	m_headerTimeout	   = other.m_headerTimeout;
 	m_bodyTimeout	   = other.m_bodyTimeout;
+	m_cgiTimeout	   = other.m_cgiTimeout;
 
 	m_accessLog = other.m_accessLog;
 	m_errorLog	= other.m_errorLog;
@@ -108,6 +110,18 @@ void Config::setBodyTimeout(const size_t timeout)
 	m_bodyTimeout = timeout;
 }
 
+/**
+ *
+ * @brief Sets the CGI timeout for the virtual server.
+ *
+ * @param timeout The CGI timeout to be set (in seconds).
+ *
+ */
+void Config::setCgiTimeout(const size_t timeout)
+{
+	m_cgiTimeout = timeout;
+}
+
 
 /**
  *
@@ -181,6 +195,17 @@ time_t Config::getBodyTimeout() const
 	return m_bodyTimeout;
 }
 
+/**
+ *
+ * @brief Gets the CGI timeout for the virtual server.
+ *
+ * @return The CGI timeout in seconds.
+ *
+ */
+time_t Config::getCgiTimeout() const
+{
+	return m_cgiTimeout;
+}
 
 
 /**

@@ -31,6 +31,7 @@ class Config
 		time_t m_keepAliveTimeout;
 		time_t m_headerTimeout;
 		time_t m_bodyTimeout;
+		time_t m_cgiTimeout;
 
 		std::string m_accessLog;
 		std::string m_errorLog;
@@ -65,6 +66,9 @@ class Config
 
 		void   setBodyTimeout(const size_t timeout);
 		time_t getBodyTimeout() const;
+
+		void   setCgiTimeout(const size_t timeout);
+		time_t getCgiTimeout() const;
 
 		void			   setAccessLog(const std::string &accessLog);
 		const std::string &getAccessLog() const;

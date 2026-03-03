@@ -158,7 +158,7 @@ void VirtualServer::createClient(int clientFd)
 {
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
 	{
-		// TODO Logger::openFile(errorFile).custom(ERROR_MSG_FCNTL_FAILED);
+		// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_FCNTL_FAILED);
 		close(clientFd);
 		return;
 	}
@@ -186,7 +186,7 @@ void VirtualServer::onPollIn()
 	int clientFd = accept(m_fd, (struct sockaddr *) &clientAddr, &clientLen);
 	if (clientFd < 0)
 	{
-		// TODO Logger::openFile(errorFile).custom(ERROR_MSG_ACCEPT_FAILED);
+		// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_ACCEPT_FAILED);
 		return;
 	}
 	createClient(clientFd);
@@ -201,7 +201,7 @@ void VirtualServer::onPollErr()
 	m_connectionClosed = true;
 	m_events		   = 0;
 	std::cerr << "VirtualServer error on fd " << m_fd << std::endl;
-	// TODO Logger::openFile(errorFile).custom(ERROR_MSG_UNKNOWN);
+	// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_UNKNOWN);
 }
 
 void VirtualServer::onPollHangUp()
