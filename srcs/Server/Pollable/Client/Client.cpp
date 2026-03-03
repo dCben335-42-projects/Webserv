@@ -531,6 +531,18 @@ const Config *Client::findHostConfig(const std::string &host) const
 }
 
 
+/**
+ *
+ * @brief Serves a custom error page if defined in the server configuration.
+ *
+ * This function checks the active locations in the client's request for a custom error page corresponding to the given status code.
+ * If a custom error page is found, it reads the file content and prepares the HTTP response with that content and the appropriate headers.
+ *
+ * @param statusCode The HTTP status code for which to serve the custom error page.
+ *
+ * @return true if a custom error page was served, false otherwise.
+ *
+ */
 bool Client::serveCustomErrorPage(const int statusCode)
 {
 	const Vec<Location> &locations = m_req.getActiveLocations();
