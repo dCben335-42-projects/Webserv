@@ -483,9 +483,7 @@ void Parser::parse(const std::string &stringToParsed)
 		mapPathCurrent = mapPathNext;
 		mapPathNext.clear();
 	}
-	if (mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c))
-		Logger::log("Parsing complete ✅");
-	else
+	if (!(mapPathNext.empty() || verifyOptionalEnd(mapPathCurrent, c)))
 		throw FileNotFinishedException("END: The file ended before reaching a valid end state.");
 }
 } // namespace bnf
