@@ -86,8 +86,8 @@ class Logger
 		static std::ostream &stream();
 
 	public:
-		static Logger &openFile(const std::string &path, const FileMode mode = Append, const std::string key = "");
-		static Logger &openFile(const std::string &path, const std::string key, const FileMode mode = Append);
+		static bool openFile(const std::string &path, const FileMode mode = Append, const std::string key = "");
+		static bool openFile(const std::string &path, const std::string key, const FileMode mode = Append);
 
 		static Logger &setTarget(Target t);
 		static Logger &setFile(const std::string &key);

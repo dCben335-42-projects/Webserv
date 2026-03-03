@@ -2,11 +2,11 @@
 #include "webserv.hpp"
 #include "Number.hpp"
 
-AuthToken::AuthToken(const std::string &name, const std::string &serverName, unsigned short serverPort)
+AuthToken::AuthToken(const std::string &name, unsigned short serverPort)
 {
 	m_creationDate	 = std::time(0);
 	m_expirationDate = m_creationDate + COOKIE_EXPIRE_DURATION;
-	m_hashInt		 = computeHash(name + serverName + Number::toString(serverPort) + Number::toString(m_creationDate));
+	m_hashInt		 = computeHash(name + Number::toString(serverPort) + Number::toString(m_creationDate));
 	m_hashStr		 = Number::toString(m_hashInt);
 }
 

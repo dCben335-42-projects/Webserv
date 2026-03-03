@@ -15,9 +15,8 @@
 #include "log.hpp"
 #include "IPAddress.hpp"
 
-
-const std::string errorFile	 = "errors.log";
-const std::string accessFile = "access.log";
+const std::string errorFile	 = "logs/errors.log";
+const std::string accessFile = "logs/access.log";
 // TODO HOST OU IP DANS LES LOGS
 
 
@@ -32,14 +31,18 @@ Client::Client(int fd, const Config &config, VirtualServer &server) :
 	m_accessLog	  = config.getAccessLog();
 	m_errorLog	  = config.getErrorLog();
 	EventLoop::addHandler(this);
-	Logger::openFile(m_accessLog).custom(LOG_MSG_CLIENT_CONNECTED);
+	if (Logger::openFile(errorFile))
+		Logger::custom(LOG_MSG_CLIENT_CONNECTED);
+	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CLIENT_CONNECTED);
 }
 
 Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
-	Logger::openFile(accessFile).custom(LOG_MSG_CLIENT_DISCONNECTED);
+	if (Logger::openFile(errorFile))
+		Logger::custom(LOG_MSG_CLIENT_DISCONNECTED);
+	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CLIENT_DISCONNECTED);
 }
 
 
@@ -162,6 +165,36 @@ void Client::setEvents(const short events)
 	m_events = events;
 }
 
+bool Client::hasPostAuth()
+{
+	const std::string &target	   = m_req.getTarget();
+	const std::string  authloc	   = String::removeDuplicateSlashes(m_config->getAuthLocation() + "/");
+	const std::string  registerLoc = authloc + AUTH_REGISTER_LOC;
+
+	if (target == registerLoc)
+	{
+		HttpAuth auth(authloc);
+		auth.parse(m_req.getBody(), HttpAuth::REGISTER);
+		const Map<std::string> &urlEncoded = auth.getUrlEncoded();
+		m_res.setBody(REGISTER_SUCCESS_MSG);
+		m_res.setHeader(HEADER_SET_COOKIE, m_server.createUser(urlEncoded.get(AUTH_REGISTER_NAME_KEY), urlEncoded.get(AUTH_REGISTER_PSWD_KEY)));
+		m_res.setStatusCode(201);
+		return true;
+	}
+	const std::string loginLoc = authloc + AUTH_LOGIN_LOC;
+	if (target == loginLoc)
+	{
+		HttpAuth auth(authloc);
+		auth.parse(m_req.getBody(), HttpAuth::LOGIN);
+		const Map<std::string> &urlEncoded = auth.getUrlEncoded();
+		m_res.setBody(LOGIN_SUCCESS_MSG);
+		m_res.setHeader(HEADER_SET_COOKIE, m_server.findUser(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY), authloc));
+		m_res.setStatusCode(200);
+		return true;
+	}
+	return false;
+}
+
 /**
  *
  * @brief Handles HTTP POST requests.
@@ -176,30 +209,8 @@ void Client::setEvents(const short events)
 void Client::handlePost(const std::string &ressourcePath)
 {
 	(void) ressourcePath;
-	const std::string &target = m_req.getTarget();
-	// TODO take the auth loc from the config
-	const std::string authloc = "/auth/";
-	if (target == authloc + AUTH_REGISTER_LOC || target == authloc + AUTH_LOGIN_LOC)
-	{
-		HttpAuth auth(authloc);
-		if (target == authloc + AUTH_REGISTER_LOC)
-		{
-			auth.parse(m_req.getBody(), HttpAuth::REGISTER);
-			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
-			m_res.setBody(REGISTER_SUCCESS_MSG);
-			m_res.setHeader(HEADER_SET_COOKIE, m_server.createUser(urlEncoded.get(AUTH_REGISTER_NAME_KEY), urlEncoded.get(AUTH_REGISTER_PSWD_KEY)));
-			m_res.setStatusCode(201);
-		}
-		else if (target == authloc + AUTH_LOGIN_LOC)
-		{
-			auth.parse(m_req.getBody(), HttpAuth::LOGIN);
-			const Map<std::string> &urlEncoded = auth.getUrlEncoded();
-			m_res.setBody(LOGIN_SUCCESS_MSG);
-			m_res.setHeader(HEADER_SET_COOKIE, m_server.findUser(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY), authloc));
-			m_res.setStatusCode(200);
-		}
+	if (hasPostAuth())
 		return;
-	}
 	FileUpload file(m_req);
 	if (!m_req.hasUpload())
 		throw Http403Exception();
@@ -261,7 +272,10 @@ void Client::handleDelete(const std::string &ressourcePath)
 	}
 	catch (const FileManager::FileException &e)
 	{
-		Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what());
+		const std::string logStr = LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what();
+		if (Logger::openFile(errorFile))
+			Logger::custom(logStr);
+		Logger::setTarget(Logger::Stderr).custom(logStr);
 		throw e.getHttpException();
 	}
 	m_res.setStatusCode(204);
@@ -382,21 +396,10 @@ bool Client::findIndexFile(std::string &ressourcePath, const std::string &target
  */
 void Client::handleGet(const std::string &ressourcePath)
 {
-
 	bool			  isIndexFile = false;
 	const std::string target	  = m_req.getTarget();
-	// TODO change those variables for the config ones
-	const std::string authLoc	= "/auth/";
-	const std::string cgiBinLoc = "/cgi-bin/";
+	const std::string authLoc	  = m_config->getAuthLocation();
 
-	if (target == cgiBinLoc)
-	{
-		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
-			throw Http401Exception();
-		const std::string token = m_req.getCookieValue(COOKIE_KEY_TOKEN);
-		if (!m_server.hasUser(token))
-			throw Http401Exception();
-	}
 	if (target == authLoc)
 	{
 		HttpAuth auth(authLoc);
@@ -428,7 +431,9 @@ void Client::handleGet(const std::string &ressourcePath)
 	}
 	catch (const FileManager::FileException &e)
 	{
-		Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what());
+		const std::string logStr = LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what();
+		if (Logger::openFile(errorFile))
+			Logger::custom(logStr);
 		throw e.getHttpException();
 	}
 }
@@ -467,6 +472,14 @@ void Client::serveReturn()
  */
 bool Client::prepareResponse()
 {
+	if (m_req.isAuthRequired())
+	{
+		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
+			throw Http401Exception();
+		const std::string token = m_req.getCookieValue(COOKIE_KEY_TOKEN);
+		if (!m_server.hasUser(token))
+			throw Http401Exception();
+	}
 	if (m_req.hasReturn())
 	{
 		serveReturn();
@@ -512,10 +525,9 @@ const Config *Client::findHostConfig(const std::string &host) const
 
 	bool hasPort = IPAddress::extractPort(host, port, portPos, invalidPort);
 	if (invalidPort)
-		throw Http400Exception("Invalid port in Host header");
+		throw Http400Exception(INVALID_PORT_HOST_HEADER);
 	const std::string	 extractedServerName = hasPort ? host.substr(0, portPos) : host;
 	const ServerConfigs &confs				 = m_server.getConfigs();
-	Logger::log("confs to compare: " + Logger::get(confs));
 	for (ServerConfigs::const_iterator it = confs.begin(); it != confs.end(); ++it)
 	{
 		const Config &config = (*it);
@@ -587,10 +599,11 @@ bool Client::serveCustomErrorPage(const int statusCode)
  */
 void Client::onHttpException(const AHttpException &e)
 {
-	Logger::openFile(errorFile).custom(
-		LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR +
-		m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Logger::get(e.getStatusCode()) +
-		LOG_GLOBAL_SEPARATOR + e.what() + LOG_GLOBAL_SEPARATOR + e.getExtraMessage());
+	const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR +
+							   m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Logger::get(e.getStatusCode()) +
+							   LOG_GLOBAL_SEPARATOR + e.what() + LOG_GLOBAL_SEPARATOR + e.getExtraMessage();
+	if (Logger::openFile(errorFile))
+		Logger::custom(logStr);
 	m_res.reset();
 	const int statusCode = e.getStatusCode();
 	m_res.setStatusCode(statusCode);
@@ -712,7 +725,12 @@ void Client::buildResponse()
 	const Vec<Location> &activeLocation = m_req.getActiveLocations();
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout(), activeLocation).build();
 	determineKeepAlive(m_res.getStatusCode());
-	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()));
+
+
+	const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode());
+	if (Logger::openFile(accessFile))
+		Logger::custom(logStr);
+	Logger::setTarget(Logger::Stdout).custom(logStr);
 }
 
 /**
@@ -732,7 +750,10 @@ void Client::onPollOut()
 	{
 		if (m_res.sendOnce(m_fd))
 		{
-			Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_SENT LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()));
+			const std::string logStr = LOG_MSG_REPONSE_SENT LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode());
+			if (Logger::openFile(accessFile))
+				Logger::custom(logStr);
+			Logger::setTarget(Logger::Stdout).custom(logStr);
 			if (m_shouldClose)
 			{
 				m_connectionClosed = true;
@@ -746,7 +767,11 @@ void Client::onPollOut()
 	}
 	catch (const std::exception &e)
 	{
-		Logger::openFile(accessFile).custom(ERROR_MSG_RESPONSE_SENDING_FAILED LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()) + LOG_GLOBAL_SEPARATOR + e.what());
+		const std::string logStr = ERROR_MSG_RESPONSE_SENDING_FAILED LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()) + LOG_GLOBAL_SEPARATOR + e.what();
+		if (Logger::openFile(accessFile))
+			Logger::custom(logStr);
+		Logger::setTarget(Logger::Stdout).custom(logStr);
+
 		m_events		   = 0;
 		m_connectionClosed = true;
 		return;
@@ -768,7 +793,10 @@ void Client::onPollOut()
  */
 void Client::onPollErr()
 {
-	Logger::openFile(errorFile).custom(ERROR_MSG_UNKNOWN LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL);
+	const std::string logStr = ERROR_MSG_UNKNOWN LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL;
+	if (Logger::openFile(errorFile))
+		Logger::custom(logStr);
+	Logger::setTarget(Logger::Stderr).custom(logStr);
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
@@ -787,7 +815,9 @@ void Client::onPollErr()
  */
 void Client::onPollHangUp()
 {
-	Logger::openFile(accessFile).custom(LOG_MSG_CONNECTION_TERMINATED);
+	if (Logger::openFile(accessFile))
+		Logger::custom(LOG_MSG_CONNECTION_TERMINATED);
+	Logger::setTarget(Logger::Stdout).custom(LOG_MSG_CONNECTION_TERMINATED);
 	m_events		   = 0;
 	m_connectionClosed = true;
 }
@@ -834,17 +864,21 @@ bool Client::isTimedOut(const time_t currentTime) const
  */
 void Client::onTimeOut()
 {
+	std::string logStr;
 	switch (m_timeoutState)
 	{
 		case HEADER_TIMEOUT:
-			Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_HEADERS_TIMED_OUT);
+			logStr = LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_HEADERS_TIMED_OUT;
 			break;
 		case BODY_TIMEOUT:
-			Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_BODY_TIMED_OUT);
+			logStr = LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_BODY_TIMED_OUT;
 			break;
 		default:
-			Logger::openFile(errorFile).custom(LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_TIMED_OUT);
+			logStr = LOG_MSG_CLIENT_PREFIX ERROR_MSG_CLIENT_TIMED_OUT;
 	}
+	if (Logger::openFile(errorFile))
+		Logger::custom(logStr);
+	Logger::setTarget(Logger::Stderr).custom(logStr);
 	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)
 	{
 		m_res.reset();

@@ -69,6 +69,7 @@ class HttpRequest : public AHttpInboundMessage
 		const Vec<Accept>	  &getAccepts() const;
 		bool				   getConnectionKeepAlive() const;
 		const Set<HttpMethod> *getAllowedMethods() const;
+		bool isAuthRequired() const;
 
 		bool			   hasHost() const;
 		const std::string &getHost() const;
