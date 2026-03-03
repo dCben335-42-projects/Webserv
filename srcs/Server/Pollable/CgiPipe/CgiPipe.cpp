@@ -182,7 +182,7 @@ bool CgiPipe::isTimedOut(const time_t currentTime) const
 	const time_t cgiTimeOut	  = m_client->getConfig().getCgiTimeout();
 	const time_t cgiStartTime = m_client->getTime();
 
-	return Date::getDiffTime(cgiStartTime, currentTime) > cgiTimeOut;
+	return Date::getDiffTime(currentTime, cgiStartTime) > cgiTimeOut;
 }
 
 
@@ -197,6 +197,7 @@ bool CgiPipe::isTimedOut(const time_t currentTime) const
 void CgiPipe::onTimeOut()
 {
 	m_client->onHttpException(Http504Exception());
+	m_client->buildResponse();
 	m_client->setEvents(POLLOUT);
 	m_events		   = 0;
 	m_connectionClosed = true;
