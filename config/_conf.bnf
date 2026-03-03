@@ -1,0 +1,319 @@
+<head> ::= http
+
+
+http              ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
+http_directives   ::= { default_type | keepalive_timeout | client_header_timeout | client_body_timeout 
+                     | client_max_body_size | autoindex | sendfile 
+                     | error_page | server | IDENT_DIRECTIVE | access_log | error_log }
+
+IDENT_DIRECTIVE     ::= IDENT [LINE_JUMP]
+
+server            ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
+server_directives ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc | IDENT_DIRECTIVE | autoindex | error_page | access_log | error_log }
+
+default_type      			::= IDENT 'default_type' 	        TAB_SPACE default_type_mime 			SEMI LINE_JUMP
+keepalive_timeout 			::= IDENT 'keepalive_timeout' 		TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
+client_header_timeout 		::= IDENT 'client_header_timeout' 	TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
+client_body_timeout   		::= IDENT 'client_body_timeout'		TAB_SPACE NUMBER_THREE 		SEMI LINE_JUMP
+client_max_body_size  		::= IDENT 'client_max_body_size' 	TAB_SPACE NUMBER_THREE_UNIT 		SEMI LINE_JUMP
+autoindex          			::= IDENT 'autoindex' 				TAB_SPACE BOOL SEMI LINE_JUMP
+sendfile           			::= IDENT 'sendfile' 				TAB_SPACE sendfile_content SEMI LINE_JUMP
+error_page         			::= IDENT  error_page_directive     SEMI LINE_JUMP
+listen             			::= IDENT 'listen' 					TAB_SPACE ADDRESS ':' PORT SEMI LINE_JUMP
+server_name        			::= IDENT 'server_name' 			TAB_SPACE WORD SEMI LINE_JUMP
+root               			::= IDENT 'root'                    TAB_SPACE PATH SEMI LINE_JUMP
+index              			::= IDENT 'index'                   TAB_SPACE { index_file_list } SEMI LINE_JUMP
+add_header         			::= IDENT 'add_header'              TAB_SPACE WORD_NORMAL TAB_SPACE WORD SEMI LINE_JUMP
+auth_loc           			::= IDENT 'auth_loc'                TAB_SPACE PATH SEMI LINE_JUMP
+alias              			::= IDENT 'alias'                   TAB_SPACE PATH SEMI LINE_JUMP
+return             			::= IDENT 'return'                  TAB_SPACE return_type SEMI LINE_JUMP
+allowed_methods    			::= IDENT 'allowed_methods'         { HTTP_METHOD_SPACED } SEMI LINE_JUMP
+auth_required      			::= IDENT 'auth_required'           TAB_SPACE BOOL SEMI LINE_JUMP
+cgi_pass           			::= IDENT 'cgi_pass'                TAB_SPACE EXT TAB_SPACE PATH SEMI LINE_JUMP
+access_log           		::= IDENT 'access_log'              TAB_SPACE PATH SEMI LINE_JUMP
+error_log           		::= IDENT 'error_log'               TAB_SPACE PATH SEMI LINE_JUMP
+
+location           	::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [LINE_JUMP]
+location_directives ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | autoindex | error_page | access_log | error_log }
+
+index_file_list		::= PATH [ SPACE ]
+
+HTTP_METHOD_SPACED          ::= TAB_SPACE HTTP_METHOD
+
+HTTP_METHOD                 ::= ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
+
+sendfile_content            ::= 'on' TAB_SPACE PATH
+                            |= 'off'
+
+DIGIT_NOT_NULL              ::= [ '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ]
+UNIT                        ::= [ 'K' | 'M' | 'G' ]
+
+NUMBER_THREE                ::= DIGIT_NOT_NULL DIGIT DIGIT
+                            |=  DIGIT_NOT_NULL DIGIT
+                            |=  DIGIT_NOT_NULL
+
+NUMBER_THREE_UNIT           ::= NUMBER_THREE UNIT
+                            |= DIGIT_NOT_NULL { DIGIT }
+                            |= DIGIT_NOT_NULL
+
+ADDRESS            ::= ( IPV_FOUR | IPV_SIX | HOSTNAME )
+
+IPV_FOUR           ::= OCTET '.' OCTET '.' OCTET '.' OCTET
+OCTET              ::= DIGIT
+                    |= DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT
+
+IPV_SIX            ::= BRACKET_OPEN IPV_SIX_CORE BRACKET_CLOSE
+
+BRACKET_OPEN       ::= '['
+BRACKET_CLOSE      ::= ']'
+
+IPV_SIX_CORE       ::= IPV_SIX_FULL
+                    |= IPV_SIX_LEADING
+                    |= IPV_SIX_TRAILING
+                    |= IPV_SIX_MIDDLE
+
+
+IPV_SIX_FULL       ::= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+
+
+IPV_SIX_LEADING    ::= '::'
+                    |= '::' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+
+
+IPV_SIX_TRAILING   ::= IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::'
+
+
+IPV_SIX_MIDDLE     ::= IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H ':' IPV_SIX_H
+                    |= IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H ':' IPV_SIX_H '::' IPV_SIX_H
+
+
+IPV_SIX_H          ::= HEX_DIGIT
+                    |= HEX_DIGIT HEX_DIGIT
+                    |= HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    |= HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+
+
+HEX_DIGIT          ::= (DIGIT | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F')
+
+HOSTNAME           ::= LETTER { HOST_SEQ }
+HOST_SEQ           ::= LETTER
+                    |= DIGIT
+                    |= '-'
+                    |= '.'
+
+PORT               ::= DIGIT
+                    |= DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT DIGIT
+                    |= DIGIT DIGIT DIGIT DIGIT DIGIT
+
+DIGIT              ::= ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9')
+
+LETTER             ::= (UPCASE_LETTER | LOCASE_LETTER)
+
+UPCASE_LETTER      ::= ('A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z')
+LOCASE_LETTER      ::= ('a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z')
+
+IDENT              ::= [ TAB_SPACE ]
+
+TAB_SPACE          ::= { SPACE | TAB }
+TAB                ::= '\t'
+SPACE              ::= ' '
+LINE_JUMP          ::= '\n'
+
+BRACE_IN           ::= '{'
+BRACE_OUT          ::= '}'
+SEMI               ::= ';'
+
+PATH				::= [ '/' ] { SEGMENT }
+					|= PROTOCOL ':' SLASH SLASH { SEGMENT }
+					|= '/'
+                    |= DQUOTE [ '/' ] { SEGMENT_QUOTED } DQUOTE
+
+ABSOLUTE_PATH       ::= '/' { SEGMENT }
+                    |= '/'
+                    |= DQUOTE '/' { SEGMENT_QUOTED } DQUOTE
+
+PROTOCOL			::= 'https'
+					|= 'http'
+
+SEGMENT				::= { DOT } SEGMENT_STR [ '/' ]
+					|= DOT [ '/' ]
+					|= DOT DOT [ '/' ]
+					|= SEGMENT_STR [ '/' ]
+
+SEGMENT_QUOTED      ::= { DOT } SEGMENT_QUOTED_STR [ '/' ]
+					|= DOT [ '/' ]
+					|= DOT DOT [ '/' ]
+					|= SEGMENT_QUOTED_STR [ '/' ]
+
+SEGMENT_STR			    ::= { LETTER | DIGIT | DOT | DQUOTE | '-' | '_' | '=' | SQUOTE }
+SEGMENT_QUOTED_STR		::= { LETTER | DIGIT | SYMBOL_FILE | SPACE }
+
+SYMBOL_FILE         ::= ( '-' | '_' | '.' | '~' | '!' | '$' | '&' | '\'' | '(' | ')' | '@' | '^' | '`' | '{' | '}' | ',' | ';' | '=' | '+' )
+
+DQUOTE				::= '"'
+SQUOTE				::= '\''
+DQUOTE_ESC			::= BACKSLASH DQUOTE
+SQUOTE_ESC			::= BACKSLASH SQUOTE
+BACKSLASH			::= '\\'
+SLASH				::= '/'
+
+WS					::= ( '\t' | '\n' | '\r' | ' ' )
+EXT                	::= DOT [ 'php' | 'py' | 'html' | 'htm' ]
+DOT                	::= '.'
+default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'application/json' | 'application/javascript' |
+						'application/vnd.ms-fontobject' | 'application/pdf' | 'application/xml' | 'application/zip' | 'application/gzip' | 'application/x-tar' |
+						'application/x-7z-compressed' | 'application/vnd.rar' | 'application/x-www-form-urlencoded' | 'application/x-yaml' | 'application/toml' |
+						'application/rtf' | 'application/x-sqlite3' | 'application/wasm' | 'application/octet-stream' | 'font/woff' | 'font/woff2' | 'font/ttf' |
+						'font/otf' | 'multipart/form-data' | 'audio/mpeg' | 'audio/wav' | 'audio/flac' | 'audio/ogg' | 'audio/aac' | 'video/mp4' | 'video/webm' |
+						'video/ogg' | 'video/x-msvideo' | 'video/x-matroska' | 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif' | 'image/svg+xml' |
+						'image/avif' | 'image/heic' | 'image/icns' | 'image/bmp' | 'image/tiff' | 'image/x-icon' | 'image/x-xpixmap' |
+                        'text/markdown' | 'text/x-c' | 'text/x-c++' | 'text/x-go' | 'text/rust' | 'text/x-python' | 'text/x-java-source' |
+                        'application/x-sh' | 'application/x-makefile' )
+
+
+WORD                ::= WORD_QUOTED
+                    |= WORD_NORMAL
+WORD_NORMAL         ::= { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE_ESC | '-' | '_' | '=' | BACKSLASH }
+WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | '-' | '_' | '=' | WS | BACKSLASH | SEMI } DQUOTE
+
+
+return_type					::= ( return_bad_request | return_unauthorized | return_forbidden | return_not_found | return_method_not_allowed
+								| return_request_timeout | return_gone | return_tea_pot | return_too_many_request | return_internal_server_error | return_bad_gateway
+								| return_service_unavailable | return_permanent | return_temporary | return_ok | return_created | return_accepted | return_no_content
+								| return_reset_content | return_strict_http_method )
+
+return_bad_request					::= '400' TAB_SPACE WORD_QUOTED
+									|=	'400'
+
+return_unauthorized					::= '401' TAB_SPACE WORD_QUOTED
+									|=	'401'
+
+return_forbidden					::= '403' TAB_SPACE WORD_QUOTED
+									|=	'403'
+
+return_not_found					::= '404' TAB_SPACE WORD_QUOTED
+									|=	'404'
+
+return_method_not_allowed			::= '405' TAB_SPACE WORD_QUOTED
+									|= '405'
+
+return_request_timeout				::= '408' TAB_SPACE WORD_QUOTED
+									|= '408'
+
+return_gone							::= '410' TAB_SPACE WORD_QUOTED
+									|= '410'
+
+return_tea_pot						::= '418' TAB_SPACE WORD_QUOTED
+									|= '418'
+
+return_too_many_request				::= '429' TAB_SPACE WORD_QUOTED
+									|=  '429'
+
+return_internal_server_error		::= '500' TAB_SPACE WORD_QUOTED
+									|= '500'
+
+return_bad_gateway					::= '502' TAB_SPACE WORD_QUOTED
+									|= '502'
+
+return_service_unavailable			::= '503' TAB_SPACE WORD_QUOTED
+									|= '503'
+
+return_permanent					::= '301' TAB_SPACE PATH
+
+return_temporary					::= '302' TAB_SPACE PATH
+
+return_strict_http_method			::= '308' TAB_SPACE PATH
+
+return_ok							::= '200' TAB_SPACE WORD_QUOTED
+									|= '200'
+
+return_created						::= '201' TAB_SPACE WORD_QUOTED
+									|= '201'
+
+return_accepted						::= '202' TAB_SPACE WORD_QUOTED
+									|= '202'
+
+return_no_content					::= '204'
+return_reset_content				::= '205'
+
+
+error_page_directive                ::= 'error_page' TAB_SPACE error_code TAB_SPACE PATH
+
+error_code                          ::= '400'
+                                    |= '401'
+                                    |= '403'
+                                    |= '404'
+                                    |= '405'
+                                    |= '408'
+                                    |= '410'
+                                    |= '413'
+                                    |= '418'
+                                    |= '429'
+                                    |= '500'
+                                    |= '502'
+                                    |= '503'
+                                    |= '504'
+
+error_target                        ::= uri
+
+response_code                       ::= '200'
+                                    |= '201'
+                                    |= '202'
+                                    |= '204'
+                                    |= '301'
+                                    |= '302'
+                                    |= '307'
+                                    |= '308'
+                                    |= '400'
+                                    |= '401'
+                                    |= '403'
+                                    |= '404'
+                                    |= '500'
+
+uri                                 ::= PATH
+                                    |= WORD_QUOTED
+
+
+
+
+
+
+
+
+
+NUMBER             ::= { DIGIT }
+BOOL               ::= ( 'on' | 'off' )

@@ -39,6 +39,7 @@ bool Parser::applyNumberDirective(T &obj, const DirectiveType &directive, const 
 	return true;
 }
 
+
 template <typename T, typename DirectiveType>
 bool Parser::applyDirective(
 	T					   &obj,

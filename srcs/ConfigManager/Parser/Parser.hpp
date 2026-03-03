@@ -27,10 +27,10 @@
 #define PARSER_KEY_BODY_TIMEOUT "client_body_timeout"
 #define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
 #define PARSER_KEY_HEADER_TIMEOUT "client_header_timeout"
+#define PARSER_KEY_CGI_TIMEOUT "cgi_timeout"
 
 #define PARSER_KEY_ACCESS_LOG "access_log"
 #define PARSER_KEY_ERROR_LOG "error_log"
-#define PARSER_KEY_CGI_TIMEOUT "cgi_timeout"
 
 
 
@@ -111,6 +111,13 @@ class Parser
 
 		void createServersConfigs();
 		void createHttpConfig();
+
+		bool applyWithFallback(
+			Config				   &serverConfig,
+			Location			   &location,
+			const std::string	   &key,
+			const Vec<std::string> &values,
+			bool					ignoreListenWarning);
 
 		void checkTimeoutValues(Config &config);
 

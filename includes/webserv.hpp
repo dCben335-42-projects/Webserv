@@ -39,6 +39,13 @@
 
 #define POLL_TIMEOUT 500u
 
+#define MIN_CGI_DIFF_TIMEOUT 5u
+#define MIN_KEEP_ALIVE_TIMEOUT 10u
+#define MIN_HEADER_TIMEOUT 5u
+#define MIN_BODY_TIMEOUT 5u
+#define MIN_CGI_TIMEOUT 5u
+
+
 
 // Cookie Duration in seconds
 #define COOKIE_EXPIRE_DURATION 36000u

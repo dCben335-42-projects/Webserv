@@ -590,21 +590,60 @@ void Parser::createConfigs()
  */
 void Parser::checkTimeoutValues(Config &config)
 {
-	const time_t keepAliveTimeOut = config.getKeepAliveTimeout();
-	const time_t cgiTimeOut		  = config.getCgiTimeout();
+	time_t		 keepAliveTimeOut = config.getKeepAliveTimeout();
+	time_t		 cgiTimeOut		  = config.getCgiTimeout();
+	const time_t headerTimeOut	  = config.getHeaderTimeout();
+	const time_t bodyTimeOut	  = config.getBodyTimeout();
 
-	const time_t diff = cgiTimeOut - keepAliveTimeOut;
+	if (headerTimeOut < MIN_HEADER_TIMEOUT)
+	{
+		Logger::warn(PARSER_KEY_HEADER_TIMEOUT " is set to " + Logger::get(headerTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_HEADER_TIMEOUT) + " seconds. " +
+					 "Consider increasing " PARSER_KEY_HEADER_TIMEOUT " to avoid potential issues with headers timing out too quickly."
+					 " Resetting " +
+					 PARSER_KEY_HEADER_TIMEOUT " to " + Logger::get(MIN_HEADER_TIMEOUT) + " seconds.");
+		config.setHeaderTimeout(MIN_HEADER_TIMEOUT);
+	}
+	if (bodyTimeOut < MIN_BODY_TIMEOUT)
+	{
+		Logger::warn(PARSER_KEY_BODY_TIMEOUT " is set to " + Logger::get(bodyTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_BODY_TIMEOUT) + " seconds. " +
+					 "Consider increasing " + PARSER_KEY_BODY_TIMEOUT + " to avoid potential issues with body timing out too quickly."
+																		" Resetting " +
+					 PARSER_KEY_BODY_TIMEOUT " to " + Logger::get(MIN_BODY_TIMEOUT) + " seconds.");
+		config.setBodyTimeout(MIN_BODY_TIMEOUT);
+	}
+	if (keepAliveTimeOut < MIN_KEEP_ALIVE_TIMEOUT)
+	{
+		Logger::warn(PARSER_KEY_KEEPALIVE_TIMEOUT " is set to " + Logger::get(keepAliveTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_KEEP_ALIVE_TIMEOUT) + " seconds. " +
+					 "Consider increasing " PARSER_KEY_KEEPALIVE_TIMEOUT " to avoid potential issues with connections timing out too quickly."
+					 " Resetting " +
+					 PARSER_KEY_KEEPALIVE_TIMEOUT " to " + Logger::get(MIN_KEEP_ALIVE_TIMEOUT) + " seconds.");
+		config.setKeepAliveTimeout(MIN_KEEP_ALIVE_TIMEOUT);
+	}
+	if (cgiTimeOut < MIN_CGI_TIMEOUT)
+	{
+		Logger::warn(PARSER_KEY_CGI_TIMEOUT " is set to " + Logger::get(cgiTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_CGI_TIMEOUT) + " seconds. " +
+					 "Consider increasing " + PARSER_KEY_CGI_TIMEOUT + " to avoid potential issues with CGI scripts timing out too quickly."
+																	   " Resetting " +
+					 PARSER_KEY_CGI_TIMEOUT " to " + Logger::get(MIN_CGI_TIMEOUT) + " seconds.");
+		config.setCgiTimeout(MIN_CGI_TIMEOUT);
+	}
+
+
+	keepAliveTimeOut  = config.getKeepAliveTimeout();
+	cgiTimeOut		  = config.getCgiTimeout();
+	const time_t diff = keepAliveTimeOut - cgiTimeOut;
 	if (diff < 0)
 	{
-		Logger::warn("cgi_timeout is less than keepalive_timeout by " + Logger::get(-diff) + " seconds. This might cause issues with CGI scripts timing out before the connection times out. " +
-					 "Resetting cgi_timeout to keepalive_timeout + 10 seconds.");
-		config.setCgiTimeout(keepAliveTimeOut + 10);
+		Logger::warn(PARSER_KEY_CGI_TIMEOUT " is less than " PARSER_KEY_KEEPALIVE_TIMEOUT " by " + Logger::get(-diff) + " seconds. This might cause issues with CGI scripts timing out before the connection times out. " +
+					 "Resetting " PARSER_KEY_CGI_TIMEOUT " to " PARSER_KEY_KEEPALIVE_TIMEOUT " + " + Logger::get(MIN_CGI_DIFF_TIMEOUT) + " seconds.");
+		config.setCgiTimeout(keepAliveTimeOut + MIN_CGI_DIFF_TIMEOUT);
 	}
-	else if (diff < 5)
+	else if (diff < MIN_CGI_DIFF_TIMEOUT)
 	{
-		Logger::warn("cgi_timeout is only " + Logger::get(diff) + " seconds greater than keepalive_timeout. Consider increasing cgi_timeout to avoid potential issues with CGI scripts timing out." +
-					 " Resetting cgi_timeout to keepalive_timeout + 10 second.");
-		config.setCgiTimeout(keepAliveTimeOut + 10);
+		Logger::warn(PARSER_KEY_CGI_TIMEOUT " is only " + Logger::get(diff) + " seconds greater than " PARSER_KEY_KEEPALIVE_TIMEOUT ". " +
+					 "Consider increasing " + PARSER_KEY_CGI_TIMEOUT + " to avoid potential issues with CGI scripts timing out." +
+					 " Resetting " + PARSER_KEY_CGI_TIMEOUT + " to " + Logger::get(keepAliveTimeOut + MIN_CGI_DIFF_TIMEOUT) + " seconds.");
+		config.setCgiTimeout(keepAliveTimeOut + MIN_CGI_DIFF_TIMEOUT);
 	}
 }
 
