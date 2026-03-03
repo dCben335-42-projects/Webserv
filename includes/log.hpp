@@ -3,6 +3,13 @@
 
 #define LOG_GLOBAL_SEPARATOR " "
 
+#define LOG_MSG_CONFIG_PREFIX "Config - "
+#define WARNING_MSG_CONFIG_PREFIX LOG_MSG_CONFIG_PREFIX "Warning - "
+#define ERROR_MSG_CONFIG_PREFIX LOG_MSG_CONFIG_PREFIX "Error - "
+#define LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_START WARNING_MSG_CONFIG_PREFIX "Duplicate directive: "
+#define LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_END " at line "
+#define ERROR_MSG_CONFIG_INVALID_PORT LOG_MSG_CONFIG_PREFIX "Invalid port number in listen directive: "
+
 #define ERROR_MSG_RESPONSE_SENDING_FAILED "An error occured while sending response to the client"
 #define ERROR_MSG_UNKNOWN "An Unknown error occured"
 #define LOG_MSG_CLIENT_PREFIX "Client - "

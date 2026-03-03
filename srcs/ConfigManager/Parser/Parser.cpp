@@ -5,6 +5,7 @@
 #include "String.hpp"
 #include "constants.hpp"
 #include "webserv.hpp"
+#include "log.hpp"
 
 const Parser::Directive<Config> Parser::m_serverDirectives[] = {
 	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL},
@@ -122,7 +123,7 @@ Vec<std::string> Parser::extractTokens(const std::string &line)
 			inQuotes = !inQuotes;
 			continue;
 		}
-		if (isspace(static_cast<unsigned char>(c)) && !inQuotes)
+		if (std::isspace(static_cast<unsigned char>(c)) && !inQuotes)
 			saveToken(tokens, current, inQuotes);
 		else
 			current += c;
@@ -155,6 +156,7 @@ std::string Parser::joinTokens(const Vec<std::string> &tokens, const size_t star
 }
 
 
+
 /**
  *
  * @brief Sets a directive in the given configuration node based on the key and tokens.
@@ -181,7 +183,7 @@ void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfig
 	else
 	{
 		if (node.hasDirective(key))
-			Logger::warn("Duplicate directive: " + Logger::get(key) + " at line " + Logger::get(lineNumber));
+			Logger::custom(LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_START + Logger::get(key) + LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_END + Logger::get(lineNumber));
 		node.setDirective(key, tokens);
 	}
 }
@@ -286,7 +288,8 @@ void Parser::resolveListen(ServerNode &server)
 
 	if (portNum == 0 || portNum > MAX_PORT_NUMBER)
 	{
-		Logger::error("Invalid port number in listen directive: " + Logger::get(port));
+
+		Logger::custom(ERROR_MSG_CONFIG_INVALID_PORT + Logger::get(port));
 		return;
 	}
 	server.setSocketAddress(SocketAddress(ip, portNum));
@@ -597,53 +600,54 @@ void Parser::checkTimeoutValues(Config &config)
 
 	if (headerTimeOut < MIN_HEADER_TIMEOUT)
 	{
-		Logger::warn(PARSER_KEY_HEADER_TIMEOUT " is set to " + Logger::get(headerTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_HEADER_TIMEOUT) + " seconds. " +
-					 "Consider increasing " PARSER_KEY_HEADER_TIMEOUT " to avoid potential issues with headers timing out too quickly."
-					 " Resetting " +
-					 PARSER_KEY_HEADER_TIMEOUT " to " + Logger::get(MIN_HEADER_TIMEOUT) + " seconds.");
+		Logger::custom(PARSER_KEY_HEADER_TIMEOUT " is set to " + Logger::get(headerTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_HEADER_TIMEOUT) + " seconds. " +
+					   "Consider increasing " PARSER_KEY_HEADER_TIMEOUT " to avoid potential issues with headers timing out too quickly."
+					   " Resetting " +
+					   PARSER_KEY_HEADER_TIMEOUT " to " + Logger::get(MIN_HEADER_TIMEOUT) + " seconds.");
 		config.setHeaderTimeout(MIN_HEADER_TIMEOUT);
 	}
 	if (bodyTimeOut < MIN_BODY_TIMEOUT)
 	{
-		Logger::warn(PARSER_KEY_BODY_TIMEOUT " is set to " + Logger::get(bodyTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_BODY_TIMEOUT) + " seconds. " +
-					 "Consider increasing " + PARSER_KEY_BODY_TIMEOUT + " to avoid potential issues with body timing out too quickly."
-																		" Resetting " +
-					 PARSER_KEY_BODY_TIMEOUT " to " + Logger::get(MIN_BODY_TIMEOUT) + " seconds.");
+		Logger::custom(PARSER_KEY_BODY_TIMEOUT " is set to " + Logger::get(bodyTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_BODY_TIMEOUT) + " seconds. " +
+					   "Consider increasing " + PARSER_KEY_BODY_TIMEOUT + " to avoid potential issues with body timing out too quickly."
+																		  " Resetting " +
+					   PARSER_KEY_BODY_TIMEOUT " to " + Logger::get(MIN_BODY_TIMEOUT) + " seconds.");
 		config.setBodyTimeout(MIN_BODY_TIMEOUT);
 	}
 	if (keepAliveTimeOut < MIN_KEEP_ALIVE_TIMEOUT)
 	{
-		Logger::warn(PARSER_KEY_KEEPALIVE_TIMEOUT " is set to " + Logger::get(keepAliveTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_KEEP_ALIVE_TIMEOUT) + " seconds. " +
-					 "Consider increasing " PARSER_KEY_KEEPALIVE_TIMEOUT " to avoid potential issues with connections timing out too quickly."
-					 " Resetting " +
-					 PARSER_KEY_KEEPALIVE_TIMEOUT " to " + Logger::get(MIN_KEEP_ALIVE_TIMEOUT) + " seconds.");
+		Logger::custom(PARSER_KEY_KEEPALIVE_TIMEOUT " is set to " + Logger::get(keepAliveTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_KEEP_ALIVE_TIMEOUT) + " seconds. " +
+					   "Consider increasing " PARSER_KEY_KEEPALIVE_TIMEOUT " to avoid potential issues with connections timing out too quickly."
+					   " Resetting " +
+					   PARSER_KEY_KEEPALIVE_TIMEOUT " to " + Logger::get(MIN_KEEP_ALIVE_TIMEOUT) + " seconds.");
 		config.setKeepAliveTimeout(MIN_KEEP_ALIVE_TIMEOUT);
 	}
 	if (cgiTimeOut < MIN_CGI_TIMEOUT)
 	{
-		Logger::warn(PARSER_KEY_CGI_TIMEOUT " is set to " + Logger::get(cgiTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_CGI_TIMEOUT) + " seconds. " +
-					 "Consider increasing " + PARSER_KEY_CGI_TIMEOUT + " to avoid potential issues with CGI scripts timing out too quickly."
-																	   " Resetting " +
-					 PARSER_KEY_CGI_TIMEOUT " to " + Logger::get(MIN_CGI_TIMEOUT) + " seconds.");
+		Logger::custom(PARSER_KEY_CGI_TIMEOUT " is set to " + Logger::get(cgiTimeOut) + " seconds, which is less than the recommended minimum of " + Logger::get(MIN_CGI_TIMEOUT) + " seconds. " +
+					   "Consider increasing " + PARSER_KEY_CGI_TIMEOUT + " to avoid potential issues with CGI scripts timing out too quickly." +
+					   " Resetting " + PARSER_KEY_CGI_TIMEOUT " to " + Logger::get(MIN_CGI_TIMEOUT) + " seconds.");
 		config.setCgiTimeout(MIN_CGI_TIMEOUT);
 	}
 
 
-	keepAliveTimeOut  = config.getKeepAliveTimeout();
-	cgiTimeOut		  = config.getCgiTimeout();
+	keepAliveTimeOut = config.getKeepAliveTimeout();
+	cgiTimeOut		 = config.getCgiTimeout();
+	Logger::debug("---Keep-alive timeout: " + Logger::get(keepAliveTimeOut) + " seconds");
+	Logger::debug("---CGI timeout: " + Logger::get(cgiTimeOut) + " seconds");
 	const time_t diff = keepAliveTimeOut - cgiTimeOut;
 	if (diff < 0)
 	{
-		Logger::warn(PARSER_KEY_CGI_TIMEOUT " is less than " PARSER_KEY_KEEPALIVE_TIMEOUT " by " + Logger::get(-diff) + " seconds. This might cause issues with CGI scripts timing out before the connection times out. " +
-					 "Resetting " PARSER_KEY_CGI_TIMEOUT " to " PARSER_KEY_KEEPALIVE_TIMEOUT " + " + Logger::get(MIN_CGI_DIFF_TIMEOUT) + " seconds.");
-		config.setCgiTimeout(keepAliveTimeOut + MIN_CGI_DIFF_TIMEOUT);
+		Logger::custom(PARSER_KEY_CGI_TIMEOUT " is greater than " PARSER_KEY_KEEPALIVE_TIMEOUT " by " + Logger::get(-diff) + " seconds. This might cause issues with connections timing out before CGI scripts finish. " +
+					   "Resetting " PARSER_KEY_CGI_TIMEOUT " to " PARSER_KEY_KEEPALIVE_TIMEOUT " - " + Logger::get(MIN_CGI_DIFF_TIMEOUT) + " seconds.");
+
+		config.setCgiTimeout(keepAliveTimeOut - MIN_CGI_DIFF_TIMEOUT);
 	}
 	else if (diff < MIN_CGI_DIFF_TIMEOUT)
 	{
-		Logger::warn(PARSER_KEY_CGI_TIMEOUT " is only " + Logger::get(diff) + " seconds greater than " PARSER_KEY_KEEPALIVE_TIMEOUT ". " +
-					 "Consider increasing " + PARSER_KEY_CGI_TIMEOUT + " to avoid potential issues with CGI scripts timing out." +
-					 " Resetting " + PARSER_KEY_CGI_TIMEOUT + " to " + Logger::get(keepAliveTimeOut + MIN_CGI_DIFF_TIMEOUT) + " seconds.");
-		config.setCgiTimeout(keepAliveTimeOut + MIN_CGI_DIFF_TIMEOUT);
+		Logger::custom(PARSER_KEY_CGI_TIMEOUT " is less than " PARSER_KEY_KEEPALIVE_TIMEOUT " by only " + Logger::get(diff) + " seconds. This could cause issues with CGI scripts timing out before the connection times out. " +
+					   "Resetting " PARSER_KEY_CGI_TIMEOUT " to " PARSER_KEY_KEEPALIVE_TIMEOUT " - " + Logger::get(MIN_CGI_DIFF_TIMEOUT) + " seconds.");
+		config.setCgiTimeout(keepAliveTimeOut - MIN_CGI_DIFF_TIMEOUT);
 	}
 }
 
@@ -682,19 +686,19 @@ void Parser::removeDuplicate()
 	{
 		if (!servers[i].hasDirective(PARSER_KEY_LISTEN))
 		{
-			Logger::warn("Server without listen directive found. This server will be ignored: " + Logger::get(servers[i]));
+			Logger::custom("Server without listen directive found. This server will be ignored: " + Logger::get(servers[i]));
 			servers.remove(i);
 			continue;
 		}
 		if (!servers[i].getSocketAddress().getLength())
 		{
-			Logger::warn("Invalid listen directive found for server: " + Logger::get(servers[i]));
+			Logger::custom("Invalid listen directive found for server: " + Logger::get(servers[i]));
 			servers.remove(i);
 			continue;
 		}
 		if (isDuplicate(servers[i], servers, i + 1))
 		{
-			Logger::warn("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()) + ". This server will be ignored: " + Logger::get(servers[i]));
+			Logger::custom("Duplicate listen directive found for " + Logger::get(servers[i].getSocketAddress()) + ". This server will be ignored: " + Logger::get(servers[i]));
 			servers.remove(i);
 			continue;
 		}

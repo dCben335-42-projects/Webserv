@@ -112,13 +112,6 @@ class Parser
 		void createServersConfigs();
 		void createHttpConfig();
 
-		bool applyWithFallback(
-			Config				   &serverConfig,
-			Location			   &location,
-			const std::string	   &key,
-			const Vec<std::string> &values,
-			bool					ignoreListenWarning);
-
 		void checkTimeoutValues(Config &config);
 
 	public:
