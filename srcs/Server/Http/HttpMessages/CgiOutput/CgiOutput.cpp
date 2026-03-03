@@ -23,7 +23,7 @@ const std::string &CgiOutput::getRes() const
 {
 	return m_res;
 }
-
+#include "Logger.hpp"
 void CgiOutput::parse(bool keepAlive)
 {
 	size_t headerEndPos = m_rawStr.find(HEADER_ENDING);
@@ -45,6 +45,7 @@ void CgiOutput::parse(bool keepAlive)
 	}
 	catch (std::invalid_argument &e)
 	{
+		Logger::log("SUUUUUUUUUUUUUUU");
 	}
 	completeOutput(keepAlive);
 }
