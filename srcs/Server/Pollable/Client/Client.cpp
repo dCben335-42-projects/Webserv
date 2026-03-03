@@ -709,7 +709,8 @@ void Client::onPollIn()
 
 void Client::buildResponse()
 {
-	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout()).build();
+	const Vec<Location> &activeLocation = m_req.getActiveLocations();
+	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout(), activeLocation).build();
 	determineKeepAlive(m_res.getStatusCode());
 	Logger::openFile(accessFile).custom(LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode()));
 }
@@ -853,7 +854,7 @@ void Client::onTimeOut()
 			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 			m_res.setBody(Http408Exception().getPage());
 		}
-		m_res.fill(true, 0).build();
+		m_res.fill(true, 0, m_req.getActiveLocations()).build();
 		determineKeepAlive(m_res.getStatusCode());
 		m_events = POLLOUT;
 		return;
