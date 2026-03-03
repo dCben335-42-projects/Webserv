@@ -163,9 +163,10 @@ void CgiPipe::onPollHangUp()
  * @brief Util function to detect if the Cgi timed out
  *
  */
-// TODO CGI timeout
 bool CgiPipe::isTimedOut(const time_t currentTime) const
 {
+	// TODO CGI timeout
+
 	(void) currentTime;
 	return false;
 }
@@ -178,14 +179,9 @@ bool CgiPipe::isTimedOut(const time_t currentTime) const
  */
 void CgiPipe::onTimeOut()
 {
-	HttpResponse		&res			= m_client->getResponse();
-	const Vec<Location> &activeLocation = m_client->getRequest().getActiveLocations();
-	res.reset();
-	res.setStatusCode(504);
-	res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-	res.setBody("<h1>CGI Script Timeout</h1>");
-	res.fill(true, 0, activeLocation).build();
+	m_client->onHttpException(Http504Exception());
 	m_client->setEvents(POLLOUT);
+	m_events		   = 0;
 	m_connectionClosed = true;
 	// TODO Logger::openFile(errorFile).custom(ERROR_MSG_CGI_TIMEOUT);
 }
