@@ -6,6 +6,7 @@
 #include "webserv.hpp"
 #include <csignal>
 #include "Signals.hpp"
+#include "log.hpp"
 
 /**
  *
@@ -26,7 +27,7 @@ bool getFiles(std::string &bnf, std::string &config, const std::string &configPa
 	}
 	catch (const FileManager::FileException &e)
 	{
-		Logger::error("Error reading file: " + std::string(e.what()));
+		Logger::custom(LOG_MSG_ERROR_READING_FILE + std::string(e.what()));
 		return false;
 	}
 	return true;
@@ -53,13 +54,16 @@ int main(int argc, char *argv[])
 		}
 		catch (const std::exception &e)
 		{
-			Logger::log("Fatal error: " + std::string(e.what()));
+			Logger::custom(ERROR_MSG_CONFIG_PREFIX + std::string(e.what()));
 			return 1;
 		}
 		const VServersConfigs &serversConfigs = configManager.getServersConfigs();
 		const Config		  &httpConfig	  = configManager.getHttpConfig();
-		Logger::log("serversConfigs: " + Logger::get(serversConfigs));
-		Logger::error("httpConfig: " + Logger::get(httpConfig));
+		if (FLAG_LOG_CONF)
+		{
+			Logger::log("serversConfigs: " + Logger::get(serversConfigs));
+			Logger::error("httpConfig: " + Logger::get(httpConfig));
+		}
 		EventLoop::init(httpConfig, serversConfigs);
 	}
 	EventLoop::run();

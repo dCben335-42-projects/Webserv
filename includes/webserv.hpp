@@ -4,6 +4,7 @@
 #include "constants.hpp"
 
 #define FLAG_LOCATION_ADD_UP 1
+#define FLAG_LOG_CONF 0
 
 #define BNF_FILE_PATH "config/conf.bnf"
 #define DEFAULT_CONFIG_PATH "config/default.conf"
@@ -18,7 +19,7 @@
 #define PROTOCOL_HTTP_URL_PREFIX "http://"
 #define PROTOCOL_HTTPS_URL_PREFIX "https://"
 
-#define READ_CLIENT_BUFFER_SIZE 8u
+#define READ_CLIENT_BUFFER_SIZE 8192u
 #define WRITE_CLIENT_BUFFER_SIZE 8192u
 
 #define READ_CGI_BUFFER_SIZE 8192u
@@ -29,21 +30,21 @@
 
 #define FALLBACK_INDEX "index.html"
 
-#define FALLBACK_CGI_TIMEOUT 10u
-#define FALLBACK_KEEP_ALIVE_TIMEOUT 50u
-#define FALLBACK_HEADER_TIMEOUT 5u
-#define FALLBACK_BODY_TIMEOUT 5u
+#define FALLBACK_CGI_TIMEOUT 15l
+#define FALLBACK_KEEP_ALIVE_TIMEOUT 50l
+#define FALLBACK_HEADER_TIMEOUT 5l
+#define FALLBACK_BODY_TIMEOUT 10l
 
 #define FALLBACK_ACCESS_LOG "files/logs/access.log"
 #define FALLBACK_ERROR_LOG "files/logs/error.log"
 
 #define POLL_TIMEOUT 500u
 
-#define MIN_CGI_DIFF_TIMEOUT 5u
-#define MIN_KEEP_ALIVE_TIMEOUT 10u
-#define MIN_HEADER_TIMEOUT 5u
-#define MIN_BODY_TIMEOUT 5u
-#define MIN_CGI_TIMEOUT 5u
+#define MIN_KEEP_ALIVE_TIMEOUT 10l
+#define MIN_HEADER_TIMEOUT 5l
+#define MIN_BODY_TIMEOUT 5l
+#define MIN_CGI_TIMEOUT 5l
+#define MIN_CGI_DIFF_TIMEOUT 5l
 
 
 
