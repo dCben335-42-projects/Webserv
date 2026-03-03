@@ -216,14 +216,16 @@ int main(void)
 	struct tm *t   = gmtime(&now);
 	char	   ts[64];
 	strftime(ts, sizeof(ts), "%Y-%m-%d %H:%M:%S UTC", t);
-
+	char *server_name = getenv("SERVER_NAME");
+	if (!server_name)
+		server_name = "webserv";
 	printf("Content-Type: text/html; charset=utf-8\r\n\r\n");
 	printf(
 		"<!DOCTYPE html><html lang='en'><head>\n"
 		"<meta charset='UTF-8'>\n"
 		"<meta name='viewport' content='width=device-width,initial-scale=1'>\n"
 		"<meta http-equiv='refresh' content='5'>\n"
-		"<title>sysmon</title>\n"
+		"<title>%s</title>\n"
 		"<link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&display=swap' rel='stylesheet'>\n"
 		"<style>\n"
 		"*{box-sizing:border-box;margin:0;padding:0}\n"
@@ -253,9 +255,10 @@ int main(void)
 		"@keyframes blink{50%%{opacity:0}}\n"
 		".refresh{font-size:.6rem;color:#1a3a1a;margin-top:2rem;letter-spacing:.1em}\n"
 		".refresh span{color:#2a6a2a}\n"
-		"</style></head><body>\n");
+		"</style></head><body>\n",
+		server_name);
 
-	printf("<h1>[ sysmon ]</h1>\n");
+	printf("<h1>[ %s ]</h1>\n", server_name);
 	printf("<p class='ts'>%s &nbsp;·&nbsp; refreshes every 5s</p>\n", ts);
 	printf("<div class='grid'>\n");
 
