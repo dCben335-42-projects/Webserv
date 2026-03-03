@@ -273,7 +273,7 @@ return_no_content					::= '204'
 return_reset_content				::= '205'
 
 
-error_page_directive                ::= 'error_page' TAB_SPACE error_code TAB_SPACE ABSOLUTE_PATH
+error_page_directive                ::= 'error_page' TAB_SPACE error_code TAB_SPACE PATH
 
 error_code                          ::= '400'
                                     |= '401'

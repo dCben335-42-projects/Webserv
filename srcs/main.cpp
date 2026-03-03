@@ -39,27 +39,29 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 		Logger::info(DEFAULT_CONFIG_MSG);
 	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ").setFormat(Logger::PlainText);
-	const std::string &configPath = argc >= 2 ? argv[1] : DEFAULT_CONFIG_PATH;
-	std::string		   bnf;
-	std::string		   config;
-	if (!getFiles(bnf, config, configPath))
-		return 1;
-	ConfigManager configManager(bnf, config);
-	try
 	{
-		configManager.lex();
-		configManager.parse();
+		const std::string &configPath = argc >= 2 ? argv[1] : DEFAULT_CONFIG_PATH;
+		std::string		   bnf;
+		std::string		   config;
+		if (!getFiles(bnf, config, configPath))
+			return 1;
+		ConfigManager configManager(bnf, config);
+		try
+		{
+			configManager.lex();
+			configManager.parse();
+		}
+		catch (const std::exception &e)
+		{
+			Logger::log("Fatal error: " + std::string(e.what()));
+			return 1;
+		}
+		const VServersConfigs &serversConfigs = configManager.getServersConfigs();
+		const Config		  &httpConfig	  = configManager.getHttpConfig();
+		Logger::log("serversConfigs: " + Logger::get(serversConfigs));
+		Logger::error("httpConfig: " + Logger::get(httpConfig));
+		EventLoop::init(httpConfig, serversConfigs);
 	}
-	catch (const std::exception &e)
-	{
-		Logger::log("Fatal error: " + std::string(e.what()));
-		return 1;
-	}
-	const VServersConfigs &serversConfigs = configManager.getServersConfigs();
-	const Config		  &httpConfig	  = configManager.getHttpConfig();
-	Logger::log("serversConfigs: " + Logger::get(serversConfigs));
-	Logger::error("httpConfig: " + Logger::get(httpConfig));
-	EventLoop::init(httpConfig, serversConfigs);
 	EventLoop::run();
 	EventLoop::destroy();
 	return 0;

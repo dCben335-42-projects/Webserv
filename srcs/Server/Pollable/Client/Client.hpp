@@ -28,8 +28,9 @@ class Client : public Pollable
 
 		const Config *m_config;
 		bool		  m_isConfigSet;
-		std::string	  m_accessLog;
-		std::string	  m_errorLog;
+
+		std::string m_accessLog;
+		std::string m_errorLog;
 
 		HttpRequest	 m_req;
 		HttpResponse m_res;
@@ -74,6 +75,8 @@ class Client : public Pollable
 
 		const HttpRequest &getRequest() const;
 		HttpResponse	  &getResponse();
+		const Config	  &getConfig() const;
+		time_t			   getTime() const;
 
 		void setEvents(const short events);
 

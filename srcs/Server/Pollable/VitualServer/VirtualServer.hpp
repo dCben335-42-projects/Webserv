@@ -12,11 +12,11 @@ class HttpUser;
 class VirtualServer : public Pollable
 {
 	private:
-		const Config		&m_defaultConf;
-		const ServerConfigs &m_configs;
+		const Config		m_defaultConf;
+		const ServerConfigs m_configs;
+		const SocketAddress m_bindAddress;
 
-		const SocketAddress &m_bindAddress;
-		Vec<HttpUser>		 m_users;
+		Vec<HttpUser> m_users;
 
 		bool setupSocket();
 

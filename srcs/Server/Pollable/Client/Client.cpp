@@ -142,6 +142,37 @@ HttpResponse &Client::getResponse()
 	return m_res;
 }
 
+
+/**
+ *
+ * @brief Gets the server configuration associated with the client.
+ *
+ * @note This allows access to the server settings and parameters
+ * that may be needed for processing requests and generating responses.
+ *
+ * @return A constant reference to the Config object.
+ *
+ */
+const Config &Client::getConfig() const
+{
+	return *m_config;
+}
+
+
+/**
+ *
+ * @brief Gets the current time associated with the client.
+ *
+ * @note This is used for managing timeouts and tracking the client's activity.
+ *
+ * @return The current time as a time_t value.
+ *
+ */
+time_t Client::getTime() const
+{
+	return m_time;
+}
+
 /**
  *
  * @brief Sets the events for the client.

@@ -170,7 +170,7 @@ void CgiSpawner::childprocess()
 	if (dup2(m_stdoutPipe[1], STDOUT_FILENO) == -1)
 		exitChild(true);
 	closePipes();
-	execve(argv[0], argv, m_envp.data());
+	execve("/ADAWDAS", argv, m_envp.data());
 	exitChild(false);
 }
 

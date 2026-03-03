@@ -8,6 +8,7 @@
 #include "httpExceptions.hpp"
 #include "Logger.hpp"
 #include "log.hpp"
+#include "Date.hpp"
 
 
 CgiPipe::CgiPipe(
@@ -165,16 +166,19 @@ void CgiPipe::onPollHangUp()
  */
 bool CgiPipe::isTimedOut(const time_t currentTime) const
 {
-	// TODO CGI timeout
+	const time_t cgiTimeOut	  = m_client->getConfig().getCgiTimeout();
+	const time_t cgiStartTime = m_client->getTime();
 
-	(void) currentTime;
-	return false;
+	return Date::getDiffTime(cgiStartTime, currentTime) > cgiTimeOut;
 }
 
 
 /**
  *
  * @brief Function to handle reaction when the Cgi Time out
+ *
+ * @note It prepares a 504 Gateway Timeout response and updates the client state to indicate that the connection is closed.
+ * @note This function is called when a timeout is detected for the CgiPipe.
  *
  */
 void CgiPipe::onTimeOut()
