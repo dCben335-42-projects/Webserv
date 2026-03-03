@@ -2,6 +2,11 @@
 #define LOG_HPP
 
 #define LOG_GLOBAL_SEPARATOR " "
+#define LOG_KEYWORD_TO " to "
+#define LOG_KEYWORD_BY " by "
+#define LOG_KEYWORD_BY_ONLY " by only "
+
+#define LOG_MSG_ERROR_READING_FILE "Error reading file: "
 
 #define LOG_MSG_CONFIG_PREFIX "Config - "
 #define WARNING_MSG_CONFIG_PREFIX LOG_MSG_CONFIG_PREFIX "Warning - "
@@ -9,6 +14,26 @@
 #define LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_START WARNING_MSG_CONFIG_PREFIX "Duplicate directive: "
 #define LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_END " at line "
 #define ERROR_MSG_CONFIG_INVALID_PORT LOG_MSG_CONFIG_PREFIX "Invalid port number in listen directive: "
+#define ERROR_MSG_NO_LISTEN_DIRECTIVE ERROR_MSG_CONFIG_PREFIX "Server without listen directive found. This server will be ignored: "
+#define ERROR_MSG_INVALID_LISTEN_DIRECTIVE ERROR_MSG_CONFIG_PREFIX "Invalid listen directive found for server: "
+#define ERROR_MSG_DUPLICATE_LISTEN_DIRECTIVE ERROR_MSG_CONFIG_PREFIX "Duplicate listen directive found for "
+#define ERROR_MSG_SERVER_IGNORED ". This server will be ignored: "
+
+#define LOG_MSG_UNKNOWN_DIRECTIVE "Unknown directive \'"
+#define LOG_MSG_WITH_VALUE "\' with value: "
+#define LOG_MSG_IS_SET_TO " is set to "
+#define LOG_MSG_SECONDS_END_MSG " seconds."
+#define LOG_MSG_RESETTING "Resetting "
+#define LOG_MSG_LESS_THAN_RECO " seconds, which is less than the recommended minimum of "
+#define LOG_MSG_BAD_HEADERS_TO " to avoid potential issues with headers timing out too quickly."
+#define LOG_MSG_BAD_BODY_TO " to avoid potential issues with body timing out too quickly."
+#define LOG_MSG_BAD_KEEPALIVE_TO " to avoid potential issues with connections timing out too quickly."
+#define LOG_MSG_BAD_CGI_TO " to avoid potential issues with CGI scripts timing out too quickly."
+#define LOG_MSG_CONSIDER "Consider increasing "
+#define LOG_MSG_IS_GREATER " is greater than "
+#define LOG_MSG_IS_LESS " is less than "
+#define LOG_MSG_CONNECTION_TO_BEFORE_CGI "This might cause issues with connections timing out before CGI scripts finish. "
+#define LOG_MSG_CGI_TO_BEFORE_CONNECTON "This could cause issues with CGI scripts timing out before the connection times out. "
 
 #define ERROR_MSG_RESPONSE_SENDING_FAILED "An error occured while sending response to the client"
 #define ERROR_MSG_UNKNOWN "An Unknown error occured"

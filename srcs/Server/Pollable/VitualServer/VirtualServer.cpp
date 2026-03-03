@@ -135,7 +135,7 @@ bool VirtualServer::setupSocket()
 			throw SocketCreationException();
 		setReusable(m_fd);
 		bindAndListen(m_fd);
-		const std::string logStr = "Go to http://" + Logger::get(m_bindAddress) + " to access the server";
+		const std::string logStr = LOG_MSG_SERVER_PREFIX "started on " + Logger::get(m_bindAddress);
 		if (Logger::openFile(m_accessLog))
 			Logger::custom(logStr);
 		Logger::setTarget(Logger::Stdout).custom(logStr);
