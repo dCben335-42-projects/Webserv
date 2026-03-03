@@ -12,6 +12,7 @@
 
 #include "HttpAuth.hpp"
 #include "log.hpp"
+#include "Signals.hpp"
 
 
 VirtualServer::VirtualServer(
@@ -23,16 +24,30 @@ VirtualServer::VirtualServer(
 	m_configs(serverConfigs),
 	m_bindAddress(address)
 {
+	m_errorLog	= m_defaultConf.getErrorLog();
+	m_accessLog = m_defaultConf.getAccessLog();
 	if (!setupSocket())
-		onPollErr();
-	else
-		m_events = POLLIN;
+	{
+		m_connectionClosed = true;
+		m_events		   = 0;
+		if (Logger::openFile(m_accessLog))
+			Logger::custom(LOG_MSG_SERVER_IGNORED LOG_GLOBAL_SEPARATOR + Logger::get(m_bindAddress));
+		Logger::setTarget(Logger::Stdout).custom(LOG_MSG_SERVER_IGNORED LOG_GLOBAL_SEPARATOR + Logger::get(m_bindAddress));
+		return;
+	}
+	m_events = POLLIN;
 }
 
 VirtualServer::~VirtualServer()
 {
 	if (m_fd != -1)
 		close(m_fd);
+	if (!Signals::getIsChild())
+	{
+		if (Logger::openFile(m_accessLog))
+			Logger::custom(LOG_MSG_SERVER_DISCONNECTED);
+		Logger::setTarget(Logger::Stdout).custom(LOG_MSG_SERVER_DISCONNECTED);
+	}
 }
 
 
@@ -120,8 +135,10 @@ bool VirtualServer::setupSocket()
 			throw SocketCreationException();
 		setReusable(m_fd);
 		bindAndListen(m_fd);
-		// TODO
-		Logger::info("Go to http://" + Logger::get(m_bindAddress) + " to access the server");
+		const std::string logStr = "Go to http://" + Logger::get(m_bindAddress) + " to access the server";
+		if (Logger::openFile(m_accessLog))
+			Logger::custom(logStr);
+		Logger::setTarget(Logger::Stdout).custom(logStr);
 		return true;
 	}
 	catch (const ServerException &e)
@@ -131,9 +148,11 @@ bool VirtualServer::setupSocket()
 			close(m_fd);
 			m_fd = -1;
 		}
-		std::cerr << e.what() << " (" << Logger::get(m_bindAddress) << ")" << std::endl;
-		// TODO
-		//  std::cerr << e.what() << " (" << ip << ":" << port << ")" << std::endl;
+		const std::string eWhat	 = e.what();
+		const std::string logStr = LOG_MSG_SERVER_PREFIX + eWhat + " on " + Logger::get(m_bindAddress);
+		if (Logger::openFile(m_errorLog))
+			Logger::custom(logStr);
+		Logger::setTarget(Logger::Stderr).custom(logStr);
 		return false;
 	}
 }
@@ -158,7 +177,9 @@ void VirtualServer::createClient(int clientFd)
 {
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
 	{
-		// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_FCNTL_FAILED);
+		if (Logger::openFile(m_errorLog))
+			Logger::custom(ERROR_MSG_FCNTL_FAILED);
+		Logger::setTarget(Logger::Stderr).custom(ERROR_MSG_FCNTL_FAILED);
 		close(clientFd);
 		return;
 	}
@@ -186,7 +207,9 @@ void VirtualServer::onPollIn()
 	int clientFd = accept(m_fd, (struct sockaddr *) &clientAddr, &clientLen);
 	if (clientFd < 0)
 	{
-		// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_ACCEPT_FAILED);
+		if (Logger::openFile(m_errorLog))
+			Logger::custom(ERROR_MSG_ACCEPT_FAILED);
+		Logger::setTarget(Logger::Stderr).custom(ERROR_MSG_ACCEPT_FAILED);
 		return;
 	}
 	createClient(clientFd);
@@ -200,8 +223,6 @@ void VirtualServer::onPollErr()
 {
 	m_connectionClosed = true;
 	m_events		   = 0;
-	std::cerr << "VirtualServer error on fd " << m_fd << std::endl;
-	// TODO Logger::openFile(m_errorLog).custom(ERROR_MSG_UNKNOWN);
 }
 
 void VirtualServer::onPollHangUp()

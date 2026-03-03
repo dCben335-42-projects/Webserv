@@ -18,9 +18,12 @@
 #define LOG_MSG_CGIPIPE_PREFIX "CGIPipe - "
 #define LOG_MSG_PIPE_CLOSED LOG_MSG_CGIPIPE_PREFIX "Pipe closed from the other end, stream closed"
 #define ERROR_MSG_CGI_TIMEOUT LOG_MSG_CGIPIPE_PREFIX "CGI timed out"
+#define LOG_MSG_CGI_CLOSED LOG_MSG_CGIPIPE_PREFIX "Closed"
 
 #define LOG_MSG_SERVER_PREFIX "Virtual_Server - "
 #define ERROR_MSG_FCNTL_FAILED LOG_MSG_SERVER_PREFIX "Fcntl failed to set the fd to non-blocking mode"
 #define ERROR_MSG_ACCEPT_FAILED LOG_MSG_SERVER_PREFIX "Accept failed on the client fd"
+#define LOG_MSG_SERVER_DISCONNECTED LOG_MSG_SERVER_PREFIX "Closed"
+#define LOG_MSG_SERVER_IGNORED LOG_MSG_SERVER_PREFIX "Ignoring"
 
 #endif

@@ -14,6 +14,7 @@
 #include "Logger.hpp"
 #include "log.hpp"
 #include "IPAddress.hpp"
+#include "Signals.hpp"
 
 Client::Client(int fd, const Config &config, VirtualServer &server) :
 	Pollable(fd),
@@ -26,18 +27,21 @@ Client::Client(int fd, const Config &config, VirtualServer &server) :
 	m_accessLog	  = config.getAccessLog();
 	m_errorLog	  = config.getErrorLog();
 	EventLoop::addHandler(this);
-	if (Logger::openFile(m_errorLog))
+	if (Logger::openFile(m_accessLog))
 		Logger::custom(LOG_MSG_CLIENT_CONNECTED);
-	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CLIENT_CONNECTED);
+	Logger::setTarget(Logger::Stdout).custom(LOG_MSG_CLIENT_CONNECTED);
 }
 
 Client::~Client()
 {
 	if (m_fd != -1)
 		close(m_fd);
-	if (Logger::openFile(m_errorLog))
-		Logger::custom(LOG_MSG_CLIENT_DISCONNECTED);
-	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_CLIENT_DISCONNECTED);
+	if (!Signals::getIsChild())
+	{
+		if (Logger::openFile(m_accessLog))
+			Logger::custom(LOG_MSG_CLIENT_DISCONNECTED);
+		Logger::setTarget(Logger::Stdout).custom(LOG_MSG_CLIENT_DISCONNECTED);
+	}
 }
 
 
@@ -172,6 +176,7 @@ time_t Client::getTime() const
 {
 	return m_time;
 }
+
 
 /**
  *

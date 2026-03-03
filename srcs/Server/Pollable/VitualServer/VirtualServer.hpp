@@ -18,6 +18,9 @@ class VirtualServer : public Pollable
 
 		Vec<HttpUser> m_users;
 
+		std::string m_errorLog;
+		std::string m_accessLog;
+
 		bool setupSocket();
 
 		void setReusable(int sockFd);

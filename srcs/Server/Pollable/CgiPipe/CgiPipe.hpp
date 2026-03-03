@@ -14,6 +14,9 @@ class CgiPipe : public Pollable
 		pid_t		  m_pid;
 		size_t		  m_bytesWritten;
 
+		std::string m_errorLog;
+		std::string m_accessLog;
+
 		void waitChild();
 
 	public:
