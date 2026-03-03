@@ -38,14 +38,17 @@ void CgiOutput::parse(bool keepAlive)
 	size_t endOfLineIndex = m_rawStr.find(HEADER_LINE_ENDING);
 	if (!parseFirstOutputLine(endOfLineIndex))
 		m_statusCode = 200;
-	endOfLineIndex += HEADER_LINE_ENDING_SIZE;
+	if (m_rawStr.substr(0, endOfLineIndex).find(':') == std::string::npos)
+		endOfLineIndex += HEADER_LINE_ENDING_SIZE;
+	else
+		endOfLineIndex = 0;
 	try
 	{
 		AHttpInboundMessage::parse(m_rawStr, endOfLineIndex);
 	}
 	catch (std::invalid_argument &e)
 	{
-		Logger::log("SUUUUUUUUUUUUUUU");
+		Logger::setTarget(Logger::Stderr).log("SUUUUUUUUUUUUU");
 	}
 	completeOutput(keepAlive);
 }
