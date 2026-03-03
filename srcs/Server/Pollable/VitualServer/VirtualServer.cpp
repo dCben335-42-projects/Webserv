@@ -35,6 +35,10 @@ VirtualServer::VirtualServer(
 		Logger::setTarget(Logger::Stdout).custom(LOG_MSG_SERVER_IGNORED LOG_GLOBAL_SEPARATOR + Logger::get(m_bindAddress));
 		return;
 	}
+	const std::string logStr = LOG_MSG_SERVER_PREFIX "started on " + Logger::get(m_bindAddress);
+	if (Logger::openFile(m_accessLog))
+		Logger::custom(logStr);
+	Logger::setTarget(Logger::Stdout).custom(logStr);
 	m_events = POLLIN;
 }
 
@@ -135,10 +139,6 @@ bool VirtualServer::setupSocket()
 			throw SocketCreationException();
 		setReusable(m_fd);
 		bindAndListen(m_fd);
-		const std::string logStr = LOG_MSG_SERVER_PREFIX "started on " + Logger::get(m_bindAddress);
-		if (Logger::openFile(m_accessLog))
-			Logger::custom(logStr);
-		Logger::setTarget(Logger::Stdout).custom(logStr);
 		return true;
 	}
 	catch (const ServerException &e)
