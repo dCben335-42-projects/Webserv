@@ -194,7 +194,7 @@ BACKSLASH			::= '\\'
 SLASH				::= '/'
 
 WS					::= ( '\t' | '\n' | '\r' | ' ' )
-EXT                	::= DOT [ 'php' | 'py' | 'html' | 'htm' ]
+EXT                	::= DOT { LETTER }
 DOT                	::= '.'
 default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'application/json' | 'application/javascript' |
 						'application/vnd.ms-fontobject' | 'application/pdf' | 'application/xml' | 'application/zip' | 'application/gzip' | 'application/x-tar' |
