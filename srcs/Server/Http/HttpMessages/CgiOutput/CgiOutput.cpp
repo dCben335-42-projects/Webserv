@@ -48,7 +48,6 @@ void CgiOutput::parse(bool keepAlive)
 	}
 	catch (std::invalid_argument &e)
 	{
-		Logger::setTarget(Logger::Stderr).log("SUUUUUUUUUUUUU");
 	}
 	completeOutput(keepAlive);
 }
