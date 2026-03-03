@@ -513,7 +513,6 @@ void Client::serveReturn()
  */
 bool Client::prepareResponse()
 {
-	Logger::setTarget(Logger::Stdout).log("host: " + m_req.getHost());
 	if (m_req.isAuthRequired())
 	{
 		if (!m_req.hasCookieValue(COOKIE_KEY_TOKEN))
@@ -627,7 +626,7 @@ bool Client::serveCustomErrorPage(const int statusCode)
 		catch (const FileManager::FileException &e)
 		{
 			Logger::custom(LOG_MSG_CLIENT_PREFIX + Logger::get(statusCode) + LOG_GLOBAL_SEPARATOR + "Failed to serve custom error page: " + e.what());
-			m_res.setStatusCode(statusCode);
+			m_res.setStatusCode(404);
 			m_res.setBody(Http404Exception().getPage());
 			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
 			return true;

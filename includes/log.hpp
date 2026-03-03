@@ -52,7 +52,7 @@
 #define ERROR_MSG_CGI_TIMEOUT LOG_MSG_CGIPIPE_PREFIX "CGI timed out"
 #define LOG_MSG_CGI_CLOSED LOG_MSG_CGIPIPE_PREFIX "Closed"
 
-#define LOG_MSG_SERVER_PREFIX "Virtual_Server - "
+#define LOG_MSG_SERVER_PREFIX "Virtual Server - "
 #define ERROR_MSG_FCNTL_FAILED LOG_MSG_SERVER_PREFIX "Fcntl failed to set the fd to non-blocking mode"
 #define ERROR_MSG_ACCEPT_FAILED LOG_MSG_SERVER_PREFIX "Accept failed on the client fd"
 #define LOG_MSG_SERVER_DISCONNECTED LOG_MSG_SERVER_PREFIX "Closed"
