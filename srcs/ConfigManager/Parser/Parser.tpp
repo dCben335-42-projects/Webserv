@@ -7,14 +7,14 @@
 
 
 template <typename T, typename DirectiveType>
-bool Parser::applyStringDirective(T &obj, const DirectiveType &directive, const std::string &value)
+bool Lexer::applyStringDirective(T &obj, const DirectiveType &directive, const std::string &value)
 {
 	(obj.*directive.setString)(value);
 	return true;
 }
 
 template <typename T, typename DirectiveType>
-bool Parser::applyBoolDirective(T &obj, const DirectiveType &directive, const std::string &value)
+bool Lexer::applyBoolDirective(T &obj, const DirectiveType &directive, const std::string &value)
 {
 	if (value == "on" || value == "true" || value == "1")
 		(obj.*directive.setBool)(true);
@@ -26,14 +26,14 @@ bool Parser::applyBoolDirective(T &obj, const DirectiveType &directive, const st
 }
 
 template <typename T, typename DirectiveType>
-bool Parser::applyArrayDirective(T &obj, const DirectiveType &directive, const Vec<std::string> &values)
+bool Lexer::applyArrayDirective(T &obj, const DirectiveType &directive, const Vec<std::string> &values)
 {
 	(obj.*directive.setArray)(values);
 	return true;
 }
 
 template <typename T, typename DirectiveType>
-bool Parser::applyNumberDirective(T &obj, const DirectiveType &directive, const std::string &value)
+bool Lexer::applyNumberDirective(T &obj, const DirectiveType &directive, const std::string &value)
 {
 	(obj.*directive.setNumber)(Number::toSizeT(value));
 	return true;
@@ -41,7 +41,7 @@ bool Parser::applyNumberDirective(T &obj, const DirectiveType &directive, const 
 
 
 template <typename T, typename DirectiveType>
-bool Parser::applyDirective(
+bool Lexer::applyDirective(
 	T					   &obj,
 	const std::string	   &key,
 	const Vec<std::string> &values,

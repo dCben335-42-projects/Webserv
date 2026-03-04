@@ -7,7 +7,7 @@
 #include "webserv.hpp"
 #include "log.hpp"
 
-const Parser::Directive<Config> Parser::m_serverDirectives[] = {
+const Lexer::Directive<Config> Lexer::m_serverDirectives[] = {
 	{PARSER_KEY_SERVER_NAME, NULL, NULL, &Config::setServerNames, NULL},
 	{PARSER_KEY_KEEPALIVE_TIMEOUT, NULL, NULL, NULL, &Config::setKeepAliveTimeout},
 	{PARSER_KEY_HEADER_TIMEOUT, NULL, NULL, NULL, &Config::setHeaderTimeout},
@@ -19,7 +19,7 @@ const Parser::Directive<Config> Parser::m_serverDirectives[] = {
 	{PARSER_KEY_DEFAULT_TYPE, &Config::setDefaultMime, NULL, NULL, NULL},
 	{PARSER_KEY_DEFAULT_CGI_TYPE, &Config::setDefaultCgiMime, NULL, NULL, NULL}};
 
-const Parser::Directive<Location> Parser::m_locationDirectives[] = {
+const Lexer::Directive<Location> Lexer::m_locationDirectives[] = {
 	{PARSER_KEY_ROOT, &Location::setRoot, NULL, NULL, NULL},
 	{PARSER_KEY_ALIAS, &Location::setAlias, NULL, NULL, NULL},
 	{PARSER_KEY_AUTOINDEX, NULL, &Location::setAutoIndex, NULL, NULL},
@@ -30,14 +30,14 @@ const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_MAX_BODY_SIZE, &Location::setMaxBodySize, NULL, NULL, NULL},
 	{PARSER_KEY_AUTH_REQUIRED, NULL, &Location::setAuthRequired, NULL, NULL}};
 
-const size_t Parser::m_serverDirectivesCount   = sizeof(m_serverDirectives) / sizeof(m_serverDirectives[0]);
-const size_t Parser::m_locationDirectivesCount = sizeof(m_locationDirectives) / sizeof(m_locationDirectives[0]);
+const size_t Lexer::m_serverDirectivesCount	  = sizeof(m_serverDirectives) / sizeof(m_serverDirectives[0]);
+const size_t Lexer::m_locationDirectivesCount = sizeof(m_locationDirectives) / sizeof(m_locationDirectives[0]);
 
-Parser::Parser(const std::string &fileContent) : m_content(fileContent)
+Lexer::Lexer(const std::string &fileContent) : m_content(fileContent)
 {
 }
 
-Parser::~Parser()
+Lexer::~Lexer()
 {
 }
 
@@ -49,7 +49,7 @@ Parser::~Parser()
  * @return A constant reference to the HttpNode representing the HTTP configuration.
  *
  */
-const Config &Parser::getHttpConfig() const
+const Config &Lexer::getHttpConfig() const
 {
 	return m_httpConfig;
 }
@@ -61,7 +61,7 @@ const Config &Parser::getHttpConfig() const
  * @return A constant reference to the vector of server configurations.
  *
  */
-const VServersConfigs &Parser::getServersConfigs() const
+const VServersConfigs &Lexer::getServersConfigs() const
 {
 	return m_serversConfigs;
 }
@@ -79,7 +79,7 @@ const VServersConfigs &Parser::getServersConfigs() const
  * If the token ends with a semicolon and is not within quotes, the semicolon is removed before adding it to the vector.
  *
  */
-void Parser::saveToken(Vec<std::string> &tokens, std::string &token, const bool inQuotes)
+void Lexer::saveToken(Vec<std::string> &tokens, std::string &token, const bool inQuotes)
 {
 	if (token.empty())
 		return;
@@ -105,7 +105,7 @@ void Parser::saveToken(Vec<std::string> &tokens, std::string &token, const bool 
  * @return A vector of tokens extracted from the line.
  *
  */
-Vec<std::string> Parser::extractTokens(const std::string &line)
+Vec<std::string> Lexer::extractTokens(const std::string &line)
 {
 	Vec<std::string> tokens;
 	std::string		 current;
@@ -145,7 +145,7 @@ Vec<std::string> Parser::extractTokens(const std::string &line)
  * @return A single string resulting from joining the tokens from the specified index onward, separated by spaces.
  *
  */
-std::string Parser::joinTokens(const Vec<std::string> &tokens, const size_t start)
+std::string Lexer::joinTokens(const Vec<std::string> &tokens, const size_t start)
 {
 	std::string result;
 	for (size_t i = start; i < tokens.size(); ++i)
@@ -174,7 +174,7 @@ std::string Parser::joinTokens(const Vec<std::string> &tokens, const size_t star
  * with special processing, while other directives are set directly using the setDirective method of the node.
  *
  */
-void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node, const size_t lineNumber)
+void Lexer::set(const std::string &key, const Vec<std::string> &tokens, AConfigNode &node, const size_t lineNumber)
 {
 	if (key == PARSER_KEY_ADDHEADER && tokens.size() >= 2)
 		node.setAddHeaders(tokens[0], joinTokens(tokens, 1));
@@ -205,7 +205,7 @@ void Parser::set(const std::string &key, const Vec<std::string> &tokens, AConfig
  * updates the HttpNode, ServerNode, and LocationNode objects accordingly.
  *
  */
-void Parser::retreive()
+void Lexer::retreive()
 {
 	std::istringstream		input(m_content);
 	std::string				line;
@@ -277,7 +277,7 @@ void Parser::retreive()
  * If it exists, it extracts the host and port from the directive value and sets them in the ServerNode object.
  *
  */
-void Parser::resolveListen(ServerNode &server)
+void Lexer::resolveListen(ServerNode &server)
 {
 	if (!server.hasDirective(PARSER_KEY_LISTEN))
 		return;
@@ -314,7 +314,7 @@ void Parser::resolveListen(ServerNode &server)
  * if they are considered duplicates based on the presence or absence of server names and their values.
  *
  */
-bool Parser::isDuplicate(
+bool Lexer::isDuplicate(
 	const ServerNode	  &server,
 	const Vec<ServerNode> &servers,
 	const size_t		   start)
@@ -360,7 +360,7 @@ bool Parser::isDuplicate(
  * it adds the corresponding port and "any" SocketAddress to the provided maps.
  *
  */
-void Parser::fillIpAnyMaps(
+void Lexer::fillIpAnyMaps(
 	Map<unsigned short, SocketAddress> &ipv4AnyPorts,
 	Map<unsigned short, SocketAddress> &ipv6AnyPorts) const
 {
@@ -391,7 +391,7 @@ void Parser::fillIpAnyMaps(
  * it will be grouped under the corresponding "any" SocketAddress in the resulting map.
  *
  */
-Parser::VServersNodes Parser::groupServersNodes() const
+Lexer::VServersNodes Lexer::groupServersNodes() const
 {
 	VServersNodes		   grouped;
 	const Vec<ServerNode> &servers = m_http.getServers();
@@ -431,7 +431,7 @@ Parser::VServersNodes Parser::groupServersNodes() const
  * applies the directives to it, and then adds it to the provided Config object under the corresponding path.
  *
  */
-void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator &locIt)
+void Lexer::addLocation(Config &config, const Map<LocationNode>::const_iterator &locIt)
 {
 	const LocationNode					&locationNode = locIt->second;
 	const AConfigNode::Directives		&directives	  = locationNode.getDirectives();
@@ -469,7 +469,7 @@ void Parser::addLocation(Config &config, const Map<LocationNode>::const_iterator
  * and adds them to the Config object before adding it to the list.
  *
  */
-void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
+void Lexer::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
 {
 	Config serverConfig(m_httpConfig);
 	serverConfig.setAddress(serverNode.getSocketAddress());
@@ -516,7 +516,7 @@ void Parser::addConfig(ServerConfigs &configs, const ServerNode &serverNode)
  * Finally, it sets the default location in the m_httpConfig object.
  *
  */
-void Parser::createHttpConfig()
+void Lexer::createHttpConfig()
 {
 	const AConfigNode::Directives		&directives = m_http.getDirectives();
 	AConfigNode::DirectivesConstIt		 dit		= directives.begin();
@@ -553,7 +553,7 @@ void Parser::createHttpConfig()
  * It iterates through the grouped server nodes, applies the directives to create Config objects, and adds them to the m_serversConfigs map with the corresponding socket address as the key.
  *
  */
-void Parser::createServersConfigs()
+void Lexer::createServersConfigs()
 {
 	const VServersNodes groupedServers = groupServersNodes();
 	for (VServersNodes::const_iterator it = groupedServers.begin(); it != groupedServers.end(); ++it)
@@ -577,7 +577,7 @@ void Parser::createServersConfigs()
  * and then creates the server configurations by grouping the server nodes and applying their directives to create Config objects.
  *
  */
-void Parser::createConfigs()
+void Lexer::createConfigs()
 {
 	createHttpConfig();
 	createServersConfigs();
@@ -593,7 +593,7 @@ void Parser::createConfigs()
  * and then creates the HTTP and server configurations based on the parsed data.
  *
  */
-void Parser::checkTimeoutValues(Config &config)
+void Lexer::checkTimeoutValues(Config &config)
 {
 	time_t		 keepAliveTimeOut = config.getKeepAliveTimeout();
 	time_t		 cgiTimeOut		  = config.getCgiTimeout();
@@ -659,7 +659,7 @@ void Parser::checkTimeoutValues(Config &config)
  * the socket addresses are correctly set based on the "listen" directive.
  *
  */
-void Parser::resolve()
+void Lexer::resolve()
 {
 	Vec<ServerNode> &servers	= m_http.getServers();
 	size_t			 numServers = servers.size();
@@ -676,7 +676,7 @@ void Parser::resolve()
  * @note It Logs warnings when duplicates are found or when a server configuration is missing a "listen" directive.
  *
  */
-void Parser::removeDuplicate()
+void Lexer::removeDuplicate()
 {
 	Vec<ServerNode> &servers = m_http.getServers();
 	size_t			 i		 = 0;

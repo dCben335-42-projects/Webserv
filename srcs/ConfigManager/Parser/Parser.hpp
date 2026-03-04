@@ -48,7 +48,7 @@
 
 #include "Config.hpp"
 
-class Parser
+class Lexer
 {
 	private:
 		template <typename T>
@@ -117,8 +117,8 @@ class Parser
 		void checkTimeoutValues(Config &config);
 
 	public:
-		Parser(const std::string &fileContent);
-		~Parser();
+		Lexer(const std::string &fileContent);
+		~Lexer();
 
 		const Config		  &getHttpConfig() const;
 		const VServersConfigs &getServersConfigs() const;

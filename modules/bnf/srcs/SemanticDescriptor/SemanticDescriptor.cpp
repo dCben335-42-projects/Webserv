@@ -168,11 +168,12 @@ void SemanticDescriptor::parseBlocks()
 		}
 		parseRule(m_blocks[i], pos);
 	}
+	if (!m_concepts.has(CURSOR))
+		throw ConceptNotFoundException(CURSOR);
 	checkForRecursion();
 	assignParentRules();
 	assignTerminalChar();
 }
-
 
 /**
  *
