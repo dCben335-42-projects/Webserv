@@ -88,7 +88,7 @@ bool SemanticDescriptor::isStartRule(const std::string &line, size_t *startDef)
 	const std::string conceptName = line.substr(i, spacePos - i);
 	if (conceptName.empty() || conceptName == DIVIDER)
 		return false;
-	if (!validate_string_strict(conceptName))
+	if (!validateStringStrict(conceptName))
 		throw InvalidConceptNameException(conceptName);
 	i = spacePos;
 	while (i < size && std::isspace(line[i]))
@@ -376,7 +376,7 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			}
 			if (word != DIVIDER)
 			{
-				if (!validate_string_strict(word))
+				if (!validateStringStrict(word))
 				{
 					delete arule;
 					throw InvalidConceptNameException(word);
