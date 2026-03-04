@@ -143,9 +143,6 @@ void CgiPipe::onPollHangUp()
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
 	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
-	if (Logger::openFile(m_accessLog))
-		Logger::custom(LOG_MSG_PIPE_CLOSED);
-	Logger::setTarget(Logger::Stderr).custom(LOG_MSG_PIPE_CLOSED);
 	if (bytesRead > 0)
 	{
 		m_cgiOutput.appendToCgiOutput(buffer, bytesRead);
@@ -168,7 +165,7 @@ void CgiPipe::onPollHangUp()
 
 		res.setStatusCode(statusCode);
 		res.setFullResponse(m_cgiOutput.getRes());
-		const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(statusCode);
+		const std::string logStr = LOG_MSG_CGIPIPE_READY LOG_GLOBAL_SEPARATOR + req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(statusCode);
 		if (Logger::openFile(m_accessLog))
 			Logger::custom(logStr);
 		Logger::setTarget(Logger::Stdout).custom(logStr);

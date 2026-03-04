@@ -153,7 +153,7 @@ else
             cls="l-norm"
             grep -qE '(error|err[^o]|fatal|crit|emerg|panic|fail)' <<< "$lower" && cls="l-err"
             grep -qE '(warn)'                                        <<< "$lower" && cls="l-warn"
-            grep -qE '(success|started|ready|listening|accepted)'   <<< "$lower" && cls="l-ok"
+            grep -qE '(success|started|sent|ready|listening|accepted)'   <<< "$lower" && cls="l-ok"
             grep -qE '(info|debug|notice)'                          <<< "$lower" && cls="l-info"
             echo "<span class='${cls}'>${esc}</span>"
         done <<< "$content"

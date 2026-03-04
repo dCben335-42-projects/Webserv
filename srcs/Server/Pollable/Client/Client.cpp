@@ -691,7 +691,9 @@ void Client::onHttpException(const AHttpException &e)
  */
 bool Client::determineKeepAlive(unsigned short statusCode)
 {
-	m_shouldClose = !m_req.getConnectionKeepAlive() && !m_res.isCloseStatus(statusCode);
+	bool requestKeepAlive	 = m_req.getConnectionKeepAlive();
+	bool responseCloseStatus = m_res.isCloseStatus(statusCode);
+	m_shouldClose			 = !requestKeepAlive && !responseCloseStatus;
 	return !m_shouldClose;
 }
 
@@ -776,7 +778,6 @@ void Client::buildResponse()
 	const Vec<Location> &activeLocation = m_req.getActiveLocations();
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout(), activeLocation).build();
 	determineKeepAlive(m_res.getStatusCode());
-
 
 	const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode());
 	if (Logger::openFile(m_accessLog))
