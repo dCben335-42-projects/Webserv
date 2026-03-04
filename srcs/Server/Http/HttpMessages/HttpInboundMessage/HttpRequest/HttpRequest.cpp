@@ -392,7 +392,11 @@ size_t HttpRequest::parseFirstLine(const size_t lineEnd)
 
 	const size_t versionPos = requestLine.find(PROTOCOL, targetEnd + 1);
 	if (versionPos == std::string::npos)
-		throw std::invalid_argument(REQ_UNSUPPORTED_METHOD_MSG + requestLine.substr(targetEnd + 1));
+	{
+		const size_t prevVersionPos = requestLine.find(PREV_PROTOCOL, targetEnd + 1);
+		if (prevVersionPos == std::string::npos)
+			throw std::invalid_argument(REQ_UNSUPPORTED_METHOD_MSG + requestLine.substr(targetEnd + 1));
+	}
 	return lineEnd;
 }
 
