@@ -490,7 +490,6 @@ void Lexer::parse(const std::string &stringToParsed)
 }
 } // namespace bnf
 
-
 void Lexer::throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const
 {
 	std::string expectedChars;
