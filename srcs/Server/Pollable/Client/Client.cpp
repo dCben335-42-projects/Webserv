@@ -536,19 +536,18 @@ bool Client::prepareResponse()
 		serveReturn();
 		return true;
 	}
-	CgiSpawner cgiHandler(m_req, *m_config);
+	const HttpMethod &method = m_req.getMethod();
 	if (!m_req.isAllowedMethod())
-		throw Http403Exception();
+		throw Http405Exception(method.getStrType());
+	CgiSpawner cgiHandler(m_req, *m_config);
 	if (cgiHandler.isCgi())
 	{
 		cgiHandler.spawnCgi(this);
 		m_events = 0;
 		return false;
 	}
-	const HttpMethod &method = m_req.getMethod();
 	if (!Client::m_methodHandler.has(method))
 		throw Http405Exception(method.getStrType());
-
 	const size_t	  segmentSize	= m_req.getSegmentSize();
 	const std::string ressourcePath = m_req.buildResourcePath(segmentSize - 1);
 	(this->*Client::m_methodHandler.get(method))(ressourcePath);
