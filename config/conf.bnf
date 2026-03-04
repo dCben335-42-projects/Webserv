@@ -1,14 +1,14 @@
 <head> ::= http 
 
 http                        ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
-http_directives             ::= { default_type | default_cgi_type | keepalive_timeout | client_header_timeout | client_body_timeout | client_max_body_size | autoindex | sendfile | error_page | server | IDENT_DIRECTIVE | access_log | error_log | cgi_timeout | add_header}
+http_directives             ::= { default_type | default_cgi_type | keepalive_timeout | client_header_timeout | client_body_timeout | client_max_body_size | autoindex | sendfile | error_page | server | IDENT_DIRECTIVE | access_log | error_log | cgi_timeout | add_header }
 
 server                      ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
 server_directives           ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc | IDENT_DIRECTIVE | autoindex | error_page | access_log | error_log | cgi_timeout | client_max_body_size | cgi_pass | default_type | default_cgi_type 
-                                | keepalive_timeout | client_header_timeout | client_body_timeout | return | allowed_methods}
+                                | keepalive_timeout | client_header_timeout | client_body_timeout | return | allowed_methods }
 
 location           	        ::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [LINE_JUMP]
-location_directives         ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | error_page | client_max_body_size | sendfile}
+location_directives         ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | error_page | client_max_body_size | sendfile }
 
 
 

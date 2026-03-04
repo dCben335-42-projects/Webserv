@@ -32,7 +32,8 @@ http {
 Global settings that apply to the entire HTTP server.
 
 **Allowed directives:**
-[`keepalive_timeout`](#keepalive_timeout), [`client_body_timeout`](#client_body_timeout), [`client_header_timeout`](#client_header_timeout), [`client_max_body_size`](#client_max_body_size), [`default_type`](#default_type), [`default_cgi_type`](#default_cgi_type), [`sendfile`](#sendfile)
+[`keepalive_timeout`](#keepalive_timeout), [`client_body_timeout`](#client_body_timeout), [`client_header_timeout`](#client_header_timeout), [`client_max_body_size`](#client_max_body_size), [`default_type`](#default_type), [`default_cgi_type`](#default_cgi_type), [`autoindex`](#autoindex),
+[`sendfile`](#sendfile),[`error_page`](#error_page),[`access_log`](#access_log),[`error_log`](#error_log),[`cgi_timeout`](#cgi_timeout),[`add_header`](#add_header)
 
 ---
 
@@ -40,7 +41,7 @@ Global settings that apply to the entire HTTP server.
 Settings for a specific virtual host.
 
 **Allowed directives:**
-[`listen`](#listen), [`server_name`](#server_name), [`root`](#root), [`index`](#index), [`autoindex`](#autoindex), [`error_page`](#error_page), [`add_header`](#add_header), [`cgi_pass`](#cgi_pass), [`return`](#return)
+[`listen`](#listen), [`server_name`](#server_name), [`root`](#root), [`index`](#index), [`autoindex`](#autoindex), [`error_page`](#error_page), [`add_header`](#add_header), [`cgi_pass`](#cgi_pass), [`return`](#return),   [`sendfile`](#sendfile),[`add_header`](#add_header),[`auth_loc`](#auth_loc),[`access_log`](#access_log),[`error_log`](#error_log),[`cgi_timeout`](#cgi_timeout),[`client_max_body_size`](#client_max_body_size),[`cgi_pass`](#cgi_pass),[`default_type`](#default_type),[`default_cgi_type`](#default_cgi_type),[`keepalive_timeout`](#keepalive_timeout),[`client_header_timeout`](#client_header_timeout),[`client_body_timeout`](#client_body_timeout),[`allowed_methods`](#allowed_methods)
 
 ---
 
@@ -48,7 +49,8 @@ Settings for a specific virtual host.
 Settings for a specific URL path within a server block.
 
 **Allowed directives:**
-[`root`](#root), [`alias`](#alias), [`index`](#index), [`autoindex`](#autoindex), [`allowed_methods`](#allowed_methods), [`return`](#return)
+[`root`](#root), [`alias`](#alias), [`index`](#index), [`autoindex`](#autoindex), [`allowed_methods`](#allowed_methods), [`return`](#return),
+[`add_header`](#add_header), [`auth_required`](#auth_required), [`cgi_pass`](#cgi_pass), [`error_page`](#error_page), [`client_max_body_size`](#client_max_body_size), [`sendfile`](#sendfile)
 
 ---
 
