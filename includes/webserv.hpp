@@ -24,12 +24,9 @@
 
 #define POLL_TIMEOUT 500u
 
-
-// Cookie Duration in seconds
 #define COOKIE_EXPIRE_DURATION 36000u
 #define COOKIE_SESSION_MIN 600u
 
-// Usefuls Cookies defines
 #define COOKIE_FIELD_SEP "; "
 #define COOKIE_KEY_TOKEN "token"
 #define COOKIE_KEY_PATH "path"

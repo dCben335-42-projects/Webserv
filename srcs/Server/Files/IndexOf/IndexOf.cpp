@@ -5,6 +5,7 @@
 #include "HttpMethod.hpp"
 #include "File.hpp"
 #include "webserv.hpp"
+#include "FileManager.hpp"
 
 
 const std::string IndexOf::HEAD_TEMPLATE =
@@ -224,9 +225,14 @@ IndexOf::~IndexOf()
 IndexOf &IndexOf::scanDirectory()
 {
 	std::string path = m_path;
-	DIR		   *dir	 = opendir(path.c_str());
+	if (!FileManager::exists(path))
+		throw FileManager::FileDoesNotExistException(path);
+	if (!FileManager::hasRPerm(path))
+		throw FileManager::FilePermissionException(path);
+
+	DIR *dir = opendir(path.c_str());
 	if (!dir)
-		throw std::runtime_error("Failed to open directory: " + path);
+		throw FileManager::FileOpenException(path);
 
 	struct dirent *entry;
 	std::string	   fullPath;
@@ -240,8 +246,6 @@ IndexOf &IndexOf::scanDirectory()
 		m_files.push_back(File(entryName, m_path + "/" + entryName, m_location, ""));
 	}
 	closedir(dir);
-
-
 	return *this;
 }
 

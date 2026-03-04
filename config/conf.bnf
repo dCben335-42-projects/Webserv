@@ -1,4 +1,3 @@
-
 <head> ::= http 
 
 http                        ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
@@ -29,7 +28,6 @@ sendfile           			::= IDENT 'sendfile' 				TAB_SPACE   sendfile_content     
 listen             			::= IDENT 'listen' 					TAB_SPACE   ADDRESS ':' PORT                        SEMI LINE_JUMP
 server_name        			::= IDENT 'server_name' 			TAB_SPACE   WORD                                    SEMI LINE_JUMP
 index              			::= IDENT 'index'                   TAB_SPACE   { index_file_list }                     SEMI LINE_JUMP
-add_header         			::= IDENT 'add_header'              TAB_SPACE   WORD_NORMAL TAB_SPACE WORD              SEMI LINE_JUMP
 
 root               			::= IDENT 'root'                    TAB_SPACE   PATH                                    SEMI LINE_JUMP
 auth_loc           			::= IDENT 'auth_loc'                TAB_SPACE   PATH                                    SEMI LINE_JUMP
@@ -38,7 +36,9 @@ access_log           		::= IDENT 'access_log'              TAB_SPACE   PATH     
 error_log           		::= IDENT 'error_log'               TAB_SPACE   PATH                                    SEMI LINE_JUMP
 
 error_page         			::= IDENT 'error_page'              TAB_SPACE   error_code    TAB_SPACE PATH            SEMI LINE_JUMP
+add_header         			::= IDENT 'add_header'              TAB_SPACE   WORD_NORMAL TAB_SPACE WORD              SEMI LINE_JUMP
 cgi_pass           			::= IDENT 'cgi_pass'                TAB_SPACE   EXT           TAB_SPACE PATH            SEMI LINE_JUMP
+
 return             			::= IDENT 'return'                  TAB_SPACE   return_type                             SEMI LINE_JUMP
 
 allowed_methods    			::= IDENT 'allowed_methods'         { HTTP_METHOD_SPACED }                              SEMI LINE_JUMP

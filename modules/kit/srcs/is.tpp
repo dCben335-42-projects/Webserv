@@ -7,7 +7,6 @@
 
 // clang-format off
 
-// ANCHOR: GENERIC is_same (used by other type traits)
 template<typename A, typename B>
 struct is_same {
     static const bool value = false;
@@ -20,7 +19,6 @@ struct is_same<A, A> {
 
 
 
-// ANCHOR: String and Char type traits
 template<typename V>
 struct is_string {
     static const bool value = is_same<V, std::string>::value || is_same<V, const std::string>::value;
@@ -44,7 +42,6 @@ struct is_unsigned_char {
 
 
 
-// ANCHOR: Numeric type traits
 template<typename V>
 struct is_int {
     static const bool value = is_same<V, int>::value;
@@ -107,7 +104,6 @@ struct is_number {
 
 
 
-// ANCHOR: Container type traits
 template<typename V>
 struct is_vector {
     static const bool value = false;

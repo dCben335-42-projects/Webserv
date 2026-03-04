@@ -187,6 +187,7 @@ const Map<size_t, Vec<std::string> > &ARule::getRequiredInJsonMap() const
 {
 	return m_requiredInJson;
 }
+// clang-format on
 
 void ARule::addRequiredInJson(size_t index, const std::string &val)
 {

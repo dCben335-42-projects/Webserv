@@ -5,7 +5,6 @@
 #include <sstream>
 #include <cctype>
 
-// ROT13
 char rot13_char(char c)
 {
 	if (c >= 'a' && c <= 'z')
@@ -23,7 +22,6 @@ std::string rot13(const std::string &s)
 	return result;
 }
 
-// Decode URL-encoded string
 std::string url_decode(const std::string &str)
 {
 	std::string result;
@@ -46,7 +44,6 @@ std::string url_decode(const std::string &str)
 	return result;
 }
 
-// Parse form-urlencoded
 std::map<std::string, std::string> parseForm(const std::string &data)
 {
 	std::map<std::string, std::string> result;
@@ -74,11 +71,10 @@ int main()
 	std::cin.read(&postData[0], contentLength);
 
 	auto		form = parseForm(postData);
-	std::string text = form["text"]; // récupère seulement le champ text
+	std::string text = form["text"];
 
 	std::string transformed = rot13(text);
 
-	// Output CGI headers
 	std::cout << "Content-Type: text/plain\r\n\r\n";
 	std::cout << transformed;
 

@@ -364,11 +364,21 @@ void Client::serveFile(
 
 void Client::serveIndexOf(const std::string &ressourcePath, const std::string &target)
 {
-	IndexOf index(ressourcePath, target, m_req.getAllowedMethods());
-	index.scanDirectory().generate();
-	m_res.setBody(index.getPage());
-	m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-	m_res.setStatusCode(200);
+	try
+	{
+		IndexOf index(ressourcePath, target, m_req.getAllowedMethods());
+		index.scanDirectory().generate();
+		m_res.setBody(index.getPage());
+		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+		m_res.setStatusCode(200);
+	}
+	catch (const FileManager::FileException &e)
+	{
+		const std::string logStr = LOG_MSG_CLIENT_PREFIX + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + e.what();
+		if (Logger::openFile(m_errorLog))
+			Logger::custom(logStr);
+		throw e.getHttpException();
+	}
 }
 
 /**
