@@ -1,4 +1,4 @@
-<head> ::= http
+<head> ::= http 
 
 
 http              ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT

@@ -3,28 +3,28 @@
 #include <algorithm>
 #include "../ARulePathInfo/ARulePathInfo.hpp"
 #include "../BNFSignals/BNFSignals.hpp"
-#include "./Parser.hpp"
+#include "./Lexer.hpp"
 
 
 namespace bnf
 {
 /**
  *
- * @brief Constructs a Parser object with the given SemanticDescriptor.
+ * @brief Constructs a Lexer object with the given SemanticDescriptor.
  *
  * @param semantic The SemanticDescriptor that defines the grammar rules and concepts for parsing.
  *
  */
-Parser::Parser(const SemanticDescriptor &semantic) : m_semantic(semantic)
+Lexer::Lexer(const SemanticDescriptor &semantic) : m_semantic(semantic)
 {
 }
 
 /**
  *
- * @brief Destructor for the Parser class.
+ * @brief Destructor for the Lexer class.
  *
  */
-Parser::~Parser()
+Lexer::~Lexer()
 {
 }
 
@@ -37,7 +37,7 @@ Parser::~Parser()
  * @param mapPath The ARuleMap to which the path possibility will be added.
  *
  */
-void Parser::addPathPossibility(
+void Lexer::addPathPossibility(
 	ARulePath		  &completePath,
 	const ARule *const rule,
 	ARuleMap		  &mapPath)
@@ -63,7 +63,7 @@ void Parser::addPathPossibility(
  * @param element The ARulePaths vector to which the ARulePathInfo will be added if it doesn't already exist.
  * @param completePath The complete path of ARules for which the ARulePathInfo is being created.
  */
-void Parser::createPathInfo(
+void Lexer::createPathInfo(
 	ARulePaths		&element,
 	const ARulePath &completePath)
 {
@@ -80,7 +80,7 @@ void Parser::createPathInfo(
  * @param pathHash The hash of the ARulePath used for quick lookup.
  * @return A pointer to the created or existing ARulePathInfo object.
  */
-ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path, size_t pathHash)
+ARulePathInfo *Lexer::createARulePathInfo(const ARulePath &path, size_t pathHash)
 {
 	size_t n = m_arulePathInfoList.size();
 	for (size_t i = 0; i < n; ++i)
@@ -106,7 +106,7 @@ ARulePathInfo *Parser::createARulePathInfo(const ARulePath &path, size_t pathHas
  * @param mapPathNext The ARuleMap to which the sequence paths will be added.
  *
  */
-void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
+void Lexer::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
 {
 	int lastIndex = path.size() - 1;
 	for (int i = lastIndex; i >= 0; --i)
@@ -137,7 +137,7 @@ void Parser::addSequencePaths(const ARulePath &path, ARuleMap &mapPathNext)
  * @param mapPath The ARuleMap to which the paths will be added based on the terminal symbol.
  *
  */
-void Parser::processTerminalSymbol(
+void Lexer::processTerminalSymbol(
 	const ARule *rule,
 	ARulePath	&path,
 	ARuleMap	&mapPath)
@@ -162,7 +162,7 @@ void Parser::processTerminalSymbol(
  * @param mapPath The ARuleMap to which the terminal character paths will be added.
  *
  */
-void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
+void Lexer::getPathsTerminalChars(ARulePath &completePath, const std::string *conceptName, ARuleMap &mapPath)
 {
 	m_conceptPaths.push_back(conceptName);
 	const Vec<ConceptDef *>			  &defs			   = m_semantic.getConceptDefs(*conceptName);
@@ -201,7 +201,7 @@ void Parser::getPathsTerminalChars(ARulePath &completePath, const std::string *c
  * @param rule The ARule for which the next paths are being added.
  *
  */
-void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule)
+void Lexer::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext, const ARulePath &path, const ARule *const rule)
 {
 	addSequencePaths(path, mapPathNext);
 	ARulePath nextRule = rule->getNextRules(path);
@@ -226,7 +226,7 @@ void Parser::addNextPaths(const ARuleMap &mapPathCurrent, ARuleMap &mapPathNext,
  * @return true if the character is valid for the current path and rule, false otherwise.
  *
  */
-bool Parser::word(
+bool Lexer::word(
 	const char		   c,
 	const ARule *const rule,
 	ARulePathInfo	  *pathInfo,
@@ -273,7 +273,7 @@ bool Parser::word(
  * @param mapPathNext The ARuleMap to which the next paths will be added after processing the character.
  * @return true if the character is valid for at least one of the current paths and rules, false otherwise.
  */
-bool Parser::parseCurrentChar(
+bool Lexer::parseCurrentChar(
 	const char		c,
 	const ARuleMap &mapPathCurrent,
 	ARuleMap	   &mapPathNext)
@@ -311,7 +311,7 @@ bool Parser::parseCurrentChar(
  * @param rule The ARule to be checked.
  * @return true if the ARule is fully optional, false otherwise.
  */
-bool Parser::isFullyOptional(const ARule &rule)
+bool Lexer::isFullyOptional(const ARule &rule)
 {
 	std::map<const ARule *, bool>::iterator cacheIt = m_optionalCache.find(&rule);
 	if (cacheIt != m_optionalCache.end())
@@ -378,7 +378,7 @@ bool Parser::isFullyOptional(const ARule &rule)
  * @param path The ARulePath to be checked.
  * @return true if the ARulePath is fully optional until the end, false otherwise.
  */
-bool Parser::isFullyOptionalEnd(const ARulePath &path)
+bool Lexer::isFullyOptionalEnd(const ARulePath &path)
 {
 	ARulePath current = path;
 	while (!current.empty())
@@ -396,7 +396,7 @@ bool Parser::isFullyOptionalEnd(const ARulePath &path)
  * @param path The ARulePath to be checked.
  * @return true if the ARulePath is fully optional until the end, false otherwise.
  */
-bool Parser::isFullyOptionalEndAdvance(const ARulePath &path)
+bool Lexer::isFullyOptionalEndAdvance(const ARulePath &path)
 {
 	return isFullyOptionalEnd(path.back()->getNextRules(path));
 }
@@ -407,7 +407,7 @@ bool Parser::isFullyOptionalEndAdvance(const ARulePath &path)
  * @param c The current character being parsed from the input string.
  * @return true if the current ARuleMap can lead to a valid end state with the given character, false otherwise.
  */
-bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
+bool Lexer::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
 {
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)
 	{
@@ -429,7 +429,7 @@ bool Parser::verifyOptionalEnd(const ARuleMap &mapPathCurrent, const char c)
  * @brief Checks if the file can be considered valid when it is empty, based on the grammar rules defined in the SemanticDescriptor.
  * @return true if the file can be considered valid when empty, false otherwise.
  */
-bool Parser::isValidEmptyFile()
+bool Lexer::isValidEmptyFile()
 {
 	ARulePath				 startPath;
 	const Vec<ConceptDef *> &defs	   = m_semantic.getConceptDefs(CURSOR);
@@ -448,7 +448,7 @@ bool Parser::isValidEmptyFile()
  * @brief Parses the given string according to the grammar rules defined in the SemanticDescriptor.
  * @param stringToParsed The string to be parsed.
  */
-void Parser::parse(const std::string &stringToParsed)
+void Lexer::parse(const std::string &stringToParsed)
 {
 	if (stringToParsed.empty())
 	{
@@ -491,7 +491,7 @@ void Parser::parse(const std::string &stringToParsed)
 } // namespace bnf
 
 
-void Parser::throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const
+void Lexer::throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const
 {
 	std::string expectedChars;
 	for (ARuleMap::const_iterator it = mapPathCurrent.begin(); it != mapPathCurrent.end(); ++it)

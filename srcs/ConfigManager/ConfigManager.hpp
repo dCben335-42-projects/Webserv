@@ -8,7 +8,7 @@
 class ConfigManager
 {
 	private:
-		::Parser		   m_parser;
+		::Lexer			   m_parser;
 		const std::string &m_fileContent;
 		const std::string &m_bnfContent;
 

@@ -18,7 +18,7 @@ namespace bnf
 		OPTION
 	};
 
-	class Parser;
+	class Lexer;
 	class SemanticDescriptor;
 
 	static const std::string SEMI						 = ";";

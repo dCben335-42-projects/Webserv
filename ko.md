@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webserv Team</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;800&family=Syne:wght@400;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f0e;
+            --surface: #131614;
+            --surface2: #1a1d1b;
+            --border: #2a2f2c;
+            --green: #a8d5a2;
+            --green-bright: #d4f5ce;
+            --green-dim: #4a7a45;
+            --yellow: #fabd2f;
+            --blue: #83a598;
+            --text: #e8ede8;
+            --text-dim: #7a8c7a;
+            --text-muted: #3d4d3d;
+            --glow: rgba(168, 213, 162, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(168, 213, 162, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 213, 162, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.05) 2px, rgba(0, 0, 0, 0.05) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .ambient {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(168, 213, 162, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 70px 40px 50px;
+            text-align: center;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-size: 11px;
+            color: var(--green);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            animation: fadeSlideDown 0.6s ease forwards;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(168, 213, 162, 0.4)
+            }
+
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 4px rgba(168, 213, 162, 0)
+            }
+        }
+
+        .main-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -3px;
+            color: var(--green-bright);
+            animation: fadeSlideDown 0.6s 0.1s ease both;
+        }
+
+        .main-title span {
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        .subtitle {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            animation: fadeSlideDown 0.6s 0.2s ease both;
+        }
+
+        .subtitle .prompt {
+            color: var(--green-dim);
+            margin-right: 6px;
+        }
+
+        .cmd-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            animation: fadeSlideDown 0.6s 0.3s ease both;
+            flex-wrap: wrap;
+        }
+
+        .cmd-item {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .cmd-item span {
+            color: var(--green-dim);
+            margin-right: 4px;
+        }
+
+        .divider-h {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+        }
+
+        .team {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 20px auto 80px;
+            padding: 0 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2px;
+        }
+
+        .member {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+            animation: fadeSlideUp 0.6s ease both;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member:nth-child(1) {
+            animation-delay: 0.4s;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .member:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .member:nth-child(3) {
+            animation-delay: 0.6s;
+            border-radius: 0 12px 12px 0;
+        }
+
+        @media(max-width:720px) {
+            .member {
+                border-radius: 12px !important
+            }
+
+            .team {
+                gap: 12px
+            }
+        }
+
+        .member::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, var(--glow) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .member:hover {
+            border-color: var(--green-dim);
+            z-index: 2;
+        }
+
+        .member:hover::before {
+            opacity: 1;
+        }
+
+        .card-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 7px;
+        }
+
+        .tl {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .tl-red {
+            background: #ff5f57
+        }
+
+        .tl-yellow {
+            background: #febc2e
+        }
+
+        .tl-green {
+            background: #28c840
+        }
+
+        .card-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            padding: 28px 24px;
+        }
+
+        .member-identity {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            object-fit: cover;
+            display: block;
+            transition: border-color 0.3s;
+            background: var(--surface2);
+        }
+
+        .member:hover .avatar {
+            border-color: var(--green-dim);
+        }
+
+        .avatar-status {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28c840;
+            border: 2px solid var(--surface);
+        }
+
+        .member-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--green-bright);
+        }
+
+        .member-role {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 22px;
+            transition: all 0.25s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .github-link:hover {
+            color: var(--green);
+            border-color: var(--green-dim);
+            background: rgba(168, 213, 162, 0.05);
+        }
+
+        .github-link svg {
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
+        .github-link:hover svg {
+            opacity: 1;
+        }
+
+        .gh-arrow {
+            margin-left: auto;
+            font-size: 10px;
+            opacity: 0.4;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .github-link:hover .gh-arrow {
+            transform: translateX(3px);
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stats-grid img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: block;
+            transition: border-color 0.3s ease;
+            background: var(--surface2);
+        }
+
+        .member:hover .stats-grid img {
+            border-color: rgba(168, 213, 162, 0.2);
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--surface2);
+            margin-top: auto;
+        }
+
+        .tag {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 3px;
+            border: 1px solid;
+        }
+
+        .tag-cpp {
+            color: #83a598;
+            border-color: rgba(131, 165, 152, 0.3);
+            background: rgba(131, 165, 152, 0.07)
+        }
+
+        .tag-server {
+            color: var(--yellow);
+            border-color: rgba(250, 189, 47, 0.3);
+            background: rgba(250, 189, 47, 0.07)
+        }
+
+        .tag-42 {
+            color: #d3869b;
+            border-color: rgba(211, 134, 155, 0.3);
+            background: rgba(211, 134, 155, 0.07)
+        }
+
+        .card-num {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .footer-sep {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-16px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="scanlines"></div>
+    <div class="ambient"></div>
+    <header>
+        <div class="header-badge">
+            <div class="dot"></div>Webserv Project — Active
+        </div>
+        <h1 class="main-title">Our<br><span>Team</span></h1>
+        <div class="cmd-bar">
+            <div class="cmd-item"><span>//</span> Language: C++98</div>
+            <div class="divider-h"></div>
+            <div class="cmd-item"><span>//</span> Protocol: HTTP/1.1</div>
+            <div class="divider-h"></div>
+            <div class="cmd-item"><span>//</span> Ecole 42</div>
+        </div>
+    </header>
+    <section class="team">
+        <div class="member">
+            <div class="card-topbar">
+                <div class="traffic-lights">
+                    <div class="tl tl-red"></div>
+                    <div class="tl tl-yellow"></div>
+                    <div class="tl tl-green"></div>
+                </div><span class="card-label">member.profile</span>
+            </div>
+            <div class="card-body">
+                <div class="member-identity">
+                    <div class="avatar-wrap"><img class="avatar" src="https://github.com/AzallLab.png" alt="AzallLab">
+                        <div class="avatar-status"></div>
+                    </div>
+                    <div>
+                        <div class="member-name">AzallLab</div>
+                        <div class="member-role">// C++ Student · 42</div>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/AzallLab" target="_blank" rel="noopener"><svg width="15"
+                        height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>github.com/AzallLab<span class="gh-arrow">&#8594;</span></a>
+                <div class="stats-grid"><img
+                        src="https://github-readme-stats-rouge-three-59.vercel.app/api?username=AzallLab&show_icons=true&theme=gruvbox&hide_border=true&bg_color=131614&title_color=a8d5a2&icon_color=83a598&text_color=e8ede8"
+                        alt="stats"><img
+                        src="https://github-readme-stats-rouge-three-59.vercel.app/api/top-langs?username=AzallLab&theme=gruvbox&layout=compact&hide_border=true&bg_color=131614&title_color=a8d5a2&text_color=e8ede8"
+                        alt="langs"></div>
+            </div>
+            <div class="card-footer">
+                <div style="display:flex;gap:6px;"><span class="tag tag-cpp">C++</span><span
+                        class="tag tag-42">42</span></div><span class="card-num">#01</span>
+            </div>
+        </div>
+        <div class="member">
+            <div class="card-topbar">
+                <div class="traffic-lights">
+                    <div class="tl tl-red"></div>
+                    <div class="tl tl-yellow"></div>
+                    <div class="tl tl-green"></div>
+                </div><span class="card-label">member.profile</span>
+            </div>
+            <div class="card-body">
+                <div class="member-identity">
+                    <div class="avatar-wrap"><img class="avatar" src="https://github.com/dCben335.png" alt="dCben335">
+                        <div class="avatar-status"></div>
+                    </div>
+                    <div>
+                        <div class="member-name">dCben335</div>
+                        <div class="member-role">// C++ Student · 42</div>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/dCben335" target="_blank" rel="noopener"><svg width="15"
+                        height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>github.com/dCben335<span class="gh-arrow">&#8594;</span></a>
+                <div class="stats-grid"><img
+                        src="https://github-readme-stats-rouge-three-59.vercel.app/api?username=dCben335&show_icons=true&theme=gruvbox&hide_border=true&bg_color=131614&title_color=a8d5a2&icon_color=83a598&text_color=e8ede8"
+                        alt="stats"><img
+                        src="https://github-readme-stats-rouge-three-59.vercel.app/api/top-langs?username=dCben335&theme=gruvbox&layout=compact&hide_border=true&bg_color=131614&title_color=a8d5a2&text_color=e8ede8"
+                        alt="langs"></div>
+            </div>
+            <div class="card-footer">
+                <div style="display:flex;gap:6px;"><span class="tag tag-cpp">C++</span><span
+                        class="tag tag-server">HTTP</span></div><span class="card-num">#02</span>
+            </div>
+        </div>
+        <div class="member">
+            <div class="card-topbar">
+                <div class="traffic-lights">
+                    <div class="tl tl-red"></div>
+                    <div class="tl tl-yellow"></div>
+                    <div class="tl tl-green"></div>
+                </div><span class="card-label">member.profile</span>
+            </div>
+            <div class="card-body">
+                <div class="member-identity">
+                    <div class="avatar-wrap"><img class="avatar" src="https://github.com/Onhix973.png" alt="Onhix973">
+                        <div class="avatar-status"></div>
+                    </div>
+                    <div>
+                        <div class="member-name">Onhix973</div>
+                        <div class="member-role">// C++ Student · 42</div>
+                    </div>
+                </div>
+                <a class="github-link" href="https://github.com/Onhix973" target="_blank" rel="noopener"><svg width="15"
+                        height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>github.com/Onhix973<span class="gh-arrow">&#8594;</span></a>
+                <div class="stats-grid"><img
+                        src="https://github-readme-stats-rouge-three-59.vercel.app/api?username=Onhix973&show_icons=true&theme=gruvbox&hide_border=true&bg_color=131614&title_color=a8d5a2&icon_color=83a598&text_color=e8ede8"
+                        alt="stats"><img
+                        src="https://github-readme-stats-rouge-three-59.vercel.app/api/top-langs?username=Onhix973&theme=gruvbox&layout=compact&hide_border=true&bg_color=131614&title_color=a8d5a2&text_color=e8ede8"
+                        alt="langs"></div>
+            </div>
+            <div class="card-footer">
+                <div style="display:flex;gap:6px;"><span class="tag tag-cpp">C++</span><span
+                        class="tag tag-42">42</span></div><span class="card-num">#03</span>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-inner"><span class="footer-logo">WEBSERV</span><span class="footer-sep">·</span><span
+                class="footer-text">Custom HTTP/1.1 Server</span><span class="footer-sep">·</span><span
+                class="footer-text">C++98</span><span class="footer-sep">·</span><span class="footer-text">Ecole
+                42</span></div>
+    </footer>
+</body>
+
+</html>

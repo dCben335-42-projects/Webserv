@@ -14,13 +14,13 @@
 #include "../SemanticDescriptor/SemanticDescriptor.hpp"
 #include "../utils/utils.hpp"
 
-#include "../Exception/Parser/InvalidEntryException.hpp"
-#include "../Exception/Parser/FileNotFinishedException.hpp"
-#include "../Exception/Parser/CacheFullException.hpp"
+#include "../Exception/Lexer/InvalidEntryException.hpp"
+#include "../Exception/Lexer/FileNotFinishedException.hpp"
+#include "../Exception/Lexer/CacheFullException.hpp"
 
 namespace bnf
 {
-class Parser
+class Lexer
 {
 	private:
 		std::map<const ARule *, bool> m_optionalCache;
@@ -51,8 +51,8 @@ class Parser
 		void		   throwInvalidEntryException(const ARuleMap &mapPathCurrent, const char c, size_t i) const;
 
 	public:
-		Parser(const SemanticDescriptor &semantic);
-		~Parser();
+		Lexer(const SemanticDescriptor &semantic);
+		~Lexer();
 
 		void parse(const std::string &stringToParsed);
 };

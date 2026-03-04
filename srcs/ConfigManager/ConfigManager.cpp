@@ -55,7 +55,7 @@ void ConfigManager::lex()
 	bnf::SemanticDescriptor descriptorParser;
 	descriptorParser.parse(m_bnfContent);
 
-	bnf::Parser bnfParser(descriptorParser);
+	bnf::Lexer bnfParser(descriptorParser);
 	bnfParser.parse(m_fileContent);
 }
 
