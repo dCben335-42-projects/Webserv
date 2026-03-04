@@ -344,7 +344,7 @@ void Client::serveFile(
 	const std::string &target,
 	const bool		   matchAccept)
 {
-	File file(filePath, target);
+	File file(filePath, target, m_config->getDefaultMime());
 	if (file.getIsDirectory())
 	{
 		const size_t	  pos			   = String::rfindIC(filePath, target);
@@ -620,7 +620,7 @@ bool Client::serveCustomErrorPage(const int statusCode)
 		{
 			const std::string fileContent = FileManager::readFile(errorPagePath);
 			m_res.setBody(fileContent);
-			m_res.setHeader(HEADER_CONTENT_TYPE, FileManager::getMime(errorPagePath));
+			m_res.setHeader(HEADER_CONTENT_TYPE, FileManager::getMime(errorPagePath, m_config->getDefaultMime()));
 			return true;
 		}
 		catch (const FileManager::FileException &e)

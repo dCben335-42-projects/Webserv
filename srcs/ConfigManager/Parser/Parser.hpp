@@ -28,6 +28,8 @@
 #define PARSER_KEY_KEEPALIVE_TIMEOUT "keepalive_timeout"
 #define PARSER_KEY_HEADER_TIMEOUT "client_header_timeout"
 #define PARSER_KEY_CGI_TIMEOUT "cgi_timeout"
+#define PARSER_KEY_DEFAULT_TYPE "default_type"
+#define PARSER_KEY_DEFAULT_CGI_TYPE "default_cgi_type"
 
 #define PARSER_KEY_ACCESS_LOG "access_log"
 #define PARSER_KEY_ERROR_LOG "error_log"

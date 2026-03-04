@@ -9,16 +9,17 @@ class CgiOutput : public AHttpInboundMessage
 		std::string m_res;
 
 		bool parseFirstOutputLine(const size_t endOfLineIndex);
-		void completeOutput(bool keepAlive);
+		void completeOutput(bool keepAlive, const std::string &defaultMime);
 
 	public:
-		void			   parse(bool keepAlive);
-		void			   appendToCgiOutput(const char *rawStr, size_t size);
-		void			   build();
-		const std::string &getRes() const;
-
 		CgiOutput();
 		~CgiOutput();
+
+		void parse(bool keepAlive, const std::string &defaultMime);
+		void appendToCgiOutput(const char *rawStr, size_t size);
+		void build();
+
+		const std::string &getRes() const;
 };
 
 #endif

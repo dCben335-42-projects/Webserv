@@ -15,7 +15,9 @@ const Parser::Directive<Config> Parser::m_serverDirectives[] = {
 	{PARSER_KEY_ACCESS_LOG, &Config::setAccessLog, NULL, NULL, NULL},
 	{PARSER_KEY_ERROR_LOG, &Config::setErrorLog, NULL, NULL, NULL},
 	{PARSER_KEY_AUTH_LOCATION, &Config::setAuthLocation, NULL, NULL, NULL},
-	{PARSER_KEY_CGI_TIMEOUT, NULL, NULL, NULL, &Config::setCgiTimeout}};
+	{PARSER_KEY_CGI_TIMEOUT, NULL, NULL, NULL, &Config::setCgiTimeout},
+	{PARSER_KEY_DEFAULT_TYPE, &Config::setDefaultMime, NULL, NULL, NULL},
+	{PARSER_KEY_DEFAULT_CGI_TYPE, &Config::setDefaultCgiMime, NULL, NULL, NULL}};
 
 const Parser::Directive<Location> Parser::m_locationDirectives[] = {
 	{PARSER_KEY_ROOT, &Location::setRoot, NULL, NULL, NULL},

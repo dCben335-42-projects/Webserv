@@ -9,7 +9,8 @@
 File::File(
 	const std::string &name,
 	const std::string &ressourcePath,
-	const std::string &location)
+	const std::string &location,
+	const std::string &defaultMime)
 {
 	if (!FileManager::exists(ressourcePath))
 		throw FileManager::FileDoesNotExistException(ressourcePath);
@@ -28,19 +29,20 @@ File::File(
 	m_extension = FileManager::determineExtension(name, &m_extensionPos);
 	m_sizeHuman = Number::bytesToHumanSize(m_size);
 	m_icon		= FileManager::getIcon(*this);
-	m_mime		= FileManager::getMime(*this);
+	m_mime		= FileManager::getMime(*this, defaultMime);
 	m_isHidden	= (name[0] == '.');
 }
 
 File::File(
 	const std::string &ressourcePath,
-	const std::string &location)
+	const std::string &location,
+	const std::string &defaultMime)
 {
 	size_t		lastSlashPos = ressourcePath.rfind('/');
 	std::string name		 = (lastSlashPos != std::string::npos)
 								   ? ressourcePath.substr(lastSlashPos + 1)
 								   : ressourcePath;
-	*this					 = File(name, ressourcePath, location);
+	*this					 = File(name, ressourcePath, location, defaultMime);
 }
 
 File::~File()

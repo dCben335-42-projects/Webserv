@@ -121,6 +121,7 @@ void CgiPipe::onPollOut()
 void CgiPipe::onPollErr()
 {
 	m_client->onHttpException(Http500Exception());
+	m_client->buildResponse();
 	m_events = 0;
 	m_client->setEvents(POLLOUT);
 	m_connectionClosed = true;
@@ -132,6 +133,7 @@ void CgiPipe::onPollHangUp()
 	char	buffer[READ_CGI_BUFFER_SIZE] = {'\0'};
 	ssize_t bytesRead					 = read(m_fd, buffer, READ_CGI_BUFFER_SIZE - 1);
 
+	Logger::setTarget(Logger::Stdout).custom("HEEY " + Number::toString(bytesRead) + " bytes read from CGI pipe");
 	// TODO Logger::openClient(m_accessLog).custom(LOG_MSG_PIPE_CLOSED);
 	if (bytesRead > 0)
 	{
@@ -143,12 +145,15 @@ void CgiPipe::onPollHangUp()
 		if (bytesRead < 0)
 			throw Http500Exception();
 		waitChild();
-		m_cgiOutput.parse(m_client->getRequest().getConnectionKeepAlive());
+
+		const std::string  defaultMime = m_client->getConfig().getDefaultCgiMime();
+		const HttpRequest &req		   = m_client->getRequest();
+		const bool		   keepAlive   = req.getConnectionKeepAlive();
+		m_cgiOutput.parse(keepAlive, defaultMime);
 		m_cgiOutput.build();
 
-		const HttpRequest &req		  = m_client->getRequest();
-		HttpResponse	  &res		  = m_client->getResponse();
-		unsigned int	   statusCode = m_cgiOutput.getStatusCode();
+		HttpResponse &res		 = m_client->getResponse();
+		unsigned int  statusCode = m_cgiOutput.getStatusCode();
 
 		res.setStatusCode(statusCode);
 		res.setFullResponse(m_cgiOutput.getRes());

@@ -36,6 +36,9 @@ class Config
 		std::string m_accessLog;
 		std::string m_errorLog;
 
+		std::string m_defaultMime;
+		std::string m_defaultCgiMime;
+
 	public:
 		Config();
 		Config(const Config &other);
@@ -75,6 +78,12 @@ class Config
 
 		void			   setErrorLog(const std::string &errorLog);
 		const std::string &getErrorLog() const;
+
+		void			   setDefaultMime(const std::string &defaultType);
+		const std::string &getDefaultMime() const;
+
+		void			   setDefaultCgiMime(const std::string &defaultCgiType);
+		const std::string &getDefaultCgiMime() const;
 
 		bool					hasIndexes(const std::string &locationPath) const;
 		const Vec<std::string> &getIndexFiles(const std::string &locationPath) const;

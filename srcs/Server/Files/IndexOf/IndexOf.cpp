@@ -237,7 +237,7 @@ IndexOf &IndexOf::scanDirectory()
 		entryName = entry->d_name;
 		if (entryName == "." || entryName == "..")
 			continue;
-		m_files.push_back(File(entryName, m_path + "/" + entryName, m_location));
+		m_files.push_back(File(entryName, m_path + "/" + entryName, m_location, ""));
 	}
 	closedir(dir);
 

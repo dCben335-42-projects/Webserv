@@ -1,10 +1,8 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-#include "constants.hpp"
-
 #define FLAG_LOCATION_ADD_UP 1
-#define FLAG_LOG_CONF 0
+#define FLAG_LOG_CONF 1
 
 #define BNF_FILE_PATH "config/conf.bnf"
 #define DEFAULT_CONFIG_PATH "config/default.conf"
@@ -25,27 +23,7 @@
 #define READ_CGI_BUFFER_SIZE 8192u
 #define WRITE_CGI_BUFFER_SIZE 8192u
 
-#define FALLBACK_MAX_BODY_SIZE (10 * MB)
-#define FALLBACK_MAX_HEADERS_SIZE (8 * KB)
-
-#define FALLBACK_INDEX "index.html"
-
-#define FALLBACK_CGI_TIMEOUT 15l
-#define FALLBACK_KEEP_ALIVE_TIMEOUT 50l
-#define FALLBACK_HEADER_TIMEOUT 5l
-#define FALLBACK_BODY_TIMEOUT 10l
-
-#define FALLBACK_ACCESS_LOG "files/logs/access.log"
-#define FALLBACK_ERROR_LOG "files/logs/error.log"
-
 #define POLL_TIMEOUT 500u
-
-#define MIN_KEEP_ALIVE_TIMEOUT 10l
-#define MIN_HEADER_TIMEOUT 5l
-#define MIN_BODY_TIMEOUT 5l
-#define MIN_CGI_TIMEOUT 5l
-#define MIN_CGI_DIFF_TIMEOUT 5l
-
 
 
 // Cookie Duration in seconds

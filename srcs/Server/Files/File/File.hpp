@@ -35,10 +35,12 @@ class File
 		File(
 			const std::string &name,
 			const std::string &ressourcePath,
-			const std::string &location);
+			const std::string &location,
+			const std::string &defaultMime);
 		File(
 			const std::string &ressourcePath,
-			const std::string &location);
+			const std::string &location,
+			const std::string &defaultMime);
 		~File();
 
 		const std::string &getName() const;

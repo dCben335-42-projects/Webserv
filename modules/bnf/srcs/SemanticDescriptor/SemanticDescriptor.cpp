@@ -116,7 +116,6 @@ void SemanticDescriptor::splitBlocks(std::istringstream &iss)
 		{
 			if (isOnlyWhitespace(cblock, prevStartDef))
 			{
-				Logger::log("Block: " + cblock);
 				throw ConceptHasNotDefinitionException();
 			}
 			m_blocks.push_back(cblock);
@@ -148,7 +147,6 @@ bool SemanticDescriptor::findSeparator(const std::string &block, size_t &pos)
 		pos += ORRULE.length();
 		return false;
 	}
-	Logger::log("Block: " + block);
 	throw ConceptHasNotDefinitionException();
 }
 
@@ -379,7 +377,6 @@ void SemanticDescriptor::parseRule(const std::string &m_content, size_t cursor)
 			{
 				if (!validate_string_strict(word))
 				{
-					Logger::log("Error: Invalid concept name: " + word + " at index " + Logger::get(i) + " in rule: " + m_content.substr(cursor));
 					delete arule;
 					throw InvalidConceptNameException(word);
 				}
@@ -642,7 +639,7 @@ const Vec<ConceptDef *> &SemanticDescriptor::getConceptDefs(const std::string &c
  */
 std::ostream &operator<<(std::ostream &os, const SemanticDescriptor &data)
 {
-	Logger::log(data.getConcepts());
+	os << Logger::get(data.getConcepts());
 	return (os);
 }
 

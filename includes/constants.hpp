@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include "httpMimes.hpp"
+
 #define KB 1024
 #define MB (1024 * KB)
 #define GB (1024 * MB)
@@ -19,5 +21,28 @@
 
 
 #define MAX_PORT_NUMBER 65535
+
+
+#define FALLBACK_MAX_BODY_SIZE (10 * MB)
+#define FALLBACK_MAX_HEADERS_SIZE (8 * KB)
+
+#define FALLBACK_INDEX "index.html"
+
+#define FALLBACK_CGI_TIMEOUT 15l
+#define FALLBACK_KEEP_ALIVE_TIMEOUT 50l
+#define FALLBACK_HEADER_TIMEOUT 5l
+#define FALLBACK_BODY_TIMEOUT 10l
+#define FALLBACK_DEFAULT_TYPE MIME_OCTET
+#define FALLBACK_DEFAULT_CGI_TYPE MIME_HTML
+
+#define FALLBACK_ACCESS_LOG "files/logs/access.log"
+#define FALLBACK_ERROR_LOG "files/logs/error.log"
+
+
+#define MIN_KEEP_ALIVE_TIMEOUT 10l
+#define MIN_HEADER_TIMEOUT 5l
+#define MIN_BODY_TIMEOUT 5l
+#define MIN_CGI_TIMEOUT 5l
+#define MIN_CGI_DIFF_TIMEOUT 5l
 
 #endif

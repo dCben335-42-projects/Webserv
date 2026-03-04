@@ -1,4 +1,5 @@
 #include "AuthToken.hpp"
+#include "constants.hpp"
 #include "webserv.hpp"
 #include "Number.hpp"
 

@@ -23,15 +23,14 @@ const std::string &CgiOutput::getRes() const
 {
 	return m_res;
 }
-#include "Logger.hpp"
-void CgiOutput::parse(bool keepAlive)
+void CgiOutput::parse(bool keepAlive, const std::string &defaultMime)
 {
 	size_t headerEndPos = m_rawStr.find(HEADER_ENDING);
 	if (headerEndPos == std::string::npos)
 	{
 		m_statusCode = (m_rawStr.size() == 0 ? 204 : 200);
 		m_body		 = m_rawStr;
-		completeOutput(keepAlive);
+		completeOutput(keepAlive, defaultMime);
 		return;
 	}
 	m_body				  = m_rawStr.substr(headerEndPos + HEADER_ENDING_SIZE);
@@ -49,7 +48,7 @@ void CgiOutput::parse(bool keepAlive)
 	catch (std::invalid_argument &e)
 	{
 	}
-	completeOutput(keepAlive);
+	completeOutput(keepAlive, defaultMime);
 }
 
 void CgiOutput::appendToCgiOutput(const char *rawStr, size_t size)
@@ -71,10 +70,10 @@ bool CgiOutput::parseFirstOutputLine(const size_t endOfLineIndex)
 	return true;
 }
 
-void CgiOutput::completeOutput(bool keepAlive)
+void CgiOutput::completeOutput(bool keepAlive, const std::string &defaultMime)
 {
 	if (!hasHeader(HEADER_CONTENT_TYPE))
-		setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+		setHeader(HEADER_CONTENT_TYPE, defaultMime);
 	if (!hasHeader(HEADER_CONTENT_LENGTH))
 		setHeader(HEADER_CONTENT_LENGTH, Number::toString(m_body.size()));
 	setHeader(HEADER_CONNECTION, keepAlive ? HEADER_CONNECTION_KEEP_ALIVE : HEADER_CONNECTION_CLOSE);

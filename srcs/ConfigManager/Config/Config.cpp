@@ -1,6 +1,6 @@
 #include "Config.hpp"
 #include "Location.hpp"
-#include "webserv.hpp"
+#include "constants.hpp"
 
 Config::Config()
 {
@@ -10,6 +10,8 @@ Config::Config()
 	m_accessLog		   = FALLBACK_ACCESS_LOG;
 	m_errorLog		   = FALLBACK_ERROR_LOG;
 	m_cgiTimeout	   = FALLBACK_CGI_TIMEOUT;
+	m_defaultMime	   = FALLBACK_DEFAULT_TYPE;
+	m_defaultCgiMime   = FALLBACK_DEFAULT_CGI_TYPE;
 }
 
 Config::Config(const Config &other)
@@ -25,8 +27,10 @@ Config::Config(const Config &other)
 	m_bodyTimeout	   = other.m_bodyTimeout;
 	m_cgiTimeout	   = other.m_cgiTimeout;
 
-	m_accessLog = other.m_accessLog;
-	m_errorLog	= other.m_errorLog;
+	m_accessLog		 = other.m_accessLog;
+	m_errorLog		 = other.m_errorLog;
+	m_defaultMime	 = other.m_defaultMime;
+	m_defaultCgiMime = other.m_defaultCgiMime;
 }
 
 
@@ -259,6 +263,54 @@ void Config::setErrorLog(const std::string &errorLog)
 	m_errorLog = errorLog;
 }
 
+
+/**
+ *
+ * @brief Sets the default MIME type for the virtual server.
+ *
+ * @param defaultType The default MIME type to be set.
+ *
+ */
+void Config::setDefaultMime(const std::string &defaultType)
+{
+	m_defaultMime = defaultType;
+}
+
+/**
+ *
+ * @brief Gets the default MIME type for the virtual server.
+ *
+ * @return The default MIME type as a constant reference to a string.
+ *
+ */
+const std::string &Config::getDefaultMime() const
+{
+	return m_defaultMime;
+}
+
+/**
+ *
+ * @brief Sets the default CGI MIME type for the virtual server.
+ *
+ * @param defaultCgiType The default CGI MIME type to be set.
+ *
+ */
+void Config::setDefaultCgiMime(const std::string &defaultCgiType)
+{
+	m_defaultCgiMime = defaultCgiType;
+}
+
+/**
+ *
+ * @brief Gets the default CGI MIME type for the virtual server.
+ *
+ * @return The default CGI MIME type as a constant reference to a string.
+ *
+ */
+const std::string &Config::getDefaultCgiMime() const
+{
+	return m_defaultCgiMime;
+}
 
 /**
  *
