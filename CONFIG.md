@@ -10,6 +10,8 @@ The default configuration file is `default.conf`. To override default settings, 
 
 A configuration file is organized into **blocks**, each enclosed in `{ }`. Blocks contain **directives** — key-value pairs that control server behavior.
 
+Blocks follow a strict nesting hierarchy: `http` is the top-level block, `server` blocks are defined inside it, and `location` blocks are defined inside `server` blocks.
+
 ```
 http {
     # Global HTTP settings
@@ -29,28 +31,69 @@ http {
 ## Blocks
 
 ### `http`
-Global settings that apply to the entire HTTP server.
+The top-level block. Contains global settings that apply to the entire HTTP server, as well as all `server` blocks.
 
 **Allowed directives:**
-[`keepalive_timeout`](#keepalive_timeout), [`client_body_timeout`](#client_body_timeout), [`client_header_timeout`](#client_header_timeout), [`client_max_body_size`](#client_max_body_size), [`default_type`](#default_type), [`default_cgi_type`](#default_cgi_type), [`autoindex`](#autoindex),
-[`sendfile`](#sendfile),[`error_page`](#error_page),[`access_log`](#access_log),[`error_log`](#error_log),[`cgi_timeout`](#cgi_timeout),[`add_header`](#add_header)
+[`keepalive_timeout`](#keepalive_timeout),
+[`client_body_timeout`](#client_body_timeout),
+[`client_header_timeout`](#client_header_timeout),
+[`client_max_body_size`](#client_max_body_size),
+[`default_type`](#default_type),
+[`default_cgi_type`](#default_cgi_type),
+[`autoindex`](#autoindex),
+[`sendfile`](#sendfile),
+[`error_page`](#error_page),
+[`add_header`](#add_header),
+[`access_log`](#access_log),
+[`error_log`](#error_log),
+[`cgi_timeout`](#cgi_timeout)
 
 ---
 
 ### `server`
-Settings for a specific virtual host.
+Defined inside the `http` block. Contains settings for a specific virtual host, as well as all `location` blocks that belong to it. Multiple `server` blocks can coexist inside `http` to handle different hostnames or ports.
 
 **Allowed directives:**
-[`listen`](#listen), [`server_name`](#server_name), [`root`](#root), [`index`](#index), [`autoindex`](#autoindex), [`error_page`](#error_page), [`add_header`](#add_header), [`cgi_pass`](#cgi_pass), [`return`](#return),   [`sendfile`](#sendfile),[`add_header`](#add_header),[`auth_loc`](#auth_loc),[`access_log`](#access_log),[`error_log`](#error_log),[`cgi_timeout`](#cgi_timeout),[`client_max_body_size`](#client_max_body_size),[`cgi_pass`](#cgi_pass),[`default_type`](#default_type),[`default_cgi_type`](#default_cgi_type),[`keepalive_timeout`](#keepalive_timeout),[`client_header_timeout`](#client_header_timeout),[`client_body_timeout`](#client_body_timeout),[`allowed_methods`](#allowed_methods)
+[`listen`](#listen),
+[`server_name`](#server_name),
+[`root`](#root),
+[`index`](#index),
+[`autoindex`](#autoindex),
+[`allowed_methods`](#allowed_methods),
+[`sendfile`](#sendfile),
+[`return`](#return),
+[`add_header`](#add_header),
+[`error_page`](#error_page),
+[`cgi_pass`](#cgi_pass),
+[`default_type`](#default_type),
+[`default_cgi_type`](#default_cgi_type),
+[`keepalive_timeout`](#keepalive_timeout),
+[`client_body_timeout`](#client_body_timeout),
+[`client_header_timeout`](#client_header_timeout),
+[`client_max_body_size`](#client_max_body_size),
+[`cgi_timeout`](#cgi_timeout),
+[`auth_loc`](#auth_loc),
+[`access_log`](#access_log),
+[`error_log`](#error_log)
 
 ---
 
 ### `location`
-Settings for a specific URL path within a server block.
+Defined inside a `server` block. Matches a URL path prefix and overrides or extends the parent server's settings for requests to that path. Multiple `location` blocks can be defined within a single `server` block to handle different routes.
 
 **Allowed directives:**
-[`root`](#root), [`alias`](#alias), [`index`](#index), [`autoindex`](#autoindex), [`allowed_methods`](#allowed_methods), [`return`](#return),
-[`add_header`](#add_header), [`auth_required`](#auth_required), [`cgi_pass`](#cgi_pass), [`error_page`](#error_page), [`client_max_body_size`](#client_max_body_size), [`sendfile`](#sendfile)
+[`root`](#root),
+[`alias`](#alias),
+[`index`](#index),
+[`autoindex`](#autoindex),
+[`allowed_methods`](#allowed_methods),
+[`sendfile`](#sendfile),
+[`return`](#return),
+[`add_header`](#add_header),
+[`error_page`](#error_page),
+[`cgi_pass`](#cgi_pass),
+[`client_max_body_size`](#client_max_body_size),
+[`auth_required`](#auth_required)
 
 ---
 
@@ -70,7 +113,7 @@ listen 0.0.0.0:8080;
 #### `server_name`
 One or more hostnames used to match incoming HTTP requests to this server block.
 ```
-server_name <name> [<name> ...];
+server_name <n> [<n> ...];
 ```
 ```nginx
 server_name example.com www.example.com;
@@ -115,8 +158,8 @@ If a filename starts with `/`, it is treated as an absolute path relative to the
 index <filename> [<filename> ...];
 ```
 ```nginx
-index index.html index.htm;   # tries index.html first, then index.htm
-index /fallback.html;         # resolved against server root
+index index.html index.htm;        # tries index.html first, then index.htm
+index /fallback.html;              # resolved against server root
 index index.html /fallback.html;
 ```
 
@@ -209,7 +252,8 @@ default_cgi_type text/html;
 
 ### Timeouts
 
-All timeout values must be integers between **1 and 999** (in seconds).
+All timeout values must be integers between **1 and 999** (in seconds). 
+Specific timeouts apply different minimum values.
 
 #### `keepalive_timeout`
 How long to keep an idle connection open for reuse between requests.
@@ -240,7 +284,7 @@ cgi_timeout <seconds>;
 ### Request Limits
 
 #### `client_max_body_size`
-Maximum allowed size of the client request body. Accepts a byte count or a number with a unit suffix.
+Maximum allowed size of the client request body. Accepts a byte count or a number with a unit suffix (e.g., `K`, `M`, `G`).
 ```
 client_max_body_size <size>;
 ```
@@ -294,28 +338,28 @@ error_log /var/log/webserver/error.log;
 
 ## Quick Reference
 
-| Directive | Block(s) | Repeatable |
-|---|---|---|
-| [`listen`](#listen) | `server` | No |
-| [`server_name`](#server_name) | `server` | No |
-| [`root`](#root) | `server`, `location` | No |
-| [`alias`](#alias) | `location` | No |
-| [`index`](#index) | `server`, `location` | No |
-| [`autoindex`](#autoindex) | `server`, `location` | No |
-| [`allowed_methods`](#allowed_methods) | `location` | No |
-| [`return`](#return) | `server`, `location` | No |
-| [`sendfile`](#sendfile) | `http` | No |
-| [`add_header`](#add_header) | `server` | **Yes** |
-| [`cgi_pass`](#cgi_pass) | `server` | **Yes** |
-| [`error_page`](#error_page) | `server` | **Yes** |
-| [`default_type`](#default_type) | `http` | No |
-| [`default_cgi_type`](#default_cgi_type) | `http` | No |
-| [`keepalive_timeout`](#keepalive_timeout) | `http` | No |
-| [`client_body_timeout`](#client_body_timeout) | `http` | No |
-| [`client_header_timeout`](#client_header_timeout) | `http` | No |
-| [`cgi_timeout`](#cgi_timeout) | `http` | No |
-| [`client_max_body_size`](#client_max_body_size) | `http` | No |
-| [`auth_loc`](#auth_loc) | `server`, `location` | No |
-| [`auth_required`](#auth_required) | `server`, `location` | No |
-| [`access_log`](#access_log) | `http`, `server` | No |
-| [`error_log`](#error_log) | `http`, `server` | No |
+| Directive                                         | `http` | `server` | `location` | Repeatable |
+| ------------------------------------------------- | :----: | :------: | :--------: | :--------: |
+| [`listen`](#listen)                               |        |    ✓     |            |     No     |
+| [`server_name`](#server_name)                     |        |    ✓     |            |     No     |
+| [`root`](#root)                                   |        |    ✓     |     ✓      |     No     |
+| [`alias`](#alias)                                 |        |          |     ✓      |     No     |
+| [`index`](#index)                                 |        |    ✓     |     ✓      |     No     |
+| [`autoindex`](#autoindex)                         |   ✓    |    ✓     |     ✓      |     No     |
+| [`allowed_methods`](#allowed_methods)             |        |    ✓     |     ✓      |     No     |
+| [`sendfile`](#sendfile)                           |   ✓    |    ✓     |     ✓      |     No     |
+| [`return`](#return)                               |        |    ✓     |     ✓      |     No     |
+| [`add_header`](#add_header)                       |   ✓    |    ✓     |     ✓      |  **Yes**   |
+| [`error_page`](#error_page)                       |   ✓    |    ✓     |     ✓      |  **Yes**   |
+| [`cgi_pass`](#cgi_pass)                           |        |    ✓     |     ✓      |  **Yes**   |
+| [`default_type`](#default_type)                   |   ✓    |    ✓     |            |     No     |
+| [`default_cgi_type`](#default_cgi_type)           |   ✓    |    ✓     |            |     No     |
+| [`keepalive_timeout`](#keepalive_timeout)         |   ✓    |    ✓     |            |     No     |
+| [`client_body_timeout`](#client_body_timeout)     |   ✓    |    ✓     |            |     No     |
+| [`client_header_timeout`](#client_header_timeout) |   ✓    |    ✓     |            |     No     |
+| [`cgi_timeout`](#cgi_timeout)                     |   ✓    |    ✓     |            |     No     |
+| [`client_max_body_size`](#client_max_body_size)   |   ✓    |    ✓     |     ✓      |     No     |
+| [`auth_loc`](#auth_loc)                           |        |    ✓     |            |     No     |
+| [`auth_required`](#auth_required)                 |        |          |     ✓      |     No     |
+| [`access_log`](#access_log)                       |   ✓    |    ✓     |            |     No     |
+| [`error_log`](#error_log)                         |   ✓    |    ✓     |            |     No     |
