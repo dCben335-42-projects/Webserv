@@ -1,13 +1,14 @@
 <head> ::= http 
 
 http                        ::= 'http' SPACE BRACE_IN LINE_JUMP http_directives BRACE_OUT
-http_directives             ::= { default_type | default_cgi_type | keepalive_timeout | client_header_timeout | client_body_timeout | client_max_body_size | autoindex | sendfile | error_page | server | IDENT_DIRECTIVE | access_log | error_log | cgi_timeout }
+http_directives             ::= { default_type | default_cgi_type | keepalive_timeout | client_header_timeout | client_body_timeout | client_max_body_size | autoindex | sendfile | error_page | server | IDENT_DIRECTIVE | access_log | error_log | cgi_timeout | add_header}
 
 server                      ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_directives IDENT BRACE_OUT LINE_JUMP
-server_directives           ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc | IDENT_DIRECTIVE | autoindex | error_page | access_log | error_log | cgi_timeout | client_max_body_size | cgi_pass}
+server_directives           ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc | IDENT_DIRECTIVE | autoindex | error_page | access_log | error_log | cgi_timeout | client_max_body_size | cgi_pass | default_type | default_cgi_type 
+                                | keepalive_timeout | client_header_timeout | client_body_timeout | return | allowed_methods}
 
 location           	        ::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [LINE_JUMP]
-location_directives         ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | autoindex | error_page | client_max_body_size}
+location_directives         ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | error_page | client_max_body_size | sendfile}
 
 
 
@@ -26,7 +27,7 @@ auth_required      			::= IDENT 'auth_required'           TAB_SPACE   BOOL      
 
 sendfile           			::= IDENT 'sendfile' 				TAB_SPACE   sendfile_content                        SEMI LINE_JUMP
 listen             			::= IDENT 'listen' 					TAB_SPACE   ADDRESS ':' PORT                        SEMI LINE_JUMP
-server_name        			::= IDENT 'server_name' 			TAB_SPACE   WORD                                    SEMI LINE_JUMP
+server_name        			::= IDENT 'server_name' 			{ SERVER_NAME_SPACED }                              SEMI LINE_JUMP
 index              			::= IDENT 'index'                   TAB_SPACE   { index_file_list }                     SEMI LINE_JUMP
 
 root               			::= IDENT 'root'                    TAB_SPACE   PATH                                    SEMI LINE_JUMP
@@ -43,15 +44,13 @@ return             			::= IDENT 'return'                  TAB_SPACE   return_typ
 
 allowed_methods    			::= IDENT 'allowed_methods'         { HTTP_METHOD_SPACED }                              SEMI LINE_JUMP
 
-IDENT_DIRECTIVE              ::= IDENT [ LINE_JUMP ]
-
-
-
-
+IDENT_DIRECTIVE             ::= IDENT [ LINE_JUMP ]
 
 index_file_list		        ::= PATH [ SPACE ]
 
 HTTP_METHOD_SPACED          ::= TAB_SPACE HTTP_METHOD
+
+SERVER_NAME_SPACED          ::= TAB_SPACE WORD
 
 HTTP_METHOD                 ::= ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
 
@@ -171,9 +170,10 @@ BRACE_OUT          ::= '}'
 SEMI               ::= ';'
 
 PATH				::= [ '/' ] { SEGMENT }
-					|= PROTOCOL ':' SLASH SLASH { SEGMENT }
 					|= '/'
                     |= DQUOTE [ '/' ] { SEGMENT_QUOTED } DQUOTE
+
+PROTOCOL_PATH       ::= PROTOCOL ':' SLASH SLASH { SEGMENT }
 
 ABSOLUTE_PATH       ::= '/' { SEGMENT }
                     |= '/'
@@ -205,7 +205,7 @@ BACKSLASH			::= '\\'
 SLASH				::= '/'
 
 WS					::= ( '\t' | '\n' | '\r' | ' ' )
-EXT                	::= DOT { LETTER }
+EXT                	::= DOT ( 'sh' | 'py' | 'php' | 'c' | 'cpp' | 'cgi' | 'out' )
 DOT                	::= '.'
 default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'application/json' | 'application/javascript' |
 						'application/vnd.ms-fontobject' | 'application/pdf' | 'application/xml' | 'application/zip' | 'application/gzip' | 'application/x-tar' |
@@ -220,8 +220,8 @@ default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' |
 
 WORD                ::= WORD_QUOTED
                     |= WORD_NORMAL
-WORD_NORMAL         ::= { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE_ESC | '-' | '_' | '=' | BACKSLASH }
-WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | '-' | '_' | '=' | WS | BACKSLASH | SEMI } DQUOTE
+WORD_NORMAL         ::= { LETTER | DIGIT | DOT | '-' | '_' | '=' | BACKSLASH }
+WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | SQUOTE_ESC | '-' | '_' | '=' | WS | BACKSLASH | SEMI } DQUOTE
 
 
 return_type					::= ( return_bad_request | return_unauthorized | return_forbidden | return_not_found | return_method_not_allowed
@@ -265,14 +265,14 @@ return_bad_gateway					::= '502' TAB_SPACE WORD_QUOTED
 return_service_unavailable			::= '503' TAB_SPACE WORD_QUOTED
 									|= '503'
 
-return_permanent					::= '301' TAB_SPACE PATH
+return_permanent					::= '301' TAB_SPACE ( PATH | PROTOCOL_PATH )
 
-return_temporary					::= '302' TAB_SPACE PATH
+return_temporary					::= '302' TAB_SPACE ( PATH | PROTOCOL_PATH )
 
-return_strict_http_method			::= '308' TAB_SPACE PATH
+return_strict_http_method			::= '308' TAB_SPACE ( PATH | PROTOCOL_PATH )
 
 return_ok							::= '200' TAB_SPACE WORD_QUOTED
-									|= '200'
+									|= '200' ''
 
 return_created						::= '201' TAB_SPACE WORD_QUOTED
 									|= '201'
@@ -318,8 +318,5 @@ response_code                       ::= '200'
 uri                                 ::= PATH
                                     |= WORD_QUOTED
 
-
 NUMBER             ::= { DIGIT }
 BOOL               ::= ( 'on' | 'off' )
-
-
