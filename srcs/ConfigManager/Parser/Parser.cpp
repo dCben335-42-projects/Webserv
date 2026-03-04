@@ -282,19 +282,18 @@ void Lexer::resolveListen(ServerNode &server)
 	if (!server.hasDirective(PARSER_KEY_LISTEN))
 		return;
 
-	const std::string	&listen	 = server.getDirective(PARSER_KEY_LISTEN).at(0);
-	const size_t		 pos	 = listen.rfind(':');
-	const std::string	 ip		 = listen.substr(0, pos);
-	const std::string	 port	 = listen.substr(pos + 1);
-	const unsigned short portNum = Number::toUShort(port);
+	const std::string &listen  = server.getDirective(PARSER_KEY_LISTEN).at(0);
+	const size_t	   pos	   = listen.rfind(':');
+	const std::string  ip	   = listen.substr(0, pos);
+	const std::string  port	   = listen.substr(pos + 1);
+	const size_t	   portNum = Number::toSizeT(port);
 
 	if (portNum == 0 || portNum > MAX_PORT_NUMBER)
 	{
-
 		Logger::custom(ERROR_MSG_CONFIG_INVALID_PORT + Logger::get(port));
 		return;
 	}
-	server.setSocketAddress(SocketAddress(ip, portNum));
+	server.setSocketAddress(SocketAddress(ip, static_cast<unsigned short>(portNum)));
 }
 
 

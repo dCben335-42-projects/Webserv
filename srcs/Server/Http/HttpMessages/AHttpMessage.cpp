@@ -42,6 +42,7 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 	map[502] = HTTP_502_MSG;
 	map[503] = HTTP_503_MSG;
 	map[504] = HTTP_504_MSG;
+	map[505] = HTTP_505_MSG;
 	return (map);
 }
 
@@ -51,7 +52,15 @@ Vec<unsigned short> AHttpMessage::initCloseStatus()
 
 	vec.push(400);
 	vec.push(408);
+	vec.push(411);
 	vec.push(413);
+	vec.push(414);
+	vec.push(431);
+	vec.push(500);
+	vec.push(501);
+	vec.push(502);
+	vec.push(503);
+	vec.push(505);
 	return (vec);
 }
 

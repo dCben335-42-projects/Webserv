@@ -172,10 +172,10 @@ autoindex on | off;
 #### `sendfile`
 Uses the `sendfile()` syscall to send static files directly from disk to the network, bypassing user space for better performance. Optionally restrict to a specific file path.
 ```
-sendfile on [<path>] | off;
+sendfile on <path> | off;
 ```
 ```nginx
-sendfile on;
+sendfile off;
 sendfile on /var/www/html/large-file.bin;
 ```
 

@@ -7,15 +7,11 @@ Map<HttpMethod::Type, std::string> HttpMethod::initMethodMap()
 {
 	Map<Type, std::string> methodMap;
 
-	methodMap[GET]	   = M_GET;
-	methodMap[POST]	   = M_POST;
-	methodMap[DELETE]  = M_DELETE;
-	methodMap[PUT]	   = M_PUT;
-	methodMap[PATCH]   = M_PATCH;
-	methodMap[HEAD]	   = M_HEAD;
-	methodMap[OPTIONS] = M_OPTIONS;
-	methodMap[TRACE]   = M_TRACE;
-	methodMap[CONNECT] = M_CONNECT;
+	methodMap[GET]	  = M_GET;
+	methodMap[POST]	  = M_POST;
+	methodMap[DELETE] = M_DELETE;
+	methodMap[PUT]	  = M_PUT;
+	methodMap[PATCH]  = M_PATCH;
 	return methodMap;
 }
 

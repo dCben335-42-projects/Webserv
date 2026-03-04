@@ -372,6 +372,7 @@ HttpRequest &HttpRequest::parseActiveLocations(const Config &config)
  *
  * @throws std::invalid_argument if the request line is malformed or contains an unsupported HTTP version.
  * @throws Http501Exception if the HTTP method is not supported.
+ * @throws Http505Exception if the HTTP version is not supported.
  *
  */
 size_t HttpRequest::parseFirstLine(const size_t lineEnd)
@@ -395,7 +396,7 @@ size_t HttpRequest::parseFirstLine(const size_t lineEnd)
 	{
 		const size_t prevVersionPos = requestLine.find(PREV_PROTOCOL, targetEnd + 1);
 		if (prevVersionPos == std::string::npos)
-			throw std::invalid_argument(REQ_UNSUPPORTED_METHOD_MSG + requestLine.substr(targetEnd + 1));
+			throw Http505Exception(requestLine.substr(targetEnd + 1));
 	}
 	return lineEnd;
 }
