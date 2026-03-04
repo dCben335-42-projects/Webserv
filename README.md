@@ -13,7 +13,7 @@ It can handle an optional config file as an CLI argument, if no argument is prov
 
 If the config file is valid, the webserv will launch and you will be able to access it with the ip:port set up in the config file.
 
-Additionally, an error and access log file will be created, the server will fill them with useful information during the process.
+Additionally, an error and access log file will be created if the folder exists already, otherwise stdout and stderr will be used, the server will then fill those files with useful information and errors during the process.
 
 Note: This webserv handles some features of the HTTP 1.1 protocol.
 
