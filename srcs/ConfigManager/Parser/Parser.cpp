@@ -122,6 +122,7 @@ Vec<std::string> Lexer::extractTokens(const std::string &line)
 				current += c;
 				continue;
 			}
+			saveToken(tokens, current, inQuotes);
 			inQuotes = !inQuotes;
 			continue;
 		}

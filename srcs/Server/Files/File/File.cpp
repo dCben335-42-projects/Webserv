@@ -5,6 +5,7 @@
 #include "FileManager.hpp"
 #include "unistd.h"
 #include "sys/stat.h"
+#include "Logger.hpp"
 
 File::File(
 	const std::string &name,

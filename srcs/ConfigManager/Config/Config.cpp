@@ -443,6 +443,8 @@ std::ostream &operator<<(std::ostream &os, const Config &config)
 	os << Logger::indent() << "bodyTimeout=" << config.getBodyTimeout() << "\n";
 	os << Logger::indent() << "accessLog=" << LoggerJson::get(config.getAccessLog()) << "\n";
 	os << Logger::indent() << "errorLog=" << LoggerJson::get(config.getErrorLog()) << "\n";
+	os << Logger::indent() << "defaultMime=" << LoggerJson::get(config.getDefaultMime()) << "\n";
+	os << Logger::indent() << "defaultCgiMime=" << LoggerJson::get(config.getDefaultCgiMime()) << "\n";
 	os << Logger::indent() << "defaultLocation=" << LoggerJson::get(config.getDefaultLocation()) << "\n";
 	if (locations.size() > 0)
 		os << Logger::indent() << "Locations=" << LoggerJson::get(locations) << "\n";

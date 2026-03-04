@@ -96,10 +96,6 @@ Map<std::string> FileManager::initMimes()
 	mimes[FILE_EXT_EOT]	  = MIME_EOT;
 
 	mimes["/"] = MIME_OCTET;
-	mimes[""]  = MIME_OCTET;
-
-
-
 	return mimes;
 }
 
