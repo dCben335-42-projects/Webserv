@@ -405,6 +405,7 @@ size_t HttpRequest::parseFirstLine(const size_t lineEnd)
  *
  * @param headers The raw HTTP header string.
  *
+ * @throws Http411Exception if the Content-Length header is missing.
  * @throws Http400Exception if the Content-Length header is malformed.
  *
  * @return The value of the Content-Length header, or 0 if not present or invalid.
@@ -417,7 +418,7 @@ size_t HttpRequest::readContentLength(const std::string &headers) const
 	const size_t len   = headers.size();
 	size_t		 clPos = String::findIC(headers, toFind);
 	if (clPos == std::string::npos)
-		throw Http400Exception(REQ_MISSING_CONTENT_LENGTH_MSG);
+		throw Http411Exception(REQ_MISSING_CONTENT_LENGTH_MSG);
 	clPos += std::strlen(toFind);
 	if (headers[clPos] != ':')
 		throw Http400Exception(REQ_EXPECTED_HEADER_COLON_MSG);
@@ -799,6 +800,8 @@ bool HttpRequest::isCompleteHeader()
  * @brief Checks if the HTTP request body is complete based on the Content-Length header.
  *
  * @throws Http413Exception if the Content-Length exceeds the specified maximum body size.
+ * @throws Http411Exception if the Content-Length header is missing.
+ * @throws Http400Exception if the Content-Length header is malformed.
  *
  * @return true if the request body is complete, false otherwise.
  *

@@ -11,6 +11,10 @@
 #define LOG_MSG_CONFIG_PREFIX "Config - "
 #define WARNING_MSG_CONFIG_PREFIX LOG_MSG_CONFIG_PREFIX "Warning - "
 #define ERROR_MSG_CONFIG_PREFIX LOG_MSG_CONFIG_PREFIX "Error - "
+
+#define DEFAULT_CONFIG_MSG WARNING_MSG_CONFIG_PREFIX "No configuration file specified. Using default: "
+#define LOG_MSG_SIGNAL_CAUGHT_BEFORE_INIT "Signal caught before initialization. Exiting."
+
 #define LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_START WARNING_MSG_CONFIG_PREFIX "Duplicate directive: "
 #define LOG_MSG_CONFIG_DUPLICATE_DIRECTIVE_END " at line "
 #define ERROR_MSG_CONFIG_INVALID_PORT LOG_MSG_CONFIG_PREFIX "Invalid port number in listen directive: "
@@ -57,5 +61,6 @@
 #define ERROR_MSG_ACCEPT_FAILED LOG_MSG_SERVER_PREFIX "Accept failed on the client fd"
 #define LOG_MSG_SERVER_DISCONNECTED LOG_MSG_SERVER_PREFIX "Closed"
 #define LOG_MSG_SERVER_IGNORED LOG_MSG_SERVER_PREFIX "Ignoring"
+
 
 #endif

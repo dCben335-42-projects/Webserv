@@ -190,7 +190,7 @@ void CgiSpawner::exitChild(bool needFdClose)
 		EventLoop::destroy();
 	}
 	(*this).~CgiSpawner();
-	exit(1);
+	std::exit(1);
 }
 
 

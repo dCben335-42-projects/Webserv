@@ -32,6 +32,7 @@ Map<unsigned short, std::string> AHttpMessage::initStatusReasonMap()
 	map[408] = HTTP_408_MSG;
 	map[409] = HTTP_409_MSG;
 	map[410] = HTTP_410_MSG;
+	map[411] = HTTP_411_MSG;
 	map[413] = HTTP_413_MSG;
 	map[418] = HTTP_418_MSG;
 	map[429] = HTTP_429_MSG;

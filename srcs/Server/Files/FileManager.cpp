@@ -384,6 +384,7 @@ std::string FileManager::readFile(const std::string &path)
 
 	if (file.fail() && !file.eof())
 		throw FileManager::FileReadException(path);
+	file.close();
 	return content.str();
 }
 

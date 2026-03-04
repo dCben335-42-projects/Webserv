@@ -32,4 +32,5 @@ SRC_FILES += Server/Pollable/CgiPipe/CgiPipe.cpp
 SRC_FILES += Server/Pollable/Client/Client.cpp
 SRC_FILES += Server/Pollable/Pollable.cpp
 SRC_FILES += Server/Pollable/VitualServer/VirtualServer.cpp
+SRC_FILES += Signals/EarlySignal/EarlySignal.cpp
 SRC_FILES += Signals/Signals.cpp

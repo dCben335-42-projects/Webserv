@@ -29,9 +29,8 @@ void SemanticDescriptor::parse(const std::string &fileContent)
 	}
 	catch (const SemanticException &e)
 	{
-		std::cout << e;
 		clear();
-		throw std::runtime_error("semantic descriptor is not valid");
+		throw std::runtime_error(std::string("Semantic descriptor - ") + e.what());
 	}
 }
 
@@ -47,6 +46,7 @@ SemanticDescriptor::~SemanticDescriptor()
 
 /**
  * @brief Gets the ARuleMap representing the starting paths of the semantic descriptor.
+ *
  * @return The ARuleMap containing the starting paths.
  */
 void SemanticDescriptor::clear()

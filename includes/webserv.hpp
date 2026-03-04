@@ -6,7 +6,6 @@
 
 #define BNF_FILE_PATH "config/conf.bnf"
 #define DEFAULT_CONFIG_PATH "config/default.conf"
-#define DEFAULT_CONFIG_MSG "No configuration file specified. Using default: " DEFAULT_CONFIG_PATH
 
 #define SERVER_NAME "i_am_the_one_who_ports"
 #define SERVER_VERSION "1.1"

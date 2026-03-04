@@ -4,9 +4,11 @@
 #include "Logger.hpp"
 #include "EventLoop.hpp"
 #include "webserv.hpp"
-#include <csignal>
 #include "Signals.hpp"
+#include "EarlySignal.hpp"
 #include "log.hpp"
+
+static EarlySignal g_earlySignal;
 
 /**
  *
@@ -34,35 +36,66 @@ bool getFiles(std::string &bnf, std::string &config, const std::string &configPa
 }
 
 
+/**
+ *
+ * @brief Parses the configuration using the provided ConfigManager instance.
+ *
+ * @param configManager A reference to a ConfigManager instance that
+ * has been initialized with the BNF and configuration file contents.
+ *
+ * @return true if the configuration was parsed successfully,
+ * false if an error occurred during parsing.
+ *
+ */
+bool parseConfig(ConfigManager &configManager)
+{
+	try
+	{
+		configManager.lex();
+		configManager.parse();
+	}
+	catch (const std::exception &e)
+	{
+		Logger::custom(ERROR_MSG_CONFIG_PREFIX + std::string(e.what()));
+		return false;
+	}
+	return true;
+}
+
+
 int main(int argc, char *argv[])
 {
-	signal(SIGINT, SIG_IGN);
 	Logger::setCustomPrefix("[ " SERVER_FULL_NAME " ] ").setFormat(Logger::Json);
+	if (g_earlySignal.getCaught())
+	{
+		Logger::custom(LOG_MSG_SIGNAL_CAUGHT_BEFORE_INIT);
+		return 1;
+	}
 	if (argc < 2)
-		Logger::info(DEFAULT_CONFIG_MSG);
+		Logger::custom(DEFAULT_CONFIG_MSG DEFAULT_CONFIG_PATH);
 	{
 		const std::string &configPath = argc >= 2 ? argv[1] : DEFAULT_CONFIG_PATH;
 		std::string		   bnf;
 		std::string		   config;
 		if (!getFiles(bnf, config, configPath))
 			return 1;
-		ConfigManager configManager(bnf, config);
-		try
+
+		if (g_earlySignal.getCaught())
 		{
-			configManager.lex();
-			configManager.parse();
-		}
-		catch (const std::exception &e)
-		{
-			Logger::custom(ERROR_MSG_CONFIG_PREFIX + std::string(e.what()));
+			Logger::custom(LOG_MSG_SIGNAL_CAUGHT_BEFORE_INIT);
 			return 1;
 		}
+
+		ConfigManager configManager(bnf, config);
+		if (!parseConfig(configManager))
+			return 1;
+
 		const VServersConfigs &serversConfigs = configManager.getServersConfigs();
 		const Config		  &httpConfig	  = configManager.getHttpConfig();
 		if (FLAG_LOG_CONF)
 		{
-			Logger::log("serversConfigs: " + Logger::get(serversConfigs));
-			Logger::error("httpConfig: " + Logger::get(httpConfig));
+			Logger::custom("serversConfigs: " + Logger::get(serversConfigs));
+			Logger::custom("httpConfig: " + Logger::get(httpConfig));
 		}
 		EventLoop::init(httpConfig, serversConfigs);
 	}
