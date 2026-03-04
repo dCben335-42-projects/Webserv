@@ -10,6 +10,8 @@ This document describes the structure and rules of the custom BNF grammar used f
 
 - `<head>` is the **single and mandatory entry point** of the grammar.
 
+- It must appear on the first line
+
 - No other concept can reference `<head>`.
 
 - All parsing begins exclusively with this concept.
@@ -44,14 +46,21 @@ The grammar is based on four fundamental structures for validating tokens.
 
 Let A and B be two concepts.
 
-| Syntax | Type | Functioning |
-| :--- | :--- | :--- |
-| `A` | **Symbol** | Appel simple d'une règle définie ailleurs. |
-| `[ A \| B ]` | **Option** | 0 ou 1 élément parmi la liste fournie. |
-| `{ A \| B }` | **Sequence** | Répétition de 1 à N fois (itération linéaire). |
-| `( A \| B )` | **Group** | Sélectionne exactement 1 élément parmi les choix. |
+| Syntax       | Type         | Functioning                                       |
+| :----------- | :----------- | :------------------------------------------------ |
+| `A`          | **Symbol**   | Appel simple d'une règle définie ailleurs.        |
+| `[ A \| B ]` | **Option**   | 0 ou 1 élément parmi la liste fournie.            |
+| `{ A \| B }` | **Sequence** | Répétition de 1 à N fois (itération linéaire).    |
+| `( A \| B )` | **Group**    | Sélectionne exactement 1 élément parmi les choix. |
 
-*The symbol | represents a logical OR. (It is not mandatory but recommended)*
+
+
+> [!Note]
+> *The symbol | represents a logical OR. (It is not mandatory but recommended)*
+
+> [!Warning]
+> Typping  | `A | B` | without any enclosure, create two  **Symbol**
+
 
 ## 3. Terminal Character
 
