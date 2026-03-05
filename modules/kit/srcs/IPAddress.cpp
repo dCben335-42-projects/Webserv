@@ -42,9 +42,16 @@ bool IPAddress::extractPort(
 	const std::string &ip,
 	unsigned short	  &port,
 	size_t			  &startPos,
-	bool			  &invalidPort)
+	bool			  &invalidPort,
+	ssize_t			   closeBracketPos)
 {
+	if (ip.empty())
+		return false;
+
 	const size_t pos = ip.rfind(':');
+
+	if (closeBracketPos != -1 && pos != std::string::npos && pos < static_cast<size_t>(closeBracketPos))
+		return false;
 	if (pos == std::string::npos || (pos > 0 && ip[pos - 1] == ':'))
 		return false;
 	const std::string portStr = ip.substr(pos + 1);
@@ -244,9 +251,7 @@ uint32_t IPAddress::convertIPv4(const std::string &ip)
 			shift -= 8;
 		}
 		else
-		{
 			value = value * 10 + (ip[i] - '0');
-		}
 	}
 
 	return htonl(addr);

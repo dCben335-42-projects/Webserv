@@ -578,11 +578,23 @@ const Config *Client::findHostConfig(const std::string &host) const
 	else
 		hostWithoutProtocol = host;
 
+	if (hostWithoutProtocol.empty())
+		return &m_server.getConfigs().at(0);
+
+
 	bool		   invalidPort = false;
 	unsigned short port;
 	size_t		   portPos;
+	ssize_t		   closeBracketPos = -1;
 
-	bool hasPort = IPAddress::extractPort(hostWithoutProtocol, port, portPos, invalidPort);
+	if (hostWithoutProtocol.at(0) == '[')
+	{
+		const size_t closingBracketPos = hostWithoutProtocol.find(']');
+		if (closingBracketPos == std::string::npos)
+			throw Http400Exception(INVALID_IPV6_HOST_HEADER);
+		closeBracketPos = closingBracketPos;
+	}
+	const bool hasPort = IPAddress::extractPort(hostWithoutProtocol, port, portPos, invalidPort, closeBracketPos);
 	if (invalidPort)
 		throw Http400Exception(INVALID_PORT_HOST_HEADER);
 

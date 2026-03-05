@@ -13,7 +13,7 @@ bool validateStringStrict(const std::string &s)
 		return true;
 
 	for (size_t i = 0; i < len; ++i)
-		if (!std::isalpha(s[i]) && s[i] != '_')
+		if (!std::isalpha(static_cast<unsigned char>(s[i])) && s[i] != '_')
 			return false;
 
 	return true;
@@ -25,7 +25,7 @@ bool isOnlyWhitespace(const std::string &str, size_t start)
 		return false;
 	for (std::string::const_iterator it = str.begin() + start; it != str.end(); ++it)
 	{
-		if (!isspace(static_cast<unsigned char>(*it)))
+		if (!std::isspace(static_cast<unsigned char>(*it)))
 		{
 			return false;
 		}

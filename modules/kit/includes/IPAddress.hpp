@@ -27,11 +27,14 @@ class IPAddress
 
 	public:
 		static bool isHostname(const std::string &ip);
+
 		static bool extractPort(
 			const std::string &ip,
 			unsigned short	  &port,
 			size_t			  &startPos,
-			bool			  &invalidPort);
+			bool			  &invalidPort,
+			ssize_t			   closeBracketPos);
+
 		static bool isIPv6(const std::string &ip);
 
 		static struct in6_addr convertIPv6(const std::string &ip);
