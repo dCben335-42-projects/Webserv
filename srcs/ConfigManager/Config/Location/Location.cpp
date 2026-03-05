@@ -465,7 +465,8 @@ void Location::setUpload(const Vec<std::string> &upload)
  */
 void Location::setMaxBodySize(const std::string &maxBodySize)
 {
-	if (maxBodySize.size() > 0 && !Number::isNumber(maxBodySize.substr(0, maxBodySize.size() - 1)))
+	const std::string &sizeNoUint = std::isalpha(maxBodySize.at(maxBodySize.size() - 1)) ? maxBodySize.substr(0, maxBodySize.size() - 1) : maxBodySize;
+	if (!Number::isNumber(sizeNoUint))
 		return;
 	m_maxBodySize.first	 = true;
 	m_maxBodySize.second = Number::toBytes(maxBodySize);
