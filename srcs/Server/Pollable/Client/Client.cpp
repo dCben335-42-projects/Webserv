@@ -198,13 +198,14 @@ void Client::setEvents(const short events)
 
 bool Client::hasPostAuth()
 {
-	const std::string &target	   = m_req.getTarget();
-	const std::string  authloc	   = String::removeDuplicateSlashes(m_config->getAuthLocation() + "/");
-	const std::string  registerLoc = authloc + AUTH_REGISTER_LOC;
+	const std::string &target		 = m_req.getTarget();
+	const std::string  configAuthLoc = m_config->getAuthLocation();
+	const std::string  authloc		 = String::removeDuplicateSlashes(configAuthLoc + "/");
+	const std::string  registerLoc	 = authloc + AUTH_REGISTER_LOC;
 
 	if (target == registerLoc)
 	{
-		HttpAuth auth(authloc);
+		HttpAuth auth(configAuthLoc);
 		auth.parse(m_req.getBody(), HttpAuth::REGISTER);
 		const Map<std::string> &urlEncoded = auth.getUrlEncoded();
 		m_res.setBody(REGISTER_SUCCESS_MSG);
@@ -215,11 +216,11 @@ bool Client::hasPostAuth()
 	const std::string loginLoc = authloc + AUTH_LOGIN_LOC;
 	if (target == loginLoc)
 	{
-		HttpAuth auth(authloc);
+		HttpAuth auth(configAuthLoc);
 		auth.parse(m_req.getBody(), HttpAuth::LOGIN);
 		const Map<std::string> &urlEncoded = auth.getUrlEncoded();
 		m_res.setBody(LOGIN_SUCCESS_MSG);
-		m_res.setHeader(HEADER_SET_COOKIE, m_server.findUser(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY), authloc));
+		m_res.setHeader(HEADER_SET_COOKIE, m_server.findUser(urlEncoded.get(AUTH_LOGIN_NAME_KEY), urlEncoded.get(AUTH_LOGIN_PSWD_KEY), configAuthLoc));
 		m_res.setStatusCode(200);
 		return true;
 	}
@@ -240,7 +241,7 @@ bool Client::hasPostAuth()
 void Client::handlePost(const std::string &ressourcePath)
 {
 	(void) ressourcePath;
-	if (hasPostAuth())
+	if (m_config->hasAuthLocation() && hasPostAuth())
 		return;
 	FileUpload file(m_req);
 	if (!m_req.hasUpload())
@@ -449,16 +450,19 @@ void Client::handleGet(const std::string &ressourcePath)
 {
 	bool			  isIndexFile = false;
 	const std::string target	  = m_req.getTarget();
-	const std::string authLoc	  = m_config->getAuthLocation();
 
-	if (target == authLoc)
+	if (m_config->hasAuthLocation())
 	{
-		HttpAuth auth(authLoc);
-		auth.generatePage();
-		m_res.setBody(auth.getPage());
-		m_res.setStatusCode(200);
-		m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
-		return;
+		const std::string authLoc = m_config->getAuthLocation();
+		if (target == authLoc)
+		{
+			HttpAuth auth(authLoc);
+			auth.generatePage();
+			m_res.setBody(auth.getPage());
+			m_res.setStatusCode(200);
+			m_res.setHeader(HEADER_CONTENT_TYPE, MIME_HTML);
+			return;
+		}
 	}
 	try
 	{
@@ -715,7 +719,7 @@ bool Client::determineKeepAlive(unsigned short statusCode)
 	bool requestKeepAlive	 = m_req.getConnectionKeepAlive();
 	bool responseCloseStatus = m_res.isCloseStatus(statusCode);
 
-	m_shouldClose			 = !requestKeepAlive || responseCloseStatus;
+	m_shouldClose = !requestKeepAlive || responseCloseStatus;
 	return !m_shouldClose;
 }
 
@@ -819,7 +823,7 @@ void Client::buildResponse()
  */
 void Client::onPollOut()
 {
-	m_time	 = std::time(0);
+	m_time = std::time(0);
 	try
 	{
 		if (m_res.sendOnce(m_fd))
@@ -954,7 +958,7 @@ void Client::onTimeOut()
 	Logger::setTarget(Logger::Stderr).custom(logStr);
 	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)
 	{
-		m_time	 = std::time(0);
+		m_time = std::time(0);
 		m_res.reset();
 		m_res.setStatusCode(408);
 		if (!serveCustomErrorPage(408))

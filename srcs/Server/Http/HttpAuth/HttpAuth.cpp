@@ -211,9 +211,10 @@ HttpAuth::~HttpAuth()
  */
 void HttpAuth::generatePage()
 {
-	m_page = m_templatePage;
-
-	String::replaceAll(m_page, AUTH_TEMPLATE_AUTHLOC, m_authLoc);
+	m_page							   = m_templatePage;
+	size_t			  pos			   = m_authLoc.size() - 1;
+	const std::string authWithoutSlash = m_authLoc.at(pos) == '/' ? m_authLoc.substr(0, pos) : m_authLoc;
+	String::replaceAll(m_page, AUTH_TEMPLATE_AUTHLOC, authWithoutSlash);
 }
 
 const std::string &HttpAuth::getPage() const
