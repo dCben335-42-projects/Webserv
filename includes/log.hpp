@@ -21,6 +21,7 @@
 #define ERROR_MSG_NO_LISTEN_DIRECTIVE ERROR_MSG_CONFIG_PREFIX "Server without listen directive found. This server will be ignored: "
 #define ERROR_MSG_INVALID_LISTEN_DIRECTIVE ERROR_MSG_CONFIG_PREFIX "Invalid listen directive found for server: "
 #define ERROR_MSG_DUPLICATE_LISTEN_DIRECTIVE ERROR_MSG_CONFIG_PREFIX "Duplicate listen directive found for "
+#define ERROR_MSG_MAX_BODY_SIZE_NOT_NUMBER ERROR_MSG_CONFIG_PREFIX "Invalid max body size value: "
 #define ERROR_MSG_SERVER_IGNORED ". This server will be ignored: "
 
 #define LOG_MSG_UNKNOWN_DIRECTIVE "Unknown directive \'"

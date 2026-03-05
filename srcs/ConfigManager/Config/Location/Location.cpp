@@ -1,5 +1,7 @@
 #include "Location.hpp"
 #include "Number.hpp"
+#include "log.hpp"
+#include "Logger.hpp"
 
 
 Location::Location()
@@ -465,9 +467,13 @@ void Location::setUpload(const Vec<std::string> &upload)
  */
 void Location::setMaxBodySize(const std::string &maxBodySize)
 {
-	const std::string &sizeNoUint = std::isalpha(maxBodySize.at(maxBodySize.size() - 1)) ? maxBodySize.substr(0, maxBodySize.size() - 1) : maxBodySize;
+	const size_t	   lastPos	  = maxBodySize.size() - 1;
+	const std::string &sizeNoUint = std::isalpha(maxBodySize.at(lastPos)) ? maxBodySize.substr(0, lastPos) : maxBodySize;
 	if (!Number::isNumber(sizeNoUint))
+	{
+		Logger::custom(ERROR_MSG_MAX_BODY_SIZE_NOT_NUMBER + Logger::get(maxBodySize) + ". This max body size will be ignored.");
 		return;
+	}
 	m_maxBodySize.first	 = true;
 	m_maxBodySize.second = Number::toBytes(maxBodySize);
 }
