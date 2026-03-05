@@ -2,7 +2,7 @@
 #define WEBSERV_HPP
 
 #define FLAG_LOCATION_ADD_UP 1
-#define FLAG_LOG_CONF 0
+#define FLAG_LOG_CONF 1
 
 #define BNF_FILE_PATH "config/conf.bnf"
 #define DEFAULT_CONFIG_PATH "config/default.conf"

@@ -307,7 +307,6 @@ void Lexer::resolveListen(ServerNode &server)
 	catch (std::runtime_error &e)
 	{
 		Logger::custom(ERROR_MSG_CONFIG_PREFIX + std::string(e.what()));
-
 	}
 }
 

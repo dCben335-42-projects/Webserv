@@ -105,6 +105,7 @@ SocketAddress SocketAddress::any(const bool ipv6, const unsigned short port)
 {
 	SocketAddress addr;
 
+	addr.m_isIPv6 = ipv6;
 	if (ipv6)
 	{
 		struct in6_addr anyAddr = IN6ADDR_ANY_INIT;
