@@ -37,12 +37,7 @@ webserv
 
 # Executables
 *.exe
-*.out
 *.app
 
 # debug information files
 *.dwo
-
-*.log
-
-uploads/
