@@ -714,7 +714,8 @@ bool Client::determineKeepAlive(unsigned short statusCode)
 {
 	bool requestKeepAlive	 = m_req.getConnectionKeepAlive();
 	bool responseCloseStatus = m_res.isCloseStatus(statusCode);
-	m_shouldClose			 = !requestKeepAlive && !responseCloseStatus;
+
+	m_shouldClose			 = !requestKeepAlive || responseCloseStatus;
 	return !m_shouldClose;
 }
 
@@ -770,6 +771,7 @@ bool Client::hasReceivedCompleteRequest()
  */
 void Client::onPollIn()
 {
+	Logger::setTarget(Logger::Stderr).error("m_count : " + Logger::get(m_count));
 	const ssize_t bytesRead = m_req.readOnce(m_fd);
 
 	if (bytesRead == -1)
@@ -799,7 +801,6 @@ void Client::buildResponse()
 	const Vec<Location> &activeLocation = m_req.getActiveLocations();
 	m_res.fill(!m_req.getConnectionKeepAlive(), m_config->getKeepAliveTimeout(), activeLocation).build();
 	determineKeepAlive(m_res.getStatusCode());
-
 	const std::string logStr = LOG_MSG_REPONSE_READY LOG_GLOBAL_SEPARATOR + m_req.getMethod().getStrType() + LOG_GLOBAL_SEPARATOR + m_req.getTarget() + LOG_GLOBAL_SEPARATOR + PROTOCOL + LOG_GLOBAL_SEPARATOR + Number::toString(m_res.getStatusCode());
 	if (Logger::openFile(m_accessLog))
 		Logger::custom(logStr);
@@ -819,6 +820,7 @@ void Client::buildResponse()
  */
 void Client::onPollOut()
 {
+	m_time	 = std::time(0);
 	try
 	{
 		if (m_res.sendOnce(m_fd))
@@ -827,6 +829,7 @@ void Client::onPollOut()
 			if (Logger::openFile(m_accessLog))
 				Logger::custom(logStr);
 			Logger::setTarget(Logger::Stdout).custom(logStr);
+			Logger::setTarget(Logger::Stdout).info("m_shouldClose :" + Logger::get(m_shouldClose));
 			if (m_shouldClose)
 			{
 				m_connectionClosed = true;
@@ -849,7 +852,6 @@ void Client::onPollOut()
 		m_connectionClosed = true;
 		return;
 	}
-	m_time	 = std::time(0);
 	m_events = POLLOUT;
 }
 
@@ -954,6 +956,7 @@ void Client::onTimeOut()
 	Logger::setTarget(Logger::Stderr).custom(logStr);
 	if (m_timeoutState == HEADER_TIMEOUT || m_timeoutState == BODY_TIMEOUT)
 	{
+		m_time	 = std::time(0);
 		m_res.reset();
 		m_res.setStatusCode(408);
 		if (!serveCustomErrorPage(408))
