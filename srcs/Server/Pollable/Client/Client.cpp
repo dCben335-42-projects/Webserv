@@ -771,7 +771,6 @@ bool Client::hasReceivedCompleteRequest()
  */
 void Client::onPollIn()
 {
-	Logger::setTarget(Logger::Stderr).error("m_count : " + Logger::get(m_count));
 	const ssize_t bytesRead = m_req.readOnce(m_fd);
 
 	if (bytesRead == -1)
@@ -829,7 +828,6 @@ void Client::onPollOut()
 			if (Logger::openFile(m_accessLog))
 				Logger::custom(logStr);
 			Logger::setTarget(Logger::Stdout).custom(logStr);
-			Logger::setTarget(Logger::Stdout).info("m_shouldClose :" + Logger::get(m_shouldClose));
 			if (m_shouldClose)
 			{
 				m_connectionClosed = true;

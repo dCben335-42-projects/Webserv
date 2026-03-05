@@ -91,8 +91,6 @@ void Lexer::saveToken(Vec<std::string> &tokens, std::string &token, const bool i
 	}
 	else
 	{
-		if (inQuotes)
-			Logger::error("token" + Logger::get(token));
 		tokens.push(inQuotes ? String::unescape(token) : token);
 	}
 	token.clear();
