@@ -7,7 +7,7 @@ server                      ::= IDENT 'server' SPACE BRACE_IN LINE_JUMP server_d
 server_directives           ::= { listen | server_name | root | index | location | sendfile | add_header | auth_loc | IDENT_DIRECTIVE | autoindex | error_page | access_log | error_log | cgi_timeout | client_max_body_size | cgi_pass | default_type | default_cgi_type 
                                 | keepalive_timeout | client_header_timeout | client_body_timeout | return | allowed_methods }
 
-location           	        ::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [LINE_JUMP]
+location           	        ::= IDENT 'location' IDENT PATH IDENT BRACE_IN LINE_JUMP [ location_directives ] IDENT BRACE_OUT [ LINE_JUMP ]
 location_directives         ::= { root | index | alias | autoindex | return | add_header | allowed_methods | auth_required | cgi_pass | IDENT_DIRECTIVE | error_page | client_max_body_size | sendfile }
 
 
@@ -56,7 +56,7 @@ HTTP_METHOD                 ::= ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
 sendfile_content            ::= 'on' TAB_SPACE PATH
                             |= 'off'
 
-DIGIT_NOT_NULL              ::= [ '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ]
+DIGIT_NOT_NULL              ::= ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )
 UNIT                        ::= [ 'K' | 'M' | 'G' ]
 
 NUMBER_THREE                ::= DIGIT_NOT_NULL DIGIT DIGIT
@@ -157,6 +157,7 @@ PATH				::= [ '/' ] { SEGMENT }
                     |= DQUOTE [ '/' ] { SEGMENT_QUOTED } DQUOTE
 
 PROTOCOL_PATH       ::= PROTOCOL ':' SLASH SLASH { SEGMENT }
+                    |= DQUOTE PROTOCOL ':' SLASH SLASH { SEGMENT_QUOTED } DQUOTE
 
 ABSOLUTE_PATH       ::= '/' { SEGMENT }
                     |= '/'
@@ -178,7 +179,7 @@ SEGMENT_QUOTED      ::= { DOT } SEGMENT_QUOTED_STR [ '/' ]
 SEGMENT_STR			    ::= { LETTER | DIGIT | DOT | DQUOTE | '-' | '_' | '=' | SQUOTE }
 SEGMENT_QUOTED_STR		::= { LETTER | DIGIT | SYMBOL_FILE | SPACE }
 
-SYMBOL_FILE         ::= ( '-' | '_' | '.' | '~' | '!' | '$' | '&' | '\'' | '(' | ')' | '@' | '^' | '`' | '{' | '}' | ',' | ';' | '=' | '+' | BACKSLASH_ESC )
+SYMBOL_FILE         ::= ( '-' | '_' | '.' | '~' | '!' | '$' | '&' | '\'' | '(' | ')' | '@' | '^' | '`' | '{' | '}' | ',' | ';' | '=' | '+' | BACKSLASH_ESC | '%' )
 
 DQUOTE				::= '"'
 SQUOTE				::= '\''
@@ -205,7 +206,7 @@ WORD                ::= WORD_QUOTED
                     |= WORD_NORMAL
 
 WORD_NORMAL         ::= { LETTER | DIGIT | DOT | '-' | '_' | '=' }
-WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | SQUOTE_ESC | WS | BACKSLASH_ESC | SYMBOL_FILE } DQUOTE
+WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | SQUOTE_ESC | WS | BACKSLASH_ESC | SYMBOL_FILE | SLASH } DQUOTE
 
 
 

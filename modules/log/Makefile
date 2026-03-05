@@ -81,24 +81,25 @@ $(KIT_OBJS): $(MODULE_KIT_MK_OBJ)
 
 -include $(DEPS)
 
-clean:
-	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
-	@$(RM) $(BUILD_DIR)
-
-clean_libs: clean
+clean_libs:
 	@echo "$(YELLOW)$(ALIAS) Cleaning module libraries...$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) clean -C $(MODULE_KIT_DIR)
 
-fclean: clean
-	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
-	@$(RM) $(NAME) $(CONF_MK_OBJ)
-
-fclean_libs: fclean
+fclean_libs:
 	@echo "$(RED)$(ALIAS) Removed libraries and obj.mk.$(NC)"
 	@$(MAKE) $(MAKE_FLAGS) fclean -C $(MODULE_KIT_DIR)
 
+simple_clean: 
+	@echo "$(RED)$(ALIAS) Cleaning build objects...$(NC)"
+	@$(RM) $(BUILD_DIR)
+
+clean: simple_clean clean_libs
+
+fclean: simple_clean fclean_libs
+	@echo "$(RED)$(ALIAS) Removed library and obj.mk.$(NC)"
+	@$(RM) $(NAME) $(CONF_MK_OBJ)
+
 re: fclean all
-re_libs: fclean_libs all
 
 obj:
 	@echo -n "$(EXPORT_OBJS_VAR)=" > $(CONF_MK_OBJ)
@@ -107,10 +108,5 @@ obj:
 	done
 	@echo "" >> $(CONF_MK_OBJ)
 
-.PHONY: all clean fclean re obj gen fclean_libs clean_libs
 
-gen:
-	@$(MKDIR) $(CONF_DIR)
-	@echo "Generating sources.mk..."
-	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) $(EXPORT_SRCS_VAR) 1
-	@echo "Regenerating Makefile..."
+.PHONY: all clean_libs fclean_libs simple_clean clean fclean re obj

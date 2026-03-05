@@ -229,6 +229,8 @@ ssize_t CgiSpawner::getScriptIndex(const Vec<std::string> &urlSegments, const si
 		if (fileExtension.empty() || !m_activeBinMap.has(fileExtension))
 			continue;
 		m_binPath = m_activeBinMap.get(fileExtension);
+		if (!FileManager::exists(m_binPath))
+			throw FileManager::FileDoesNotExistException(m_binPath);
 		if (!FileManager::hasXPerm(m_binPath))
 			throw FileManager::FilePermissionException(m_binPath);
 		m_scriptPath = m_req.buildResourcePath(i);

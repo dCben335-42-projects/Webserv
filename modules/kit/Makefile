@@ -81,11 +81,3 @@ obj:
 
 -include $(DEPS)
 
-
-gen:
-	@$(MKDIR) $(CONF_DIR)
-	@echo "Generating sources.mk..."
-	@./config/generate_mk.sh $(SRC_DIR) "*.cpp" $(CONF_MK_SOURCES) $(EXPORT_SRCS_VAR) 1
-	@echo "Regenerating Makefile..."
-
-.PHONY: gen
