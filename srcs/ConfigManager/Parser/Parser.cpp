@@ -300,7 +300,15 @@ void Lexer::resolveListen(ServerNode &server)
 		Logger::custom(ERROR_MSG_CONFIG_INVALID_PORT + Logger::get(port));
 		return;
 	}
-	server.setSocketAddress(SocketAddress(ip, static_cast<unsigned short>(portNum)));
+	try {
+		const SocketAddress address(ip, static_cast<unsigned short>(portNum));
+		server.setSocketAddress(address);
+	} 
+	catch (std::runtime_error &e)
+	{
+		Logger::custom(ERROR_MSG_CONFIG_PREFIX + std::string(e.what()));
+
+	}
 }
 
 

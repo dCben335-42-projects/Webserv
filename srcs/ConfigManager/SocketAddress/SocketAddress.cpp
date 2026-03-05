@@ -2,6 +2,8 @@
 #include "IPAddress.hpp"
 #include <cctype>
 #include "Logger.hpp"
+#include "String.hpp"
+#include <exception>
 
 
 SocketAddress::SocketAddress()
@@ -51,6 +53,12 @@ void SocketAddress::initIP(const std::string &ip, const unsigned short port)
 		const std::string ipWithoutBrackets = ip.substr(1, ip.size() - 2);
 		initIPv6(port, IPAddress::convertIPv6(ipWithoutBrackets));
 		return;
+	}
+	const Vec<std::string> splittedIp = String::split(ip,  ".");
+	for (size_t i = 0; i < splittedIp.size(); i++)
+	{
+		if (Number::toInt(splittedIp[i]) > 255)
+			throw std::runtime_error("Invalid IP address");
 	}
 	initIPv4(port, IPAddress::convertIPv4(ip));
 }
