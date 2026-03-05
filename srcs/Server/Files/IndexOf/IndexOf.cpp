@@ -253,11 +253,13 @@ IndexOf &IndexOf::scanDirectory()
  *
  * @brief Generates a single line of the index page.
  *
- * @param icon The icon to be displayed.
- * @param link The link to the file or directory.
+ * @param icon The icon representing the file type.
+ * @param link The URI to the file or directory.
  * @param name The name of the file or directory.
  * @param sizeHuman The human-readable size of the file.
- * @param dateHuman The human-readable last modified date of the file.
+ * @param changedHuman The human-readable last changed date of the file.
+ * @param modifiedHuman The human-readable last modified date of the file.
+ * @param size The size of the file in bytes, used for the edit button.
  *
  * @note This function uses the LINE_TEMPLATE constant to format the line.
  * @see LINE_TEMPLATE
@@ -269,8 +271,8 @@ std::string IndexOf::generateLine(
 	const std::string &link,
 	const std::string &name,
 	const std::string &sizeHuman,
-	const std::string &createdHuman,
-	const std::string &dateHuman,
+	const std::string &changedHuman,
+	const std::string &modifiedHuman,
 	const std::string &size)
 {
 	std::string line = LINE_TEMPLATE;
@@ -278,9 +280,9 @@ std::string IndexOf::generateLine(
 	String::replaceAll(line, INDEXOF_TEMPLATE_ICON, icon);
 	String::replaceAll(line, INDEXOF_TEMPLATE_LINK, link);
 	String::replaceAll(line, INDEXOF_TEMPLATE_NAME, name);
-	String::replaceAll(line, INDEXOF_TEMPLATE_CHANGED_HUMAN, createdHuman);
+	String::replaceAll(line, INDEXOF_TEMPLATE_CHANGED_HUMAN, changedHuman);
 	String::replaceAll(line, INDEXOF_TEMPLATE_SIZE_HUMAN, sizeHuman);
-	String::replaceAll(line, INDEXOF_TEMPLATE_MODIFIED_HUMAN, dateHuman);
+	String::replaceAll(line, INDEXOF_TEMPLATE_MODIFIED_HUMAN, modifiedHuman);
 	if (name != "..")
 	{
 		std::string editBtn = m_hasPut ? EDIT_BUTTON_TEMPLATE : "";
@@ -376,8 +378,8 @@ IndexOf &IndexOf::generate()
 			it->getUri(),
 			it->getName(),
 			it->getSizeHuman(),
-			it->getCreatedAtHuman(),
-			it->getLastModifiedHuman(),
+			it->getChangedAtHuman(),
+			it->getModifiedAtHuman(),
 			Number::toString(it->getSize()));
 	}
 	m_page += generateFoot();

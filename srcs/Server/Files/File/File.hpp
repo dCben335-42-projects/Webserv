@@ -13,7 +13,7 @@ class File
 		std::string m_uri;
 		std::string m_fullPath;
 		size_t		m_size;
-		std::string m_lastModified;
+		std::string m_modifiedAt;
 		mode_t		m_mode;
 		std::string m_content;
 
@@ -25,8 +25,8 @@ class File
 		std::string m_mime;
 
 		std::string m_sizeHuman;
-		std::string m_lastModifiedHuman;
-		std::string m_createdAtHuman;
+		std::string m_modifiedAtHuman;
+		std::string m_changedAtHuman;
 
 		std::string m_icon;
 		bool		m_isHidden;
@@ -46,11 +46,11 @@ class File
 		const std::string &getName() const;
 		const std::string &getUri() const;
 		const std::string &getFullPath() const;
-		const std::string &getLastModified() const;
+		const std::string &getModifiedAt() const;
 
 		const std::string &getMime() const;
 		const std::string &getSizeHuman() const;
-		const std::string &getLastModifiedHuman() const;
+		const std::string &getModifiedAtHuman() const;
 		const std::string &getIcon() const;
 
 		bool getIsHidden() const;
@@ -61,7 +61,7 @@ class File
 		size_t getSize() const;
 
 		const std::string &getExtension() const;
-		const std::string &getCreatedAtHuman() const;
+		const std::string &getChangedAtHuman() const;
 		const std::string &getContent() const;
 
 		File &read();

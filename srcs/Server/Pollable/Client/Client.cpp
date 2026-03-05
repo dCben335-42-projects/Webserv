@@ -357,7 +357,7 @@ void Client::serveFile(
 	file.read();
 	m_res.setBody(file.getContent());
 	m_res.setHeader(HEADER_CONTENT_TYPE, mime);
-	m_res.setHeader(HEADER_LAST_MODIFIED, file.getLastModified());
+	m_res.setHeader(HEADER_LAST_MODIFIED, file.getModifiedAt());
 	m_res.setStatusCode(200);
 }
 

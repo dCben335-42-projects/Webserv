@@ -17,15 +17,15 @@ File::File(
 		throw FileManager::FileDoesNotExistException(ressourcePath);
 	m_stat = FileManager::getStat(ressourcePath);
 
-	m_name				= name;
-	m_mode				= m_stat.st_mode;
-	m_isDirectory		= S_ISDIR(m_mode);
-	m_uri				= String::removeDuplicateSlashes(location + "/" + name + (m_isDirectory ? "/" : ""));
-	m_fullPath			= ressourcePath;
-	m_size				= static_cast<size_t>(m_stat.st_size);
-	m_lastModified		= Date::toHttpDateFormat(gmtime(&m_stat.st_mtime));
-	m_createdAtHuman	= Date::toHumanFormat(gmtime(&m_stat.st_ctime));
-	m_lastModifiedHuman = Date::toHumanFormat(localtime(&m_stat.st_mtime));
+	m_name			  = name;
+	m_mode			  = m_stat.st_mode;
+	m_isDirectory	  = S_ISDIR(m_mode);
+	m_uri			  = String::removeDuplicateSlashes(location + "/" + name + (m_isDirectory ? "/" : ""));
+	m_fullPath		  = ressourcePath;
+	m_size			  = static_cast<size_t>(m_stat.st_size);
+	m_modifiedAt	  = Date::toHttpDateFormat(gmtime(&m_stat.st_mtime));
+	m_changedAtHuman  = Date::toHumanFormat(gmtime(&m_stat.st_ctime));
+	m_modifiedAtHuman = Date::toHumanFormat(localtime(&m_stat.st_mtime));
 
 	m_extension = FileManager::determineExtension(name, &m_extensionPos);
 	m_sizeHuman = Number::bytesToHumanSize(m_size);
@@ -93,9 +93,9 @@ const std::string &File::getFullPath() const
  * @return A constant reference to the last modified date of the file.
  *
  */
-const std::string &File::getLastModified() const
+const std::string &File::getModifiedAt() const
 {
-	return m_lastModified;
+	return m_modifiedAt;
 }
 
 /**
@@ -129,9 +129,9 @@ const std::string &File::getSizeHuman() const
  * @return A constant reference to the human-readable last modified date of the file.
  *
  */
-const std::string &File::getLastModifiedHuman() const
+const std::string &File::getModifiedAtHuman() const
 {
-	return m_lastModifiedHuman;
+	return m_modifiedAtHuman;
 }
 
 /**
@@ -225,9 +225,9 @@ const std::string &File::getExtension() const
  * @return A constant reference to the human-readable creation date of the file.
  *
  */
-const std::string &File::getCreatedAtHuman() const
+const std::string &File::getChangedAtHuman() const
 {
-	return m_createdAtHuman;
+	return m_changedAtHuman;
 }
 
 /**
