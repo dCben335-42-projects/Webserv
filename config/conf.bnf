@@ -56,7 +56,7 @@ HTTP_METHOD                 ::= ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
 sendfile_content            ::= 'on' TAB_SPACE PATH
                             |= 'off'
 
-DIGIT_NOT_NULL              ::= [ '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ]
+DIGIT_NOT_NULL              ::= ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' )
 UNIT                        ::= [ 'K' | 'M' | 'G' ]
 
 NUMBER_THREE                ::= DIGIT_NOT_NULL DIGIT DIGIT
