@@ -787,3 +787,25 @@ bool String::endWith(const std::string &str, const std::string &suffix)
 		return false;
 	return str.compare(strLen - suffixLen, suffixLen, suffix) == 0;
 }
+
+
+
+/**
+ *
+ * @brief Checks if a backslash at a given index in a string is escaped by counting preceding backslashes.
+ *
+ * @param line The input string to check.
+ * @param index The index of the backslash character to check.
+ *
+ * @return true if the backslash at the specified index is escaped (i.e., preceded by an odd number of backslashes), false otherwise.
+ *
+ * @note This function counts the number of consecutive backslashes immediately preceding the specified index.
+ *       If the count is odd, it means the backslash at the index is escaped; if even, it is not escaped.
+ */
+bool String::isEscapedBackslash(const std::string &line, const size_t index)
+{
+	size_t backslashCount = 0;
+	for (size_t j = index; j < line.size() && line[j] == '\\'; --j)
+		++backslashCount;
+	return backslashCount % 2 == 1;
+}

@@ -58,6 +58,8 @@ class String
 
 		static bool startWith(const std::string &str, const std::string &prefix);
 		static bool endWith(const std::string &str, const std::string &suffix);
+
+		static bool isEscapedBackslash(const std::string &line, const size_t index);
 };
 
 #endif

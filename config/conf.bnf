@@ -28,8 +28,7 @@ auth_required      			::= IDENT 'auth_required'           TAB_SPACE   BOOL      
 sendfile           			::= IDENT 'sendfile' 				TAB_SPACE   sendfile_content                        SEMI LINE_JUMP
 listen             			::= IDENT 'listen' 					TAB_SPACE   ADDRESS ':' PORT                        SEMI LINE_JUMP
 server_name        			::= IDENT 'server_name' 			{ SERVER_NAME_SPACED }                              SEMI LINE_JUMP
-index              			::= IDENT 'index'                   TAB_SPACE   { index_file_list }                     SEMI LINE_JUMP
-
+index              			::= IDENT 'index'                   { INDEX_FILE }                                      SEMI LINE_JUMP
 root               			::= IDENT 'root'                    TAB_SPACE   PATH                                    SEMI LINE_JUMP
 auth_loc           			::= IDENT 'auth_loc'                TAB_SPACE   PATH                                    SEMI LINE_JUMP
 alias              			::= IDENT 'alias'                   TAB_SPACE   PATH                                    SEMI LINE_JUMP
@@ -37,7 +36,7 @@ access_log           		::= IDENT 'access_log'              TAB_SPACE   PATH     
 error_log           		::= IDENT 'error_log'               TAB_SPACE   PATH                                    SEMI LINE_JUMP
 
 error_page         			::= IDENT 'error_page'              TAB_SPACE   error_code    TAB_SPACE PATH            SEMI LINE_JUMP
-add_header         			::= IDENT 'add_header'              TAB_SPACE   WORD_NORMAL   TAB_SPACE WORD              SEMI LINE_JUMP
+add_header         			::= IDENT 'add_header'              TAB_SPACE   WORD_NORMAL   TAB_SPACE WORD            SEMI LINE_JUMP
 cgi_pass           			::= IDENT 'cgi_pass'                TAB_SPACE   EXT           TAB_SPACE PATH            SEMI LINE_JUMP
 
 return             			::= IDENT 'return'                  TAB_SPACE   return_type                             SEMI LINE_JUMP
@@ -46,7 +45,7 @@ allowed_methods    			::= IDENT 'allowed_methods'         { HTTP_METHOD_SPACED }
 
 IDENT_DIRECTIVE             ::= IDENT [ LINE_JUMP ]
 
-index_file_list		        ::= PATH [ SPACE ]
+INDEX_FILE		            ::= TAB_SPACE PATH
 
 HTTP_METHOD_SPACED          ::= TAB_SPACE HTTP_METHOD
 
@@ -151,23 +150,7 @@ PORT               ::= DIGIT
                     |= DIGIT DIGIT DIGIT DIGIT
                     |= DIGIT DIGIT DIGIT DIGIT DIGIT
 
-DIGIT              ::= ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9')
 
-LETTER             ::= (UPCASE_LETTER | LOCASE_LETTER)
-
-UPCASE_LETTER      ::= ('A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z')
-LOCASE_LETTER      ::= ('a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z')
-
-IDENT              ::= [ TAB_SPACE ]
-
-TAB_SPACE          ::= { SPACE | TAB }
-TAB                ::= '\t'
-SPACE              ::= ' '
-LINE_JUMP          ::= '\n'
-
-BRACE_IN           ::= '{'
-BRACE_OUT          ::= '}'
-SEMI               ::= ';'
 
 PATH				::= [ '/' ] { SEGMENT }
 					|= '/'
@@ -195,16 +178,16 @@ SEGMENT_QUOTED      ::= { DOT } SEGMENT_QUOTED_STR [ '/' ]
 SEGMENT_STR			    ::= { LETTER | DIGIT | DOT | DQUOTE | '-' | '_' | '=' | SQUOTE }
 SEGMENT_QUOTED_STR		::= { LETTER | DIGIT | SYMBOL_FILE | SPACE }
 
-SYMBOL_FILE         ::= ( '-' | '_' | '.' | '~' | '!' | '$' | '&' | '\'' | '(' | ')' | '@' | '^' | '`' | '{' | '}' | ',' | ';' | '=' | '+' )
+SYMBOL_FILE         ::= ( '-' | '_' | '.' | '~' | '!' | '$' | '&' | '\'' | '(' | ')' | '@' | '^' | '`' | '{' | '}' | ',' | ';' | '=' | '+' | BACKSLASH_ESC )
 
 DQUOTE				::= '"'
 SQUOTE				::= '\''
 DQUOTE_ESC			::= BACKSLASH DQUOTE
 SQUOTE_ESC			::= BACKSLASH SQUOTE
 BACKSLASH			::= '\\'
+BACKSLASH_ESC       ::= BACKSLASH BACKSLASH
 SLASH				::= '/'
 
-WS					::= ( '\t' | '\n' | '\r' | ' ' )
 EXT                	::= DOT ( 'sh' | 'py' | 'php' | 'c' | 'cpp' | 'cgi' | 'out' )
 DOT                	::= '.'
 default_type_mime   ::= ( 'text/html' | 'text/plain' | 'text/css' | 'text/csv' | 'application/json' | 'application/javascript' |
@@ -222,7 +205,8 @@ WORD                ::= WORD_QUOTED
                     |= WORD_NORMAL
 
 WORD_NORMAL         ::= { LETTER | DIGIT | DOT | '-' | '_' | '=' }
-WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | SQUOTE_ESC | WS | BACKSLASH | SYMBOL_FILE } DQUOTE
+WORD_QUOTED			::= DQUOTE { LETTER | DIGIT | DOT | DQUOTE_ESC | SQUOTE | SQUOTE_ESC | WS | BACKSLASH_ESC | SYMBOL_FILE } DQUOTE
+
 
 
 return_type					::= ( return_bad_request | return_unauthorized | return_forbidden | return_not_found | return_method_not_allowed
@@ -301,19 +285,25 @@ error_code                          ::= '400'
                                     |= '504'
 
 
-response_code                       ::= '200'
-                                    |= '201'
-                                    |= '202'
-                                    |= '204'
-                                    |= '301'
-                                    |= '302'
-                                    |= '307'
-                                    |= '308'
-                                    |= '400'
-                                    |= '401'
-                                    |= '403'
-                                    |= '404'
-                                    |= '500'
 
 NUMBER             ::= { DIGIT }
 BOOL               ::= ( 'on' | 'off' )
+WS					::= ( '\\t' | '\\n' | '\\r' | '\\v' | ' ' )
+
+DIGIT              ::= ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9')
+
+LETTER             ::= (UPCASE_LETTER | LOCASE_LETTER)
+
+UPCASE_LETTER      ::= ('A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z')
+LOCASE_LETTER      ::= ('a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z')
+
+IDENT              ::= [ TAB_SPACE ]
+
+TAB_SPACE          ::= { SPACE | TAB }
+TAB                ::= '\t'
+SPACE              ::= ' '
+LINE_JUMP          ::= '\n'
+
+BRACE_IN           ::= '{'
+BRACE_OUT          ::= '}'
+SEMI               ::= ';'
