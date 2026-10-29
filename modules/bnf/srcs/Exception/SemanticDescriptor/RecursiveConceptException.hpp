@@ -10,9 +10,9 @@ using namespace bnf;
 class RecursiveConceptException : public SemanticException
 {
 	public:
-		explicit RecursiveConceptException(const std::string &concept) :
+		explicit RecursiveConceptException(const std::string &c) :
 			SemanticException(
-				"Recursive concept detected: " + concept,
+				"Recursive concept detected: " + c,
 				"RecursiveConceptException") {};
 };
 

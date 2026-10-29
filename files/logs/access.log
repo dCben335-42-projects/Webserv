@@ -1,1 +1,24 @@
-TEST
+TEST[ i_am_the_one_who_ports/1.1 ] Virtual Server - started on 127.0.0.1:8017
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - started on 127.0.0.1:8018
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - started on 127.0.0.1:8019
+[ i_am_the_one_who_ports/1.1 ] Client - Connected
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET / HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET / HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /favicon.ico HTTP/1.1 404
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /favicon.ico HTTP/1.1 404
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /uploads/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /uploads/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /mini-upload/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /mini-upload/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /auth HTTP/1.1 404
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /auth HTTP/1.1 404
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /auth HTTP/1.1 404
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /auth HTTP/1.1 404
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /team/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /team/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /uploads/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Client - Response sent GET /uploads/ HTTP/1.1 200
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - Closed
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - Closed
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - Closed
+[ i_am_the_one_who_ports/1.1 ] Client - Disconnected

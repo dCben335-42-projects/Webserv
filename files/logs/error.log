@@ -1,0 +1,10 @@
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - Bind failed on 127.0.0.1:8080
+[ i_am_the_one_who_ports/1.1 ] Virtual Server - Bind failed on 127.0.0.1:8091
+[ i_am_the_one_who_ports/1.1 ] Client - Keepalive Timed out
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /favicon.ico HTTP/1.1 404 Not Found 
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET / HTTP/1.1 404 Not Found 
+[ i_am_the_one_who_ports/1.1 ] Client - Keepalive Timed out
+[ i_am_the_one_who_ports/1.1 ] Client - Keepalive Timed out
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /favicon.ico HTTP/1.1 404 Not Found 
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /auth HTTP/1.1 404 Not Found 
+[ i_am_the_one_who_ports/1.1 ] Client - Response ready GET /auth HTTP/1.1 404 Not Found 
